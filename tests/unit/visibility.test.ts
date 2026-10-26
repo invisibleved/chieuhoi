@@ -76,6 +76,18 @@ describe('luật ảnh công khai', () => {
   })
 })
 
+describe('toImageView: dấu [cần xác minh]', () => {
+  it('public ẩn photographer và code chưa xác minh', () => {
+    const v = toImageView(asset({ photographer: '[cần xác minh]', code: '[cần xác minh]' }), 'public')
+    expect(v?.photographer).toBeNull()
+    expect(v?.code).toBeNull()
+  })
+  it('public giữ photographer và code hợp lệ', () => {
+    const v = toImageView(asset({ photographer: 'Anh A', code: 'TL-001' }), 'public')
+    expect(v).toMatchObject({ photographer: 'Anh A', code: 'TL-001' })
+  })
+})
+
 describe('toImageView', () => {
   it('null/number -> null', () => {
     expect(toImageView(null, 'preview')).toBeNull()

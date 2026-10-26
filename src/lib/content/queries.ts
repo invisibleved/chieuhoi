@@ -17,12 +17,19 @@ const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v
 const sourcesOf = (v: unknown): Source[] =>
   Array.isArray(v) ? v.map(sourceOf).filter((s): s is Source => s !== null) : []
 
-function toSourceView(s: Source, mode: Mode = 'public'): SourceView {
+/**
+ * Tiêu đề nguồn là bắt buộc nên không thể để null: ở public, nguồn có tiêu đề chưa xác minh
+ * bị bỏ hẳn khỏi danh sách/trích dẫn (không có gì đáng hiện); preview vẫn hiện nguyên văn.
+ */
+function toSourceView(s: Source, mode: Mode = 'public'): SourceView | null {
+  const title = showText(s.title, mode)
+  if (title === null) return null
   return {
-    id: s.sourceId, publisher: showText(s.publisher, mode), title: s.title,
+    id: s.sourceId, publisher: showText(s.publisher, mode), title,
     url: showText(s.url, mode), date: showText(s.date, mode),
   }
 }
+const viewable = (v: SourceView | null): v is SourceView => v !== null
 
 type Doc = { _status?: string | null }
 
@@ -59,7 +66,7 @@ export function createContent(payload: Payload) {
     const res = await payload.find({
       collection: 'sources', overrideAccess: true, pagination: false, depth: 0, sort: 'sourceId',
     })
-    return res.docs.map((s) => toSourceView(s, mode))
+    return res.docs.map((s) => toSourceView(s, mode)).filter(viewable)
   }
 
   async function sourceMap() {
@@ -170,9 +177,9 @@ export function createContent(payload: Payload) {
     const published = d._status === 'published'
     return {
       ...storyCard(d, mode),
-      body: mode === 'public' && !published ? null : sanitizeRich(d.body, await sourceMap()),
+      body: mode === 'public' && !published ? null : sanitizeRich(d.body, await sourceMap(), mode),
       editor: showText(d.editor, mode),
-      sources: sourcesOf(d.sources).map((s) => toSourceView(s, mode)),
+      sources: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable),
     }
   }
 
@@ -195,7 +202,7 @@ export function createContent(payload: Payload) {
       flags: [...flagsOf(d, mode), ...v.flags],
       note: identifying ? showText(d.note, mode) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
-      story: identifying ? sanitizeRich(d.story, await sourceMap()) : null,
+      story: identifying ? sanitizeRich(d.story, await sourceMap(), mode) : null,
     }
   }
 
@@ -211,13 +218,16 @@ export function createContent(payload: Payload) {
       const image = toImageView(d, mode)
       if (!image) continue
       const label = showText(d.relatedLabel, mode)
+      // Chỉ nhận đường dẫn nội bộ (bắt đầu bằng một dấu '/'), tránh liên kết ra ngoài/giao thức lạ.
+      const href = showText(d.relatedHref, mode)
+      const internalHref = href && /^\/(?!\/)/.test(href) ? href : null
       items.push({
         image,
         title: showText(d.title, mode),
         description: showText(d.description, mode),
         category: d.category ?? null,
         era: d.era ?? null,
-        related: label && d.relatedHref ? { label, href: d.relatedHref } : null,
+        related: label && internalHref ? { label, href: internalHref } : null,
         flags: image.flags,
       })
     }

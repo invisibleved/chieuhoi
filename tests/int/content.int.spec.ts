@@ -117,6 +117,29 @@ describe('lib/content', () => {
     expect(v.map((i) => i.image.code)).toEqual(['A-1', 'A-2'])
   })
 
+  it('thư viện: relatedHref chỉ nhận đường dẫn nội bộ và không chứa dấu', async () => {
+    const k = { category: 'village', era: 'old', relatedLabel: 'Xem' }
+    await asset({ code: 'H-1', inArchive: true, relatedHref: '/san-pham/chieu-1', ...k })
+    await asset({ code: 'H-2', inArchive: true, relatedHref: 'https://evil.example', ...k })
+    await asset({ code: 'H-3', inArchive: true, relatedHref: '//evil.example', ...k })
+    await asset({ code: 'H-4', inArchive: true, relatedHref: '[cần xác minh]', ...k })
+    const rel = Object.fromEntries((await content.getArchive('public')).map((i) => [i.image.code, i.related?.href ?? null]))
+    expect(rel).toEqual({ 'H-1': '/san-pham/chieu-1', 'H-2': null, 'H-3': null, 'H-4': null })
+  })
+
+  it('nguồn có tiêu đề chưa xác minh bị bỏ khỏi public, còn ở preview', async () => {
+    await create('sources', { sourceId: 's-ok', title: 'Báo A' })
+    await create('sources', { sourceId: 's-bad', title: '[cần xác minh] Báo' })
+    expect((await content.getSources()).map((s) => s.id)).toEqual(['s-ok'])
+    expect((await content.getSources('preview')).map((s) => s.id).sort()).toEqual(['s-bad', 's-ok'])
+  })
+
+  it('bài có nguồn tiêu đề chưa xác minh: public không liệt kê nguồn đó', async () => {
+    const bad = await create('sources', { sourceId: 's-bad2', title: '[cần xác minh]' })
+    await create('stories', pub({ slug: 'ns', title: 'T', workflow: 'published', sources: [bad.id] }))
+    expect((await content.getStory('ns', 'public'))?.sources).toEqual([])
+  })
+
   it('site settings trống thì ẩn', async () => {
     await setGlobal('site-settings', { tagline: 'Chiếu Hới', email: '', _status: 'published' }, false)
     const p = await content.getSiteSettings('public')

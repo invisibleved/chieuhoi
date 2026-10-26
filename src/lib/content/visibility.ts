@@ -49,8 +49,8 @@ export function toImageView(
     width: asset.width ?? 0,
     height: asset.height ?? 0,
     sizes,
-    photographer: asset.photographer ?? null,
-    code: asset.code ?? null,
+    photographer: showText(asset.photographer, mode),
+    code: showText(asset.code, mode),
     flags,
   }
 }

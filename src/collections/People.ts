@@ -5,6 +5,16 @@ import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 import { restrictedEditor } from './restrictedEditor'
 
+/** Chữ thường, bỏ dấu, khoảng trắng và ký tự lạ thành '-'. */
+const slugify = (v: string) =>
+  v
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/gi, 'd')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
 const control = { create: reviewerOnlyField, update: reviewerOnlyField }
 
 export const People: CollectionConfig = {
@@ -14,7 +24,21 @@ export const People: CollectionConfig = {
   ...contentCollectionDefaults,
   fields: [
     workflowField(),
-    { name: 'slug', type: 'text', label: 'Đường dẫn', required: true, unique: true },
+    {
+      name: 'slug',
+      type: 'text',
+      label: 'Đường dẫn',
+      required: true,
+      unique: true,
+      // R24: slug lộ ra URL công khai nên không được chứa tên (khi chưa có đồng ý dùng tên).
+      validate: (value: string | null | undefined, { siblingData }: { siblingData: unknown }) => {
+        if (!value) return 'Bắt buộc.'
+        const name = (siblingData as { name?: unknown } | undefined)?.name
+        const n = typeof name === 'string' ? slugify(name) : ''
+        if (n && slugify(value).includes(n)) return 'Đường dẫn không được chứa tên người.'
+        return true
+      },
+    },
     { name: 'name', type: 'text', label: 'Tên', localized: true },
     {
       name: 'category',
