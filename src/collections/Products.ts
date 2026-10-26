@@ -24,8 +24,8 @@ export const Products: CollectionConfig = {
       type: 'select',
       label: 'Nhóm',
       options: [
-        { label: 'Truyền thống', value: 'traditional' },
-        { label: 'Đương đại', value: 'contemporary' },
+        { label: 'Chiếu cói truyền thống', value: 'traditional' },
+        { label: 'Chiếu đương đại', value: 'contemporary' },
       ],
     },
     { name: 'summary', type: 'textarea', label: 'Tóm tắt', localized: true },
