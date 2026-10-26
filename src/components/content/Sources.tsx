@@ -6,10 +6,10 @@ export function sourceNumbers(sources: SourceView[]): Map<string, number> {
 }
 
 // Số chú thích trên dòng; vùng chạm 44px mở rộng bằng pseudo-element.
-export function FootnoteRef({ n }: { n: number }) {
+export function FootnoteRef({ n, href }: { n: number; href?: string }) {
   return (
     <a
-      href={`#nguon-${n}`}
+      href={href ?? `#nguon-${n}`}
       className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:left-1/2 before:top-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
       aria-label={`Nguồn ${n}`}
     >
