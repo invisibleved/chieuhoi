@@ -1,15 +1,20 @@
+import { randomUUID } from 'crypto'
 import path from 'path'
-import { ValidationError, type Access, type CollectionConfig } from 'payload'
+import { Forbidden, ValidationError, type Access, type CollectionConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
-import { isLoggedIn, isReviewer, reviewerOnlyField } from '@/access/roles'
+import { isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export { isAssetPubliclyAllowed }
 
-const readAccess: Access = ({ req }) => (req.user ? true : publicAssetQuery)
+// R19: khách chỉ được tải file (isReadingStaticFile), không liệt kê/đọc metadata qua REST.
+const readAccess: Access = ({ req, isReadingStaticFile }) => {
+  if (req.user) return true
+  return isReadingStaticFile ? publicAssetQuery : false
+}
 
 const webp = { formatOptions: { format: 'webp' as const } }
 
@@ -96,10 +101,41 @@ export const ArchiveAssets: CollectionConfig = {
       ],
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
     },
+    {
+      name: 'sourceFile',
+      type: 'text',
+      label: 'Tên file tham chiếu gốc',
+      admin: { readOnly: true, description: 'Chỉ seed ghi; dùng làm khoá tự nhiên, không công khai.' },
+      access: { create: () => false, update: () => false, read: reviewerOnlyField },
+    },
     { name: 'inArchive', type: 'checkbox', label: 'Thuộc kho tư liệu', defaultValue: false },
   ],
   hooks: {
+    // R24: tên file công khai là mã tư liệu hoặc UUID, không bao giờ là tên file gốc.
+    beforeOperation: [
+      ({ args, operation }) => {
+        if (operation !== 'create') return
+        const req = (args as { req?: { file?: { name: string } } }).req
+        const data = (args as { data?: { code?: string } }).data
+        if (!req?.file) return
+        const ext = path.extname(req.file.name).toLowerCase()
+        const safeCode = (data?.code ?? '').replace(/[^A-Za-z0-9_-]/g, '')
+        req.file.name = `${safeCode || randomUUID()}${ext}`
+      },
+    ],
     beforeValidate: [
+      // R20: ảnh đã duyệt công khai chỉ người duyệt được sửa (kể cả thay file).
+      ({ originalDoc, operation, req }) => {
+        if (
+          operation === 'update' &&
+          req.user &&
+          !isReviewerUser(req.user) &&
+          originalDoc &&
+          isAssetPubliclyAllowed(originalDoc)
+        ) {
+          throw new Forbidden(req.t)
+        }
+      },
       ({ data, originalDoc }) => {
         const merged = { ...originalDoc, ...data }
         if (merged.inArchive) {

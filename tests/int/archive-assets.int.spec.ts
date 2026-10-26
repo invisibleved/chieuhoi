@@ -80,12 +80,77 @@ describe('archive-assets', () => {
     expect([403, 404]).toContain(res.status)
   })
 
-  it('find của khách chỉ trả ảnh được phép', async () => {
+  it('khách không liệt kê được metadata ảnh qua find', async () => {
     await makeAsset({ rights: 'permitted', subjectConsent: 'given' })
     await makeAsset({})
-    const res = await payload.find({ collection: 'archive-assets', overrideAccess: false })
-    expect(res.docs).toHaveLength(1)
-    expect(res.docs[0].rights).toBe('permitted')
+    await expect(
+      payload.find({ collection: 'archive-assets', overrideAccess: false }),
+    ).rejects.toThrow()
+  })
+
+  it('editor không sửa được trường của ảnh đã duyệt', async () => {
+    const doc = await makeAsset({ rights: 'permitted', subjectConsent: 'not_applicable' })
+    const editor = await makeUser(payload, 'editor')
+    await expect(
+      payload.update({
+        collection: 'archive-assets',
+        id: doc.id,
+        data: { alt: 'Đổi alt' },
+        user: editor,
+        overrideAccess: false,
+      }),
+    ).rejects.toThrow()
+    const after = await payload.findByID({ collection: 'archive-assets', id: doc.id })
+    expect(after.alt).toBe('Ảnh thử')
+  })
+
+  it('editor không thay file của ảnh đã duyệt', async () => {
+    const doc = await makeAsset({ rights: 'permitted', subjectConsent: 'not_applicable' })
+    const editor = await makeUser(payload, 'editor')
+    await expect(
+      payload.update({
+        collection: 'archive-assets',
+        id: doc.id,
+        data: {},
+        filePath: fixture,
+        user: editor,
+        overrideAccess: false,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('editor vẫn sửa được ảnh chưa duyệt', async () => {
+    const doc = await makeAsset({})
+    const editor = await makeUser(payload, 'editor')
+    const updated = await payload.update({
+      collection: 'archive-assets',
+      id: doc.id,
+      data: { alt: 'Sửa được' },
+      user: editor,
+      overrideAccess: false,
+    })
+    expect(updated.alt).toBe('Sửa được')
+  })
+
+  it('reviewer sửa được ảnh đã duyệt', async () => {
+    const doc = await makeAsset({ rights: 'permitted', subjectConsent: 'not_applicable' })
+    const reviewer = await makeUser(payload, 'reviewer')
+    const updated = await payload.update({
+      collection: 'archive-assets',
+      id: doc.id,
+      data: { alt: 'Reviewer sửa' },
+      user: reviewer,
+      overrideAccess: false,
+    })
+    expect(updated.alt).toBe('Reviewer sửa')
+  })
+
+  it('file tải lên được đổi tên mờ, không giữ tên gốc', async () => {
+    const withCode = await makeAsset({ code: 'TL-077' })
+    expect(withCode.filename).toBe('TL-077.webp')
+    const noCode = await makeAsset({})
+    expect(noCode.filename).not.toContain('tiny')
+    expect(noCode.filename).toMatch(/^[0-9a-f-]{36}\.webp$/)
   })
 
   it('inArchive thiếu code thì lỗi validate', async () => {
