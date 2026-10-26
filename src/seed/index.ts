@@ -87,6 +87,7 @@ async function seedAssets(payload: Payload, user: TypedUser): Promise<Record<str
     if (!item && !other) throw new Error(`Ảnh ${file} chưa có alt trong dữ liệu seed.`)
     const data = {
       alt: item ? archiveAlt(item) : other.alt,
+      sourceFile: file,
       rights: 'unknown',
       subjectConsent: 'pending',
       ...(item
@@ -104,7 +105,7 @@ async function seedAssets(payload: Payload, user: TypedUser): Promise<Record<str
     }
     const found = await payload.find({
       collection: 'archive-assets',
-      where: { filename: { equals: file } },
+      where: { or: [{ sourceFile: { equals: file } }, { filename: { equals: file } }] },
       limit: 1,
       depth: 0,
       overrideAccess: true,
@@ -252,19 +253,23 @@ export async function seed(payload: Payload): Promise<void> {
     )
   }
 
-  // Globals
-  await payload.updateGlobal({
-    slug: 'site-settings',
-    data: { ...siteSettings, _status: 'published' },
-    overrideAccess: true,
-    user,
-  })
-  await payload.updateGlobal({
-    slug: 'page-intros',
-    data: { ...(pageIntros as object), _status: 'published' } as never,
-    overrideAccess: true,
-    user,
-  })
+  // Globals: không ghi đè bản đã đăng (có thể đã được biên tập) trừ khi SEED_FORCE_GLOBALS=true.
+  const force = process.env.SEED_FORCE_GLOBALS === 'true'
+  const globals: [slug: 'site-settings' | 'page-intros', data: object][] = [
+    ['site-settings', siteSettings],
+    ['page-intros', pageIntros as object],
+  ]
+  for (const [slug, data] of globals) {
+    if (!force) {
+      const current = (await payload.findGlobal({
+        slug, draft: false, depth: 0, overrideAccess: true,
+      })) as { _status?: string | null }
+      if (current._status === 'published') continue
+    }
+    await payload.updateGlobal({
+      slug, data: { ...data, _status: 'published' } as never, overrideAccess: true, user,
+    })
+  }
 }
 
 async function main() {

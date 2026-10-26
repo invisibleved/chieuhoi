@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { readFileSync } from 'fs'
 import path from 'path'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Payload } from 'payload'
 
 import { seed } from '@/seed'
@@ -13,10 +13,19 @@ const sources = JSON.parse(
 
 describe('seed', () => {
   let payload: Payload
+  const savedAppEnv = process.env.APP_ENV
+  const savedForce = process.env.SEED_FORCE_GLOBALS
+  afterAll(() => {
+    if (savedAppEnv === undefined) delete process.env.APP_ENV
+    else process.env.APP_ENV = savedAppEnv
+    if (savedForce === undefined) delete process.env.SEED_FORCE_GLOBALS
+    else process.env.SEED_FORCE_GLOBALS = savedForce
+  })
   beforeAll(async () => {
     payload = await getTestPayload()
     await resetDb(payload)
     process.env.APP_ENV = 'development'
+    delete process.env.SEED_FORCE_GLOBALS
     await seed(payload)
     await seed(payload)
   }, 240_000)
@@ -34,6 +43,35 @@ describe('seed', () => {
     expect(await count('stories')).toBe(6)
     expect(await count('users')).toBe(1)
   })
+
+  it('tên file công khai không lộ tên gốc, sourceFile giữ khoá seed', async () => {
+    const res = await payload.find({ collection: 'archive-assets', limit: 100, overrideAccess: true })
+    for (const d of res.docs) {
+      expect(d.sourceFile).toBeTruthy()
+      expect(d.filename).not.toBe(d.sourceFile)
+    }
+  })
+
+  it('chạy lại không ghi đè global đã đăng, trừ khi SEED_FORCE_GLOBALS=true', async () => {
+    const [reviewer] = (await payload.find({ collection: 'users', overrideAccess: true })).docs
+    await payload.updateGlobal({
+      slug: 'site-settings',
+      data: { tagline: 'Sửa tay', _status: 'published' },
+      user: { ...reviewer, collection: 'users' },
+      overrideAccess: true,
+    } as never)
+    await seed(payload)
+    const kept = await payload.findGlobal({ slug: 'site-settings', draft: false, overrideAccess: true })
+    expect(kept.tagline).toBe('Sửa tay')
+    process.env.SEED_FORCE_GLOBALS = 'true'
+    try {
+      await seed(payload)
+    } finally {
+      delete process.env.SEED_FORCE_GLOBALS
+    }
+    const forced = await payload.findGlobal({ slug: 'site-settings', draft: false, overrideAccess: true })
+    expect(forced.tagline).not.toBe('Sửa tay')
+  }, 240_000)
 
   it('ảnh tham khảo: rights unknown, consent pending', async () => {
     const bad = await count('archive-assets', {

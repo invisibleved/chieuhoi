@@ -36,7 +36,8 @@ describe('globals site-settings và page-intros', () => {
     await payload.updateGlobal({
       slug: 'site-settings',
       data: { tagline: 'khởi tạo', _status: 'draft' },
-      draft: true,
+      draft: false,
+      user: reviewer,
       overrideAccess: true,
     } as never)
   })
