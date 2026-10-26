@@ -5,6 +5,15 @@ import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 import { restrictedEditor } from './restrictedEditor'
 
+/** Nguồn duy nhất của nhãn nhóm; lớp content map value -> label từ đây. */
+export const PERSON_CATEGORY_OPTIONS = [
+  { label: 'Nghệ nhân', value: 'artisan' },
+  { label: 'Gia đình làm nghề', value: 'craft-family' },
+  { label: 'Người giữ nghề', value: 'craft-keeper' },
+  { label: 'Thế hệ trẻ', value: 'young-generation' },
+  { label: 'Những người gắn bó với làng', value: 'village-bound' },
+]
+
 /** Chữ thường, bỏ dấu, khoảng trắng và ký tự lạ thành '-'. */
 const slugify = (v: string) =>
   v
@@ -44,13 +53,7 @@ export const People: CollectionConfig = {
       name: 'category',
       type: 'select',
       label: 'Nhóm',
-      options: [
-        { label: 'Nghệ nhân', value: 'artisan' },
-        { label: 'Gia đình làm nghề', value: 'craft-family' },
-        { label: 'Người giữ nghề', value: 'craft-keeper' },
-        { label: 'Thế hệ trẻ', value: 'young-generation' },
-        { label: 'Những người gắn bó với làng', value: 'village-bound' },
-      ],
+      options: PERSON_CATEGORY_OPTIONS,
     },
     { name: 'role', type: 'text', label: 'Vai trò', localized: true },
     { name: 'note', type: 'text', label: 'Ghi chú', localized: true },

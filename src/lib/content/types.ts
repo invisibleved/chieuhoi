@@ -14,7 +14,7 @@ export interface ImageView {
 
 export interface PersonView {
   slug: string
-  category: string
+  category: string | null
   role: string | null
   name: string | null
   portrait: ImageView | null

@@ -4,6 +4,15 @@ import type { CollectionConfig } from 'payload'
 import { restrictedEditor } from './restrictedEditor'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
+/** Nguồn duy nhất của nhãn chuyên mục; lớp content map value -> label từ đây. */
+export const STORY_CATEGORY_OPTIONS = [
+  { label: 'Lịch sử', value: 'history' },
+  { label: 'Ký ức làng quê', value: 'village-memory' },
+  { label: 'Nghề truyền thống', value: 'traditional-craft' },
+  { label: 'Con người', value: 'people' },
+  { label: 'Đời sống hôm nay', value: 'life-today' },
+]
+
 export const Stories: CollectionConfig = {
   slug: 'stories',
   labels: { singular: 'Bài viết', plural: 'Bài viết' },
@@ -18,13 +27,7 @@ export const Stories: CollectionConfig = {
       name: 'category',
       type: 'select',
       label: 'Chuyên mục',
-      options: [
-        { label: 'Lịch sử', value: 'history' },
-        { label: 'Ký ức làng quê', value: 'village-memory' },
-        { label: 'Nghề truyền thống', value: 'traditional-craft' },
-        { label: 'Con người', value: 'people' },
-        { label: 'Đời sống hôm nay', value: 'life-today' },
-      ],
+      options: STORY_CATEGORY_OPTIONS,
     },
     { name: 'cover', type: 'relationship', relationTo: 'archive-assets', label: 'Ảnh bìa' },
     {

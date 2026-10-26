@@ -134,6 +134,13 @@ describe('toImageView', () => {
 })
 
 describe('toPersonView', () => {
+  it('category là nhãn tiếng Việt từ config; giá trị lạ/rỗng là null', () => {
+    expect(toPersonView(person({ category: 'artisan' }), 'public').category).toBe('Nghệ nhân')
+    expect(toPersonView(person({ category: 'craft-family' }), 'public').category).toBe('Gia đình làm nghề')
+    expect(toPersonView(person({ category: 'khong-co' as never }), 'public').category).toBeNull()
+    expect(toPersonView(person({ category: null }), 'public').category).toBeNull()
+  })
+
   it('thiếu consent.name: ẩn tên, giữ ảnh, consentPending', () => {
     const v = toPersonView(person({ consent: { name: false, photo: true, quote: false } }), 'public')
     expect(v.name).toBeNull()

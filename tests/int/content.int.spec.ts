@@ -72,6 +72,13 @@ describe('lib/content', () => {
     expect((await content.getStory('s1', 'preview'))?.cover).not.toBeNull()
   })
 
+  it('getStories/getPeople trả nhãn chuyên mục tiếng Việt', async () => {
+    await create('stories', pub({ slug: 'h', title: 'H', workflow: 'published', category: 'village-memory' }))
+    await create('people', pub({ slug: 'nn', category: 'artisan', workflow: 'published' }))
+    expect((await content.getStories('public')).find((c) => c.slug === 'h')?.category).toBe('Ký ức làng quê')
+    expect((await content.getPeople('public')).find((p) => p.slug === 'nn')?.category).toBe('Nghệ nhân')
+  })
+
   it('idea có thẻ, không có trang', async () => {
     await create('stories', pub({ slug: 'y', title: 'Ý tưởng', workflow: 'idea' }))
     const cards = await content.getStories('public')

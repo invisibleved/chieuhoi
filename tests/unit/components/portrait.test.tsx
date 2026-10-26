@@ -16,6 +16,10 @@ describe('PortraitCard', () => {
     expect(link.textContent).toContain('Xem chân dung →')
     expect(link.textContent).toContain('NGHỆ NHÂN')
   })
+  it('category null: ẩn dòng nhóm', () => {
+    render(<PortraitCard person={{ ...base, category: null }} href="#" />)
+    expect(screen.getByRole('link').textContent).not.toContain('NGHỆ NHÂN')
+  })
   it('đã đồng ý: hiện tên, không có nhãn', () => {
     render(<PortraitCard person={{ ...base, name: 'Bà A', consentPending: false }} href="#" />)
     expect(screen.getByText('Bà A')).toBeTruthy()

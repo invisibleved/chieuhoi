@@ -2,6 +2,7 @@
 import { isAssetPubliclyAllowed } from '@/access/assetRules'
 import type { ArchiveAsset, Person } from '@/payload-types'
 
+import { personCategoryLabel } from './categories'
 import type { Flag, ImageView, Mode, PersonView } from './types'
 
 export const UNVERIFIED = '[cần xác minh]'
@@ -87,7 +88,7 @@ export function toPersonView(p: Person, mode: Mode): PersonView {
 
   return {
     slug: p.slug,
-    category: p.category ?? '',
+    category: personCategoryLabel(p.category),
     role: showText(p.role, mode),
     name,
     portrait,

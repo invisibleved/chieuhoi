@@ -29,8 +29,9 @@ for (const vp of [
     test('một h1 và đủ h2', async ({ page }) => {
       await open(page)
       await expect(page.locator('main h1')).toHaveCount(1)
-      const h1 = ((await page.locator('main h1').textContent()) ?? '').replace(/\s+/g, ' ').trim()
-      expect(h1.length).toBeGreaterThan(0)
+      const h1 = (await page.locator('main h1').evaluate((el) => (el as HTMLElement).innerText)).split('\n').map((l) => l.trim()).filter(Boolean)
+      expect(h1[0]).toBe('Từ sợi cói quê nhà,')
+      expect(h1[h1.length - 1]).toBe('câu chuyện.')
       for (const t of H2) await expect(page.getByRole('heading', { level: 2, name: t, exact: true })).toBeVisible()
       await expect(page.getByRole('heading', { level: 2, name: /Làng vẫn còn đó/ })).toBeVisible()
     })
@@ -52,7 +53,7 @@ for (const vp of [
     test('chọn điểm hoa văn 2', async ({ page }) => {
       await open(page)
       const dot = page.locator('button[aria-pressed][aria-label^="Chi tiết 2"]')
-      test.skip((await dot.count()) === 0, 'sản phẩm nổi bật có ít hơn 2 điểm hoa văn')
+      expect(await dot.count()).toBeGreaterThan(0)
       await dot.scrollIntoViewIfNeeded()
       await dot.click()
       await expect(dot).toHaveAttribute('aria-pressed', 'true')
@@ -105,7 +106,7 @@ for (const vp of [
   { name: '1440', width: 1440, height: 900 },
   { name: '390', width: 390, height: 844 },
 ]) {
-  test(`chụp toàn trang chủ ${vp.name}`, async ({ page, request }) => {
+  test(`chụp toàn trang chủ ${vp.name}`, async ({ page }) => {
     test.skip(!SHOTS, 'đặt SHOTS_DIR để lưu ảnh chụp')
     test.setTimeout(120_000)
     await page.setViewportSize({ width: vp.width, height: vp.height })
@@ -116,7 +117,6 @@ for (const vp of [
       const res = await page.request.post('/api/users/login', { data: { email, password } })
       expect(res.ok()).toBeTruthy()
     }
-    void request
     await open(page)
     // Cuộn hết trang để ảnh lazy tải xong.
     await page.evaluate(async () => {

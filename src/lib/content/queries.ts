@@ -5,6 +5,7 @@ import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
 import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-types'
 
+import { storyCategoryLabel } from './categories'
 import { sanitizeRich } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, Mode, PageIntroView, PersonDetailView, PersonView,
@@ -158,7 +159,7 @@ export function createContent(payload: Payload) {
       slug: d.slug,
       title: showText(d.title, mode),
       sapo: showText(d.sapo, mode),
-      category: d.category ?? null,
+      category: storyCategoryLabel(d.category),
       cover: toImageView(d.cover, mode),
       readingMinutes: d.readingMinutes ?? null,
       hasDetail: d.workflow !== 'idea',
