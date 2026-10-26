@@ -5,6 +5,7 @@ type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'outline-dark'
   href?: string
   icon?: 'play'
+  iconSize?: number
   disabled?: boolean
   type?: 'button' | 'submit'
   onClick?: () => void
@@ -25,9 +26,9 @@ const variants = {
 } as const
 
 // Biểu tượng phát: vòng tròn 36px + tam giác, nét 1.2 (nguyên từ artboard).
-function PlayIcon() {
+function PlayIcon({ size }: { size: number }) {
   return (
-    <svg aria-hidden="true" width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.2">
+    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.2">
       <circle cx="18" cy="18" r="17" />
       <path d="M15 12.5v11l8.5-5.5z" />
     </svg>
@@ -38,6 +39,7 @@ export function Button({
   variant = 'primary',
   href,
   icon,
+  iconSize = 36,
   disabled,
   type = 'button',
   onClick,
@@ -47,7 +49,7 @@ export function Button({
   const cls = [base, variants[variant], className].filter(Boolean).join(' ')
   const content = (
     <>
-      {icon === 'play' ? <PlayIcon /> : null}
+      {icon === 'play' ? <PlayIcon size={iconSize} /> : null}
       {children}
     </>
   )
