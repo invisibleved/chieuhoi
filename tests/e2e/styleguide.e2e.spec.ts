@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
 
-const SHOTS = '/private/tmp/claude-501/-Users-luongdd-Documents-code-me-chieuhoivn/7a403193-6fa6-4cf4-8114-8bb55c7f7741/scratchpad/phase2-shots'
+const SHOTS = process.env.SHOTS_DIR
 const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
 
 for (const vp of [
@@ -41,7 +41,8 @@ for (const vp of [
     })
 
     test('chụp toàn trang', async ({ page }) => {
-      mkdirSync(SHOTS, { recursive: true })
+      test.skip(!SHOTS, 'đặt SHOTS_DIR để lưu ảnh chụp')
+      mkdirSync(SHOTS!, { recursive: true })
       await page.goto('/styleguide')
       await page.waitForLoadState('networkidle')
       await page.screenshot({ path: `${SHOTS}/styleguide-${vp.name}.png`, fullPage: true })
@@ -58,8 +59,8 @@ test.describe('styleguide 390 mobile', () => {
     const small = await page.evaluate(() =>
       [...document.querySelectorAll('main a, main button')]
         .filter((el) => {
-          if (el.classList.contains('fn')) return false
-          if (el.closest('p, li')) return false
+          // Ngoại lệ WCAG 2.5.8 (link nằm trong dòng chữ): chú thích .fn, link trong <p>, link trích nguồn.
+          if (el.classList.contains('fn') || el.closest('p') || el.matches('[id^="nguon-"] a')) return false
           const r = el.getBoundingClientRect()
           return r.width > 0 && r.height > 0 && r.height < 44
         })
@@ -77,7 +78,6 @@ test.describe('styleguide 390 mobile', () => {
       const r = el.getBoundingClientRect()
       return { before: [b.width, b.height], link: [r.width, r.height] }
     })
-    console.log('FN_HIT', JSON.stringify(m))
     const [w, h] = m.before.map(parseFloat)
     expect(w).toBeGreaterThan(0)
     expect(h).toBeGreaterThan(0)

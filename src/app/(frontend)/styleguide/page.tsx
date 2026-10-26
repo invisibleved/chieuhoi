@@ -166,8 +166,9 @@ export default function StyleguidePage() {
           <div className="flex min-w-0 flex-col gap-3.5">
             <Lab>NGUỒN</Lab>
             <p className="text-[15px] leading-[1.6] text-text-secondary">
-              Nghề dệt chiếu làng Hới được báo chí nhắc tới gần đây.
-              <FootnoteRef n={1} />
+              Không phải chi tiết nào cũng thống nhất. Vietnam+ đặt câu chuyện mang nghề về làng vào đầu thế kỷ XVI và nhắc đến hai lần đi sứ.
+              <FootnoteRef n={1} /> Chính bài trên Dân Việt cũng ghi nhận rằng tiểu sử của ông dựa nhiều vào truyền khẩu, và cơ quan văn hoá nơi có lăng mộ ông chưa lưu giữ hồ sơ về ông.
+              <FootnoteRef n={2} />
             </p>
             <Tok>footnote/ref · source/list</Tok>
           </div>
