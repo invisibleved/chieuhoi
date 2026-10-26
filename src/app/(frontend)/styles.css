@@ -1,8 +1,0 @@
-/* Khung tối thiểu. Task 2 dựng lại layout và token. */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}

@@ -1,7 +1,3 @@
 export default function HomePage() {
-  return (
-    <div className="home">
-      <h1>Chiếu Hới</h1>
-    </div>
-  )
+  return <h1 className="font-display text-h1">Chiếu Hới</h1>
 }

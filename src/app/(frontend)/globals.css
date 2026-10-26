@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+
+/* Token gốc, chép nguyên từ design/tokens/tokens.css (nguồn sự thật). */
+:root {
+  /* Nền */
+  --bg-primary: #F3EBDD;      /* Cói */
+  --bg-secondary: #E9DECA;    /* Cói đậm */
+  --bg-raised: #FBF6EE;       /* ô nhập, thẻ nổi */
+  --bg-inverse: #344B3D;      /* Xanh làng */
+  --bg-deep: #232A25;         /* Thư viện */
+  --bg-ink: #282724;          /* Footer */
+  /* Chữ trên nền sáng (tỉ lệ tương phản trên #F3EBDD) */
+  --text-primary: #282724;    /* 12.6:1 */
+  --text-secondary: #4A4741;  /* 7.8:1 */
+  --text-muted: #6A655C;      /* 4.9:1 */
+  --text-meta: #74592C;       /* 5.5:1 */
+  --text-muted-alt: #5A554C;  /* 5.6:1 trên #E9DECA */
+  /* Chữ trên nền tối */
+  --text-on-dark: #F3EBDD;    /* 8.0:1 trên #344B3D */
+  --text-on-dark-muted: #D3CCBD; /* 5.9:1 */
+  --text-deep-muted: #C9C4B6; /* 8.4:1 trên #232A25 */
+  --accent-on-dark: #E3CD9C;  /* 6.1:1 */
+  /* Nhấn */
+  --accent: #A04435;          /* Đỏ điều 5.3:1 */
+  --accent-hover: #86382B;
+  --accent-press: #74301F;
+  --on-accent: #FBF6EE;       /* 5.8:1 */
+  --decor-straw: #C3A46C;     /* CHỈ trang trí — không dùng cho chữ (2.0:1) */
+  /* Viền, focus */
+  --border-subtle: rgba(40,39,36,.16);
+  --border-strong: #282724;
+  --border-dashed: #8C857A;
+  --focus-light: #344B3D;
+  --focus-dark: #E3CD9C;
+  /* Chuyển động */
+  --dur-micro: 150ms;
+  --dur-ui: 250ms;
+  --dur-reveal: 600ms;
+  --ease-weave: cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-micro: 0ms; --dur-ui: 0ms; --dur-reveal: 0ms; }
+}
+/* Vạch chia sợi cói */
+.threads { height: 12px; background-image: repeating-linear-gradient(0deg, var(--decor-straw) 0 1px, transparent 1px 4px); }
+/* Hoạ tiết caro (chỉ dùng cho trạng thái đang chọn / điểm nhấn nhỏ) */
+.check { background: repeating-conic-gradient(var(--accent) 0 25%, var(--decor-straw) 0 50%) 0 0 / 6px 6px; }
+
+/*
+ * Ánh xạ token sang Tailwind. Màu trỏ về biến :root bên trên bằng var(),
+ * nên media reduced-motion và việc đổi token chỉ cần sửa một nơi.
+ * Thang chữ: `--text-*` giữ giá trị desktop; mobile (< 768px) được ghi đè
+ * trong khối @media ở cuối file. Cỡ cố định (small, caption, eyebrow) không đổi.
+ */
+@theme {
+  --color-*: initial;
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-inverse: var(--bg-inverse);
+  --color-bg-deep: var(--bg-deep);
+  --color-bg-ink: var(--bg-ink);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-meta: var(--text-meta);
+  --color-text-muted-alt: var(--text-muted-alt);
+  --color-text-on-dark: var(--text-on-dark);
+  --color-text-on-dark-muted: var(--text-on-dark-muted);
+  --color-text-deep-muted: var(--text-deep-muted);
+  --color-accent-on-dark: var(--accent-on-dark);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-press: var(--accent-press);
+  --color-on-accent: var(--on-accent);
+  --color-decor-straw: var(--decor-straw); /* chỉ trang trí, không dùng cho chữ */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-border-dashed: var(--border-dashed);
+  --color-focus-light: var(--focus-light);
+  --color-focus-dark: var(--focus-dark);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-display: var(--font-noto-serif-display), 'Noto Serif Display', Georgia, serif;
+  --font-serif: var(--font-noto-serif), 'Noto Serif', Georgia, serif;
+  --font-sans: var(--font-be-vietnam-pro), 'Be Vietnam Pro', system-ui, sans-serif;
+
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-full: 50%; /* chỉ cho điểm đánh dấu hoa văn */
+  --shadow-*: initial;
+
+  --text-display: 70px;
+  --text-h1: 60px;
+  --text-h2: 60px;
+  --text-h3: 44px;
+  --text-h4: 32px;
+  --text-h5: 26px;
+  --text-h6: 26px;
+  --text-quote: 36px;
+  --text-lead: 22px;
+  --text-body-lg: 19px;
+  --text-body: 17px;
+  --text-small: 14px;
+  --text-caption: 14px;
+  --text-eyebrow: 12px;
+
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --text-display: 38px;
+    --text-h1: 36px;
+    --text-h2: 36px;
+    --text-h3: 28px;
+    --text-h4: 24px;
+    --text-h5: 22px;
+    --text-h6: 22px;
+    --text-quote: 26px;
+    --text-lead: 18px;
+    --text-body-lg: 16px;
+    --text-body: 16px;
+    --text-caption: 13px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-size: var(--text-body);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-light);
+  outline-offset: 3px;
+}
+
+:is(.bg-bg-inverse, .bg-bg-deep, .bg-bg-ink) :focus-visible {
+  outline-color: var(--focus-dark);
+}
