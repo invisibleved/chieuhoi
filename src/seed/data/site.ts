@@ -9,6 +9,16 @@ export const siteSettings = {
   // email, phone, visitInfo: artboard chỉ có placeholder, để trống.
 } as const
 
+export const homeMedia = {
+  heroImage: 'kn14.webp',
+  heroInset: 'kn5.webp',
+  heroCaption: 'Ảnh: [tác giả — cần xác minh] · Địa điểm: [cần xác minh]',
+  villageImages: [
+    { file: 'hc8.webp', caption: 'Chiếu trải phơi trên bãi đất trống. Địa điểm và thời gian chụp: [cần xác minh].' },
+    { file: 'kn11.webp', caption: 'Gấp chiếu thành phẩm. [Nhân vật — cần xin phép trước khi đăng]' },
+  ],
+}
+
 type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }
 
 // Tiêu đề nhiều dòng (<br>) được nối bằng khoảng trắng vì trường title là một dòng; riêng heroTitle giữ ngắt dòng.

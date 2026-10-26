@@ -21,3 +21,4 @@ export const getPerson = async (...a: Parameters<ReturnType<typeof createContent
 export const getArchive = async (...a: Parameters<ReturnType<typeof createContent>['getArchive']>) => (await bound()).getArchive(...a)
 export const getSiteSettings = async (...a: Parameters<ReturnType<typeof createContent>['getSiteSettings']>) => (await bound()).getSiteSettings(...a)
 export const getPageIntro = async (...a: Parameters<ReturnType<typeof createContent>['getPageIntro']>) => (await bound()).getPageIntro(...a)
+export const getHomeMedia = async (...a: Parameters<ReturnType<typeof createContent>['getHomeMedia']>) => (await bound()).getHomeMedia(...a)

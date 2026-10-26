@@ -38,6 +38,16 @@ const routeGroup = (key: RouteKey): Field => ({
     ...(key === 'home'
       ? ([
           { name: 'heroTitle', type: 'textarea', label: 'Tiêu đề hero (giữ ngắt dòng)', localized: true },
+          { name: 'heroImage', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh hero' },
+          { name: 'heroInset', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh nhỏ cạnh hero' },
+          { name: 'heroCaption', type: 'text', label: 'Chú thích ảnh hero', localized: true },
+          {
+            name: 'villageImages', type: 'array', label: 'Ảnh mục Làng Hới', maxRows: 2,
+            fields: [
+              { name: 'image', type: 'upload', relationTo: 'archive-assets', required: true, label: 'Ảnh' },
+              { name: 'caption', type: 'text', label: 'Chú thích', localized: true },
+            ],
+          },
         ] as Field[])
       : []),
   ],

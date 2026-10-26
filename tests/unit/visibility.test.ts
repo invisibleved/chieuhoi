@@ -55,6 +55,25 @@ describe('isUnverified', () => {
   })
 })
 
+describe('dấu chưa xác minh mở rộng', () => {
+  const marks = [
+    '[cần xác minh]',
+    'Ảnh: [tác giả — cần xác minh] · Địa điểm: x',
+    '[Nhân vật — cần xin phép trước khi đăng]',
+    '[chờ xác minh với cơ sở dệt]',
+    '[Cần nguồn]',
+  ]
+  it.each(marks)('public ẩn, preview giữ nguyên văn: %j', (v) => {
+    expect(isUnverified(v)).toBe(true)
+    expect(showText(v, 'public')).toBeNull()
+    expect(showText(v, 'preview')).toBe(v)
+  })
+  it.each(['[X] PHÚT ĐỌC', '[1]'])('không khớp %j', (v) => {
+    expect(isUnverified(v)).toBe(false)
+    expect(showText(v, 'public')).toBe(v)
+  })
+})
+
 describe('showText', () => {
   it('public ẩn chuỗi unverified', () => {
     expect(showText('Kiểu dệt: [cần xác minh].', 'public')).toBeNull()

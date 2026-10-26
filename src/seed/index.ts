@@ -12,7 +12,7 @@ import { injectCitations } from './citations'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples, productSummary, storyCategory, storyExtras } from './data/extras'
 import { timelineCopy } from './data/timeline'
-import { pageIntros, siteSettings } from './data/site'
+import { homeMedia, pageIntros, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
 
 export { assertSeedAllowed } from './guard'
@@ -254,10 +254,20 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Globals: không ghi đè bản đã đăng (có thể đã được biên tập) trừ khi SEED_FORCE_GLOBALS=true.
+  const byFile = (f: string) => {
+    if (!assets[f]) throw new Error(`Không có ảnh ${f}`)
+    return assets[f]
+  }
+  const homeMediaData = {
+    heroImage: byFile(homeMedia.heroImage),
+    heroInset: byFile(homeMedia.heroInset),
+    heroCaption: homeMedia.heroCaption,
+    villageImages: homeMedia.villageImages.map((v) => ({ image: byFile(v.file), caption: v.caption })),
+  }
   const force = process.env.SEED_FORCE_GLOBALS === 'true'
   const globals: [slug: 'site-settings' | 'page-intros', data: object][] = [
     ['site-settings', siteSettings],
-    ['page-intros', pageIntros as object],
+    ['page-intros', { ...pageIntros, home: { ...pageIntros.home, ...homeMediaData } } as object],
   ]
   for (const [slug, data] of globals) {
     if (!force) {

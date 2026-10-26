@@ -6,7 +6,7 @@ import type { Flag, ImageView, Mode, PersonView } from './types'
 
 export const UNVERIFIED = '[cần xác minh]'
 
-const UNVERIFIED_MARK = /\[\s*cần\s+xác\s+minh\s*\]/iu
+const UNVERIFIED_MARK = /\[[^\]]*(?:cần|chờ)\s[^\]]*\]/iu
 
 export function isUnverified(v: unknown): boolean {
   if (v === null || v === undefined) return true

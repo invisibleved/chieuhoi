@@ -15,7 +15,16 @@ describe('seed', () => {
   let payload: Payload
   const savedAppEnv = process.env.APP_ENV
   const savedForce = process.env.SEED_FORCE_GLOBALS
-  afterAll(() => {
+  afterAll(async () => {
+    // Seed đăng page-intros kèm ảnh trang chủ; resetDb ở file test sau sẽ xoá asset và để lại
+    // hàng upload bắt buộc bị rỗng trong các phiên bản, làm hỏng lần cập nhật global kế tiếp.
+    const [reviewer] = (await payload.find({ collection: 'users', overrideAccess: true })).docs
+    await payload.updateGlobal({
+      slug: 'page-intros',
+      data: { home: { heroImage: null, heroInset: null, villageImages: [] }, _status: 'published' },
+      user: { ...reviewer, collection: 'users' },
+      overrideAccess: true,
+    } as never)
     if (savedAppEnv === undefined) delete process.env.APP_ENV
     else process.env.APP_ENV = savedAppEnv
     if (savedForce === undefined) delete process.env.SEED_FORCE_GLOBALS

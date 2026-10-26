@@ -118,6 +118,12 @@ export interface SiteSettingsView {
   copyright: string | null
 }
 
+export interface HomeMediaView {
+  hero: { image: ImageView; title: string | null; caption: string | null } | null
+  heroInset: ImageView | null
+  village: { image: ImageView; caption: string | null }[]
+}
+
 export interface PageIntroView {
   eyebrow: string | null
   title: string | null

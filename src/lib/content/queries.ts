@@ -3,11 +3,11 @@ import type { CollectionSlug, Payload, Where } from 'payload'
 
 import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
-import type { Maker, Product, Source, Story } from '@/payload-types'
+import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-types'
 
 import { sanitizeRich } from './rich'
 import type {
-  ArchiveItemView, CraftStepView, Flag, Mode, PageIntroView, PersonDetailView, PersonView,
+  ArchiveItemView, CraftStepView, Flag, HomeMediaView, Mode, PageIntroView, PersonDetailView, PersonView,
   ProductCardView, ProductView, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView,
 } from './types'
@@ -234,9 +234,9 @@ export function createContent(payload: Payload) {
     return items
   }
 
-  async function readGlobal(slug: 'site-settings' | 'page-intros', mode: Mode) {
+  async function readGlobal(slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0) {
     const g = ((await payload.findGlobal({
-      slug, draft: mode === 'preview', overrideAccess: true, depth: 0,
+      slug, draft: mode === 'preview', overrideAccess: true, depth,
     })) as unknown) as Record<string, unknown> & Doc
     // Chưa từng đăng thì bản công khai coi như trống.
     return mode === 'public' && g._status !== 'published' ? {} : g
@@ -261,8 +261,32 @@ export function createContent(payload: Payload) {
     }
   }
 
+  async function getHomeMedia(mode: Mode): Promise<HomeMediaView> {
+    const g = (await readGlobal('page-intros', mode, 1)) as { home?: Record<string, unknown> }
+    const h = g.home ?? {}
+    const img = (v: unknown) => toImageView(v as ArchiveAsset | number | null | undefined, mode)
+    const heroImage = img(h.heroImage)
+    const heroAsset = h.heroImage && typeof h.heroImage === 'object' ? (h.heroImage as ArchiveAsset) : null
+    const village: HomeMediaView['village'] = []
+    for (const row of (Array.isArray(h.villageImages) ? h.villageImages : []) as
+      { image?: unknown; caption?: string | null }[]) {
+      const image = img(row.image)
+      if (image) village.push({ image, caption: showText(row.caption, mode) })
+    }
+    return {
+      hero: heroImage
+        ? {
+            image: heroImage, title: showText(heroAsset?.title, mode),
+            caption: showText(h.heroCaption as string | null | undefined, mode),
+          }
+        : null,
+      heroInset: img(h.heroInset),
+      village,
+    }
+  }
+
   return {
-    getSources: allSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
+    getHomeMedia, getSources: allSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
     getStory, getPeople, getPerson, getArchive, getSiteSettings, getPageIntro,
   }
 }

@@ -843,6 +843,16 @@ export interface PageIntro {
     title?: string | null;
     lead?: string | null;
     heroTitle?: string | null;
+    heroImage?: (number | null) | ArchiveAsset;
+    heroInset?: (number | null) | ArchiveAsset;
+    heroCaption?: string | null;
+    villageImages?:
+      | {
+          image: number | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'lang-hoi'?: {
     eyebrow?: string | null;
@@ -913,6 +923,16 @@ export interface PageIntrosSelect<T extends boolean = true> {
         title?: T;
         lead?: T;
         heroTitle?: T;
+        heroImage?: T;
+        heroInset?: T;
+        heroCaption?: T;
+        villageImages?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'lang-hoi'?:
     | T
