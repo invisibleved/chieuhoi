@@ -1,5 +1,5 @@
 import type { Payload } from 'payload'
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { getTestPayload, makeUser, resetDb } from './helpers'
 
@@ -9,8 +9,13 @@ describe('users', () => {
   beforeAll(async () => {
     payload = await getTestPayload()
   })
+  const savedFlag = process.env.ALLOW_FIRST_USER
   beforeEach(async () => {
     await resetDb(payload)
+  })
+  afterEach(() => {
+    if (savedFlag === undefined) delete process.env.ALLOW_FIRST_USER
+    else process.env.ALLOW_FIRST_USER = savedFlag
   })
 
   const newUser = (email: string) => ({
@@ -67,7 +72,27 @@ describe('users', () => {
     await expect(payload.find({ collection: 'users', overrideAccess: false })).rejects.toThrow()
   })
 
+  it('không bật ALLOW_FIRST_USER thì khách không tạo được user đầu tiên', async () => {
+    delete process.env.ALLOW_FIRST_USER
+    await expect(
+      payload.create({
+        collection: 'users',
+        data: newUser('nope@example.test'),
+        overrideAccess: false,
+      }),
+    ).rejects.toThrow()
+    process.env.ALLOW_FIRST_USER = 'false'
+    await expect(
+      payload.create({
+        collection: 'users',
+        data: newUser('nope2@example.test'),
+        overrideAccess: false,
+      }),
+    ).rejects.toThrow()
+  })
+
   it('user đầu tiên khi DB trống được tạo và thành reviewer', async () => {
+    process.env.ALLOW_FIRST_USER = 'true'
     const first = await payload.create({
       collection: 'users',
       data: newUser('first@example.test'),

@@ -16,6 +16,7 @@ Thiết kế đã hoàn tất. Việc của bạn là **triển khai đúng thi�
 - Font: `next/font/google` cho Noto Serif Display, Noto Serif và Be Vietnam Pro, khai báo `subsets: ['vietnamese','latin']`.
 - Dữ liệu: component chỉ đọc qua lớp `src/lib/content`, không gọi Payload trực tiếp; nguồn thật là Payload/Postgres, `content/seed` dùng để seed (`npm run seed`).
 - Postgres cục bộ: `docker compose up -d` (host port 5433; DB `chieuhoi` và `chieuhoi_test`). Biến môi trường: xem `.env.example`.
+- Cơ sở dữ liệu: chỉ `APP_ENV=development` tự đồng bộ schema (`push`). Đổi schema thì chạy `npm run migrate:create <tên>` và commit `src/migrations`; deploy chạy `npm run migrate`. Người duyệt đầu tiên ở production: `npm run create-reviewer` (đặt `REVIEWER_EMAIL`/`REVIEWER_PASSWORD`); `ALLOW_FIRST_USER` chỉ bật ở dev.
 - Test: `npm run test:unit` (vitest, `tests/unit`), `npm run test:int` (vitest, `tests/int`, dùng `DATABASE_URI_TEST`, chạy tuần tự), `npm run test:e2e` (Playwright).
 - Spec thiết kế kiến trúc: `docs/superpowers/specs/2026-10-26-chieu-hoi-web-design.md`.
 - KHÔNG làm: giỏ hàng, thanh toán, đăng nhập người xem, form Kết nối (form chỉ là minh hoạ, phải giữ dòng "minh hoạ"). Đăng nhập chỉ dành cho biên tập viên và người duyệt qua Payload admin.

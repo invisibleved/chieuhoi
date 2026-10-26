@@ -228,6 +228,10 @@ export interface ArchiveAsset {
   source?: string | null;
   rights: 'unknown' | 'permitted' | 'restricted';
   subjectConsent: 'not_applicable' | 'pending' | 'given';
+  /**
+   * Chỉ seed ghi; dùng làm khoá tự nhiên, không công khai.
+   */
+  sourceFile?: string | null;
   inArchive?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -598,6 +602,7 @@ export interface ArchiveAssetsSelect<T extends boolean = true> {
   source?: T;
   rights?: T;
   subjectConsent?: T;
+  sourceFile?: T;
   inArchive?: T;
   updatedAt?: T;
   createdAt?: T;

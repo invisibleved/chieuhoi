@@ -1,10 +1,11 @@
-/** Seed chỉ được chạy ở môi trường dev/staging; thiếu APP_ENV cũng bị chặn. */
+/** Seed chỉ được chạy ở dev/staging (R22: danh sách cho phép, mọi giá trị khác đều bị chặn). */
+const ALLOWED = new Set(['development', 'staging'])
+
 export function assertSeedAllowed(env: Record<string, string | undefined>): void {
   const appEnv = env.APP_ENV
-  if (!appEnv) {
-    throw new Error('Seed bị chặn: thiếu APP_ENV (chỉ chạy khi APP_ENV là development hoặc staging).')
-  }
-  if (appEnv === 'production') {
-    throw new Error('Seed bị chặn: không bao giờ chạy seed ở production.')
+  if (!appEnv || !ALLOWED.has(appEnv)) {
+    throw new Error(
+      `Seed bị chặn: APP_ENV phải là development hoặc staging (hiện là "${appEnv ?? ''}").`,
+    )
   }
 }

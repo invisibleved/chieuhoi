@@ -12,6 +12,11 @@ describe('assertSeedAllowed', () => {
   it('chặn khi thiếu APP_ENV', () => {
     expect(() => assertSeedAllowed({})).toThrow()
   })
+  it('chặn mọi giá trị ngoài danh sách cho phép', () => {
+    expect(() => assertSeedAllowed({ APP_ENV: 'prod' })).toThrow()
+    expect(() => assertSeedAllowed({ APP_ENV: 'Production' })).toThrow()
+    expect(() => assertSeedAllowed({ APP_ENV: 'test' })).toThrow()
+  })
   it('cho phép development và staging', () => {
     expect(() => assertSeedAllowed({ APP_ENV: 'development' })).not.toThrow()
     expect(() => assertSeedAllowed({ APP_ENV: 'staging' })).not.toThrow()

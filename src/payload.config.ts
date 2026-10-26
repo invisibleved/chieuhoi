@@ -39,6 +39,9 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // R23: chỉ dev tự đồng bộ schema; staging/production dùng migration (`npm run migrate`).
+    push: process.env.APP_ENV === 'development',
+    migrationDir: path.resolve(dirname, 'migrations'),
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },

@@ -2,10 +2,11 @@ import type { Access, CollectionBeforeChangeHook, CollectionConfig } from 'paylo
 
 import { isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
-/** Không có đăng ký công khai: chỉ người duyệt tạo user, trừ user đầu tiên khi DB trống. */
+/** Không có đăng ký công khai: chỉ người duyệt tạo user, trừ user đầu tiên khi DB trống và ALLOW_FIRST_USER=true (R21). */
 const canCreateUser: Access = async ({ req }) => {
   if (isReviewer({ req })) return true
   if (req.user) return false
+  if (process.env.ALLOW_FIRST_USER !== 'true') return false
   const { totalDocs } = await req.payload.count({
     collection: 'users',
     overrideAccess: true,
