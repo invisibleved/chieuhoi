@@ -2,14 +2,9 @@ import type { HomeMediaView, PageIntroView } from '@/lib/content'
 import { Button } from '@/components/ui/Button'
 import { ContentImage } from '@/components/content/ContentImage'
 import { DocumentLabel } from '@/components/content/DocumentLabel'
+import { docNumber } from './tlCode'
 
 type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string | null }
-
-// Mã tư liệu chỉ hiện khi dạng TL-<số>; lấy phần số.
-function docNumber(code: string | null): string | null {
-  const m = code?.match(/^TL-(\d+)$/)
-  return m ? m[1] : null
-}
 
 // Tiêu đề hero: tách theo \n, dòng cuối nghiêng màu accent.
 function HeroTitle({ intro }: { intro: PageIntroView }) {
