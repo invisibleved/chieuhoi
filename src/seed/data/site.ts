@@ -1,0 +1,53 @@
+// Nguyên văn từ footer Home.dc.html và phần đầu các artboard desktop.
+
+export const siteSettings = {
+  tagline: 'Nơi những sợi cói dệt nên chuyện làng.',
+  description: 'Không gian số lưu giữ ký ức, con người và nghề dệt chiếu làng Hới.',
+  address: 'Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên',
+  addressNote: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình · theo Vietnam+ (08/2026), cần đối chiếu',
+  copyright: '© 2026 Chiếu Hới. Ảnh thuộc bản quyền của tác giả, ghi công trong từng tư liệu.',
+  // email, phone, visitInfo: artboard chỉ có placeholder, để trống.
+} as const
+
+type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }
+
+// Tiêu đề nhiều dòng (<br>) được nối bằng khoảng trắng vì trường title là một dòng; riêng heroTitle giữ ngắt dòng.
+export const pageIntros: Record<string, Intro> = {
+  home: {
+    eyebrow: 'DI SẢN LÀNG NGHỀ VIỆT NAM',
+    title: 'Từ sợi cói quê nhà, dệt nên những câu chuyện.',
+    heroTitle: 'Từ sợi cói quê nhà,\ndệt nên những\ncâu chuyện.',
+    lead: 'Khám phá làng Hới, nơi nghề dệt chiếu lưu giữ ký ức, sự khéo léo và tâm hồn của bao thế hệ.',
+  },
+  'lang-hoi': {
+    eyebrow: '01 — LÀNG HỚI',
+    title: 'Có một làng Hới...',
+    lead: 'Một ngôi làng ven sông, nơi nghề dệt chiếu được kể là đã có từ hơn năm trăm năm, và nơi người ta vẫn nhắc đến một ông Trạng đã mang khung dệt về quê.',
+  },
+  'cau-chuyen': { eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.' },
+  'nghe-det-chieu': {
+    eyebrow: '03 — NGHỀ DỆT CHIẾU',
+    title: 'Một tấm chiếu, muôn công đoạn.',
+    lead: 'Từ bó cói ngoài đồng đến tấm chiếu trải giữa nhà là một hành trình của đôi tay, thời tiết và sự kiên nhẫn. Đi theo từng công đoạn bên dưới.',
+  },
+  'con-nguoi': {
+    eyebrow: '04 — CON NGƯỜI',
+    title: 'Những bàn tay giữ hồn làng.',
+    lead: 'Người dệt, người in hoa, người giữ khung dệt cũ trong nhà. Mỗi chân dung ở đây là một người thật, và chỉ được kể khi chính họ đồng ý.',
+  },
+  'san-pham': {
+    eyebrow: '05 — SẢN PHẨM',
+    title: 'Nét đẹp từ những đường dệt.',
+    lead: 'Mỗi tấm chiếu ở đây được trình bày như một hiện vật: chất liệu, cách làm, nơi làm ra. Đây là bộ sưu tập để hiểu, không phải cửa hàng.',
+  },
+  'thu-vien': {
+    eyebrow: '06 — THƯ VIỆN',
+    title: 'Ký ức qua từng khung hình.',
+    lead: 'Kho ảnh và tư liệu của làng Hới. Mỗi tấm đều có chỗ cho tên, thời gian, người chụp, nguồn và quyền sử dụng.',
+  },
+  'ket-noi': {
+    eyebrow: 'KẾT NỐI',
+    title: 'Làng vẫn còn đó. Chuyện nghề vẫn được kể tiếp.',
+    lead: 'Góp một tấm ảnh, giới thiệu một người giữ nghề, hay chỉ muốn tìm hiểu thêm về làng Hới, đây là nơi bắt đầu.',
+  },
+}
