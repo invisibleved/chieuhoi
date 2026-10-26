@@ -1,0 +1,121 @@
+// @vitest-environment node
+import { describe, expect, it } from 'vitest'
+
+import type { ArchiveAsset, Person } from '@/payload-types'
+import { isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
+
+const asset = (over: Partial<ArchiveAsset> = {}): ArchiveAsset =>
+  ({
+    id: 1,
+    alt: 'Khung dệt',
+    url: '/media/a.webp',
+    width: 800,
+    height: 600,
+    rights: 'permitted',
+    subjectConsent: 'not_applicable',
+    updatedAt: '',
+    createdAt: '',
+    ...over,
+  }) as ArchiveAsset
+
+const person = (over: Partial<Person> = {}): Person =>
+  ({
+    id: 1,
+    workflow: 'published',
+    slug: 'nguoi-a',
+    name: 'Nguyễn Văn A',
+    category: 'artisan',
+    role: 'Nghệ nhân',
+    portrait: asset(),
+    quote: 'Nghề dệt là hồn làng.',
+    quoteSource: { id: 2, sourceId: 'vietnamplus-2026', title: 'T', updatedAt: '', createdAt: '' },
+    consent: { name: true, photo: true, quote: true },
+    updatedAt: '',
+    createdAt: '',
+    ...over,
+  }) as Person
+
+describe('isUnverified', () => {
+  it.each([null, undefined, '', '  ', 'Kiểu dệt: [cần xác minh].', '[Cần xác minh]', '[ cần xác minh ]'])(
+    'true cho %j',
+    (v) => expect(isUnverified(v)).toBe(true),
+  )
+  it.each(['Sinh tại làng Hải Triều', '[?]'])('false cho %j', (v) => expect(isUnverified(v)).toBe(false))
+  it('chuẩn hoá NFC', () => {
+    expect(isUnverified('[cần xác minh]'.normalize('NFD'))).toBe(true)
+  })
+})
+
+describe('showText', () => {
+  it('public ẩn chuỗi unverified', () => {
+    expect(showText('Kiểu dệt: [cần xác minh].', 'public')).toBeNull()
+    expect(showText('', 'public')).toBeNull()
+  })
+  it('preview giữ nguyên văn / nhãn khi rỗng', () => {
+    expect(showText('Kiểu dệt: [cần xác minh].', 'preview')).toBe('Kiểu dệt: [cần xác minh].')
+    expect(showText('', 'preview')).toBe('[cần xác minh]')
+    expect(showText(null, 'preview')).toBe('[cần xác minh]')
+  })
+})
+
+describe('toImageView', () => {
+  it('null/number -> null', () => {
+    expect(toImageView(null, 'preview')).toBeNull()
+    expect(toImageView(5, 'preview')).toBeNull()
+  })
+  it('rights unknown: public null, preview có flag', () => {
+    const a = asset({ rights: 'unknown' })
+    expect(toImageView(a, 'public')).toBeNull()
+    expect(toImageView(a, 'preview')?.flags).toContain('rights-not-permitted')
+  })
+  it('consent pending: public null, preview có flag', () => {
+    const a = asset({ subjectConsent: 'pending' })
+    expect(toImageView(a, 'public')).toBeNull()
+    expect(toImageView(a, 'preview')?.flags).toContain('consent-pending')
+  })
+  it('ảnh hợp lệ', () => {
+    const v = toImageView(asset({ sizes: { card: { url: '/c.webp' } } }), 'public')
+    expect(v).toMatchObject({ url: '/media/a.webp', alt: 'Khung dệt', width: 800, flags: [] })
+    expect(v?.sizes).toEqual({ card: '/c.webp' })
+  })
+})
+
+describe('toPersonView', () => {
+  it('thiếu consent.name: ẩn tên, giữ ảnh, consentPending', () => {
+    const v = toPersonView(person({ consent: { name: false, photo: true, quote: false } }), 'public')
+    expect(v.name).toBeNull()
+    expect(v.portrait).not.toBeNull()
+    expect(v.consentPending).toBe(true)
+  })
+  it('ảnh rights unknown: không ra public', () => {
+    const v = toPersonView(person({ portrait: asset({ rights: 'unknown' }) }), 'public')
+    expect(v.portrait).toBeNull()
+  })
+  it('quote cần quoteSource', () => {
+    expect(toPersonView(person({ quoteSource: null }), 'public').quote).toBeNull()
+    expect(toPersonView(person({ quoteSource: 3 }), 'public').quote).toBeNull()
+  })
+  it('quote đủ điều kiện', () => {
+    expect(toPersonView(person(), 'public').quote).toEqual({
+      text: 'Nghề dệt là hồn làng.',
+      sourceId: 'vietnamplus-2026',
+    })
+  })
+  it('đủ consent: không pending', () => {
+    const v = toPersonView(person(), 'public')
+    expect(v.consentPending).toBe(false)
+    expect(v.flags).toEqual([])
+  })
+  it('preview mọi consent false: hiện giá trị + flag', () => {
+    const v = toPersonView(person({ consent: { name: false, photo: false, quote: false } }), 'preview')
+    expect(v.name).not.toBeNull()
+    expect(v.portrait).not.toBeNull()
+    expect(v.quote).not.toBeNull()
+    expect(v.flags).toContain('consent-pending')
+    expect(new Set(v.flags).size).toBe(v.flags.length)
+  })
+  it('preview thiếu tên gắn unverified', () => {
+    const v = toPersonView(person({ name: '' }), 'preview')
+    expect(v.flags).toContain('unverified')
+  })
+})
