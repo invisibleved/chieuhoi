@@ -44,7 +44,7 @@ const routeGroup = (key: RouteKey): Field => ({
           {
             name: 'villageImages', type: 'array', label: 'Ảnh mục Làng Hới', maxRows: 2,
             fields: [
-              { name: 'image', type: 'upload', relationTo: 'archive-assets', required: true, label: 'Ảnh' },
+              { name: 'image', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh' },
               { name: 'caption', type: 'text', label: 'Chú thích', localized: true },
             ],
           },

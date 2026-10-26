@@ -848,7 +848,7 @@ export interface PageIntro {
     heroCaption?: string | null;
     villageImages?:
       | {
-          image: number | ArchiveAsset;
+          image?: (number | null) | ArchiveAsset;
           caption?: string | null;
           id?: string | null;
         }[]

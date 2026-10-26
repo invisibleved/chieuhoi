@@ -1,7 +1,7 @@
 // @vitest-environment node
 import path from 'path'
 import type { Payload } from 'payload'
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { createContent } from '@/lib/content/queries'
 import type { User } from '@/payload-types'
@@ -53,19 +53,6 @@ describe('getHomeMedia', () => {
     } as never)
   })
 
-  // Global không bị resetDb xoá: gỡ tham chiếu ảnh để không làm hỏng các file test khác.
-  afterEach(async () => {
-    // Đăng bản sạch rồi gỡ đăng: bản đã đăng cũ còn tham chiếu ảnh sẽ bị resetDb làm rỗng
-    // và khiến lần cập nhật global kế tiếp (ở file test khác) vướng validation.
-    for (const _status of ['published', 'draft']) {
-      await payload.updateGlobal({
-        slug: 'page-intros',
-        data: { home: { heroImage: null, heroInset: null, villageImages: [] }, _status },
-        user: reviewer, overrideAccess: true,
-      } as never)
-    }
-  })
-
   it('public: ảnh chưa được phép thì hero null, làng rỗng', async () => {
     await seedHomeMedia({ rights: 'unknown', subjectConsent: 'pending' })
     const m = await content.getHomeMedia('public')
@@ -88,6 +75,39 @@ describe('getHomeMedia', () => {
     expect(m.hero?.caption).toBeNull()
     expect(m.heroInset).not.toBeNull()
     expect(m.village.map((v) => v.caption)).toEqual([null, null])
+  })
+  it('public: được phép đăng nhưng subjectConsent pending thì bị loại', async () => {
+    await seedHomeMedia({ rights: 'permitted', subjectConsent: 'pending' })
+    const m = await content.getHomeMedia('public')
+    expect(m.hero).toBeNull()
+    expect(m.village).toEqual([])
+  })
+  it('public: chỉ một trong hai ảnh làng được phép thì village có 1 phần tử', async () => {
+    await seedHomeMedia({ rights: 'unknown', subjectConsent: 'pending' })
+    const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as {
+      home: { villageImages: { image: number }[] }
+    }
+    await payload.update({
+      collection: 'archive-assets', id: g.home.villageImages[0].image,
+      data: { rights: 'permitted', subjectConsent: 'not_applicable' }, overrideAccess: true,
+    } as never)
+    const m = await content.getHomeMedia('public')
+    expect(m.village).toHaveLength(1)
+  })
+  it('xoá asset đang được tham chiếu: lưu lại global vẫn được, preview chỉ còn ảnh còn lại', async () => {
+    await seedHomeMedia({ rights: 'unknown', subjectConsent: 'pending' })
+    const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as {
+      home: { villageImages: { image: number }[] }
+    }
+    await payload.delete({
+      collection: 'archive-assets', id: g.home.villageImages[0].image, user: reviewer, overrideAccess: true,
+    } as never)
+    await payload.updateGlobal({
+      slug: 'page-intros', data: { home: { heroCaption: 'Sửa' }, _status: 'published' },
+      user: reviewer, overrideAccess: true,
+    } as never)
+    const m = await content.getHomeMedia('preview')
+    expect(m.village).toHaveLength(1)
   })
   it('global chưa đăng: public trả rỗng, không lỗi', async () => {
     const m = await content.getHomeMedia('public')

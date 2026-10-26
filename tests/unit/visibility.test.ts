@@ -68,6 +68,10 @@ describe('dấu chưa xác minh mở rộng', () => {
     expect(showText(v, 'public')).toBeNull()
     expect(showText(v, 'preview')).toBe(v)
   })
+  it('chi phí chấp nhận: [Cần Thơ] bị coi là chưa xác minh, [cần] thì không', () => {
+    expect(isUnverified('[Cần Thơ]')).toBe(true)
+    expect(isUnverified('[cần]')).toBe(false)
+  })
   it.each(['[X] PHÚT ĐỌC', '[1]'])('không khớp %j', (v) => {
     expect(isUnverified(v)).toBe(false)
     expect(showText(v, 'public')).toBe(v)
