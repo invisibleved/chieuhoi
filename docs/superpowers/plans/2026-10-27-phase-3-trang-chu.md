@@ -35,11 +35,21 @@
 
 ## Review Focus
 
-1. **Public lúc mới dựng: gần như không có gì được đăng.** Trang vẫn render hero, "Có một làng Hới..." và section kết, không lỗi. Không có tiêu đề section mồ côi và không có chuỗi `[cần xác minh]`. → Task 8, e2e ở chế độ public.
+1. **Public khi view model rỗng hoặc chỉ có dữ liệu kiểu public** (không flag, story idea `hasDetail: false`, chú thích có dấu bị null). Trang vẫn render, không có tiêu đề section mồ côi, không có chuỗi `cần xác minh`/`chờ xác minh`/`cần xin phép`, không có link tới trang 404. → Task 8, test `HomeView`.
 2. **Ảnh hero hoặc ảnh làng chưa được phép đăng.** Public không có thẻ `img` nào trỏ tới asset đó. Chú thích chứa `[cần xác minh]` bị ẩn. → Task 2 (int), Task 3 (unit).
 3. **Công đoạn không có ảnh (CMS có bước 3 thiếu ảnh).** Khi chọn công đoạn đó, sân khấu hiện khung "ẢNH CẦN CHỤP" kèm `shotNeeded`, không vỡ bố cục. → Task 4.
 4. **Bàn phím:** chọn công đoạn bằng Enter/Space trên nút, chọn điểm hoa văn bằng nút `aria-pressed`, lọc ảnh bằng chip. Focus nhìn thấy trên nền tối. → Task 4, Task 6, Task 7, Task 8 (axe).
 5. **Mobile 390:** các dải vuốt ngang (người, chip, nút công đoạn) không làm trang cuộn ngang, mọi nút ≥ 44px. → Task 8, e2e.
+
+
+## Sửa đổi sau review plan (ràng buộc mọi task)
+
+- **Một cây DOM hay hai:** mỗi section là một cây DOM duy nhất, bố cục desktop/mobile đổi bằng class responsive. Riêng các chuỗi chữ khác nhau giữa desktop và mobile thì render cả hai bản, ẩn/hiện bằng `hidden md:block` / `md:hidden`. Test trong plan dùng `getBy…` cho chuỗi có ở cả hai bản thì phải đổi sang `getAllBy…`/`[0]` hoặc `within(…)`. Đó là sửa test, không phải đổi yêu cầu.
+- **Ghi chú xác minh chỉ hiện ở preview.** Ruling (Claude): các câu là ghi chú quy trình, không phải nội dung, chỉ render khi `mode === 'preview'`: "Trình tự và tên gọi các công đoạn sẽ được xác minh với nghệ nhân trước khi đăng." (Task 4) và "Danh mục đang xác minh với cơ sở dệt." (mobile, Task 6, `HomeMobile.dc.html:164`). Section nào cần biết `mode` thì nhận thêm prop `mode: Mode`.
+- **Không có JavaScript.** Ruling (Claude): các teaser tương tác (công đoạn, điểm hoa văn, lọc ảnh) chỉ cần hiện trạng thái đầu khi không có JS. Nội dung đầy đủ nằm ở trang chi tiết mà mỗi teaser đều link tới. Đây là chấp nhận một phần HANDOFF "đọc được đầy đủ khi không có JS" ở mức trang chủ.
+- **Màu chữ chỉ dùng token.** Không dùng `#C4BFB1` (dùng `text-text-on-dark-muted`) và không dùng `#3E3B35` (dùng `text-text-secondary`).
+- **`.threads` trang chủ cao 14px** (`h-[14px]`) theo artboard Home. Lớp toàn cục vẫn giữ 12px.
+- **`Reveal` luôn render `div`.** Không bọc `section` trong `section`.
 
 ---
 
@@ -82,6 +92,10 @@ tests/e2e/home.e2e.spec.ts
   - tâm số 2, mong đợi `#nguon-2`.
 - [ ] **Step 2:** Chứng minh test bắt được lỗi. Tạm đổi `Sources.tsx` về `before:-inset-x-[18px] before:-inset-y-[13px]` và bỏ `z-[1]`, chạy `npm run test:e2e -- styleguide`: kết quả mong đợi FAIL. Hoàn tác thay đổi tạm, chạy lại: PASS. Ghi cả hai kết quả vào báo cáo. Không commit bản tạm.
 - [ ] **Step 3:** Commit `test: hồi quy chú thích nguồn đứng sát nhau`.
+
+**Bổ sung sau review:**
+- Test mới đặt trong khối `desktop 1440` của `styleguide.e2e.spec.ts`.
+- Bản tạm để chứng minh RED phải đưa `FootnoteRef` về đúng code cũ trước `bb861fb`. Bỏ cả `before:left-1/2 before:top-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2` lẫn `span z-[1]`, rồi dùng lại `before:-inset-x-[18px] before:-inset-y-[13px]`.
 
 ---
 
@@ -141,6 +155,19 @@ it('global chưa đăng: public trả rỗng, không lỗi', async () => {
 - [ ] **Step 3:** Thêm trường, tạo migration, viết `getHomeMedia`. Đọc global với `depth: 1` để populate upload, rồi đổi qua `toImageView(asset, mode)`. Cập nhật seed. Chạy `npm run generate:types` để cập nhật `payload-types.ts`.
 - [ ] **Step 4:** Chạy `npm run test:int` (PASS hết, gồm test seed hiện có), `npm run lint`, `npm run build`.
 - [ ] **Step 5:** Commit `feat(content): ảnh trang chủ trong page-intros và getHomeMedia`.
+
+**Bổ sung sau review:**
+- **Mở rộng dấu chưa xác minh (chặn lỗi lộ placeholder).** Trong `src/lib/content/visibility.ts`, đổi `UNVERIFIED_MARK` thành `/\[[^\]]*(?:cần|chờ)\s[^\]]*\]/iu`. Mọi cặp ngoặc vuông chứa "cần …" hoặc "chờ …" đều tính là chưa xác minh, ví dụ `[cần xác minh]`, `[tác giả — cần xác minh]`, `[Nhân vật — cần xin phép trước khi đăng]`, `[chờ xác minh với cơ sở dệt]`, `[Cần nguồn]`.
+  - Thêm test unit vào `tests/unit/visibility.test.ts` cho 5 ví dụ này: tất cả bị ẩn ở public, hiện nguyên văn ở preview.
+  - Thêm test cho các chuỗi không được khớp: `[X] PHÚT ĐỌC`, `[1]`.
+  - Chạy lại toàn bộ `test:unit` và `test:int`. Nếu test Phase 1 nào đổi kết quả thì ghi vào báo cáo.
+  - Ruling (Claude): mở rộng dấu cho toàn site. CLAUDE.md yêu cầu ẩn mọi phần thiếu dữ liệu ở production. Cái giá: một câu chính thức có chứa "[… cần …]" cũng sẽ bị ẩn.
+- **`readGlobal`:** `readGlobal` trong `queries.ts` đang cố định `depth: 0`. Thêm tham số tuỳ chọn `depth = 0`, `getHomeMedia` gọi với `depth: 1`, `getPageIntro` giữ nguyên.
+- **Test int:**
+  - Đầu file đặt `// @vitest-environment node`.
+  - Thêm `beforeEach` gồm `resetDb(payload)` và `makeUser(payload, 'reviewer')`, rồi `updateGlobal('page-intros', { _status: 'draft' }, overrideAccess)` để test không phụ thuộc thứ tự (mẫu ở `tests/int/content.int.spec.ts:38-44`).
+  - Helper `seedHomeMedia` publish global với `user` là reviewer, vì `guardPublish` yêu cầu reviewer.
+- **Seed:** seed bỏ qua global đã đăng. Để thấy ảnh mới trên DB dev hiện có, chạy `SEED_FORCE_GLOBALS=true npm run seed`. Ghi câu này vào báo cáo.
 
 ---
 
@@ -229,6 +256,15 @@ it('VillageIntro public: không có [CẦN XÁC MINH]; preview: có', () => {
 - [ ] **Step 4:** Chạy test, kết quả mong đợi: PASS. Chạy lint.
 - [ ] **Step 5:** Commit `feat(home): hero và mục Làng Hới`.
 
+**Bổ sung sau review:**
+- **DocumentLabel:** thêm hẳn prop tuỳ chọn `meta?: string | null` (null hoặc undefined thì không render dòng meta) và `className?: string`. Trong hero, nhãn đặt trong `figcaption` với nền `bg-bg-primary`, không viền, theo artboard.
+- **Mã tư liệu:** chỉ hiện mã khi `image.code` khớp `/^TL-(\d+)$/`, lấy phần số. Không khớp (ví dụ preview trả `[cần xác minh]`) thì bỏ dòng mã.
+- **Ảnh inset dùng `alt={image.alt}`**, không dùng `alt=""`. Ruling cũ bị huỷ vì artboard có alt thật. Mobile không render ảnh inset.
+- **Button:** thêm prop tuỳ chọn `iconSize?: number` (mặc định 36) để mobile dùng icon 28px.
+- **Link nghe chuyện:** `Hero` nhận thêm prop `storyHref: string | null`. Khi null thì không render nút "Nghe chuyện làng Hới". `page.tsx` (Task 8) truyền `/cau-chuyen/chuyen-ve-trang-chieu` chỉ khi slug này có trong `getStories(mode)` với `hasDetail`. Thêm test: `storyHref={null}` thì không có link "Nghe chuyện làng Hới".
+- **Đoạn VillageIntro, nguyên văn:** "Có những ngôi làng được nhớ bằng một mái đình, một bến sông. Làng Hới được nhớ bằng nhịp khung dệt và những tấm chiếu trải phơi kín bãi đất đầu làng." Chữ "C" thả lớn làm bằng `first-letter:` (desktop), không tách thành span riêng, để trình đọc màn hình không đọc "C ó".
+- **Mobile VillageIntro:** link "Đọc về làng Hới" nằm sau ảnh.
+
 ---
 
 ### Task 4: `CraftTeaser` — chọn công đoạn (client)
@@ -289,6 +325,18 @@ it('rỗng thì không render', () => {
   - **Ruling (Claude):** mặc định chọn công đoạn đầu tiên. Artboard vẽ "04" đang chọn chỉ để minh hoạ.
 - [ ] **Step 4:** Chạy test, kết quả mong đợi: PASS. Chạy lint.
 - [ ] **Step 5:** Commit `feat(home): hành trình công đoạn rút gọn`.
+
+**Bổ sung sau review:**
+- **Mobile có thêm nút Trước/Tiếp** theo `HomeMobile.dc.html:87-91`:
+  - hai `<button type="button">` 48×48 với `aria-label="Công đoạn trước"` và `aria-label="Công đoạn tiếp"`;
+  - không vòng lại: nút Trước `disabled` ở bước đầu, nút Tiếp `disabled` ở bước cuối;
+  - link mobile riêng `LinkArrow tone="dark"` "Xem cả hành trình" → `/nghe-det-chieu`, hiện ở mobile thay cho "Đi theo hành trình một tấm chiếu" (link desktop).
+  - Test: bấm "Công đoạn tiếp" thì progressbar tăng; ở bước cuối nút Tiếp bị `disabled`; ở bước đầu nút Trước bị `disabled`.
+- **`scrollIntoView`** chỉ gọi trong handler click của nút pill mobile (và Trước/Tiếp), không bao giờ gọi trong effect khi mount. Gọi kiểu `el.scrollIntoView?.({ inline: 'center', block: 'nearest' })`. Trong test, stub `Element.prototype.scrollIntoView = vi.fn()`.
+- **Số cột thumbnail:** dùng `style={{ gridTemplateColumns: `repeat(${Math.min(total, 7)}, minmax(0, 1fr))` }}`, không dùng class động.
+- **Nhãn sân khấu:** dòng 1 là `TƯ LIỆU · {số}` (theo quy tắc mã ở Task 3). Dòng 2 là `step.title`, thêm ` · Ảnh: ${image.photographer}` khi `photographer` có giá trị. Không có ảnh thì không có nhãn.
+- **`ShotNeeded`:** truyền `description={step.shotNeeded ?? undefined}`.
+- **Prop:** `CraftTeaser` nhận thêm `mode: Mode` để hiện ghi chú xác minh ở preview (xem mục "Sửa đổi sau review").
 
 ---
 
@@ -354,6 +402,12 @@ it('StoriesTeaser: bài nổi bật là bài có trang; ghi chú chủ đề đ�
     - Section mở đầu bằng `.threads` `mx-20`, mobile `mx-5`.
 - [ ] **Step 4:** Chạy `npm run test:unit`. PASS, kể cả test Phase 2 của PortraitCard và StoryCard. Chạy lint.
 - [ ] **Step 5:** Commit `feat(home): mục Con người và Câu chuyện`.
+
+**Bổ sung sau review:**
+- **Link bài viết:** `href = story.hasDetail ? `/cau-chuyen/${slug}` : '/cau-chuyen'`. Bài "chủ đề đề xuất" không có trang chi tiết (spec §6, `getStory` trả null). Sửa test: thẻ idea trỏ `/cau-chuyen`.
+- **Ghi chú "Chủ đề biên tập đề xuất — bài viết chưa được soạn."** hiện khi có ít nhất một thẻ gọn với `!hasDetail`, không dựa vào flag `idea` (flag này chỉ có ở preview). Thêm test với dữ liệu kiểu public: `flags: []`, `hasDetail: false`.
+- **Mobile mục Câu chuyện:** hiện 2 thẻ gọn, không có CTA. Thêm prop tuỳ chọn `hideCta` cho StoryCard compact nếu cần.
+- **Gợi ý vuốt:** vẫn bỏ "· 1 / 3". Câu "Vuốt ngang để xem thêm" là một phần của chuỗi artboard; báo người dùng ở cuối phase.
 
 ---
 
@@ -431,6 +485,16 @@ it('ProductsTeaser: 4 thẻ hiện vật, link Xem toàn bộ sưu tập', () =>
 - [ ] **Step 4:** Chạy test, kết quả mong đợi: PASS. Test FootnoteRef cũ vẫn PASS. Chạy lint.
 - [ ] **Step 5:** Commit `feat(home): mục Sản phẩm với điểm hoa văn`.
 
+**Bổ sung sau review:**
+- **Điểm mở mặc định** là `annotations[0]`, không phải `n === 1`. Ở public, các annotation có dấu bị loại nên có thể chỉ còn điểm 2.
+- **`title` null:** `aria-label = Chi tiết ${n}`, tiêu đề khối mở là `${n}`, dòng liệt kê là `${n}`. Không gọi `toLocaleLowerCase` trên null.
+- **Vòng trạng thái của nút đang mở:** `ring-[6px] ring-[rgba(160,68,53,.35)]`. Không dùng `outline` vì nó trùng với viền focus.
+- **ExhibitCard:** thêm prop tuỳ chọn `onSecondary?: boolean`. Khi bật, nhãn `HIỆN VẬT 0n` dùng `text-text-muted-alt`, đạt AA trên `bg-bg-secondary`, theo artboard `#5A554C`. ProductsTeaser bật prop này.
+- **Số `HIỆN VẬT`** là vị trí gốc của sản phẩm trong `getProducts` (index + 1), không phải vị trí sau khi lọc tên null.
+- **Chọn `featured`:** duyệt `getProducts` theo thứ tự, gọi `getProduct(slug, mode)`, lấy sản phẩm đầu tiên có `images.length > 0 && annotations.length > 0`. Không có thì trả `null`. Việc này làm trong `page.tsx` ở Task 8; Task 6 chỉ nhận `featured`.
+- **Mobile:** tên hiện vật 22px, không có dòng note. Nhãn ghi chú xác minh mobile chỉ hiện ở preview, nên `ProductsTeaser` nhận thêm `mode: Mode`.
+- **Hợp đồng nguồn với Phase 5:** link `/san-pham/${slug}#nguon-${n}` sẽ 404 cho tới khi Phase 5 làm trang hiện vật. Ghi dòng này vào bảng "Ngoài phạm vi".
+
 ---
 
 ### Task 7: Thư viện (client) và section kết
@@ -496,6 +560,11 @@ it('Closing: tiêu đề hai dòng, nút Góp một ký ức → /ket-noi', () =
 - [ ] **Step 4:** Chạy test, kết quả mong đợi: PASS. Chạy lint.
 - [ ] **Step 5:** Commit `feat(home): mục Thư viện và lời kết`.
 
+**Bổ sung sau review:**
+- **Import:** test `import { within } from '@testing-library/react'`.
+- **Ghi chú phải** "Chưa có ảnh tư liệu lịch sử. Nếu gia đình bạn còn giữ ảnh cũ, hãy góp cùng làng." chỉ hiện khi không có item nào có `category === 'history'`.
+- **Mobile:** hiện 3 ô ảnh, ô chờ `col-span-2`. Nhãn chỉ có `TL · số`. Test kiểm nhãn nhóm qua `textContent` của link (gồm cả phần bị ẩn bằng CSS), hoặc chỉ kiểm ở desktop.
+
 ---
 
 ### Task 8: Ghép trang `/`, hiện dần khi cuộn, e2e, so ảnh chụp
@@ -543,6 +612,38 @@ Các test e2e (`tests/e2e/home.e2e.spec.ts`) chạy ở 1440×900 và 390×844, 
 - [ ] **Step 6:** Commit `feat: trang chủ`.
 - [ ] **Step 7:** Dừng lại và gửi người dùng: tóm tắt, ảnh chụp so sánh, danh sách Ruling, cách xem (`npm run seed`, `npm run dev`, mở `/`).
 
+**Bổ sung sau review: tách Task 8.** Task 8 chỉ gồm `Reveal`, `HomeView` và `page.tsx`, kèm test unit. Phần e2e, ảnh chụp và sửa lệch chuyển sang Task 9.
+- **`src/components/home/HomeView.tsx`:** component thuần (server) `HomeView(props: { mode: Mode; intro: PageIntroView; media: HomeMediaView; steps: CraftStepView[]; people: PersonView[]; stories: StoryCardView[]; featured: ProductView | null; products: ProductCardView[]; archive: ArchiveItemView[]; storyHref: string | null })`. Nó ghép các section theo thứ tự đã nêu và bọc `Reveal`. `page.tsx` chỉ lấy dữ liệu rồi render `HomeView`.
+- **Test `tests/unit/home/home-view.test.tsx`, thay `page-public.test.tsx`:**
+  - Mọi mảng rỗng và `featured`, `storyHref` null: chỉ còn h1 cùng h2 "Có một làng Hới..." và h2 kết, không có h2 nào khác.
+  - Dữ liệu kiểu public (story idea `hasDetail: false`, `flags: []`, caption null): `textContent` không chứa `cần xác minh`, `chờ xác minh`, `cần xin phép`. Mọi `href` bắt đầu bằng `/cau-chuyen/` đều thuộc bài có `hasDetail`.
+- **`Reveal`:** chỉ gọi `matchMedia` khi `typeof window.matchMedia === 'function'`. Thêm test với `IntersectionObserver` và `matchMedia` giả:
+  - phần tử ngoài khung nhìn nhận `opacity-0`, rồi hiện khi callback báo giao nhau, và chỉ hiện một lần;
+  - khi giảm chuyển động, không ẩn gì;
+  - phần tử đã trong khung nhìn lúc mount thì không bao giờ bị ẩn.
+- **Bỏ e2e và ảnh chụp khỏi Task 8.** Step 4 của Task 8 chỉ chạy `test:unit`, `test:int`, `lint`, `build`. Không làm Step 5 và Step 7 ở Task 8. Step 6 commit `feat: ghép trang chủ`.
+
+---
+
+### Task 9: E2E trang chủ, ảnh chụp, sửa lệch
+
+**Files:**
+- Create: `tests/e2e/home.e2e.spec.ts`
+- Modify: `tests/e2e/frontend.e2e.spec.ts`, sửa test đang kiểm `h1` của `/` là "Chiếu Hới" thành kiểm h1 là tiêu đề hero hoặc chỉ kiểm có đúng một h1. Kiểm lại `tests/e2e/layout.e2e.spec.ts` và `foundation.e2e.spec.ts` (cùng `goto('/')`).
+- Modify: các component trong `src/components/home/` khi cần sửa lệch so với ảnh chụp.
+
+- [ ] **Step 1: Viết e2e.** Nội dung các test e2e lấy từ danh sách "Các test e2e" của Task 8 ở trên, trừ phần public (đã chuyển sang test `HomeView`). Thêm:
+  - ở 1440, kiểm chip "Nghề dệt" qua `textContent` của ô;
+  - mọi test gọi `page.emulateMedia({ reducedMotion: 'reduce' })` trước `goto` để `Reveal` không ẩn section khi đo hoặc chụp.
+- [ ] **Step 2: Ảnh chụp.** Chỉ chạy khi đặt `SHOTS_DIR`.
+  - Trước khi chụp, đăng nhập qua `POST /api/users/login` bằng `SEED_REVIEWER_EMAIL` / `SEED_REVIEWER_PASSWORD` (bỏ qua bước này nếu thiếu biến). Lý do: ảnh preview chưa được phép chỉ tải được khi có cookie admin.
+  - Seed trước bằng `SEED_FORCE_GLOBALS=true npm run seed`.
+  - Chụp `home-1440.png` và `home-390.png`.
+- [ ] **Step 3:** Chạy `npm run test:unit`, `npm run test:int`, `npm run lint`, `npm run build`, `npm run test:e2e`. Kết quả mong đợi: tất cả PASS.
+- [ ] **Step 4: So sánh ảnh.** Đặt ảnh chụp cạnh `design/screens/Home.jpg` và `HomeMobile.jpg`. Lệch về khoảng cách hoặc cỡ chữ thì sửa ngay. Lệch do dữ liệu CMS khác artboard thì ghi vào báo cáo.
+- [ ] **Step 5:** Commit `test: e2e trang chủ` (kèm các sửa lệch nếu có).
+- [ ] **Step 6:** Dừng lại và gửi người dùng: tóm tắt, ảnh chụp, danh sách Ruling, cách xem (`SEED_FORCE_GLOBALS=true npm run seed`, `npm run dev`, mở `/`).
+
 ---
 
 ## Ngoài phạm vi Phase 3
@@ -552,4 +653,6 @@ Các test e2e (`tests/e2e/home.e2e.spec.ts`) chạy ở 1440×900 và 390×844, 
 | Hành trình đầy đủ (Trước/Tiếp, phóng 1.9×, 7 bước) | 4 | `CraftTeaser` chỉ dùng cho trang chủ |
 | Khám phá đường dệt đầy đủ (phóng 2.2×, Esc, "Đóng chi tiết") | 5 | Phase 5 đánh số nguồn trên trang hiện vật theo thứ tự `sourceId` xuất hiện trong annotation, khớp với `PatternTeaser` |
 | Lightbox `?anh=TL-xxx` | 5 | Ô ảnh trang chủ đã trỏ sẵn URL này |
+| Trang hiện vật `/san-pham/[slug]` có `#nguon-n` | 5 | Link nguồn trong `PatternTeaser` sẽ 404 cho tới Phase 5. Phase 5 đánh số nguồn theo thứ tự `sourceId` xuất hiện trong annotation |
+| Kiểm tra lại các trường CMS đang chứa placeholder lạ (vd. `craftSteps.tools`) sau khi mở rộng dấu chưa xác minh | 6 | — |
 | Revalidate khi CMS đổi dữ liệu | 6 | — |
