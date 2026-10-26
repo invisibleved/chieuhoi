@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { ArchiveAsset, Person } from '@/payload-types'
+import { isAssetPubliclyAllowed } from '@/access/assetRules'
 import { isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
 
 const asset = (over: Partial<ArchiveAsset> = {}): ArchiveAsset =>
@@ -41,6 +42,14 @@ describe('isUnverified', () => {
     (v) => expect(isUnverified(v)).toBe(true),
   )
   it.each(['Sinh tại làng Hải Triều', '[?]'])('false cho %j', (v) => expect(isUnverified(v)).toBe(false))
+  it('chấp nhận nhiều khoảng trắng / NBSP', () => {
+    expect(isUnverified('[cần  xác minh]')).toBe(true)
+    expect(isUnverified('[cần\u00a0xác\u00a0minh]')).toBe(true)
+    expect(isUnverified('[\u00a0cần xác minh\u00a0]')).toBe(true)
+  })
+  it('không có ngoặc thì không phải dấu', () => {
+    expect(isUnverified('cần xác minh thêm')).toBe(false)
+  })
   it('chuẩn hoá NFC', () => {
     expect(isUnverified('[cần xác minh]'.normalize('NFD'))).toBe(true)
   })
@@ -55,6 +64,15 @@ describe('showText', () => {
     expect(showText('Kiểu dệt: [cần xác minh].', 'preview')).toBe('Kiểu dệt: [cần xác minh].')
     expect(showText('', 'preview')).toBe('[cần xác minh]')
     expect(showText(null, 'preview')).toBe('[cần xác minh]')
+  })
+})
+
+describe('luật ảnh công khai', () => {
+  it('subjectConsent null/undefined không công khai', () => {
+    expect(toImageView(asset({ subjectConsent: null as never }), 'public')).toBeNull()
+    expect(toImageView(asset({ subjectConsent: undefined as never }), 'public')).toBeNull()
+    expect(isAssetPubliclyAllowed({ rights: 'permitted', subjectConsent: null })).toBe(false)
+    expect(isAssetPubliclyAllowed({ rights: 'permitted' })).toBe(false)
   })
 })
 
@@ -117,5 +135,23 @@ describe('toPersonView', () => {
   it('preview thiếu tên gắn unverified', () => {
     const v = toPersonView(person({ name: '' }), 'preview')
     expect(v.flags).toContain('unverified')
+  })
+  it('preview không có nguồn: hiện lời trích + unverified', () => {
+    const v = toPersonView(person({ quoteSource: null }), 'preview')
+    expect(v.quote).toEqual({ text: 'Nghề dệt là hồn làng.', sourceId: '' })
+    expect(v.flags).toContain('unverified')
+    expect(toPersonView(person({ quoteSource: 3 }), 'preview').quote?.sourceId).toBe('')
+  })
+  it('preview lời trích chứa dấu: nguyên văn', () => {
+    const v = toPersonView(person({ quote: 'Dệt [cần xác minh].' }), 'preview')
+    expect(v.quote?.text).toBe('Dệt [cần xác minh].')
+    expect(v.flags).toContain('unverified')
+  })
+  it('public: alt chân dung bỏ khi chưa đồng ý tên', () => {
+    const a = asset({ alt: 'Chân dung bà Nguyễn Thị A' })
+    const v = toPersonView(person({ portrait: a, consent: { name: false, photo: true, quote: false } }), 'public')
+    expect(v.name).toBeNull()
+    expect(v.portrait?.alt).toBe('')
+    expect(toPersonView(person({ portrait: a }), 'public').portrait?.alt).toBe('Chân dung bà Nguyễn Thị A')
   })
 })

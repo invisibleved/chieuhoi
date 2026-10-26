@@ -35,4 +35,14 @@ describe('getMode', () => {
   it('mặc định public', async () => {
     expect(await getMode()).toBe('public')
   })
+  it.each([undefined, 'prod', 'production'])('APP_ENV=%s + PREVIEW_ALL -> public', async (env) => {
+    if (env) process.env.APP_ENV = env
+    process.env.PREVIEW_ALL = 'true'
+    expect(await getMode()).toBe('public')
+  })
+  it('development + PREVIEW_ALL -> preview', async () => {
+    process.env.APP_ENV = 'development'
+    process.env.PREVIEW_ALL = 'true'
+    expect(await getMode()).toBe('preview')
+  })
 })

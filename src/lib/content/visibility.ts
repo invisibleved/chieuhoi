@@ -1,12 +1,12 @@
 // Hàm thuần: quyết định bản công khai được phép hiện gì. Không import runtime Payload ngoài luật ảnh.
-import { isAssetPubliclyAllowed } from '@/collections/ArchiveAssets'
+import { isAssetPubliclyAllowed } from '@/access/assetRules'
 import type { ArchiveAsset, Person } from '@/payload-types'
 
 import type { Flag, ImageView, Mode, PersonView } from './types'
 
 export const UNVERIFIED = '[cần xác minh]'
 
-const UNVERIFIED_MARK = /\[\s*cần xác minh\s*\]/iu
+const UNVERIFIED_MARK = /\[\s*cần\s+xác\s+minh\s*\]/iu
 
 export function isUnverified(v: unknown): boolean {
   if (v === null || v === undefined) return true
@@ -65,18 +65,24 @@ export function toPersonView(p: Person, mode: Mode): PersonView {
   if (isPreview && isUnverified(p.name)) addFlag(flags, 'unverified')
 
   const portraitView = toImageView(p.portrait, mode)
-  const portrait = consent.photo || isPreview ? portraitView : null
+  let portrait = consent.photo || isPreview ? portraitView : null
+  // Alt chân dung có thể chứa tên: ở public, không có đồng ý tên thì bỏ alt.
+  if (portrait && !isPreview && !consent.name) portrait = { ...portrait, alt: '' }
   if (isPreview && !consent.photo) addFlag(flags, 'consent-pending')
   portraitView?.flags.forEach((f) => isPreview && addFlag(flags, f))
 
   const source = p.quoteSource && typeof p.quoteSource === 'object' ? p.quoteSource : null
   let quote: PersonView['quote'] = null
-  if (source && !isUnverified(p.quote) && (consent.quote || isPreview)) {
-    quote = { text: p.quote as string, sourceId: source.sourceId }
-  }
   if (isPreview) {
+    if (!isUnverified(p.quote) || (typeof p.quote === 'string' && p.quote.trim() !== '')) {
+      quote = { text: showText(p.quote, mode) as string, sourceId: source?.sourceId ?? '' }
+      if (!source || isUnverified(p.quote)) addFlag(flags, 'unverified')
+    } else {
+      addFlag(flags, 'unverified')
+    }
     if (!consent.quote) addFlag(flags, 'consent-pending')
-    if (isUnverified(p.quote)) addFlag(flags, 'unverified')
+  } else if (consent.quote && source && !isUnverified(p.quote)) {
+    quote = { text: p.quote as string, sourceId: source.sourceId }
   }
 
   return {

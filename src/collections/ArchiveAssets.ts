@@ -1,20 +1,13 @@
 import path from 'path'
-import { ValidationError, type Access, type CollectionConfig, type Where } from 'payload'
+import { ValidationError, type Access, type CollectionConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
 import { isLoggedIn, isReviewer, reviewerOnlyField } from '@/access/roles'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
-/** Luật công khai duy nhất của ảnh: được phép dùng và không còn chờ đồng ý. */
-export function isAssetPubliclyAllowed(doc: { rights: string; subjectConsent: string }): boolean {
-  return doc.rights === 'permitted' && doc.subjectConsent !== 'pending'
-}
-
-/** Cùng luật với isAssetPubliclyAllowed, viết dạng truy vấn cho khách. */
-const publicAssetQuery: Where = {
-  and: [{ rights: { equals: 'permitted' } }, { subjectConsent: { not_equals: 'pending' } }],
-}
+export { isAssetPubliclyAllowed }
 
 const readAccess: Access = ({ req }) => (req.user ? true : publicAssetQuery)
 
