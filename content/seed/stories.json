@@ -1,0 +1,45 @@
+[
+  {
+    "slug": "chuyen-ve-trang-chieu",
+    "title": "Chuyện về Trạng Chiếu",
+    "category": "Lịch sử",
+    "status": "draft",
+    "sources": [
+      "vietnamplus-2026",
+      "danviet-2024",
+      "daidoanket-2021"
+    ],
+    "cover": "/images/reference/nkc13.webp",
+    "note": "Toàn văn bản nháp: design/source/StoryDetail.dc.html"
+  },
+  {
+    "slug": "nhung-ky-uc-ben-khung-det",
+    "title": "Những ký ức bên khung dệt",
+    "category": "Ký ức làng quê",
+    "status": "idea"
+  },
+  {
+    "slug": "mot-ngay-o-lang-hoi",
+    "title": "Một ngày ở làng Hới",
+    "category": "Đời sống hôm nay",
+    "status": "idea"
+  },
+  {
+    "slug": "nghe-xua-trong-nhip-song-moi",
+    "title": "Nghề xưa trong nhịp sống mới",
+    "category": "Nghề truyền thống",
+    "status": "idea"
+  },
+  {
+    "slug": "tu-soi-coi-den-mot-doi-nguoi",
+    "title": "Từ sợi cói đến một đời người",
+    "category": "Nghề truyền thống",
+    "status": "idea"
+  },
+  {
+    "slug": "mua-chieu-tet",
+    "title": "Mùa chiếu Tết",
+    "category": "Ký ức làng quê",
+    "status": "idea"
+  }
+]

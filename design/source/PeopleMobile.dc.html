@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Con người — Danh sách mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:3px}
+.rail{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 20px;margin:0 -20px}
+.rail::-webkit-scrollbar{display:none}
+.pill{all:unset;box-sizing:border-box;flex:0 0 auto;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;white-space:nowrap;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:8px}
+.weave{background-color:#D7C59E;background-image:repeating-linear-gradient(90deg,rgba(40,39,36,.10) 0 2px,transparent 2px 9px),repeating-linear-gradient(0deg,rgba(243,235,221,.35) 0 3px,transparent 3px 7px)}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1660px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 20px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="HomeMobile.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 18px; letter-spacing: .28em; color: #282724; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">CHIẾU HỚI</a>
+<a href="MenuMobile.dc.html" aria-label="Mở menu" style="width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="16" viewBox="0 0 24 16" fill="none" stroke="#282724" stroke-width="1.5"><path d="M0 1h24M0 8h24M6 15h18"></path></svg></a>
+</header>
+<section style="padding: 28px 20px 20px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #A04435">04 — CON NGƯỜI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 38px; line-height: 1.15">Những bàn tay<br>giữ hồn làng.</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 17px; line-height: 1.7">Mỗi chân dung chỉ được kể khi chính người đó đồng ý.</p>
+</section>
+<div style="margin: 0 20px 20px; background: #344B3D; color: #F3EBDD; padding: 18px; display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; letter-spacing: .18em; font-weight: 600; color: #E3CD9C">NGUYÊN TẮC CHÂN DUNG</span><span style="font-size: 14px; line-height: 1.6">Tên, lời trích chỉ đăng khi có đồng ý và nguồn gốc. Người được kể có quyền rút bài. Ảnh hiện tại chưa có sự đồng ý.</span></div>
+<section style="padding: 0 20px 48px; display: flex; flex-direction: column; gap: 16px">
+<div class="rail" role="group" aria-label="Lọc">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<button class="pill" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 13px; color: #6A655C">{{countLabel}}</p>
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 24px">
+<sc-for list="{{shown}}" as="p" hint-placeholder-count="8">
+<a class="card" href="{{p.href}}">
+<span style="position: relative; display: block"><img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; height: 220px; object-fit: cover; object-position: {{p.pos}}; display: block"><span style="position: absolute; left: 6px; top: 6px; background: rgba(243,235,221,.94); padding: 3px 7px; font-size: 12px; font-weight: 600; color: #4A4741">Chờ đồng ý</span></span>
+<span style="font-size: 12px; letter-spacing: .1em; font-weight: 600; color: #74592C">{{p.catUpper}}</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 19px; line-height: 1.25">{{p.name}}</span>
+</a>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px dashed #8C857A; padding: 24px; display: flex; flex-direction: column; gap: 10px"><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px">Chưa có chân dung trong nhóm này</span><a href="ConnectMobile.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Giới thiệu một người →</a></div>
+</sc-if>
+</section>
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 36px 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 20px; letter-spacing: .28em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1660}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { cat: 'all' }; }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      ['[Tên nghệ nhân]', 'Nghệ nhân', 'nkc10.webp', 'Người phụ nữ lớn tuổi ngồi dệt chiếu', '20% 50%', 'PersonMobile.dc.html'],
+      ['[Tên người dệt]', 'Gia đình làm nghề', 'nkc14.webp', 'Đôi tay trên khung dệt', '30% 50%', '#'],
+      ['[Tên người in hoa]', 'Người giữ nghề', 'kn14.webp', 'Người thợ in hoa văn đỏ lên chiếu', '62% 50%', '#'],
+      ['[Tên người thợ máy]', 'Gia đình làm nghề', 'nkc2.webp', 'Người đàn ông nạp cói vào máy dệt', '25% 50%', '#'],
+      ['[Tên người gấp chiếu]', 'Người giữ nghề', 'kn11.webp', 'Người đàn ông gấp chiếu viền đỏ', '50% 40%', '#'],
+      ['[Tên người bán chiếu]', 'Những người gắn bó với làng', 'kn2.webp', 'Hai người phụ nữ trải chiếu', '50% 50%', '#']
+    ];
+    var cats = ['Tất cả', 'Nghệ nhân', 'Gia đình làm nghề', 'Người giữ nghề', 'Thế hệ trẻ', 'Những người gắn bó với làng'];
+    var self = this; var cur = this.state.cat;
+    var catsOut = cats.map(function (c, k) { var kk = k === 0 ? 'all' : c; var on = kk === cur; return { label: c, pressed: on ? 'true' : 'false', style: on ? 'background:#282724;color:#F3EBDD;font-weight:600' : 'border:1px solid rgba(40,39,36,.35);color:#282724', pick: function () { self.setState({ cat: kk }); } }; });
+    var shown = data.filter(function (p) { return cur === 'all' || p[1] === cur; }).map(function (p) { return { name: p[0], catUpper: p[1].toUpperCase(), img: B + p[2], alt: p[3], pos: p[4], href: p[5] }; });
+    return { cats: catsOut, shown: shown, hasItems: shown.length > 0, empty: shown.length === 0, countLabel: shown.length + ' chân dung · đang chờ đồng ý' };
+  }
+}
+</script>
+</body>
+</html>

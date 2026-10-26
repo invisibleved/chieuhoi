@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Kết nối — Mobile 390</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #344B3D;outline-offset:3px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.field{display:flex;flex-direction:column;gap:8px}
+.lbl{font-size:15px;font-weight:500}
+.inp{box-sizing:border-box;width:100%;min-height:52px;padding:0 16px;background:#FBF6EE;font:400 16px 'Be Vietnam Pro',sans-serif;color:#282724}
+.opt{all:unset;box-sizing:border-box;min-height:52px;padding:0 18px;display:flex;align-items:center;gap:12px;cursor:pointer;font:400 15px 'Be Vietnam Pro',sans-serif}
+
+</style>
+</helmet>
+<div style="width: 390px; min-height: 2260px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 20px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="HomeMobile.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 18px; letter-spacing: .28em; color: #282724; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">CHIẾU HỚI</a>
+<a href="MenuMobile.dc.html" aria-label="Mở menu" style="width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="16" viewBox="0 0 24 16" fill="none" stroke="#282724" stroke-width="1.5"><path d="M0 1h24M0 8h24M6 15h18"></path></svg></a>
+</header>
+<section style="padding: 28px 20px 32px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #A04435">KẾT NỐI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 36px; line-height: 1.15">Làng vẫn còn đó.<br><em style="font-style: italic; color: #A04435">Chuyện nghề vẫn được kể tiếp.</em></h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 17px; line-height: 1.7">Góp một tấm ảnh, giới thiệu một người giữ nghề, hay tìm hiểu thêm về làng Hới.</p>
+</section>
+<section aria-labelledby="form-h" style="background: #E9DECA; padding: 36px 20px 48px; display: flex; flex-direction: column; gap: 20px">
+<h2 id="form-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 30px; line-height: 1.2">Góp một ký ức</h2>
+<div role="note" style="padding: 12px 14px; border: 1px dashed #6A655C; font-size: 13px; line-height: 1.55; color: #3E3B35">Bản minh hoạ. Chưa có hệ thống nhận thật; không dữ liệu nào được gửi đi.</div>
+<div>
+<sc-if value="{{showForm}}" hint-placeholder-val="{{ true }}">
+<form novalidate onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 24px">
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="padding: 16px 18px; background: #FBF6EE; border-top: 3px solid #A04435; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.55"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#A04435" stroke-width="1.6" style="flex: none; margin-top: 2px"><circle cx="10" cy="10" r="9"></circle><path d="M10 5.5v5.5M10 13.5v1"></path></svg><span><strong style="color: #A04435">Còn {{errorCount}} mục cần bổ sung.</strong> Xem các ô được đánh dấu bên dưới.</span></div>
+</sc-if>
+<div style="display: grid; grid-template-columns: 1fr; gap: 20px">
+<div class="field"><label class="lbl" for="c-name">Họ và tên</label><input class="inp" id="c-name" type="text" autocomplete="name" value="{{name}}" onInput="{{setName}}" aria-invalid="{{nameInvalid}}" aria-describedby="c-name-e" style="{{nameStyle}}"><span id="c-name-e" style="{{nameErrStyle}}">Vui lòng cho biết tên để chúng tôi xưng hô.</span></div>
+<div class="field"><label class="lbl" for="c-contact">Số điện thoại hoặc email</label><input class="inp" id="c-contact" type="text" autocomplete="email" value="{{contact}}" onInput="{{setContact}}" aria-invalid="{{contactInvalid}}" aria-describedby="c-contact-e" style="{{contactStyle}}"><span id="c-contact-e" style="{{contactErrStyle}}">Cần một cách liên lạc để xác minh đóng góp.</span></div>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px">
+<legend class="lbl" style="margin-bottom: 10px">Bạn muốn góp gì?</legend>
+<div role="radiogroup" aria-label="Loại đóng góp" style="display: grid; grid-template-columns: 1fr; gap: 8px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+<button class="opt" type="button" role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="{{t.style}}"><span aria-hidden="true" style="{{t.dot}}"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+<div class="field"><label class="lbl" for="c-story">Câu chuyện hoặc mô tả</label><textarea class="inp" id="c-story" rows="5" onInput="{{setStory}}" style="padding: 14px 16px; min-height: 150px; resize: vertical; border: 1px solid #6A655C; font-family: 'Be Vietnam Pro', sans-serif">{{story}}</textarea><span style="font-size: 13px; color: #5A554C">Ví dụ: ảnh chụp năm nào, ai trong ảnh, ở đâu trong làng.</span></div>
+<div class="field"><span class="lbl">Ảnh hoặc tệp</span><div style="border: 1px dashed #6A655C; background: #FBF6EE; padding: 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center"><span style="font-size: 15px; font-weight: 500">Kéo ảnh vào đây hoặc chọn tệp</span><span style="font-size: 13px; color: #5A554C">JPG, PNG · minh hoạ, chưa có hệ thống tải lên</span></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" role="checkbox" aria-checked="{{consentChecked}}" onClick="{{toggleConsent}}" style="all: unset; box-sizing: border-box; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; font: 400 15px/1.6 'Be Vietnam Pro', sans-serif; min-height: 44px"><span aria-hidden="true" style="{{consentBox}}">{{consentMark}}</span><span>Tôi là chủ sở hữu hoặc được phép chia sẻ tư liệu này, và đồng ý để Chiếu Hới liên hệ xác minh, đăng kèm ghi công khi tôi duyệt.</span></button>
+<span style="{{consentErrStyle}}">Cần xác nhận quyền chia sẻ trước khi gửi.</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: stretch; gap: 12px">
+<button type="submit" style="all: unset; box-sizing: border-box; min-height: 52px; padding: 0 32px; justify-content: center; background: #A04435; color: #FBF6EE; display: inline-flex; align-items: center; cursor: pointer; font: 500 15px 'Be Vietnam Pro', sans-serif">Gửi đóng góp</button>
+<span style="font-size: 13px; color: #5A554C">Bạn có thể yêu cầu gỡ đóng góp bất cứ lúc nào.</span>
+</div>
+</form>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="background: #344B3D; color: #F3EBDD; padding: 28px 20px; display: flex; flex-direction: column; gap: 16px">
+<svg aria-hidden="true" width="40" height="40" viewBox="0 0 22 22" fill="none" stroke="#E3CD9C" stroke-width="1.6"><path d="M4 11.5l4.5 4.5L18 6"></path></svg>
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 30px; line-height: 1.2">Cảm ơn {{nameOrBan}}.</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #D3CCBD">Chúng tôi sẽ liên hệ qua {{contactShown}} để xác minh trước khi đăng. (Màn hình minh hoạ: chưa có dữ liệu nào thực sự được gửi.)</p>
+<button type="button" onClick="{{again}}" style="all: unset; box-sizing: border-box; align-self: flex-start; min-height: 48px; padding: 0 22px; border: 1px solid #F3EBDD; display: inline-flex; align-items: center; cursor: pointer; font: 500 15px 'Be Vietnam Pro', sans-serif">Góp thêm một ký ức</button>
+</div>
+</sc-if>
+</div>
+</section>
+<section style="padding: 40px 20px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.6">
+<h2 style="margin: 0 0 10px; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 24px">Thông tin liên hệ</h2>
+<p style="margin: 0; padding: 12px 0; border-top: 1px solid #282724">[Email liên hệ] · [Số điện thoại]</p>
+<p style="margin: 0; padding: 12px 0; border-top: 1px solid rgba(40,39,36,.2)">Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên<br><span style="font-size: 13px; color: #6A655C">Theo Vietnam+ (08/2026) · cần đối chiếu</span></p>
+<p style="margin: 0; padding: 12px 0; border-top: 1px solid rgba(40,39,36,.2); border-bottom: 1px solid rgba(40,39,36,.2)">Thăm làng: chưa có thông tin chính thức</p>
+</section>
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 36px 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 20px; letter-spacing: .28em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2260}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { name: '', contact: '', story: '', type: 'photo', consent: false, tried: false, sent: false };
+  }
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var nameBad = s.tried && !s.name.trim();
+    var contactBad = s.tried && !s.contact.trim();
+    var consentBad = s.tried && !s.consent;
+    var errs = (nameBad ? 1 : 0) + (contactBad ? 1 : 0) + (consentBad ? 1 : 0);
+    var errStyle = function (bad) { return bad ? 'display:flex;font-size:13px;color:#A04435;font-weight:500' : 'display:none'; };
+    var inpStyle = function (bad) { return bad ? 'border:2px solid #A04435' : 'border:1px solid #6A655C'; };
+    var types = [['photo', 'Ảnh hoặc giấy tờ cũ'], ['story', 'Một câu chuyện, ký ức'], ['person', 'Giới thiệu người giữ nghề'], ['other', 'Hợp tác, câu hỏi khác']];
+    return {
+      showForm: !s.sent, sent: s.sent,
+      name: s.name, contact: s.contact, story: s.story,
+      setName: function (e) { self.setState({ name: e.target.value }); },
+      setContact: function (e) { self.setState({ contact: e.target.value }); },
+      setStory: function (e) { self.setState({ story: e.target.value }); },
+      nameInvalid: nameBad ? 'true' : 'false', contactInvalid: contactBad ? 'true' : 'false',
+      nameStyle: inpStyle(nameBad), contactStyle: inpStyle(contactBad),
+      nameErrStyle: errStyle(nameBad), contactErrStyle: errStyle(contactBad), consentErrStyle: errStyle(consentBad),
+      hasErrors: errs > 0, errorCount: errs,
+      types: types.map(function (t) {
+        var on = t[0] === s.type;
+        return { label: t[1], checked: on ? 'true' : 'false', style: on ? 'background:#FBF6EE;border:2px solid #282724' : 'border:1px solid rgba(40,39,36,.35)', dot: 'width:16px;height:16px;border-radius:50%;box-sizing:border-box;flex:none;' + (on ? 'border:5px solid #A04435' : 'border:1.5px solid #6A655C'), pick: function () { self.setState({ type: t[0] }); } };
+      }),
+      consentChecked: s.consent ? 'true' : 'false',
+      consentMark: s.consent ? '✓' : '',
+      consentBox: 'width:22px;height:22px;flex:none;margin-top:1px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;' + (s.consent ? 'background:#344B3D;color:#F3EBDD;border:2px solid #344B3D' : (consentBad ? 'border:2px solid #A04435;background:#FBF6EE' : 'border:1.5px solid #6A655C;background:#FBF6EE')),
+      toggleConsent: function () { self.setState({ consent: !s.consent }); },
+      submit: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (s.name.trim() && s.contact.trim() && s.consent) self.setState({ sent: true, tried: false });
+        else self.setState({ tried: true });
+      },
+      nameOrBan: s.name.trim() || 'bạn',
+      contactShown: s.contact.trim() || 'thông tin bạn để lại',
+      again: function () { self.setState({ name: '', contact: '', story: '', consent: false, tried: false, sent: false, type: 'photo' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

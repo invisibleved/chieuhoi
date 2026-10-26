@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Làng Hới — Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.green a{color:#E3CD9C}
+.green a:focus-visible,.green button:focus-visible{outline-color:#E3CD9C}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.node{all:unset;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;padding:8px 4px;min-height:44px;font-family:'Be Vietnam Pro',system-ui,sans-serif;text-align:center;transition:color .15s}
+.node:hover .node-t{color:#F3EBDD}
+.ctl{all:unset;box-sizing:border-box;min-height:48px;padding:0 20px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:500 15px 'Be Vietnam Pro',system-ui,sans-serif}
+.src{font-size:12px;letter-spacing:.06em;color:#74592C;vertical-align:super;margin-left:2px}
+@media (prefers-reduced-motion: reduce){.node{transition:none}}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column}
+.card:hover .cta{text-decoration:underline;text-underline-offset:4px}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 5310px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="#" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</span><span class="threads" style="height: 6px"></span></a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="ProductsIndex.dc.html"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; padding: 40px 80px 0">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Làng Hới</span></nav>
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 24px; padding: 24px 0 56px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>01 — LÀNG HỚI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 76px; line-height: 1.1">Có một làng Hới...</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 22px; line-height: 1.7; max-width: 680px">Một ngôi làng ven sông, nơi nghề dệt chiếu được kể là đã có từ hơn năm trăm năm, và nơi người ta vẫn nhắc đến một ông Trạng đã mang khung dệt về quê.</p>
+</div>
+<dl style="grid-column: 9 / span 4; align-self: end; margin: 0 0 56px; display: flex; flex-direction: column; font-size: 15px; line-height: 1.6">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid #282724"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">TÊN GỌI</dt><dd style="margin: 0">Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ<span class="src">[1][3]</span></dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">ĐỊA GIỚI HIỆN NAY</dt><dd style="margin: 0">Xã Long Hưng, tỉnh Hưng Yên<span class="src">[1]</span><br><span style="font-size: 13px; color: #6A655C">Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình · cần đối chiếu văn bản hành chính</span></dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid rgba(40,39,36,.2); border-bottom: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">TỔ NGHỀ</dt><dd style="margin: 0">Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"<span class="src">[1][2]</span></dd></div>
+</dl>
+</section>
+<figure style="margin: 0; position: relative">
+<img src="../reference-images/hc9.webp" alt="Những tấm chiếu đỏ phơi dọc bờ ao giữa làng, nhà dân và cây xanh phía sau" style="width: 100%; height: 640px; object-fit: cover; display: block">
+<figcaption style="position: absolute; right: 80px; bottom: 24px; background: #F3EBDD; padding: 12px 16px; font-size: 13px; line-height: 1.45; display: flex; flex-direction: column; gap: 3px; max-width: 340px"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">TƯ LIỆU · 021</span>Chiếu phơi bên ao làng · Địa điểm, tác giả: [cần xác minh]</figcaption>
+</figure>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; padding: 120px 80px">
+<div style="grid-column: span 4; display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">TỔ NGHỀ</p>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.12">Phạm Đôn Lễ, ông Trạng Chiếu.</h2>
+</div>
+<div style="grid-column: 6 / span 6; display: flex; flex-direction: column; gap: 22px">
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 20px; line-height: 1.75">Theo báo chí, Phạm Đôn Lễ sinh năm 1457 tại làng Hải Triều, mất năm 1531. Năm 1481, dưới triều Lê Thánh Tông, ông đỗ đầu cả ba kỳ thi Hương, Hội và Đình, tức Tam nguyên.<span class="src">[2][3]</span></p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 20px; line-height: 1.75">Lời kể trong làng cho rằng khi đi sứ nhà Minh, ông thấy người dân dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng cách dệt.<span class="src">[2][3]</span> Sau khi ông mất, dân làng tôn ông làm Phúc thần.<span class="src">[3]</span></p>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; background: #E9DECA; border-left: 3px solid #A04435">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #5A554C">CÁC NGUỒN CHƯA THỐNG NHẤT</span>
+<span style="font-size: 15px; line-height: 1.65">Vietnam+ đặt câu chuyện mang nghề về làng vào đầu thế kỷ XVI và nhắc đến hai lần đi sứ.<span class="src">[1]</span> Dân Việt ghi rằng phần lớn tiểu sử của ông dựa vào truyền khẩu, chưa có hồ sơ lưu trữ địa phương.<span class="src">[2]</span> Cần đối chiếu với sử liệu khoa bảng trước khi đăng chính thức.</span>
+</div>
+<p style="margin: 0; font-size: 14px; color: #6A655C">Không có chân dung lịch sử của Phạm Đôn Lễ. Trang này không dùng ảnh minh hoạ cho nhân vật.</p>
+</div>
+</section>
+
+<section class="green" aria-labelledby="tl-h" style="background: #344B3D; color: #F3EBDD; padding: 104px 80px 96px; display: flex; flex-direction: column; gap: 48px">
+<div style="display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #E3CD9C">DÒNG THỜI GIAN</p>
+<h2 id="tl-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.1">Năm trăm năm, kể theo từng mốc.</h2>
+</div>
+<ul aria-label="Chú giải độ tin cậy" style="margin: 0; padding: 0; list-style: none; display: flex; gap: 24px; font-size: 14px; color: #D3CCBD">
+<li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; background: #E3CD9C"></span>Có nguồn báo chí</li>
+<li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 10px; height: 10px; border: 2px solid #E3CD9C; transform: rotate(45deg)"></span>Truyền khẩu</li>
+<li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; border: 2px dashed #D3CCBD; box-sizing: border-box"></span>Chờ xác minh</li>
+</ul>
+</div>
+
+<div style="position: relative">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 52px; height: 1px; background: rgba(243,235,221,.35)"></div>
+<ol aria-label="Các mốc" style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; position: relative">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="8">
+<li><button class="node" type="button" onClick="{{it.pick}}" aria-current="{{it.ariaCurrent}}" style="width: 100%"><span style="{{it.yearStyle}}">{{it.y}}</span><span style="{{it.markStyle}}"></span><span class="node-t" style="{{it.titleStyle}}">{{it.t}}</span></button></li>
+</sc-for>
+</ol>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding-top: 40px; border-top: 1px solid rgba(243,235,221,.22)">
+<div style="grid-column: span 4; display: flex; flex-direction: column; gap: 14px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 88px; line-height: 1; color: #E3CD9C">{{cur.y}}</span>
+<span style="{{cur.badgeStyle}}">{{cur.kindLabel}}</span>
+</div>
+<div style="grid-column: 6 / span 7; display: flex; flex-direction: column; gap: 16px">
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 36px; line-height: 1.2">{{cur.t}}</h3>
+<p style="margin: 0; font-size: 18px; line-height: 1.7">{{cur.d}}</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #D3CCBD"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #E3CD9C">NGUỒN · </span>{{cur.src}}</p>
+<div style="display: flex; gap: 12px; margin-top: 8px">
+<button class="ctl" type="button" onClick="{{prev}}" style="border: 1px solid rgba(243,235,221,.4); color: #F3EBDD"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#F3EBDD" stroke-width="1.5"><path d="M10 3L5 8l5 5"></path></svg>Mốc trước</button>
+<button class="ctl" type="button" onClick="{{next}}" style="background: #F3EBDD; color: #344B3D">Mốc sau<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#344B3D" stroke-width="1.5"><path d="M6 3l5 5-5 5"></path></svg></button>
+</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; color: #D3CCBD">Hình dạng điểm mốc cho biết độ tin cậy, không chỉ dựa vào màu. Mọi mốc dùng được bằng bàn phím và chạm.</p>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; padding: 120px 80px">
+<div style="grid-column: span 5; display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">VỊ TRÍ</p>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.12">Làng bên sông Luộc.</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7">Sông Luộc bao quanh làng rồi đổ ra sông Hồng; bên kia sông là thành phố Hưng Yên.<span class="src">[3]</span></p>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #4A4741">Mô tả này theo bài báo năm 2021, trước khi địa giới thay đổi. Cần cập nhật theo đơn vị hành chính hiện hành.</p>
+</div>
+<div style="grid-column: 7 / span 6; height: 380px; border: 1px dashed #8C857A; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 32px; background: repeating-linear-gradient(0deg, rgba(195,164,108,.12) 0 1px, transparent 1px 22px)">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">BẢN ĐỒ VỊ TRÍ</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Chờ dữ liệu địa lý chính xác</span>
+<span style="font-size: 14px; color: #4A4741; max-width: 380px">Bản đồ đơn giản hoá: làng, sông Luộc, sông Hồng và đền thờ tổ nghề. Chỉ vẽ khi có toạ độ đã kiểm chứng.</span>
+</div>
+</section>
+
+<div class="threads" aria-hidden="true" style="margin: 0 80px"></div>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; padding: 120px 80px">
+<div style="grid-column: span 12; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">ĐỜI SỐNG LÀNG</p>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.12">Nhịp làng, nhịp chiếu.</h2>
+</div>
+<a href="ArchivePage.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Xem thêm trong Thư viện →</a>
+</div>
+<figure style="grid-column: span 7; margin: 0; display: flex; flex-direction: column; gap: 10px"><img src="../reference-images/hc8.webp" alt="Chiếu trải phơi trên bãi cỏ, trẻ em đá bóng phía sau" style="width: 100%; height: 460px; object-fit: cover; display: block"><figcaption style="font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #4A4741">Chiếu phơi trên bãi đất trống. [Địa điểm, thời gian — cần xác minh]</figcaption></figure>
+<div style="grid-column: 8 / span 5; display: grid; grid-template-rows: 1fr 1fr; gap: 24px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px"><img src="../reference-images/hc2.webp" alt="Người phụ nữ trải những tấm chiếu hoa văn đỏ bên dãy chiếu dựng đứng" style="width: 100%; height: 190px; object-fit: cover; display: block"><figcaption style="font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #4A4741">Bày chiếu. [cần xác minh]</figcaption></figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 10px"><img src="../reference-images/kn2.webp" alt="Hai người phụ nữ trải tấm chiếu hoa văn đỏ" style="width: 100%; height: 190px; object-fit: cover; display: block"><figcaption style="font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #4A4741">Xem chiếu. [cần xác minh]</figcaption></figure>
+</div>
+</section>
+
+<section style="background: #E9DECA; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; padding: 112px 80px">
+<div style="grid-column: span 4; display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">DI SẢN HÔM NAY</p>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.12">Nghề xưa vẫn sống trong nhịp đời hôm nay.</h2>
+</div>
+<div style="grid-column: 6 / span 7; display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: 18px; line-height: 1.75">Máy dệt bắt đầu được đưa vào làng khoảng năm 2005. Theo Vietnam+, nhiều khâu như chọn cói, viền mép và in hoa văn vẫn làm bằng tay.<span class="src">[1]</span></p>
+<p style="margin: 0; font-size: 18px; line-height: 1.75">Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu nylon và chiếu giả mây.<span class="src">[1]</span></p>
+<p style="margin: 0; padding: 14px 18px; border: 1px dashed #8C857A; font-size: 14px; line-height: 1.6; color: #4A4741">Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.</p>
+<a href="CraftPage.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center; align-self: flex-start">Xem quy trình dệt chiếu →</a>
+</div>
+</section>
+
+<section aria-labelledby="src-h" style="padding: 96px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px">
+<h2 id="src-h" style="grid-column: span 3; margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 32px">Nguồn tham khảo</h2>
+<ol style="grid-column: 5 / span 8; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; font-size: 15px; line-height: 1.6">
+<li style="display: grid; grid-template-columns: 40px 1fr; padding: 14px 0; border-top: 1px solid #282724"><span style="color: #74592C; font-weight: 600">[1]</span><span>Vietnam+ · <a href="https://www.vietnamplus.vn/giu-hon-nghe-det-chieu-coi-lang-hoi-giua-nhip-song-hien-dai-post1123026.vnp">Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại</a> · 14/08/2026</span></li>
+<li style="display: grid; grid-template-columns: 40px 1fr; padding: 14px 0; border-top: 1px solid rgba(40,39,36,.2)"><span style="color: #74592C; font-weight: 600">[2]</span><span>Dân Việt (dẫn Báo Hải Dương) · <a href="https://danviet.vn/lang-mo-trang-nguyen-pham-don-le-thoi-hau-le-o-hai-duong-ong-que-thai-binh-ong-to-nghe-det-chieu-20240613144750326-d1166801.html">Lăng mộ Trạng nguyên Phạm Đôn Lễ thời Hậu Lê ở Hải Dương</a> · 13/06/2024</span></li>
+<li style="display: grid; grid-template-columns: 40px 1fr; padding: 14px 0; border-top: 1px solid rgba(40,39,36,.2); border-bottom: 1px solid rgba(40,39,36,.2)"><span style="color: #74592C; font-weight: 600">[3]</span><span>Đại Đoàn Kết · Vương Tâm · <a href="https://daidoanket.vn/ve-lang-hoi-10198724.html">Về làng Hới</a> · 07/08/2021</span></li>
+</ol>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5310}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { i: 1 };
+  }
+  renderVals() {
+    var P = 'Dân Việt (13/06/2024); Đại Đoàn Kết (07/08/2021)';
+    var data = [
+      { y: '1457', t: 'Phạm Đôn Lễ ra đời', d: 'Sinh tại làng Hải Triều, tức làng Hới.', src: P, k: 'press' },
+      { y: '1481', t: 'Đỗ Tam nguyên', d: 'Đỗ đầu cả ba kỳ thi Hương, Hội và Đình dưới triều Lê Thánh Tông.', src: P, k: 'press' },
+      { y: 'Thời Lê', t: 'Khung dệt về làng', d: 'Theo lời kể, khi đi sứ nhà Minh ông học kỹ thuật dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng. Các nguồn chưa thống nhất về thời điểm: Vietnam+ đặt vào đầu thế kỷ XVI.', src: 'Dân Việt; Đại Đoàn Kết; Vietnam+ (14/08/2026)', k: 'oral' },
+      { y: '1531', t: 'Ông Trạng mất', d: 'Dân làng tôn ông làm Phúc thần và gọi là "Trạng Chiếu".', src: P, k: 'press' },
+      { y: '[?]', t: 'Đền thờ tổ nghề', d: 'Năm lập đền và cấp xếp hạng di tích chưa xác định. Báo chí ghi lễ tế tổ nghề vào mùng 6 tháng Giêng âm lịch.', src: 'Đại Đoàn Kết (07/08/2021) — cần xác minh tại địa phương', k: 'pending' },
+      { y: '~2005', t: 'Máy dệt về làng', d: 'Cơ giới hoá bắt đầu khoảng năm 2005; chọn cói, viền mép, in hoa văn vẫn làm tay.', src: 'Vietnam+ (14/08/2026)', k: 'press' },
+      { y: 'Hôm nay', t: 'Xã Long Hưng', d: 'Theo Vietnam+, làng nay thuộc xã Long Hưng, tỉnh Hưng Yên; trước đây là xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình. Cần đối chiếu văn bản hành chính.', src: 'Vietnam+ (14/08/2026)', k: 'press' },
+      { y: '+', t: 'Mốc của bạn', d: 'Ký ức, ảnh cũ, giấy tờ của các gia đình làng Hới có thể bổ sung vào dòng thời gian này sau khi được xác minh.', src: 'Mời đóng góp qua trang Kết nối', k: 'pending' }
+    ];
+    var labels = { press: 'Có nguồn báo chí', oral: 'Truyền khẩu', pending: 'Chờ xác minh' };
+    var self = this;
+    var i = this.state.i;
+    var items = data.map(function (s, k) {
+      var on = k === i;
+      var base = s.k === 'press' ? 'border-radius:50%;background:#E3CD9C' : s.k === 'oral' ? 'transform:rotate(45deg);border:2px solid #E3CD9C;background:#344B3D' : 'border-radius:50%;border:2px dashed #D3CCBD;background:#344B3D';
+      var size = on ? 'width:22px;height:22px;' : 'width:14px;height:14px;';
+      if (s.k === 'oral') size = on ? 'width:18px;height:18px;' : 'width:12px;height:12px;';
+      return {
+        y: s.y, t: s.t,
+        ariaCurrent: on ? 'true' : 'false',
+        yearStyle: on ? 'font-family:Noto Serif Display,Georgia,serif;font-size:24px;color:#E3CD9C;height:30px' : 'font-family:Noto Serif Display,Georgia,serif;font-size:20px;color:#D3CCBD;height:30px',
+        markStyle: 'display:block;box-sizing:border-box;' + size + base + (on ? ';box-shadow:0 0 0 6px rgba(227,205,156,.25)' : ''),
+        titleStyle: on ? 'font-size:15px;line-height:1.4;color:#F3EBDD;font-weight:600' : 'font-size:14px;line-height:1.4;color:#C4BFB1',
+        pick: function () { self.setState({ i: k }); }
+      };
+    });
+    var c = data[i];
+    var cur = {
+      y: c.y, t: c.t, d: c.d, src: c.src,
+      kindLabel: labels[c.k],
+      badgeStyle: c.k === 'press' ? 'align-self:flex-start;padding:6px 12px;background:#E3CD9C;color:#232A25;font-size:13px;font-weight:600' : c.k === 'oral' ? 'align-self:flex-start;padding:5px 11px;border:1px solid #E3CD9C;color:#E3CD9C;font-size:13px;font-weight:600' : 'align-self:flex-start;padding:5px 11px;border:1px dashed #D3CCBD;color:#D3CCBD;font-size:13px;font-weight:600'
+    };
+    return {
+      items: items, cur: cur,
+      prev: function () { self.setState({ i: Math.max(0, i - 1) }); },
+      next: function () { self.setState({ i: Math.min(data.length - 1, i + 1) }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

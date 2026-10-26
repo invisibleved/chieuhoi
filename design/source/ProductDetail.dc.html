@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Chiếu cạp điều — Hiện vật</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.check{background:repeating-conic-gradient(#A04435 0 25%,#C3A46C 0 50%) 0 0/6px 6px}
+.mk{all:unset;box-sizing:border-box;position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 15px 'Be Vietnam Pro',sans-serif;cursor:pointer;transition:transform .15s}
+.mk:hover{transform:scale(1.08)}
+.mk:focus-visible{outline:2px solid #E3CD9C;outline-offset:3px}
+.th{all:unset;box-sizing:border-box;cursor:pointer;display:block}
+.th:focus-visible{outline:2px solid #344B3D;outline-offset:3px}
+.ann{all:unset;box-sizing:border-box;display:flex;gap:14px;align-items:baseline;width:100%;padding:14px 0;border-top:1px solid rgba(40,39,36,.2);cursor:pointer;font-family:'Be Vietnam Pro',sans-serif}
+.stage{transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion: reduce){.stage,.mk{transition:none}}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:10px}
+.card:hover .cta{text-decoration:underline;text-underline-offset:4px}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 2280px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="ProductsIndex.dc.html" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</span><span class="threads" style="height: 6px"></span></a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px; padding: 40px 80px 0">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><a href="ProductsIndex.dc.html" style="color: #4A4741">Sản phẩm</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Chiếu cạp điều</span></nav>
+
+<div style="grid-column: span 8; display: flex; flex-direction: column; gap: 14px">
+<div style="position: relative; height: 620px; overflow: hidden; background: #2A2722">
+<img class="stage" src="{{main.img}}" alt="{{main.alt}}" style="{{stageStyle}}">
+<sc-if value="{{showMarkers}}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{marks}}" as="m" hint-placeholder-count="3">
+<button class="mk" type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" aria-label="{{m.label}}" style="{{m.style}}">{{m.n}}</button>
+</sc-for>
+</sc-if>
+<span style="position: absolute; left: 16px; top: 16px; background: rgba(40,39,36,.85); color: #F3EBDD; padding: 10px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center"><span class="check" aria-hidden="true" style="width: 10px; height: 10px"></span>{{hint}}</span>
+<sc-if value="{{zoomed}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{reset}}" style="all: unset; box-sizing: border-box; position: absolute; right: 16px; top: 16px; min-height: 44px; padding: 0 16px; background: #F3EBDD; color: #282724; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 500 14px 'Be Vietnam Pro', sans-serif">Đóng chi tiết</button>
+</sc-if>
+</div>
+<div role="group" aria-label="Ảnh hiện vật" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{thumbs}}" as="t" hint-placeholder-count="4">
+<button class="th" type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" aria-label="{{t.label}}"><img src="{{t.img}}" alt="" style="{{t.style}}"></button>
+</sc-for>
+</div>
+<p style="margin: 0; font-size: 13px; color: #6A655C">{{main.caption}}</p>
+</div>
+
+<div style="grid-column: 10 / span 3; display: flex; flex-direction: column; gap: 18px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #5A554C">HIỆN VẬT 01 · CHIẾU CÓI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.1">Chiếu cạp điều</h1>
+<p style="margin: 0; font-size: 13px; padding: 4px 10px; background: #E9DECA; color: #4A4741; align-self: flex-start">Ảnh cần cơ sở dệt xác nhận đúng loại</p>
+<div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">KHÁM PHÁ ĐƯỜNG DỆT</span>
+<sc-for list="{{marks}}" as="m" hint-placeholder-count="3">
+<button class="ann" type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}"><span style="{{m.numStyle}}">{{m.n}}</span><span style="{{m.titleStyle}}">{{m.t}}</span></button>
+</sc-for>
+</div>
+<sc-if value="{{zoomed}}" hint-placeholder-val="{{ false }}">
+<div role="region" aria-live="polite" aria-label="Chú thích chi tiết" style="padding: 18px; background: #FBF6EE; border-top: 3px solid #A04435; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px">{{cur.n}} · {{cur.t}}</span>
+<span style="font-size: 15px; line-height: 1.65">{{cur.d}}</span>
+<span style="font-size: 13px; line-height: 1.55; color: #6A655C">{{cur.src}}</span>
+</div>
+</sc-if>
+<sc-if value="{{notZoomed}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4A4741">Chọn một điểm trên ảnh hoặc trong danh sách để phóng to và đọc chú thích.</p>
+</sc-if>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding: 112px 80px 0">
+<div style="grid-column: span 4; display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #A04435">BỐI CẢNH</p>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 40px; line-height: 1.15">Một tấm chiếu trong đời sống làng</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.7; color: #4A4741">Chiếu cạp điều có trong danh sách các loại chiếu làng làm theo Vietnam+. Vai trò của loại chiếu này trong đời sống (cưới hỏi, lễ Tết, dùng hằng ngày) cần được người làng kể lại.</p>
+</div>
+<dl style="grid-column: 6 / span 7; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; font-size: 15px; line-height: 1.6">
+<div style="padding: 16px 0; border-top: 1px solid #282724"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">CHẤT LIỆU</dt><dd style="margin: 6px 0 0">Cói, viền vải [cần xác minh]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid #282724"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">KỸ THUẬT</dt><dd style="margin: 6px 0 0">Dệt tay hoặc dệt máy: [cần xác minh]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">HOA VĂN</dt><dd style="margin: 6px 0 0">In bằng khuôn [cần xác minh cho tấm này]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">KÍCH THƯỚC</dt><dd style="margin: 6px 0 0">[chỉ ghi khi đã đo]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">NƠI LÀM</dt><dd style="margin: 6px 0 0">[tên cơ sở, nếu được đồng ý]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">BẢO QUẢN</dt><dd style="margin: 6px 0 0">[hướng dẫn từ cơ sở dệt]</dd></div>
+<div style="grid-column: span 2; padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2); border-bottom: 1px solid rgba(40,39,36,.2); display: flex; justify-content: space-between; align-items: center; gap: 24px"><div><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">LIÊN HỆ NGƯỜI LÀM</dt><dd style="margin: 6px 0 0">Chưa có cơ sở được xác minh và đồng ý công khai</dd></div><a href="ConnectPage.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap">Kết nối với làng →</a></div>
+</dl>
+</section>
+
+<section style="margin-top: 112px; background: #E9DECA; padding: 88px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px">
+<div style="grid-column: span 12; display: flex; justify-content: space-between; align-items: end">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 40px">Hiện vật khác</h2>
+<a href="ProductsIndex.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Toàn bộ sưu tập →</a>
+</div>
+<a class="card" href="ProductsIndex.dc.html" style="grid-column: span 4"><img src="../reference-images/kn3.webp" alt="Chiếu hoa văn đỏ dựng đứng ở sạp" style="width: 100%; height: 240px; object-fit: cover; display: block"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #5A554C">HIỆN VẬT 02</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Chiếu hoa cài</span><span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem hiện vật →</span></a>
+<a class="card" href="ProductsIndex.dc.html" style="grid-column: span 4"><img src="../reference-images/kn5.webp" alt="Cuộn chiếu cói màu tự nhiên" style="width: 100%; height: 240px; object-fit: cover; display: block"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #5A554C">HIỆN VẬT 03</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Chiếu trơn</span><span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem hiện vật →</span></a>
+<a class="card" href="CraftPage.dc.html" style="grid-column: span 4"><img src="../reference-images/kn13.webp" alt="In hoa văn bằng khuôn" style="width: 100%; height: 240px; object-fit: cover; display: block"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #5A554C">CÁCH LÀM</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Công đoạn tạo hoa văn</span><span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem công đoạn →</span></a>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2280}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { img: 0, m: -1 };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var imgs = [
+      { img: B + 'kn8.webp', alt: 'Tấm chiếu hoa văn đỏ có viền đỏ trải trước cửa xưởng, một người ngồi phía sau', caption: 'Ảnh 1/4 · Ảnh: [tác giả — cần xác minh] · Chưa xác nhận đây là chiếu cạp điều' },
+      { img: B + 'kn2.webp', alt: 'Hai người phụ nữ trải tấm chiếu hoa văn đỏ', caption: 'Ảnh 2/4 · Ảnh: [cần xác minh]' },
+      { img: B + 'hc9.webp', alt: 'Chiếu phơi bên ao làng', caption: 'Ảnh 3/4 · Ảnh: [cần xác minh]' },
+      { img: B + 'nkc15.webp', alt: 'May viền vải đỏ cho tấm chiếu bằng máy khâu', caption: 'Ảnh 4/4 · Công đoạn may viền · Ảnh: [cần xác minh]' }
+    ];
+    var marks = [
+      { n: '1', t: 'Viền chiếu', x: 30, y: 72, d: 'Phần viền màu đỏ chạy dọc mép chiếu. Cách may và tên gọi địa phương của phần viền: [cần xác minh với cơ sở dệt].', src: 'Quan sát từ ảnh · chưa xác minh' },
+      { n: '2', t: 'Hoa văn in', x: 52, y: 60, d: 'Hoa văn được in lên mặt chiếu. Báo chí nhắc đến các hoạ tiết ở làng như hoa sen, hoa hồng, chữ Thọ, chữ Phúc, song hỷ, nhưng hoạ tiết trên tấm này chưa được xác định. Không suy diễn ý nghĩa khi chưa có nguồn.', src: 'Vietnam+ (14/08/2026) · danh sách hoạ tiết chung, không riêng tấm này' },
+      { n: '3', t: 'Mặt cói dệt', x: 70, y: 82, d: 'Những sợi cói dệt sát nhau làm nền cho hoa văn. Kiểu dệt và mật độ sợi: [cần xác minh].', src: 'Quan sát từ ảnh · chưa xác minh' }
+    ];
+    var self = this;
+    var im = this.state.img;
+    var mi = this.state.m;
+    var cur = mi >= 0 ? marks[mi] : null;
+    var zoomed = !!cur && im === 0;
+    return {
+      main: imgs[im],
+      stageStyle: 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;' + (zoomed ? 'transform-origin:' + cur.x + '% ' + cur.y + '%;transform:scale(2.2)' : 'transform:scale(1)'),
+      showMarkers: im === 0,
+      hint: im === 0 ? 'Chạm vào các điểm để xem chi tiết đường dệt' : 'Chọn ảnh 1 để khám phá đường dệt',
+      marks: marks.map(function (m, k) {
+        var on = k === mi;
+        return {
+          n: m.n, t: m.t, label: 'Chi tiết ' + m.n + ': ' + m.t, pressed: on ? 'true' : 'false',
+          style: 'left:' + m.x + '%;top:' + m.y + '%;' + (on ? 'background:#A04435;color:#F3EBDD;border:2px solid #F3EBDD;box-shadow:0 0 0 6px rgba(160,68,53,.35)' : 'background:#F3EBDD;color:#A04435;border:2px solid #A04435') + (zoomed && !on ? ';opacity:0;pointer-events:none' : ''),
+          numStyle: 'font-size:14px;font-weight:600;width:20px;color:' + (on ? '#A04435' : '#6A655C'),
+          titleStyle: on ? 'font-family:Noto Serif Display,Georgia,serif;font-size:24px;color:#A04435' : 'font-size:16px;color:#282724',
+          pick: function () { self.setState({ img: 0, m: on ? -1 : k }); }
+        };
+      }),
+      thumbs: imgs.map(function (t, k) {
+        var on = k === im;
+        return { img: t.img, label: 'Xem ảnh ' + (k + 1), pressed: on ? 'true' : 'false', style: 'width:100%;height:110px;object-fit:cover;display:block;' + (on ? 'outline:2px solid #A04435;outline-offset:3px' : 'opacity:.75'), pick: function () { self.setState({ img: k, m: -1 }); } };
+      }),
+      zoomed: zoomed,
+      notZoomed: !zoomed,
+      cur: cur || { n: '', t: '', d: '', src: '' },
+      reset: function () { self.setState({ m: -1 }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sản phẩm — Bộ sưu tập mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:3px}
+.rail{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 20px;margin:0 -20px}
+.rail::-webkit-scrollbar{display:none}
+.pill{all:unset;box-sizing:border-box;flex:0 0 auto;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;white-space:nowrap;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:8px}
+.weave{background-color:#D7C59E;background-image:repeating-linear-gradient(90deg,rgba(40,39,36,.10) 0 2px,transparent 2px 9px),repeating-linear-gradient(0deg,rgba(243,235,221,.35) 0 3px,transparent 3px 7px)}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 2790px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 20px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="HomeMobile.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 18px; letter-spacing: .28em; color: #282724; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">CHIẾU HỚI</a>
+<a href="MenuMobile.dc.html" aria-label="Mở menu" style="width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="16" viewBox="0 0 24 16" fill="none" stroke="#282724" stroke-width="1.5"><path d="M0 1h24M0 8h24M6 15h18"></path></svg></a>
+</header>
+<section style="padding: 28px 20px 20px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #A04435">05 — SẢN PHẨM</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 38px; line-height: 1.15">Nét đẹp từ<br>những đường dệt.</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 17px; line-height: 1.7">Bộ sưu tập để hiểu, không phải cửa hàng. Danh mục theo Vietnam+ (14/08/2026).</p>
+</section>
+<section style="padding: 0 20px 48px; display: flex; flex-direction: column; gap: 16px">
+<div class="rail" role="group" aria-label="Lọc">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<button class="pill" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 13px; color: #6A655C">{{countLabel}}</p>
+<div style="display: flex; flex-direction: column; gap: 28px">
+<sc-for list="{{shown}}" as="o" hint-placeholder-count="7">
+<a class="card" href="{{o.href}}">
+<sc-if value="{{o.hasImg}}" hint-placeholder-val="{{ true }}"><img src="{{o.img}}" alt="{{o.alt}}" style="width: 100%; height: 220px; object-fit: cover; display: block"></sc-if>
+<sc-if value="{{o.noImg}}" hint-placeholder-val="{{ false }}"><span class="weave" style="height: 220px; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box"><span style="background: #F3EBDD; padding: 8px 12px; font-size: 13px; text-align: center"><strong style="font-weight: 600">ẢNH CẦN CHỤP</strong><br>{{o.t}}</span></span></sc-if>
+<span style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 4px; border-top: 1px solid #282724"><span style="font-size: 12px; letter-spacing: .18em; font-weight: 600; color: #5A554C">{{o.code}}</span><span style="font-size: 12px; padding: 3px 8px; background: #E9DECA; color: #4A4741">{{o.tag}}</span></span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px; line-height: 1.15">{{o.t}}</span>
+</a>
+</sc-for>
+</div>
+</section>
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 36px 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 20px; letter-spacing: .28em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2790}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { g: 'all' }; }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      ['HIỆN VẬT 01', 'Chiếu cạp điều', 'coi', 'kn8.webp', 'Tấm chiếu hoa văn đỏ có viền đỏ', 'ProductMobile.dc.html'],
+      ['HIỆN VẬT 02', 'Chiếu hoa cài', 'coi', 'kn3.webp', 'Chiếu hoa văn đỏ dựng ở sạp', '#'],
+      ['HIỆN VẬT 03', 'Chiếu trơn', 'coi', 'kn5.webp', 'Cuộn chiếu cói màu tự nhiên', '#'],
+      ['HIỆN VẬT 04', 'Chiếu đót', 'coi', '', '', '#'],
+      ['HIỆN VẬT 05', 'Chiếu sợi xe', 'coi', '', '', '#'],
+      ['HIỆN VẬT 06', 'Chiếu gon', 'coi', '', '', '#'],
+      ['ĐƯƠNG ĐẠI 01', 'Chiếu nhựa, nylon, giả mây', 'moi', 'nkc2.webp', 'Người đàn ông nạp sợi vào máy dệt', '#']
+    ];
+    var groups = [['all', 'Tất cả'], ['coi', 'Chiếu cói truyền thống'], ['moi', 'Chiếu đương đại']];
+    var self = this; var g = this.state.g;
+    var shown = data.filter(function (o) { return g === 'all' || o[2] === g; }).map(function (o) { return { code: o[0], t: o[1], img: o[3] ? B + o[3] : '', alt: o[4], href: o[5], hasImg: !!o[3], noImg: !o[3], tag: o[3] ? 'Ảnh cần xác nhận loại' : 'Chưa có ảnh' }; });
+    return {
+      cats: groups.map(function (d) { var on = d[0] === g; return { label: d[1], pressed: on ? 'true' : 'false', style: on ? 'background:#282724;color:#F3EBDD;font-weight:600' : 'border:1px solid rgba(40,39,36,.35);color:#282724', pick: function () { self.setState({ g: d[0] }); } }; }),
+      shown: shown, countLabel: shown.length + ' hiện vật'
+    };
+  }
+}
+</script>
+</body>
+</html>

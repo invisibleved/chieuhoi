@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Nghề dệt chiếu — Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.green a{color:#E3CD9C}
+.green a:focus-visible,.green button:focus-visible{outline-color:#E3CD9C}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.check{background:repeating-conic-gradient(#A04435 0 25%,#C3A46C 0 50%) 0 0/6px 6px}
+.step{all:unset;box-sizing:border-box;display:flex;gap:16px;align-items:baseline;width:100%;min-height:52px;padding:14px 12px;cursor:pointer;font-family:'Be Vietnam Pro',system-ui,sans-serif;transition:background .15s,color .15s}
+.step:hover{background:rgba(243,235,221,.06)}
+.ctl{all:unset;box-sizing:border-box;min-height:48px;padding:0 20px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:500 15px 'Be Vietnam Pro',system-ui,sans-serif;transition:background .15s}
+.tab{all:unset;box-sizing:border-box;padding:14px 0;cursor:pointer;font:500 16px 'Be Vietnam Pro',system-ui,sans-serif;margin-bottom:-1px}
+.stage-img{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion: reduce){.stage-img,.step,.ctl{transition:none}}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column}
+.card:hover .cta{text-decoration:underline;text-underline-offset:4px}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 4400px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="#" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</span><span class="threads" style="height: 6px"></span></a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="ProductsIndex.dc.html"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 40px; padding: 40px 80px 96px">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Nghề dệt chiếu</span></nav>
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 24px; padding-top: 24px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>03 — NGHỀ DỆT CHIẾU</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 70px; line-height: 1.12">Một tấm chiếu,<br>muôn công đoạn.</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 22px; line-height: 1.7; max-width: 640px">Từ bó cói ngoài đồng đến tấm chiếu trải giữa nhà là một hành trình của đôi tay, thời tiết và sự kiên nhẫn. Đi theo từng công đoạn bên dưới.</p>
+<p style="margin: 0; padding: 14px 18px; border: 1px dashed #8C857A; font-size: 14px; line-height: 1.6; color: #4A4741; max-width: 640px">Tên gọi và trình tự 7 công đoạn là khung ban đầu, sẽ được xác minh với nghệ nhân làng Hới trước khi đăng.</p>
+</div>
+<figure style="grid-column: 8 / span 5; margin: 0; display: flex; flex-direction: column; gap: 10px">
+<img src="../reference-images/nkc14.webp" alt="Nhìn từ trên xuống: đôi tay người phụ nữ ấn go trên khung dệt chiếu" style="width: 100%; height: 460px; object-fit: cover; display: block">
+<figcaption style="font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #4A4741">Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]</figcaption>
+</figure>
+</section>
+
+<section class="green" aria-labelledby="journey-h" style="background: #344B3D; color: #F3EBDD; padding: 96px 80px; display: flex; flex-direction: column; gap: 48px">
+<div style="display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #E3CD9C">HÀNH TRÌNH MỘT TẤM CHIẾU</p>
+<h2 id="journey-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.1">Từ sợi cói đến một đời người.</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 320px">
+<div style="display: flex; justify-content: space-between; font-size: 14px; color: #D3CCBD"><span>Công đoạn</span><span><strong style="color: #F3EBDD; font-weight: 600">{{cur.n}}</strong> / 07</span></div>
+<div role="progressbar" aria-label="Tiến trình hành trình" aria-valuemin="1" aria-valuemax="7" aria-valuenow="{{curNum}}" style="height: 3px; background: rgba(243,235,221,.2)"><div style="{{barStyle}}"></div></div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start">
+<ol aria-label="Các công đoạn" style="grid-column: span 3; margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid rgba(243,235,221,.22)">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="7">
+<li style="border-bottom: 1px solid rgba(243,235,221,.22)"><button class="step" type="button" onClick="{{s.pick}}" aria-current="{{s.ariaCurrent}}" style="{{s.btnStyle}}"><span style="{{s.numStyle}}">{{s.n}}</span><span>{{s.t}}</span></button></li>
+</sc-for>
+</ol>
+
+<div style="grid-column: 4 / span 6; display: flex; flex-direction: column; gap: 16px">
+<div style="position: relative; height: 560px; overflow: hidden; background: #2A3D31">
+<sc-if value="{{cur.hasImg}}" hint-placeholder-val="{{ true }}">
+<img class="stage-img" src="{{cur.img}}" alt="{{cur.alt}}" style="{{imgStyle}}">
+</sc-if>
+<sc-if value="{{cur.noImg}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; border: 1px dashed rgba(243,235,221,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 48px">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #E3CD9C">ẢNH CẦN CHỤP</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px; line-height: 1.3; max-width: 440px">{{cur.shot}}</span>
+</div>
+</sc-if>
+<div style="position: absolute; left: 16px; bottom: 16px; background: #F3EBDD; color: #282724; padding: 10px 14px; font-size: 13px; line-height: 1.45; display: flex; flex-direction: column; gap: 3px; max-width: 360px"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">{{cur.tl}}</span>{{cur.caption}}</div>
+</div>
+<div style="display: flex; gap: 12px; align-items: center">
+<button class="ctl" type="button" onClick="{{prev}}" aria-label="Công đoạn trước" style="border: 1px solid rgba(243,235,221,.4); color: #F3EBDD"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#F3EBDD" stroke-width="1.5"><path d="M10 3L5 8l5 5"></path></svg>Trước</button>
+<button class="ctl" type="button" onClick="{{next}}" aria-label="Công đoạn tiếp" style="background: #F3EBDD; color: #344B3D">Tiếp<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#344B3D" stroke-width="1.5"><path d="M6 3l5 5-5 5"></path></svg></button>
+<button class="ctl" type="button" onClick="{{toggleZoom}}" aria-pressed="{{zoomPressed}}" style="{{zoomStyle}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"></circle><path d="M12.5 12.5L17 17M8 5.5v5M5.5 8h5"></path></svg>{{zoomLabel}}</button>
+</div>
+</div>
+
+<div style="grid-column: 10 / span 3; display: flex; flex-direction: column; gap: 18px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 80px; line-height: 1; color: #E3CD9C">{{cur.n}}</span>
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 34px; line-height: 1.2">{{cur.t}}</h3>
+<p style="margin: 0; font-size: 14px; color: #D3CCBD">{{cur.sub}}</p>
+<p style="margin: 0; font-size: 17px; line-height: 1.7">{{cur.desc}}</p>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 16px; border-top: 1px solid rgba(243,235,221,.22)">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #E3CD9C">DỤNG CỤ</span>
+<span style="font-size: 15px; line-height: 1.6; color: #D3CCBD">{{cur.tools}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #E3CD9C">CẦN GHI LẠI</span>
+<span style="font-size: 15px; line-height: 1.6; color: #D3CCBD">{{cur.more}}</span>
+</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; color: #D3CCBD">Dùng phím Tab và Enter để chọn công đoạn. Khi bật chế độ giảm chuyển động, ảnh đổi ngay không có hiệu ứng.</p>
+</section>
+
+<section aria-labelledby="tools-h" style="padding: 112px 80px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">DỤNG CỤ</p>
+<h2 id="tools-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.1">Những vật dụng của nghề.</h2>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6A655C; max-width: 340px; text-align: right">Tên gọi địa phương của từng dụng cụ cần được người làng xác nhận.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<img src="../reference-images/nkc13.webp" alt="Cận cảnh hàng răng gỗ của khung dệt với sợi căng" style="width: 100%; height: 320px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">DỤNG CỤ · 01</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Khung dệt</span>
+<figcaption style="font-size: 15px; line-height: 1.6; color: #4A4741">Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].</figcaption>
+</figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<img src="../reference-images/kn1.webp" alt="Khuôn in hoa văn đặt trên tấm chiếu trắng" style="width: 100%; height: 320px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">DỤNG CỤ · 02</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Khuôn in hoa văn</span>
+<figcaption style="font-size: 15px; line-height: 1.6; color: #4A4741">Chất liệu khuôn và cách làm khuôn: [cần xác minh].</figcaption>
+</figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+<img src="../reference-images/kn4.webp" alt="Bàn tay đeo găng cầm bàn chải dính màu đỏ trên mặt chiếu" style="width: 100%; height: 320px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">DỤNG CỤ · 03</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Bàn chải quét màu</span>
+<figcaption style="font-size: 15px; line-height: 1.6; color: #4A4741">Loại màu dùng để in và cách pha: [cần xác minh].</figcaption>
+</figure>
+</div>
+</section>
+
+<div class="threads" aria-hidden="true" style="margin: 0 80px"></div>
+
+<section aria-labelledby="compare-h" style="padding: 112px 80px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px; max-width: 760px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">HAI CÁCH DỆT</p>
+<h2 id="compare-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 52px; line-height: 1.1">Dệt thủ công, dệt bằng máy.</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #4A4741">Hai cách làm cùng tồn tại ở làng nghề hôm nay. Phần này đặt chúng cạnh nhau để hiểu điều gì thay đổi và điều gì vẫn cần đến bàn tay người thợ, không để xếp hạng cách nào đáng giá hơn.</p>
+</div>
+<div role="tablist" aria-label="Cách dệt" style="display: flex; gap: 36px; border-bottom: 1px solid rgba(40,39,36,.2)">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
+<button class="tab" type="button" role="tab" aria-selected="{{tb.selected}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
+</sc-for>
+</div>
+<sc-if value="{{showHand}}" hint-placeholder-val="{{ true }}">
+<div role="tabpanel" aria-label="Dệt thủ công" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<img src="../reference-images/nkc5.webp" alt="Hai người phụ nữ ngồi trên sàn nhà cùng dệt chiếu trên khung gỗ" style="grid-column: span 7; width: 100%; height: 480px; object-fit: cover; display: block">
+<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 16px">
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 34px">Dệt thủ công</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.7">Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A4741">Số người cần cho một khung, thời gian một tấm, cách chia việc trong gia đình: [cần xác minh].</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{showMachine}}" hint-placeholder-val="{{ false }}">
+<div role="tabpanel" aria-label="Dệt bằng máy" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<img src="../reference-images/nkc2.webp" alt="Người đàn ông mỉm cười nạp sợi cói vào máy dệt" style="grid-column: span 7; width: 100%; height: 480px; object-fit: cover; display: block">
+<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 16px">
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 34px">Dệt bằng máy</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.7">Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A4741">Thời điểm máy dệt xuất hiện ở làng, loại máy và công suất: [cần xác minh].</p>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{showCompare}}" hint-placeholder-val="{{ false }}">
+<div role="tabpanel" aria-label="So sánh" style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: grid; grid-template-columns: 240px 1fr 1fr; gap: 0 32px; font-size: 15px; line-height: 1.6">
+<span style="padding: 14px 0; border-bottom: 1px solid #282724; font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">KHÍA CẠNH</span><span style="padding: 14px 0; border-bottom: 1px solid #282724; font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">THỦ CÔNG</span><span style="padding: 14px 0; border-bottom: 1px solid #282724; font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">BẰNG MÁY</span>
+<span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); font-weight: 500">Việc của đôi tay</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16)">Đưa sợi và dệt trên khung</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16)">Nạp cói vào máy</span>
+<span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); font-weight: 500">Thời gian một tấm</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span>
+<span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); font-weight: 500">Hoa văn</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span>
+<span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); font-weight: 500">Khâu vẫn làm tay</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span><span style="padding: 16px 0; border-bottom: 1px solid rgba(40,39,36,.16); color: #6A655C">[cần xác minh]</span>
+</div>
+<p style="margin: 0; font-size: 14px; color: #6A655C">Chỉ điền ô khi có thông tin từ nghệ nhân hoặc cơ sở dệt.</p>
+</div>
+</sc-if>
+</section>
+
+<section style="background: #E9DECA; padding: 96px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px">
+<p style="grid-column: span 12; margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">ĐỌC TIẾP</p>
+<a class="card" href="PeopleIndex.dc.html" style="grid-column: span 4; gap: 12px">
+<img src="../reference-images/nkc10.webp" alt="Người phụ nữ lớn tuổi ngồi dệt chiếu" style="width: 100%; height: 260px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #5A554C">CON NGƯỜI</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Gặp những người dệt</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem chân dung →</span>
+</a>
+<a class="card" href="StoriesIndex.dc.html" style="grid-column: span 4; gap: 12px">
+<img src="../reference-images/nkc2.webp" alt="Người đàn ông nạp cói vào máy dệt" style="width: 100%; height: 260px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #5A554C">CÂU CHUYỆN</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Nghề xưa trong nhịp sống mới</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Đọc bài →</span>
+</a>
+<a class="card" href="ProductsIndex.dc.html" style="grid-column: span 4; gap: 12px">
+<img src="../reference-images/kn8.webp" alt="Tấm chiếu hoa văn đỏ trải trước cửa xưởng" style="width: 100%; height: 260px; object-fit: cover; display: block">
+<span style="font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #5A554C">SẢN PHẨM</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px">Bộ sưu tập chiếu</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem hiện vật →</span>
+</a>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4400}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { i: 4, zoom: false, tab: 'hand' };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      { n: '01', t: 'Nguyên liệu', sub: 'Cói và các vật liệu liên quan', img: B + 'nkc8.webp', alt: 'Một túm sợi cói nằm trên mặt chiếu đang dệt', tl: 'TƯ LIỆU · 101', caption: 'Sợi cói · Ảnh: [cần xác minh]', desc: 'Cói là nguyên liệu chính làm nên tấm chiếu.', tools: '[cần xác minh]', more: 'Giống cói, nơi trồng, mùa thu hoạch.', focus: '45% 55%' },
+      { n: '02', t: 'Chuẩn bị và xử lý', sub: 'Làm sợi cói trước khi dệt', img: B + 'nkc1.webp', alt: 'Hai người ngồi bên đống cói trong nhà, chuẩn bị sợi', tl: 'TƯ LIỆU · 102', caption: 'Chuẩn bị cói · Ảnh: [cần xác minh]', desc: '[Mô tả công đoạn — chờ ghi chép từ nghệ nhân]', tools: '[cần xác minh]', more: 'Các bước xử lý sợi và tên gọi địa phương.', focus: '40% 70%' },
+      { n: '03', t: 'Phơi và nhuộm', sub: 'Phơi khô, nhuộm màu sợi', img: '', alt: '', shot: 'Cói phơi trên sân và sợi cói sau khi nhuộm màu', tl: 'TƯ LIỆU · —', caption: 'Chưa có ảnh cho công đoạn này', desc: '[Mô tả công đoạn — chờ ghi chép từ nghệ nhân]', tools: '[cần xác minh]', more: 'Thời gian phơi, loại màu nhuộm, cách nhuộm.', focus: '50% 50%' },
+      { n: '04', t: 'Chuẩn bị khung và sợi', sub: 'Căng sợi trên khung dệt', img: B + 'nkc13.webp', alt: 'Cận cảnh hàng răng gỗ của khung dệt với sợi căng', tl: 'TƯ LIỆU · 104', caption: 'Khung dệt · Ảnh: [cần xác minh]', desc: '[Mô tả công đoạn — chờ ghi chép từ nghệ nhân]', tools: 'Khung dệt và các bộ phận [tên gọi cần xác minh]', more: 'Loại sợi căng trên khung, cách căng.', focus: '50% 40%' },
+      { n: '05', t: 'Dệt chiếu', sub: 'Đưa sợi cói qua khung', img: B + 'nkc5.webp', alt: 'Hai người phụ nữ ngồi trên sàn nhà, cùng dệt chiếu trên khung gỗ', tl: 'TƯ LIỆU · 014', caption: 'Dệt chiếu bằng khung thủ công · Ảnh: [cần xác minh]', desc: 'Ảnh ghi lại hai người cùng làm trên một khung dệt. Cách phân công giữa hai người: [chờ xác minh].', tools: 'Khung dệt [tên bộ phận cần xác minh]', more: 'Nhịp làm việc, thời gian hoàn thành một tấm.', focus: '35% 60%' },
+      { n: '06', t: 'Tạo hoa văn và hoàn thiện', sub: 'In hoa văn, may viền', img: B + 'kn13.webp', alt: 'Hai người thợ in hoa văn đỏ lên chiếu bằng khuôn trong xưởng', tl: 'TƯ LIỆU · 106', caption: 'In hoa văn bằng khuôn · Ảnh: [cần xác minh]', desc: 'Ảnh cho thấy hoa văn được in bằng khuôn và bàn chải, sau đó viền chiếu được may bằng máy khâu.', tools: 'Khuôn in, bàn chải, máy khâu', more: 'Ý nghĩa hoa văn chỉ ghi khi có nguồn.', focus: '60% 85%' },
+      { n: '07', t: 'Thành phẩm', sub: 'Cuộn, gấp và đưa đi', img: B + 'kn5.webp', alt: 'Những cuộn chiếu cói dựng đứng trong xưởng', tl: 'TƯ LIỆU · 107', caption: 'Chiếu thành phẩm · Ảnh: [cần xác minh]', desc: '[Mô tả công đoạn — chờ ghi chép từ nghệ nhân]', tools: '[cần xác minh]', more: 'Chiếu đi đâu, bán cho ai, mùa nào nhiều việc.', focus: '50% 50%' }
+    ];
+    var self = this;
+    var i = this.state.i;
+    var cur = data[i];
+    cur.hasImg = !!cur.img;
+    cur.noImg = !cur.img;
+    var steps = data.map(function (s, k) {
+      var on = k === i;
+      return {
+        n: s.n, t: s.t,
+        ariaCurrent: on ? 'step' : 'false',
+        btnStyle: on ? 'color:#F3EBDD;background:rgba(243,235,221,.08);box-shadow:inset 3px 0 0 #E3CD9C;font-weight:600;font-size:17px' : 'color:#C4BFB1;font-size:16px',
+        numStyle: on ? 'font-size:13px;width:24px;color:#E3CD9C' : 'font-size:13px;width:24px',
+        pick: function () { self.setState({ i: k, zoom: false }); }
+      };
+    });
+    var z = this.state.zoom;
+    var tabsDef = [['hand', 'Dệt thủ công'], ['machine', 'Dệt bằng máy'], ['compare', 'So sánh']];
+    var tab = this.state.tab;
+    var tabs = tabsDef.map(function (d) {
+      var on = d[0] === tab;
+      return { label: d[1], selected: on ? 'true' : 'false', style: on ? 'color:#282724;border-bottom:3px solid #A04435' : 'color:#4A4741;border-bottom:3px solid transparent', pick: function () { self.setState({ tab: d[0] }); } };
+    });
+    return {
+      steps: steps,
+      cur: cur,
+      curNum: i + 1,
+      barStyle: 'height:100%;background:#E3CD9C;width:' + Math.round((i + 1) / 7 * 100) + '%',
+      imgStyle: 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform-origin:' + cur.focus + ';transform:scale(' + (z ? 1.9 : 1) + ')',
+      zoomPressed: z ? 'true' : 'false',
+      zoomLabel: z ? 'Thu nhỏ' : 'Xem cận cảnh',
+      zoomStyle: z ? 'border:1px solid #E3CD9C;color:#E3CD9C;background:rgba(227,205,156,.1)' : 'border:1px solid rgba(243,235,221,.4);color:#F3EBDD',
+      prev: function () { self.setState({ i: Math.max(0, i - 1), zoom: false }); },
+      next: function () { self.setState({ i: Math.min(6, i + 1), zoom: false }); },
+      toggleZoom: function () { self.setState({ zoom: !z }); },
+      tabs: tabs,
+      showHand: tab === 'hand',
+      showMachine: tab === 'machine',
+      showCompare: tab === 'compare'
+    };
+  }
+}
+</script>
+</body>
+</html>

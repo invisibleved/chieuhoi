@@ -1,0 +1,45 @@
+/* Chiếu Hới — design tokens v0.1. Nguồn: artboard Foundations trên canvas. */
+:root {
+  /* Nền */
+  --bg-primary: #F3EBDD;      /* Cói */
+  --bg-secondary: #E9DECA;    /* Cói đậm */
+  --bg-raised: #FBF6EE;       /* ô nhập, thẻ nổi */
+  --bg-inverse: #344B3D;      /* Xanh làng */
+  --bg-deep: #232A25;         /* Thư viện */
+  --bg-ink: #282724;          /* Footer */
+  /* Chữ trên nền sáng (tỉ lệ tương phản trên #F3EBDD) */
+  --text-primary: #282724;    /* 12.6:1 */
+  --text-secondary: #4A4741;  /* 7.8:1 */
+  --text-muted: #6A655C;      /* 4.9:1 */
+  --text-meta: #74592C;       /* 5.5:1 */
+  --text-muted-alt: #5A554C;  /* 5.6:1 trên #E9DECA */
+  /* Chữ trên nền tối */
+  --text-on-dark: #F3EBDD;    /* 8.0:1 trên #344B3D */
+  --text-on-dark-muted: #D3CCBD; /* 5.9:1 */
+  --text-deep-muted: #C9C4B6; /* 8.4:1 trên #232A25 */
+  --accent-on-dark: #E3CD9C;  /* 6.1:1 */
+  /* Nhấn */
+  --accent: #A04435;          /* Đỏ điều 5.3:1 */
+  --accent-hover: #86382B;
+  --accent-press: #74301F;
+  --on-accent: #FBF6EE;       /* 5.8:1 */
+  --decor-straw: #C3A46C;     /* CHỈ trang trí — không dùng cho chữ (2.0:1) */
+  /* Viền, focus */
+  --border-subtle: rgba(40,39,36,.16);
+  --border-strong: #282724;
+  --border-dashed: #8C857A;
+  --focus-light: #344B3D;
+  --focus-dark: #E3CD9C;
+  /* Chuyển động */
+  --dur-micro: 150ms;
+  --dur-ui: 250ms;
+  --dur-reveal: 600ms;
+  --ease-weave: cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-micro: 0ms; --dur-ui: 0ms; --dur-reveal: 0ms; }
+}
+/* Vạch chia sợi cói */
+.threads { height: 12px; background-image: repeating-linear-gradient(0deg, var(--decor-straw) 0 1px, transparent 1px 4px); }
+/* Hoạ tiết caro (chỉ dùng cho trạng thái đang chọn / điểm nhấn nhỏ) */
+.check { background: repeating-conic-gradient(var(--accent) 0 25%, var(--decor-straw) 0 50%) 0 0 / 6px 6px; }

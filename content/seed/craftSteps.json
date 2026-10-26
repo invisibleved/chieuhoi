@@ -1,0 +1,94 @@
+[
+  {
+    "n": 1,
+    "title": "Nguyên liệu",
+    "subtitle": "Cói và các vật liệu liên quan",
+    "image": "/images/reference/nkc8.webp",
+    "focus": [
+      45,
+      55
+    ],
+    "body": "Cói là nguyên liệu chính làm nên tấm chiếu.",
+    "tools": null,
+    "status": "pending"
+  },
+  {
+    "n": 2,
+    "title": "Chuẩn bị và xử lý",
+    "subtitle": "Làm sợi cói trước khi dệt",
+    "image": "/images/reference/nkc1.webp",
+    "focus": [
+      40,
+      70
+    ],
+    "body": null,
+    "tools": null,
+    "status": "pending"
+  },
+  {
+    "n": 3,
+    "title": "Phơi và nhuộm",
+    "subtitle": "Phơi khô, nhuộm màu sợi",
+    "image": null,
+    "shotNeeded": "Cói phơi trên sân và sợi cói sau khi nhuộm màu",
+    "focus": [
+      50,
+      50
+    ],
+    "body": null,
+    "tools": null,
+    "status": "pending"
+  },
+  {
+    "n": 4,
+    "title": "Chuẩn bị khung và sợi",
+    "subtitle": "Căng sợi trên khung dệt",
+    "image": "/images/reference/nkc13.webp",
+    "focus": [
+      50,
+      40
+    ],
+    "body": null,
+    "tools": "Khung dệt [tên bộ phận cần xác minh]",
+    "status": "pending"
+  },
+  {
+    "n": 5,
+    "title": "Dệt chiếu",
+    "subtitle": "Đưa sợi cói qua khung",
+    "image": "/images/reference/nkc5.webp",
+    "focus": [
+      35,
+      60
+    ],
+    "body": "Ảnh ghi lại hai người cùng làm trên một khung dệt.",
+    "tools": "Khung dệt",
+    "status": "pending"
+  },
+  {
+    "n": 6,
+    "title": "Tạo hoa văn và hoàn thiện",
+    "subtitle": "In hoa văn, may viền",
+    "image": "/images/reference/kn13.webp",
+    "focus": [
+      60,
+      85
+    ],
+    "body": "Hoa văn in bằng khuôn và bàn chải; viền may bằng máy khâu (quan sát từ ảnh).",
+    "tools": "Khuôn in, bàn chải, máy khâu",
+    "status": "pending"
+  },
+  {
+    "n": 7,
+    "title": "Thành phẩm",
+    "subtitle": "Cuộn, gấp và đưa đi",
+    "image": "/images/reference/kn5.webp",
+    "focus": [
+      50,
+      50
+    ],
+    "body": null,
+    "tools": null,
+    "status": "pending"
+  }
+]

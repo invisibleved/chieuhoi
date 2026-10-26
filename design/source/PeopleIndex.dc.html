@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Con người — Danh sách</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.chip{all:unset;box-sizing:border-box;min-height:44px;padding:0 18px;display:inline-flex;align-items:center;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.chip:hover{border-color:#282724 !important}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:10px}
+.card:hover{color:#282724}
+.card img{transition:opacity .2s}
+.card:hover img{opacity:.88}
+.card:hover .cta{text-decoration:underline;text-underline-offset:4px}
+@media (prefers-reduced-motion: reduce){.card img{transition:none}}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 2500px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="#" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">04</span>Con người</span><span class="threads" style="height: 6px"></span></a>
+<a href="ProductsIndex.dc.html"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="padding: 40px 80px 72px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Con người</span></nav>
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 22px; padding-top: 24px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>04 — CON NGƯỜI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 76px; line-height: 1.1">Những bàn tay<br>giữ hồn làng.</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 21px; line-height: 1.7; max-width: 640px">Người dệt, người in hoa, người giữ khung dệt cũ trong nhà. Mỗi chân dung ở đây là một người thật, và chỉ được kể khi chính họ đồng ý.</p>
+</div>
+<aside aria-label="Nguyên tắc chân dung" style="grid-column: 9 / span 4; align-self: end; background: #344B3D; color: #F3EBDD; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #E3CD9C">NGUYÊN TẮC CHÂN DUNG</span>
+<ul style="margin: 0; padding-left: 18px; font-size: 15px; line-height: 1.65; display: flex; flex-direction: column; gap: 6px">
+<li>Tên, tuổi, vai trò chỉ đăng khi người được kể đồng ý.</li>
+<li>Lời trích chỉ đăng khi có ghi âm hoặc ghi chép gốc.</li>
+<li>Người được kể có quyền xem lại và rút bài bất cứ lúc nào.</li>
+</ul>
+<span style="font-size: 13px; line-height: 1.55; color: #D3CCBD">Ảnh dưới đây lấy từ bộ ảnh tham khảo, chưa có sự đồng ý của người trong ảnh.</span>
+</aside>
+</section>
+
+<div class="threads" aria-hidden="true" style="margin: 0 80px"></div>
+
+<section style="padding: 56px 80px 120px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap">
+<div role="group" aria-label="Lọc theo nhóm" style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<button class="chip" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 14px; color: #6A655C">{{countLabel}}</p>
+</div>
+
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px">
+<sc-for list="{{shown}}" as="p" hint-placeholder-count="8">
+<a class="card" href="{{p.href}}" style="{{p.offset}}">
+<span style="position: relative; display: block">
+<img src="{{p.img}}" alt="{{p.alt}}" style="width: 100%; height: 380px; object-fit: cover; object-position: {{p.pos}}; display: block">
+<span style="position: absolute; left: 12px; top: 12px; background: rgba(243,235,221,.94); padding: 5px 10px; font-size: 12px; font-weight: 600; color: #4A4741; display: flex; gap: 6px; align-items: center"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; border: 1.5px dashed #4A4741"></span>Chờ đồng ý</span>
+</span>
+<span style="font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #74592C">{{p.catUpper}}</span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; line-height: 1.2">{{p.name}}</span>
+<span style="font-size: 14px; line-height: 1.55; color: #4A4741">{{p.note}}</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Xem chân dung →</span>
+</a>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px dashed #8C857A; padding: 56px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; max-width: 760px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 32px">Chưa có chân dung trong nhóm này</span>
+<span style="font-size: 16px; line-height: 1.65; color: #4A4741">Nếu bạn là người trẻ đang làm nghề chiếu, hoặc biết một người như vậy, chúng tôi muốn được nghe kể.</span>
+<a href="ConnectPage.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Giới thiệu một người →</a>
+</div>
+</sc-if>
+</section>
+
+<section style="background: #E9DECA; padding: 88px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px; line-height: 1.15">Bạn biết một người giữ nghề?</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #4A4741">Ông bà, cha mẹ, hàng xóm từng ngồi bên khung dệt. Giới thiệu với chúng tôi, và chúng tôi sẽ hỏi ý họ trước khi ghi lại bất cứ điều gì.</p>
+</div>
+<div style="grid-column: 9 / span 4; display: flex; justify-content: flex-end">
+<a href="ConnectPage.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 28px; background: #A04435; color: #FBF6EE; font-size: 15px; font-weight: 500; text-decoration: none">Giới thiệu một người</a>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cat: 'all' };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      { name: '[Tên nghệ nhân]', cat: 'Nghệ nhân', note: 'Dệt chiếu tay · vai trò cần xác minh', img: B + 'nkc10.webp', alt: 'Người phụ nữ lớn tuổi mặc áo nâu đỏ ngồi dệt chiếu', pos: '20% 50%', href: 'PersonDetail.dc.html' },
+      { name: '[Tên người dệt]', cat: 'Gia đình làm nghề', note: 'Đôi tay trên khung dệt · cần xác minh', img: B + 'nkc14.webp', alt: 'Đôi tay người phụ nữ ấn go trên khung dệt', pos: '30% 50%', href: '#' },
+      { name: '[Tên người in hoa]', cat: 'Người giữ nghề', note: 'In hoa văn bằng khuôn · cần xác minh', img: B + 'kn14.webp', alt: 'Người thợ đeo khẩu trang in hoa văn đỏ lên chiếu', pos: '62% 50%', href: '#' },
+      { name: '[Tên người thợ máy]', cat: 'Gia đình làm nghề', note: 'Nạp cói cho máy dệt · cần xác minh', img: B + 'nkc2.webp', alt: 'Người đàn ông mỉm cười nạp sợi cói vào máy dệt', pos: '25% 50%', href: '#' },
+      { name: '[Tên người gấp chiếu]', cat: 'Người giữ nghề', note: 'Hoàn thiện thành phẩm · cần xác minh', img: B + 'kn11.webp', alt: 'Người đàn ông gấp chiếu viền đỏ trong xưởng', pos: '50% 40%', href: '#' },
+      { name: '[Tên người bán chiếu]', cat: 'Những người gắn bó với làng', note: 'Bày chiếu, đưa chiếu đi xa · cần xác minh', img: B + 'kn2.webp', alt: 'Hai người phụ nữ trải tấm chiếu hoa văn đỏ', pos: '50% 50%', href: '#' },
+      { name: '[Tên người thợ in]', cat: 'Nghệ nhân', note: 'In hoa văn trên bàn gỗ · cần xác minh', img: B + 'nkc4.webp', alt: 'Hai người phụ nữ in hoa văn lên chiếu trên bàn gỗ', pos: '70% 50%', href: '#' },
+      { name: '[Tên người giữ lò]', cat: 'Những người gắn bó với làng', note: 'Công việc trong xưởng · cần xác minh', img: B + 'kn12.webp', alt: 'Người thợ đứng bên lò kim loại bốc hơi', pos: '50% 50%', href: '#' }
+    ];
+    var cats = ['Tất cả', 'Nghệ nhân', 'Gia đình làm nghề', 'Người giữ nghề', 'Thế hệ trẻ', 'Những người gắn bó với làng'];
+    var self = this;
+    var cur = this.state.cat;
+    var shown = data.filter(function (p) { return cur === 'all' || p.cat === cur; }).map(function (p, k) {
+      return { name: p.name, note: p.note, img: p.img, alt: p.alt, pos: p.pos, href: p.href, catUpper: p.cat.toUpperCase(), offset: (k % 4 === 1 || k % 4 === 3) ? 'margin-top:48px' : '' };
+    });
+    return {
+      cats: cats.map(function (c, k) {
+        var key = k === 0 ? 'all' : c;
+        var on = key === cur;
+        return { label: c, pressed: on ? 'true' : 'false', style: on ? 'background:#282724;color:#F3EBDD;border:1px solid #282724;font-weight:600' : 'border:1px solid rgba(40,39,36,.35);color:#282724', pick: function () { self.setState({ cat: key }); } };
+      }),
+      shown: shown, hasItems: shown.length > 0, empty: shown.length === 0,
+      countLabel: shown.length + ' chân dung · tất cả đang chờ đồng ý'
+    };
+  }
+}
+</script>
+</body>
+</html>

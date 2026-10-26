@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Câu chuyện — Danh sách</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.chip{all:unset;box-sizing:border-box;min-height:44px;padding:0 18px;display:inline-flex;align-items:center;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.chip:hover{border-color:#282724 !important}
+.card{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:12px}
+.card:hover{color:#282724}
+.card img{transition:opacity .2s}
+.card:hover img{opacity:.88}
+.card:hover .cta{text-decoration:underline;text-underline-offset:4px}
+@media (prefers-reduced-motion: reduce){.card img{transition:none}}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 2510px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="#" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</span><span class="threads" style="height: 6px"></span></a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="ProductsIndex.dc.html"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="padding: 40px 80px 64px; display: flex; flex-direction: column; gap: 24px">
+<nav aria-label="Đường dẫn" style="display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Câu chuyện</span></nav>
+<div style="display: flex; justify-content: space-between; align-items: end; gap: 40px; padding-top: 24px">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>02 — CÂU CHUYỆN</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 76px; line-height: 1.1">Chuyện làng, kể chậm.</h1>
+</div>
+<div style="width: 360px; display: flex; flex-direction: column; gap: 8px">
+<label for="q" style="font-size: 14px; font-weight: 500">Tìm trong câu chuyện</label>
+<div style="display: flex; align-items: center; border: 1px solid #6A655C; background: #FBF6EE; min-height: 48px; padding: 0 14px; gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#4A4741" stroke-width="1.5"><circle cx="8" cy="8" r="6"></circle><path d="M12.5 12.5L17 17"></path></svg><input id="q" type="search" placeholder="Ví dụ: khung dệt, Trạng Chiếu" style="all: unset; flex: 1; font: 400 15px 'Be Vietnam Pro', sans-serif; color: #282724"></div>
+</div>
+</div>
+</section>
+
+<section style="padding: 0 80px 96px">
+<a class="card" href="StoryDetail.dc.html" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<img src="../reference-images/nkc9.webp" alt="Cận cảnh mép chiếu đang dệt, những sợi cói buông xuống" style="grid-column: span 7; width: 100%; height: 520px; object-fit: cover; display: block">
+<span style="grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 18px">
+<span style="display: flex; gap: 12px; align-items: center"><span style="font-size: 12px; letter-spacing: .18em; font-weight: 600; color: #74592C">BÀI NỔI BẬT · LỊCH SỬ</span><span style="font-size: 12px; padding: 3px 8px; border: 1px dashed #6A655C; color: #4A4741">Bản nháp</span></span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 52px; line-height: 1.12">Chuyện về Trạng Chiếu</span>
+<span style="font-family: 'Noto Serif', Georgia, serif; font-size: 19px; line-height: 1.7; color: #4A4741">Phạm Đôn Lễ và khung dệt mang về làng Hới — những gì báo chí ghi lại, và những gì làng vẫn kể.</span>
+<span style="font-size: 14px; color: #6A655C">3 nguồn báo chí · khoảng 4 phút đọc</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">Đọc bài →</span>
+</span>
+</a>
+</section>
+
+<div class="threads" aria-hidden="true" style="margin: 0 80px"></div>
+
+<section style="padding: 72px 80px 120px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap">
+<div role="group" aria-label="Lọc theo chủ đề" style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<button class="chip" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 14px; color: #6A655C">{{countLabel}}</p>
+</div>
+
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px">
+<sc-for list="{{shown}}" as="s" hint-placeholder-count="6">
+<a class="card" href="{{s.href}}">
+<img src="{{s.img}}" alt="{{s.alt}}" style="width: 100%; height: 280px; object-fit: cover; display: block">
+<span style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap"><span style="font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #74592C">{{s.catUpper}}</span><span style="{{s.statusStyle}}">{{s.status}}</span></span>
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px; line-height: 1.2">{{s.t}}</span>
+<span style="font-size: 15px; line-height: 1.6; color: #4A4741">{{s.d}}</span>
+<span class="cta" style="font-size: 15px; font-weight: 500; color: #A04435">{{s.cta}}</span>
+</a>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px dashed #8C857A; padding: 56px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; max-width: 720px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 32px">Chưa có bài trong chủ đề này</span>
+<span style="font-size: 16px; line-height: 1.65; color: #4A4741">Câu chuyện về người làng chỉ được viết khi chính họ đồng ý kể. Nếu bạn muốn kể về một người thân làm nghề chiếu, hãy liên hệ với chúng tôi.</span>
+<a href="ConnectPage.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Góp một câu chuyện →</a>
+</div>
+</sc-if>
+
+<div style="display: flex; align-items: center; gap: 20px; padding-top: 16px; border-top: 1px solid rgba(40,39,36,.16)">
+<button type="button" disabled style="all: unset; box-sizing: border-box; min-height: 48px; padding: 0 24px; display: inline-flex; align-items: center; border: 1px solid #C9BFAE; color: #6A655C; font: 500 15px 'Be Vietnam Pro', sans-serif">Xem thêm câu chuyện</button>
+<span style="font-size: 14px; color: #6A655C">Đã hiện hết các bài hiện có</span>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2510}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cat: 'all' };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      { t: 'Chuyện về Trạng Chiếu', cat: 'Lịch sử', st: 'draft', d: 'Phạm Đôn Lễ và khung dệt mang về làng — theo 3 nguồn báo chí.', img: B + 'nkc9.webp', alt: 'Mép chiếu với sợi cói buông', href: 'StoryDetail.dc.html' },
+      { t: 'Những ký ức bên khung dệt', cat: 'Ký ức làng quê', st: 'idea', d: 'Chờ ghi chép từ các gia đình làm nghề.', img: B + 'kn1.webp', alt: 'Tấm chiếu trắng in hoa văn trên bàn in', href: '#' },
+      { t: 'Một ngày ở làng Hới', cat: 'Đời sống hôm nay', st: 'idea', d: 'Phóng sự ảnh một ngày làm chiếu, chờ chụp tại làng.', img: B + 'hc8.webp', alt: 'Chiếu phơi trên bãi cỏ', href: '#' },
+      { t: 'Nghề xưa trong nhịp sống mới', cat: 'Nghề truyền thống', st: 'idea', d: 'Dệt tay và dệt máy cùng tồn tại ở làng nghề hôm nay.', img: B + 'nkc2.webp', alt: 'Người đàn ông nạp cói vào máy dệt', href: '#' },
+      { t: 'Từ sợi cói đến một đời người', cat: 'Nghề truyền thống', st: 'idea', d: 'Hành trình của một tấm chiếu, từ đồng cói đến giường cưới.', img: B + 'nkc1.webp', alt: 'Hai người ngồi bên đống cói', href: '#' },
+      { t: 'Mùa chiếu Tết', cat: 'Ký ức làng quê', st: 'idea', d: 'Ký ức về những phiên chiếu cuối năm, chờ người làng kể.', img: B + 'kn3.webp', alt: 'Sạp chiếu hoa văn đỏ', href: '#' }
+    ];
+    var cats = ['Tất cả', 'Lịch sử', 'Ký ức làng quê', 'Nghề truyền thống', 'Con người', 'Đời sống hôm nay'];
+    var self = this;
+    var cur = this.state.cat;
+    var shown = data.filter(function (s) { return cur === 'all' || s.cat === cur; }).map(function (s) {
+      return {
+        t: s.t, d: s.d, img: s.img, alt: s.alt, href: s.href,
+        catUpper: s.cat.toUpperCase(),
+        status: s.st === 'draft' ? 'Bản nháp' : 'Chủ đề đề xuất',
+        statusStyle: s.st === 'draft' ? 'font-size:12px;padding:3px 8px;border:1px dashed #6A655C;color:#4A4741' : 'font-size:12px;padding:3px 8px;background:#E9DECA;color:#4A4741',
+        cta: s.st === 'draft' ? 'Đọc bài →' : 'Xem đề cương →'
+      };
+    });
+    return {
+      cats: cats.map(function (c, k) {
+        var key = k === 0 ? 'all' : c;
+        var on = key === cur;
+        return { label: c, pressed: on ? 'true' : 'false', style: on ? 'background:#282724;color:#F3EBDD;border:1px solid #282724;font-weight:600' : 'border:1px solid rgba(40,39,36,.35);color:#282724', pick: function () { self.setState({ cat: key }); } };
+      }),
+      shown: shown,
+      hasItems: shown.length > 0,
+      empty: shown.length === 0,
+      countLabel: shown.length + ' bài · ' + shown.filter(function (s) { return s.status === 'Bản nháp'; }).length + ' bản nháp'
+    };
+  }
+}
+</script>
+</body>
+</html>

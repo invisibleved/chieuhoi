@@ -1,0 +1,96 @@
+[
+  {
+    "slug": "chieu-cap-dieu",
+    "code": "HIỆN VẬT 01",
+    "name": "Chiếu cạp điều",
+    "group": "traditional",
+    "images": [
+      "/images/reference/kn8.webp",
+      "/images/reference/kn2.webp",
+      "/images/reference/hc9.webp",
+      "/images/reference/nkc15.webp"
+    ],
+    "typeConfirmed": false,
+    "annotations": [
+      {
+        "n": 1,
+        "title": "Viền chiếu",
+        "x": 30,
+        "y": 72,
+        "body": "Phần viền màu đỏ chạy dọc mép chiếu. Cách may và tên gọi: [cần xác minh].",
+        "source": null
+      },
+      {
+        "n": 2,
+        "title": "Hoa văn in",
+        "x": 52,
+        "y": 60,
+        "body": "Hoạ tiết trên tấm này chưa được xác định. Không suy diễn ý nghĩa.",
+        "source": "vietnamplus-2026"
+      },
+      {
+        "n": 3,
+        "title": "Mặt cói dệt",
+        "x": 70,
+        "y": 82,
+        "body": "Kiểu dệt và mật độ sợi: [cần xác minh].",
+        "source": null
+      }
+    ]
+  },
+  {
+    "slug": "chieu-hoa-cai",
+    "code": "HIỆN VẬT 02",
+    "name": "Chiếu hoa cài",
+    "group": "traditional",
+    "images": [
+      "/images/reference/kn3.webp"
+    ],
+    "typeConfirmed": false
+  },
+  {
+    "slug": "chieu-tron",
+    "code": "HIỆN VẬT 03",
+    "name": "Chiếu trơn",
+    "group": "traditional",
+    "images": [
+      "/images/reference/kn5.webp"
+    ],
+    "typeConfirmed": false
+  },
+  {
+    "slug": "chieu-dot",
+    "code": "HIỆN VẬT 04",
+    "name": "Chiếu đót",
+    "group": "traditional",
+    "images": [],
+    "typeConfirmed": false
+  },
+  {
+    "slug": "chieu-soi-xe",
+    "code": "HIỆN VẬT 05",
+    "name": "Chiếu sợi xe",
+    "group": "traditional",
+    "images": [],
+    "typeConfirmed": false
+  },
+  {
+    "slug": "chieu-gon",
+    "code": "HIỆN VẬT 06",
+    "name": "Chiếu gon",
+    "group": "traditional",
+    "images": [],
+    "typeConfirmed": false,
+    "note": "Đại Đoàn Kết (2021): tuổi đời hơn 500 năm"
+  },
+  {
+    "slug": "chieu-duong-dai",
+    "code": "ĐƯƠNG ĐẠI 01",
+    "name": "Chiếu nhựa, nylon, giả mây",
+    "group": "contemporary",
+    "images": [
+      "/images/reference/nkc2.webp"
+    ],
+    "typeConfirmed": false
+  }
+]

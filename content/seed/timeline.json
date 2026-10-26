@@ -1,0 +1,70 @@
+[
+  {
+    "label": "1457",
+    "title": "Phạm Đôn Lễ ra đời",
+    "body": "Sinh tại làng Hải Triều, tức làng Hới.",
+    "confidence": "press",
+    "sources": [
+      "danviet-2024",
+      "daidoanket-2021"
+    ]
+  },
+  {
+    "label": "1481",
+    "title": "Đỗ Tam nguyên",
+    "body": "Đỗ đầu cả ba kỳ thi Hương, Hội và Đình dưới triều Lê Thánh Tông.",
+    "confidence": "press",
+    "sources": [
+      "danviet-2024",
+      "daidoanket-2021"
+    ]
+  },
+  {
+    "label": "Thời Lê",
+    "title": "Khung dệt về làng",
+    "body": "Theo lời kể, khi đi sứ nhà Minh ông học kỹ thuật dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng. Vietnam+ đặt vào đầu thế kỷ XVI.",
+    "confidence": "oral",
+    "sources": [
+      "danviet-2024",
+      "daidoanket-2021",
+      "vietnamplus-2026"
+    ]
+  },
+  {
+    "label": "1531",
+    "title": "Ông Trạng mất",
+    "body": "Dân làng tôn ông làm Phúc thần, gọi là \"Trạng Chiếu\".",
+    "confidence": "press",
+    "sources": [
+      "danviet-2024",
+      "daidoanket-2021"
+    ]
+  },
+  {
+    "label": "[?]",
+    "title": "Đền thờ tổ nghề",
+    "body": "Năm lập đền và cấp xếp hạng chưa xác định. Lễ tế được ghi vào mùng 6 tháng Giêng âm lịch.",
+    "confidence": "pending",
+    "sources": [
+      "daidoanket-2021"
+    ]
+  },
+  {
+    "label": "~2005",
+    "title": "Máy dệt về làng",
+    "body": "Cơ giới hoá bắt đầu khoảng năm 2005; chọn cói, viền mép, in hoa văn vẫn làm tay.",
+    "confidence": "press",
+    "sources": [
+      "vietnamplus-2026"
+    ]
+  },
+  {
+    "label": "Hôm nay",
+    "title": "Xã Long Hưng",
+    "body": "Làng nay thuộc xã Long Hưng, tỉnh Hưng Yên; trước đây là xã Tân Lễ, huyện Hưng Hà, Thái Bình. Cần đối chiếu văn bản hành chính.",
+    "confidence": "press",
+    "sources": [
+      "vietnamplus-2026"
+    ]
+  }
+]

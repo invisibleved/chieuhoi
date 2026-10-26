@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "mau-nghe-nhan",
+    "name": null,
+    "category": "Nghệ nhân",
+    "consent": {
+      "name": false,
+      "photo": false,
+      "quote": false
+    },
+    "reviewedBySubject": false,
+    "portrait": "/images/reference/nkc10.webp",
+    "note": "Mẫu — chưa có người thật đồng ý"
+  }
+]

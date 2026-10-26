@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sản phẩm — Bộ sưu tập</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible{outline:2px solid #344B3D;outline-offset:4px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.chip{all:unset;box-sizing:border-box;min-height:44px;padding:0 18px;display:inline-flex;align-items:center;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.chip:hover{border-color:#282724 !important}
+.obj{color:#282724;text-decoration:none;display:flex;flex-direction:column;gap:12px}
+.obj:hover{color:#282724}
+.obj:hover .obj-name{color:#A04435}
+.obj img{transition:opacity .2s}
+.obj:hover img{opacity:.9}
+.weave{background-color:#D7C59E;background-image:repeating-linear-gradient(90deg,rgba(40,39,36,.10) 0 2px,transparent 2px 9px),repeating-linear-gradient(0deg,rgba(243,235,221,.35) 0 3px,transparent 3px 7px)}
+@media (prefers-reduced-motion: reduce){.obj img{transition:none}}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 2960px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="#" aria-current="page" style="flex-direction: column; gap: 6px"><span style="display: flex; gap: 8px; align-items: baseline"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</span><span class="threads" style="height: 6px"></span></a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="ConnectPage.dc.html" style="border-bottom: 1px solid #282724; padding-bottom: 2px">Kết nối</a>
+</div>
+</header>
+
+<section style="padding: 40px 80px 72px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Sản phẩm</span></nav>
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 22px; padding-top: 24px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>05 — SẢN PHẨM</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 76px; line-height: 1.1">Nét đẹp từ<br>những đường dệt.</h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 21px; line-height: 1.7; max-width: 640px">Mỗi tấm chiếu ở đây được trình bày như một hiện vật: chất liệu, cách làm, nơi làm ra. Đây là bộ sưu tập để hiểu, không phải cửa hàng.</p>
+</div>
+<aside style="grid-column: 9 / span 4; align-self: end; padding: 24px; border: 1px solid rgba(40,39,36,.2); display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">VỀ DANH MỤC</span>
+<span style="font-size: 15px; line-height: 1.65">Các loại chiếu dưới đây theo bài Vietnam+ (14/08/2026). Tên gọi, đặc điểm và ảnh của từng loại cần cơ sở dệt xác nhận.</span>
+<a href="https://www.vietnamplus.vn/giu-hon-nghe-det-chieu-coi-lang-hoi-giua-nhip-song-hien-dai-post1123026.vnp" style="font-size: 14px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Xem nguồn →</a>
+</aside>
+</section>
+
+<div class="threads" aria-hidden="true" style="margin: 0 80px"></div>
+
+<section style="padding: 56px 80px 120px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap">
+<div role="group" aria-label="Lọc theo nhóm" style="display: flex; gap: 8px; flex-wrap: wrap">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<button class="chip" type="button" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="{{g.style}}">{{g.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 14px; color: #6A655C">{{countLabel}}</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 24px; row-gap: 64px">
+<sc-for list="{{shown}}" as="o" hint-placeholder-count="6">
+<a class="obj" href="{{o.href}}">
+<sc-if value="{{o.hasImg}}" hint-placeholder-val="{{ true }}">
+<img src="{{o.img}}" alt="{{o.alt}}" style="width: 100%; height: 340px; object-fit: cover; display: block">
+</sc-if>
+<sc-if value="{{o.noImg}}" hint-placeholder-val="{{ false }}">
+<span class="weave" style="height: 340px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; box-sizing: border-box"><span style="background: #F3EBDD; padding: 10px 14px; font-size: 13px; line-height: 1.5"><strong style="font-weight: 600; letter-spacing: .1em">ẢNH CẦN CHỤP</strong><br>{{o.t}} chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt</span></span>
+</sc-if>
+<span style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 4px; border-top: 1px solid #282724"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #5A554C">{{o.code}}</span><span style="{{o.tagStyle}}">{{o.tag}}</span></span>
+<span class="obj-name" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 32px; line-height: 1.15">{{o.t}}</span>
+<span style="font-size: 15px; line-height: 1.6; color: #4A4741">{{o.d}}</span>
+</a>
+</sc-for>
+</div>
+</section>
+
+<section style="background: #344B3D; color: #F3EBDD; padding: 88px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px; line-height: 1.15">Muốn tìm đến người làm chiếu?</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #D3CCBD">Trang này không bán hàng. Danh sách cơ sở dệt sẽ chỉ đăng khi đã xác minh và được cơ sở đồng ý công khai.</p>
+</div>
+<div style="grid-column: 9 / span 4; display: flex; justify-content: flex-end">
+<a href="ConnectPage.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 28px; border: 1px solid #F3EBDD; color: #F3EBDD; font-size: 15px; font-weight: 500; text-decoration: none">Kết nối với làng</a>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: 'all' };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      { code: 'HIỆN VẬT 01', t: 'Chiếu cạp điều', grp: 'coi', d: 'Tên gọi gợi phần viền (cạp) màu đỏ điều. Đặc điểm cụ thể: [cần xác minh].', img: B + 'kn8.webp', alt: 'Tấm chiếu hoa văn đỏ có viền đỏ trải trước cửa xưởng', href: 'ProductDetail.dc.html', check: true },
+      { code: 'HIỆN VẬT 02', t: 'Chiếu hoa cài', grp: 'coi', d: 'Đặc điểm và cách làm: [cần xác minh].', img: B + 'kn3.webp', alt: 'Những tấm chiếu hoa văn đỏ dựng đứng ở sạp', href: '#', check: true },
+      { code: 'HIỆN VẬT 03', t: 'Chiếu trơn', grp: 'coi', d: 'Chiếu không in hoa văn. Kích thước phổ biến: [cần xác minh].', img: B + 'kn5.webp', alt: 'Những cuộn chiếu cói màu tự nhiên dựng đứng', href: '#', check: true },
+      { code: 'HIỆN VẬT 04', t: 'Chiếu đót', grp: 'coi', d: 'Đặc điểm và cách làm: [cần xác minh].', img: '', alt: '', href: '#', check: false },
+      { code: 'HIỆN VẬT 05', t: 'Chiếu sợi xe', grp: 'coi', d: 'Đặc điểm và cách làm: [cần xác minh].', img: '', alt: '', href: '#', check: false },
+      { code: 'HIỆN VẬT 06', t: 'Chiếu gon', grp: 'coi', d: 'Báo Đại Đoàn Kết (2021) viết chiếu gon có tuổi đời hơn 500 năm. Đặc điểm: [cần xác minh].', img: '', alt: '', href: '#', check: false },
+      { code: 'ĐƯƠNG ĐẠI 01', t: 'Chiếu nhựa, nylon, giả mây', grp: 'moi', d: 'Cơ sở trong xã hiện cũng làm các loại chiếu này bằng máy.', img: B + 'nkc2.webp', alt: 'Người đàn ông nạp sợi vào máy dệt', href: '#', check: true }
+    ];
+    var groups = [['all', 'Tất cả'], ['coi', 'Chiếu cói truyền thống'], ['moi', 'Chiếu đương đại']];
+    var self = this;
+    var g = this.state.g;
+    var shown = data.filter(function (o) { return g === 'all' || o.grp === g; }).map(function (o) {
+      return {
+        code: o.code, t: o.t, d: o.d, img: o.img, alt: o.alt, href: o.href,
+        hasImg: !!o.img, noImg: !o.img,
+        tag: o.img ? 'Ảnh cần xác nhận loại' : 'Chưa có ảnh',
+        tagStyle: 'font-size:12px;padding:3px 8px;' + (o.img ? 'background:#E9DECA;color:#4A4741' : 'border:1px dashed #6A655C;color:#4A4741')
+      };
+    });
+    return {
+      groups: groups.map(function (d) {
+        var on = d[0] === g;
+        return { label: d[1], pressed: on ? 'true' : 'false', style: on ? 'background:#282724;color:#F3EBDD;border:1px solid #282724;font-weight:600' : 'border:1px solid rgba(40,39,36,.35);color:#282724', pick: function () { self.setState({ g: d[0] }); } };
+      }),
+      shown: shown,
+      countLabel: shown.length + ' hiện vật · danh mục theo Vietnam+'
+    };
+  }
+}
+</script>
+</body>
+</html>

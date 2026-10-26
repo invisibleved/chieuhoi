@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Kết nối — Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#A04435}a:hover{color:#7E3328}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #344B3D;outline-offset:3px}
+.nav a{color:#282724;text-decoration:none;display:flex;gap:8px;align-items:baseline}.nav a:hover{color:#A04435}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.field{display:flex;flex-direction:column;gap:8px}
+.lbl{font-size:15px;font-weight:500}
+.inp{box-sizing:border-box;width:100%;min-height:52px;padding:0 16px;background:#FBF6EE;font:400 16px 'Be Vietnam Pro',sans-serif;color:#282724}
+.opt{all:unset;box-sizing:border-box;min-height:52px;padding:0 18px;display:flex;align-items:center;gap:12px;cursor:pointer;font:400 15px 'Be Vietnam Pro',sans-serif}
+.way{display:flex;flex-direction:column;gap:12px;padding:28px 0;border-top:1px solid #282724}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 2780px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 26px 80px; border-bottom: 1px solid rgba(40,39,36,.16)">
+<a href="Home.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 22px; letter-spacing: .3em; color: #282724; text-decoration: none">CHIẾU HỚI</a>
+<nav class="nav" aria-label="Điều hướng chính" style="display: flex; gap: 32px; font-size: 14px">
+<a href="VillagePage.dc.html"><span style="font-size: 12px; color: #74592C">01</span>Làng Hới</a>
+<a href="StoriesIndex.dc.html"><span style="font-size: 12px; color: #74592C">02</span>Câu chuyện</a>
+<a href="CraftPage.dc.html"><span style="font-size: 12px; color: #74592C">03</span>Nghề dệt chiếu</a>
+<a href="PeopleIndex.dc.html"><span style="font-size: 12px; color: #74592C">04</span>Con người</a>
+<a href="ProductsIndex.dc.html"><span style="font-size: 12px; color: #74592C">05</span>Sản phẩm</a>
+<a href="ArchivePage.dc.html"><span style="font-size: 12px; color: #74592C">06</span>Thư viện</a>
+</nav>
+<div class="nav" style="display: flex; gap: 24px; align-items: center; font-size: 13px">
+<span style="color: #6A655C">VI · EN</span>
+<a href="#" aria-current="page" style="border-bottom: 2px solid #A04435; padding-bottom: 2px; color: #A04435">Kết nối</a>
+</div>
+</header>
+
+<section style="padding: 40px 80px 88px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px">
+<nav aria-label="Đường dẫn" style="grid-column: span 12; display: flex; gap: 10px; font-size: 14px"><a href="Home.dc.html" style="color: #4A4741">Trang chủ</a><span aria-hidden="true" style="color: #6A655C">/</span><span aria-current="page">Kết nối</span></nav>
+<div style="grid-column: span 7; display: flex; flex-direction: column; gap: 22px; padding-top: 24px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435; display: flex; align-items: center; gap: 16px"><span style="width: 48px; height: 1px; background: #A04435"></span>KẾT NỐI</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 76px; line-height: 1.1">Làng vẫn còn đó.<br><em style="font-style: italic; color: #A04435">Chuyện nghề vẫn được kể tiếp.</em></h1>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-size: 21px; line-height: 1.7; max-width: 640px">Góp một tấm ảnh, giới thiệu một người giữ nghề, hay chỉ muốn tìm hiểu thêm về làng Hới, đây là nơi bắt đầu.</p>
+</div>
+</section>
+
+<section style="padding: 0 80px 112px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 32px">
+<div class="way"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #74592C">01</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Góp ảnh và ký ức</span><span style="font-size: 15px; line-height: 1.65; color: #4A4741">Ảnh cũ, giấy tờ, câu chuyện của gia đình bạn về nghề chiếu.</span></div>
+<div class="way"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #74592C">02</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Giới thiệu người giữ nghề</span><span style="font-size: 15px; line-height: 1.65; color: #4A4741">Chúng tôi sẽ hỏi ý họ trước khi ghi lại bất cứ điều gì.</span></div>
+<div class="way"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #74592C">03</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Kết nối cơ sở dệt</span><span style="font-size: 15px; line-height: 1.65; color: #4A4741">Danh sách cơ sở chỉ công khai khi đã xác minh và được đồng ý.</span></div>
+<div class="way"><span style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #74592C">04</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px">Hợp tác văn hoá</span><span style="font-size: 15px; line-height: 1.65; color: #4A4741">Nghiên cứu, triển lãm, giáo dục về làng nghề.</span></div>
+</section>
+
+<section aria-labelledby="form-h" style="background: #E9DECA; padding: 104px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px">
+<div style="grid-column: span 4; display: flex; flex-direction: column; gap: 18px">
+<h2 id="form-h" style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 48px; line-height: 1.12">Góp một ký ức</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.7; color: #4A4741">Chúng tôi đọc từng đóng góp, liên hệ để xác minh, và chỉ đăng khi bạn đồng ý.</p>
+<div role="note" style="padding: 16px 18px; border: 1px dashed #6A655C; font-size: 14px; line-height: 1.6; color: #3E3B35">Bản minh hoạ thiết kế. Chưa có hệ thống nhận đóng góp thật; không có dữ liệu nào được gửi đi.</div>
+</div>
+
+<div style="grid-column: 6 / span 7">
+<sc-if value="{{showForm}}" hint-placeholder-val="{{ true }}">
+<form novalidate onSubmit="{{submit}}" style="display: flex; flex-direction: column; gap: 28px">
+<sc-if value="{{hasErrors}}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="padding: 16px 18px; background: #FBF6EE; border-top: 3px solid #A04435; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.55"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#A04435" stroke-width="1.6" style="flex: none; margin-top: 2px"><circle cx="10" cy="10" r="9"></circle><path d="M10 5.5v5.5M10 13.5v1"></path></svg><span><strong style="color: #A04435">Còn {{errorCount}} mục cần bổ sung.</strong> Xem các ô được đánh dấu bên dưới.</span></div>
+</sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
+<div class="field"><label class="lbl" for="c-name">Họ và tên</label><input class="inp" id="c-name" type="text" autocomplete="name" value="{{name}}" onInput="{{setName}}" aria-invalid="{{nameInvalid}}" aria-describedby="c-name-e" style="{{nameStyle}}"><span id="c-name-e" style="{{nameErrStyle}}">Vui lòng cho biết tên để chúng tôi xưng hô.</span></div>
+<div class="field"><label class="lbl" for="c-contact">Số điện thoại hoặc email</label><input class="inp" id="c-contact" type="text" autocomplete="email" value="{{contact}}" onInput="{{setContact}}" aria-invalid="{{contactInvalid}}" aria-describedby="c-contact-e" style="{{contactStyle}}"><span id="c-contact-e" style="{{contactErrStyle}}">Cần một cách liên lạc để xác minh đóng góp.</span></div>
+</div>
+<fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 10px">
+<legend class="lbl" style="margin-bottom: 10px">Bạn muốn góp gì?</legend>
+<div role="radiogroup" aria-label="Loại đóng góp" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="4">
+<button class="opt" type="button" role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="{{t.style}}"><span aria-hidden="true" style="{{t.dot}}"></span>{{t.label}}</button>
+</sc-for>
+</div>
+</fieldset>
+<div class="field"><label class="lbl" for="c-story">Câu chuyện hoặc mô tả</label><textarea class="inp" id="c-story" rows="5" onInput="{{setStory}}" style="padding: 14px 16px; min-height: 150px; resize: vertical; border: 1px solid #6A655C; font-family: 'Be Vietnam Pro', sans-serif">{{story}}</textarea><span style="font-size: 13px; color: #5A554C">Ví dụ: ảnh chụp năm nào, ai trong ảnh, ở đâu trong làng.</span></div>
+<div class="field"><span class="lbl">Ảnh hoặc tệp</span><div style="border: 1px dashed #6A655C; background: #FBF6EE; padding: 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; text-align: center"><span style="font-size: 15px; font-weight: 500">Kéo ảnh vào đây hoặc chọn tệp</span><span style="font-size: 13px; color: #5A554C">JPG, PNG · minh hoạ, chưa có hệ thống tải lên</span></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<button type="button" role="checkbox" aria-checked="{{consentChecked}}" onClick="{{toggleConsent}}" style="all: unset; box-sizing: border-box; display: flex; gap: 14px; align-items: flex-start; cursor: pointer; font: 400 15px/1.6 'Be Vietnam Pro', sans-serif; min-height: 44px"><span aria-hidden="true" style="{{consentBox}}">{{consentMark}}</span><span>Tôi là chủ sở hữu hoặc được phép chia sẻ tư liệu này, và đồng ý để Chiếu Hới liên hệ xác minh, đăng kèm ghi công khi tôi duyệt.</span></button>
+<span style="{{consentErrStyle}}">Cần xác nhận quyền chia sẻ trước khi gửi.</span>
+</div>
+<div style="display: flex; align-items: center; gap: 24px">
+<button type="submit" style="all: unset; box-sizing: border-box; min-height: 52px; padding: 0 32px; background: #A04435; color: #FBF6EE; display: inline-flex; align-items: center; cursor: pointer; font: 500 15px 'Be Vietnam Pro', sans-serif">Gửi đóng góp</button>
+<span style="font-size: 13px; color: #5A554C">Bạn có thể yêu cầu gỡ đóng góp bất cứ lúc nào.</span>
+</div>
+</form>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="background: #344B3D; color: #F3EBDD; padding: 48px; display: flex; flex-direction: column; gap: 18px">
+<svg aria-hidden="true" width="40" height="40" viewBox="0 0 22 22" fill="none" stroke="#E3CD9C" stroke-width="1.6"><path d="M4 11.5l4.5 4.5L18 6"></path></svg>
+<h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 40px; line-height: 1.15">Cảm ơn {{nameOrBan}}.</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.7; color: #D3CCBD">Chúng tôi sẽ liên hệ qua {{contactShown}} để xác minh trước khi đăng. (Màn hình minh hoạ: chưa có dữ liệu nào thực sự được gửi.)</p>
+<button type="button" onClick="{{again}}" style="all: unset; box-sizing: border-box; align-self: flex-start; min-height: 48px; padding: 0 22px; border: 1px solid #F3EBDD; display: inline-flex; align-items: center; cursor: pointer; font: 500 15px 'Be Vietnam Pro', sans-serif">Góp thêm một ký ức</button>
+</div>
+</sc-if>
+</div>
+</section>
+
+<section style="padding: 104px 80px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 24px">
+<h2 style="grid-column: span 4; margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 40px; line-height: 1.15">Thông tin liên hệ</h2>
+<dl style="grid-column: 6 / span 7; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; font-size: 16px; line-height: 1.6">
+<div style="padding: 16px 0; border-top: 1px solid #282724"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">EMAIL</dt><dd style="margin: 6px 0 0">[Email liên hệ]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid #282724"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">ĐIỆN THOẠI</dt><dd style="margin: 6px 0 0">[Số điện thoại]</dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">ĐỊA CHỈ</dt><dd style="margin: 6px 0 0">Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên<br><span style="font-size: 13px; color: #6A655C">Theo Vietnam+ (08/2026) · cần đối chiếu văn bản hành chính</span></dd></div>
+<div style="padding: 16px 0; border-top: 1px solid rgba(40,39,36,.2)"><dt style="font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">THĂM LÀNG</dt><dd style="margin: 6px 0 0">Chưa có thông tin tham quan chính thức</dd></div>
+</dl>
+</section>
+
+<footer style="margin-top: auto; background: #282724; color: #F3EBDD; padding: 56px 80px 40px; display: flex; justify-content: space-between; align-items: end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px; letter-spacing: .3em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 16px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</div>
+<p style="margin: 0; font-size: 13px; color: #B9B4A6">Footer đầy đủ: xem artboard Trang chủ</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2780}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { name: '', contact: '', story: '', type: 'photo', consent: false, tried: false, sent: false };
+  }
+  renderVals() {
+    var self = this;
+    var s = this.state;
+    var nameBad = s.tried && !s.name.trim();
+    var contactBad = s.tried && !s.contact.trim();
+    var consentBad = s.tried && !s.consent;
+    var errs = (nameBad ? 1 : 0) + (contactBad ? 1 : 0) + (consentBad ? 1 : 0);
+    var errStyle = function (bad) { return bad ? 'display:flex;font-size:13px;color:#A04435;font-weight:500' : 'display:none'; };
+    var inpStyle = function (bad) { return bad ? 'border:2px solid #A04435' : 'border:1px solid #6A655C'; };
+    var types = [['photo', 'Ảnh hoặc giấy tờ cũ'], ['story', 'Một câu chuyện, ký ức'], ['person', 'Giới thiệu người giữ nghề'], ['other', 'Hợp tác, câu hỏi khác']];
+    return {
+      showForm: !s.sent, sent: s.sent,
+      name: s.name, contact: s.contact, story: s.story,
+      setName: function (e) { self.setState({ name: e.target.value }); },
+      setContact: function (e) { self.setState({ contact: e.target.value }); },
+      setStory: function (e) { self.setState({ story: e.target.value }); },
+      nameInvalid: nameBad ? 'true' : 'false', contactInvalid: contactBad ? 'true' : 'false',
+      nameStyle: inpStyle(nameBad), contactStyle: inpStyle(contactBad),
+      nameErrStyle: errStyle(nameBad), contactErrStyle: errStyle(contactBad), consentErrStyle: errStyle(consentBad),
+      hasErrors: errs > 0, errorCount: errs,
+      types: types.map(function (t) {
+        var on = t[0] === s.type;
+        return { label: t[1], checked: on ? 'true' : 'false', style: on ? 'background:#FBF6EE;border:2px solid #282724' : 'border:1px solid rgba(40,39,36,.35)', dot: 'width:16px;height:16px;border-radius:50%;box-sizing:border-box;flex:none;' + (on ? 'border:5px solid #A04435' : 'border:1.5px solid #6A655C'), pick: function () { self.setState({ type: t[0] }); } };
+      }),
+      consentChecked: s.consent ? 'true' : 'false',
+      consentMark: s.consent ? '✓' : '',
+      consentBox: 'width:22px;height:22px;flex:none;margin-top:1px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;' + (s.consent ? 'background:#344B3D;color:#F3EBDD;border:2px solid #344B3D' : (consentBad ? 'border:2px solid #A04435;background:#FBF6EE' : 'border:1.5px solid #6A655C;background:#FBF6EE')),
+      toggleConsent: function () { self.setState({ consent: !s.consent }); },
+      submit: function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        if (s.name.trim() && s.contact.trim() && s.consent) self.setState({ sent: true, tried: false });
+        else self.setState({ tried: true });
+      },
+      nameOrBan: s.name.trim() || 'bạn',
+      contactShown: s.contact.trim() || 'thông tin bạn để lại',
+      again: function () { self.setState({ name: '', contact: '', story: '', consent: false, tried: false, sent: false, type: 'photo' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

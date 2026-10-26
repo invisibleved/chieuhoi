@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Design system — Nền tảng</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+.threads{height:12px;background-image:repeating-linear-gradient(0deg,#C3A46C 0 1px,transparent 1px 4px)}
+.check{background:repeating-conic-gradient(#A04435 0 25%,#C3A46C 0 50%) 0 0/6px 6px}
+.tok{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#4A4741}
+.row{display:grid;grid-template-columns:200px 1fr 120px;gap:24px;align-items:baseline;padding:18px 0;border-top:1px solid rgba(40,39,36,.16)}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 4280px; box-sizing: border-box; background: #F3EBDD; color: #282724; font-family: 'Be Vietnam Pro', system-ui, sans-serif; padding: 96px 80px; display: flex; flex-direction: column; gap: 112px">
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">HỆ THỐNG THIẾT KẾ · v0.1</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 70px; line-height: 1.1">Nền tảng</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.65; color: #4A4741; max-width: 760px">Màu, chữ, khoảng cách, lưới và chuyển động dùng chung cho mọi trang Chiếu Hới. Tỉ lệ tương phản ghi cạnh mỗi cặp chữ và nền đã được tính theo WCAG 2.2.</p>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 32px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px">Màu</h2>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #F3EBDD; border: 1px solid rgba(40,39,36,.2)"></div><strong style="font-weight: 600; font-size: 15px">Cói</strong><span class="tok">#F3EBDD</span><span style="font-size: 13px; color: #6A655C">Nền chính</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #E9DECA"></div><strong style="font-weight: 600; font-size: 15px">Cói đậm</strong><span class="tok">#E9DECA</span><span style="font-size: 13px; color: #6A655C">Nền phụ</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #C3A46C"></div><strong style="font-weight: 600; font-size: 15px">Rơm</strong><span class="tok">#C3A46C</span><span style="font-size: 13px; color: #6A655C">Chỉ trang trí, không dùng cho chữ</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #A04435"></div><strong style="font-weight: 600; font-size: 15px">Đỏ điều</strong><span class="tok">#A04435</span><span style="font-size: 13px; color: #6A655C">Nút chính, link, điểm nhấn</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #344B3D"></div><strong style="font-weight: 600; font-size: 15px">Xanh làng</strong><span class="tok">#344B3D</span><span style="font-size: 13px; color: #6A655C">Section đắm chìm</span></div>
+<div style="display: flex; flex-direction: column; gap: 10px"><div style="height: 120px; background: #282724"></div><strong style="font-weight: 600; font-size: 15px">Mực</strong><span class="tok">#282724</span><span style="font-size: 13px; color: #6A655C">Chữ chính, footer</span></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; margin-top: 24px">
+<div style="display: flex; flex-direction: column">
+<p style="margin: 0 0 8px; font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #6A655C">TOKEN NGỮ NGHĨA · NỀN SÁNG</p>
+<div class="row"><span class="tok">text/primary</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #282724"></span>#282724 trên Cói</span><span style="font-size: 14px; font-weight: 600">12.6 : 1</span></div>
+<div class="row"><span class="tok">text/secondary</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #4A4741"></span>#4A4741 trên Cói</span><span style="font-size: 14px; font-weight: 600">7.8 : 1</span></div>
+<div class="row"><span class="tok">text/muted</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #6A655C"></span>#6A655C trên Cói</span><span style="font-size: 14px; font-weight: 600">4.9 : 1</span></div>
+<div class="row"><span class="tok">text/meta</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #74592C"></span>#74592C trên Cói</span><span style="font-size: 14px; font-weight: 600">5.5 : 1</span></div>
+<div class="row"><span class="tok">text/muted-alt</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #5A554C"></span>#5A554C trên Cói đậm</span><span style="font-size: 14px; font-weight: 600">5.6 : 1</span></div>
+<div class="row"><span class="tok">accent/heritage</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #A04435"></span>#A04435 trên Cói</span><span style="font-size: 14px; font-weight: 600">5.3 : 1</span></div>
+<div class="row"><span class="tok">accent/hover</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #86382B"></span>#86382B trên Cói</span><span style="font-size: 14px; font-weight: 600">6.8 : 1</span></div>
+<div class="row"><span class="tok">on-accent</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #FBF6EE; border: 1px solid #ccc"></span>#FBF6EE trên Đỏ điều</span><span style="font-size: 14px; font-weight: 600">5.8 : 1</span></div>
+<div class="row" style="border-bottom: 1px solid rgba(40,39,36,.16)"><span class="tok">focus/light</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #344B3D"></span>Viền focus 2px trên nền sáng</span><span style="font-size: 14px; font-weight: 600">8.0 : 1</span></div>
+</div>
+<div style="display: flex; flex-direction: column; background: #232A25; color: #F3EBDD; padding: 0 28px 20px">
+<p style="margin: 20px 0 8px; font-size: 12px; letter-spacing: .2em; font-weight: 600; color: #C9C4B6">TOKEN NGỮ NGHĨA · NỀN TỐI</p>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">text/on-dark</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #F3EBDD"></span>#F3EBDD trên Xanh làng</span><span style="font-size: 14px; font-weight: 600">8.0 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">text/on-dark-muted</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #D3CCBD"></span>#D3CCBD trên Xanh làng</span><span style="font-size: 14px; font-weight: 600">5.9 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">accent/on-dark</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #E3CD9C"></span>#E3CD9C trên Xanh làng</span><span style="font-size: 14px; font-weight: 600">6.1 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">bg/deep</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #232A25; border: 1px solid rgba(243,235,221,.3)"></span>#F3EBDD trên #232A25</span><span style="font-size: 14px; font-weight: 600">12.4 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">text/deep-muted</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #C9C4B6"></span>#C9C4B6 trên #232A25</span><span style="font-size: 14px; font-weight: 600">8.4 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">text/footer-muted</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #B9B4A6"></span>#B9B4A6 trên Mực</span><span style="font-size: 14px; font-weight: 600">7.2 : 1</span></div>
+<div class="row" style="border-color: rgba(243,235,221,.18); border-bottom: 1px solid rgba(243,235,221,.18)"><span class="tok" style="color: #C9C4B6">focus/dark</span><span style="display: flex; align-items: center; gap: 10px"><span style="width: 20px; height: 20px; background: #E3CD9C"></span>Viền focus 2px trên nền tối</span><span style="font-size: 14px; font-weight: 600">6.1 : 1</span></div>
+<p style="margin: 20px 0 0; font-size: 14px; line-height: 1.6; color: #C9C4B6">Lỗi dùng Đỏ điều kèm biểu tượng và lời nhắn, không chỉ dựa vào màu. Thành công dùng Xanh làng.</p>
+</div>
+</div>
+</section>
+
+<div class="threads" aria-hidden="true"></div>
+
+<section style="display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; justify-content: space-between; align-items: end">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px">Chữ</h2>
+<p style="margin: 0; font-size: 14px; color: #6A655C">Noto Serif Display · Noto Serif · Be Vietnam Pro — cả ba có bộ dấu tiếng Việt đầy đủ</p>
+</div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; padding: 12px 0; border-bottom: 1px solid #282724; font-size: 12px; letter-spacing: .16em; font-weight: 600; color: #6A655C"><span>TOKEN</span><span>MẪU</span><span>DESKTOP / MOBILE</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">display</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 70px; line-height: 1.12">Từ sợi cói quê nhà</span><span class="tok">70 / 38 · lh 1.12</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">h1 · h2</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 60px; line-height: 1.1">Có một làng Hới...</span><span class="tok">60 / 36 · lh 1.1</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">h3</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 44px; line-height: 1.15">Chuyện về Trạng Chiếu</span><span class="tok">44 / 28 · lh 1.15</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">h4</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 32px; line-height: 1.2">Những ký ức bên khung dệt</span><span class="tok">32 / 24 · lh 1.2</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">h5 · h6</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px; line-height: 1.25">Chiếu cạp điều — Hiện vật 04</span><span class="tok">26–24 / 22–20</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">quote</span><span style="font-family: 'Noto Serif Display', Georgia, serif; font-style: italic; font-size: 36px; line-height: 1.35; color: #A04435">“Trích lời chỉ đăng khi có nguồn ghi âm, ghi chép gốc.”</span><span class="tok">36 / 26 · italic</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">lead · serif</span><span style="font-family: 'Noto Serif', Georgia, serif; font-size: 22px; line-height: 1.7; max-width: 720px">Làng Hới được nhớ bằng nhịp khung dệt và những tấm chiếu trải phơi kín bãi đất đầu làng.</span><span class="tok">22 / 18 · lh 1.7</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">body-lg</span><span style="font-size: 19px; line-height: 1.65; max-width: 680px">Khám phá làng Hới, nơi nghề dệt chiếu lưu giữ ký ức, sự khéo léo và tâm hồn của bao thế hệ.</span><span class="tok">19 / 16 · lh 1.65</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">body</span><span style="font-size: 17px; line-height: 1.65; max-width: 680px">Bài dài giới hạn 68 ký tự mỗi dòng để đọc thoải mái: ằ ẳ ẵ ặ ữ ỡ ợ ừ ử.</span><span class="tok">17 / 16 · lh 1.65</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">small</span><span style="font-size: 14px; line-height: 1.6; color: #4A4741">Vai trò: [cần xác minh] · Chỉ đăng khi có sự đồng ý</span><span class="tok">14 / 14</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">caption</span><span style="font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #4A4741">Chiếu trải phơi trên bãi đất trống. Ảnh: [tác giả].</span><span class="tok">14 / 13 · italic</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">eyebrow · meta</span><span style="font-size: 12px; letter-spacing: .24em; font-weight: 600; color: #A04435">DI SẢN LÀNG NGHỀ VIỆT NAM</span><span class="tok">12 · 600 · +0.24em</span></div>
+<div style="display: grid; grid-template-columns: 180px 1fr 200px; gap: 24px; align-items: baseline"><span class="tok">button · nav</span><span style="font-size: 15px; font-weight: 500">Khám phá làng nghề · <span style="font-size: 14px; font-weight: 400">Nghề dệt chiếu</span></span><span class="tok">15·500 / 14·400</span></div>
+<p style="margin: 8px 0 0; font-size: 14px; color: #6A655C">Quy tắc: tối thiểu 12px; serif Display chỉ từ 20px trở lên; không dùng chữ in hoa cho đoạn dài.</p>
+</section>
+
+<div class="threads" aria-hidden="true"></div>
+
+<section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px">
+<div style="display: flex; flex-direction: column; gap: 20px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px">Khoảng cách</h2>
+<p style="margin: 0; font-size: 15px; color: #4A4741">Bậc 4px. Section desktop cách nhau 96–128, mobile 56–64.</p>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-1 · 4</span><span style="width: 4px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-2 · 8</span><span style="width: 8px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-3 · 12</span><span style="width: 12px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-4 · 16</span><span style="width: 16px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-5 · 20</span><span style="width: 20px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-6 · 24</span><span style="width: 24px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-8 · 32</span><span style="width: 32px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-12 · 48</span><span style="width: 48px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-16 · 64</span><span style="width: 64px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-20 · 80</span><span style="width: 80px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-24 · 96</span><span style="width: 96px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-32 · 128</span><span style="width: 128px; height: 14px; background: #A04435"></span></div>
+<div style="display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: 16px"><span class="tok">space-40 · 160</span><span style="width: 160px; height: 14px; background: #A04435"></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px">Lưới &amp; breakpoint</h2>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 15px; font-weight: 600">Desktop 1440 · 12 cột · lề 80 · rãnh 24</span>
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; padding: 0 16px; background: #E9DECA; height: 48px; align-items: stretch"><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span></div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 15px; font-weight: 600">Tablet 768 · 8 cột · lề 40 · rãnh 20</span>
+<div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding: 0 12px; background: #E9DECA; height: 48px; width: 60%"><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span></div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 15px; font-weight: 600">Mobile 375–390 · 4 cột · lề 20 · rãnh 12</span>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 0 8px; background: #E9DECA; height: 48px; width: 32%"><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span><span style="background: rgba(160,68,53,.25)"></span></div></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #4A4741">Màn 1920: nội dung giữ tối đa 1440, phần dư thành lề hai bên; ảnh tràn viền vẫn kéo hết chiều ngang. Bài đọc dài giới hạn 68 ký tự mỗi dòng ở mọi kích thước.</p>
+<div style="display: flex; flex-direction: column; gap: 0; margin-top: 8px">
+<div class="row" style="grid-template-columns: 120px 1fr"><span class="tok">radius</span><span style="font-size: 15px">0 cho mọi khung; 50% chỉ cho điểm đánh dấu hoa văn</span></div>
+<div class="row" style="grid-template-columns: 120px 1fr"><span class="tok">border</span><span style="font-size: 15px">1px mảnh (mực 16%) · 1px đậm (mực) · 3px nhấn (đỏ điều, vàng rơm)</span></div>
+<div class="row" style="grid-template-columns: 120px 1fr"><span class="tok">shadow</span><span style="font-size: 15px">Không dùng; phân lớp bằng nền và viền</span></div>
+<div class="row" style="grid-template-columns: 120px 1fr; border-bottom: 1px solid rgba(40,39,36,.16)"><span class="tok">focus</span><span style="font-size: 15px">Viền 2px, cách 3–4px; xanh làng trên nền sáng, vàng trên nền tối</span></div>
+</div>
+</div>
+</section>
+
+<div class="threads" aria-hidden="true"></div>
+
+<section style="display: flex; flex-direction: column; gap: 24px">
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 44px">Chuyển động</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #282724"><span class="tok">motion/micro · 150ms</span><span style="font-size: 15px; line-height: 1.6">Hover, focus, đổi màu nút và link</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #282724"><span class="tok">motion/ui · 250ms</span><span style="font-size: 15px; line-height: 1.6">Mở menu, đổi công đoạn, chọn bộ lọc</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #282724"><span class="tok">motion/reveal · 600ms</span><span style="font-size: 15px; line-height: 1.6">Ảnh hiện dần theo nhịp sợi đan khi cuộn tới</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid #282724"><span class="tok">ease/weave</span><span style="font-size: 15px; line-height: 1.6">cubic-bezier(.2, .7, .2, 1) — vào nhanh, dừng êm</span></div>
+</div>
+<p style="margin: 0; padding: 16px 20px; background: #E9DECA; font-size: 15px; line-height: 1.6">Giảm chuyển động (prefers-reduced-motion): bỏ hiệu ứng trượt và hiện dần, nội dung hiện ngay; đổi công đoạn không có hoạt ảnh. Không dùng parallax mạnh hay khoá cuộn trang.</p>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4280}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Thư viện — Mobile 390</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;1,400&amp;family=Noto+Serif:ital,wght@0,400;1,400&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#E3CD9C}
+a:focus-visible,button:focus-visible{outline:2px solid #E3CD9C;outline-offset:3px}
+.rail{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 20px;margin:0 -20px}
+.rail::-webkit-scrollbar{display:none}
+.pill{all:unset;box-sizing:border-box;flex:0 0 auto;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;white-space:nowrap;font:400 14px 'Be Vietnam Pro',system-ui,sans-serif;cursor:pointer}
+.tile{all:unset;box-sizing:border-box;position:relative;display:block;cursor:pointer;overflow:hidden}
+.lb-btn{all:unset;box-sizing:border-box;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(243,235,221,.35)}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1740px; box-sizing: border-box; background: #232A25; color: #F3EBDD; font-family: 'Be Vietnam Pro', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 20px; border-bottom: 1px solid rgba(243,235,221,.16)">
+<a href="HomeMobile.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 18px; letter-spacing: .28em; color: #F3EBDD; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center">CHIẾU HỚI</a>
+<a href="MenuMobile.dc.html" aria-label="Mở menu" style="width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="16" viewBox="0 0 24 16" fill="none" stroke="#F3EBDD" stroke-width="1.5"><path d="M0 1h24M0 8h24M6 15h18"></path></svg></a>
+</header>
+
+<section style="padding: 28px 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 12px; letter-spacing: .22em; font-weight: 600; color: #E3CD9C">06 — THƯ VIỆN</p>
+<h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 38px; line-height: 1.15">Ký ức qua<br>từng khung hình.</h1>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #D3CCBD">Mỗi tấm ảnh có chỗ cho thời gian, người chụp, nguồn và quyền dùng.</p>
+</section>
+
+<section style="padding: 0 20px 48px; display: flex; flex-direction: column; gap: 16px">
+<div class="rail" role="group" aria-label="Lọc theo nhóm">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="7">
+<button class="pill" type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+<p role="status" style="margin: 0; font-size: 13px; color: #C9C4B6">{{countLabel}}</p>
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 160px; grid-auto-flow: dense; gap: 8px">
+<sc-for list="{{shown}}" as="a" hint-placeholder-count="14">
+<button class="tile" type="button" onClick="{{a.open}}" aria-label="{{a.aria}}" style="{{a.span}}"><img src="{{a.img}}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block"><span style="position: absolute; left: 6px; bottom: 6px; background: rgba(35,42,37,.88); padding: 4px 8px; font-size: 12px">{{a.code}}</span></button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px dashed rgba(243,235,221,.4); padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 24px">Chưa có tư liệu trong nhóm này</span>
+<span style="font-size: 14px; line-height: 1.6; color: #D3CCBD">Nếu gia đình bạn còn giữ ảnh cũ, hãy góp cùng làng.</span>
+<a href="ConnectMobile.dc.html" style="font-size: 15px; font-weight: 500; min-height: 44px; display: inline-flex; align-items: center">Góp tư liệu →</a>
+</div>
+</sc-if>
+</section>
+
+<sc-if value="{{lbOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-label="Xem ảnh" style="position: absolute; left: 0; right: 0; top: 0; min-height: 844px; background: #101411; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 8px 20px">
+<span style="font-size: 14px; color: #C9C4B6">{{lb.pos}}</span>
+<button class="lb-btn" type="button" onClick="{{close}}" aria-label="Đóng" style="border: 0"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#F3EBDD" stroke-width="1.6"><path d="M2 2l14 14M16 2L2 16"></path></svg></button>
+</div>
+<img src="{{lb.img}}" alt="{{lb.alt}}" style="width: 100%; height: 300px; object-fit: contain; display: block; background: #101411">
+<div style="display: flex; justify-content: space-between; padding: 12px 20px">
+<button class="lb-btn" type="button" onClick="{{prev}}" aria-label="Ảnh trước"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#F3EBDD" stroke-width="1.6"><path d="M12 3L6 9l6 6"></path></svg></button>
+<span style="font-size: 13px; color: #C9C4B6; align-self: center">Vuốt ngang để chuyển ảnh</span>
+<button class="lb-btn" type="button" onClick="{{next}}" aria-label="Ảnh tiếp"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#F3EBDD" stroke-width="1.6"><path d="M6 3l6 6-6 6"></path></svg></button>
+</div>
+<div style="padding: 16px 20px 32px; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid rgba(243,235,221,.18)">
+<span style="font-size: 12px; letter-spacing: .18em; font-weight: 600; color: #E3CD9C">{{lb.code}} · {{lb.catUpper}}</span>
+<h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-weight: 400; font-size: 26px; line-height: 1.2">{{lb.t}}</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #D3CCBD">{{lb.d}}</p>
+<dl style="margin: 0; display: grid; grid-template-columns: 100px 1fr; row-gap: 8px; font-size: 14px">
+<dt style="color: #C9C4B6">Thời gian</dt><dd style="margin: 0">[cần xác minh]</dd>
+<dt style="color: #C9C4B6">Người chụp</dt><dd style="margin: 0">[cần xác minh]</dd>
+<dt style="color: #C9C4B6">Quyền dùng</dt><dd style="margin: 0">Chưa xin phép</dd>
+</dl>
+</div>
+</div>
+</sc-if>
+
+<footer style="margin-top: auto; background: #161B17; color: #F3EBDD; padding: 36px 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 20px; letter-spacing: .28em">CHIẾU HỚI</p>
+<p style="margin: 0; font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 14px; color: #E3CD9C">Nơi những sợi cói dệt nên chuyện làng.</p>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1740}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cat: 'all', open: -1 };
+  }
+  renderVals() {
+    var B = '../reference-images/';
+    var data = [
+      ['hc9.webp', 'Chiếu phơi bên ao làng', 'Làng quê', 'Chiếu hoa văn đỏ phơi dọc bờ ao giữa làng.'],
+      ['kn14.webp', 'In hoa văn bằng khuôn', 'Nghề dệt', 'Người thợ dùng khuôn in hoa văn đỏ lên mặt chiếu.'],
+      ['nkc5.webp', 'Dệt chiếu trên khung', 'Nghề dệt', 'Hai người cùng làm trên một khung dệt.'],
+      ['nkc10.webp', 'Bên khung dệt', 'Con người', 'Chưa có sự đồng ý của người trong ảnh.'],
+      ['hc8.webp', 'Chiếu phơi trên bãi cỏ', 'Làng quê', 'Chiếu trải phơi kín bãi đất.'],
+      ['nkc13.webp', 'Khung dệt', 'Nghề dệt', 'Hàng răng gỗ của khung dệt với sợi căng.'],
+      ['kn8.webp', 'Chiếu trải trước xưởng', 'Sản phẩm', 'Tấm chiếu hoa văn đỏ trải trước cửa xưởng.'],
+      ['nkc8.webp', 'Sợi cói', 'Nghề dệt', 'Một túm sợi cói trên mặt chiếu.'],
+      ['kn11.webp', 'Gấp chiếu', 'Con người', 'Người đàn ông gấp chiếu viền đỏ.'],
+      ['kn3.webp', 'Sạp chiếu', 'Sản phẩm', 'Cuộn chiếu hoa văn đỏ dựng ở sạp.']
+    ];
+    var spans = ['grid-column:span 2', '', 'grid-row:span 2', '', '', 'grid-column:span 2', '', 'grid-row:span 2', '', ''];
+    var cats = ['Tất cả', 'Làng quê', 'Nghề dệt', 'Con người', 'Sản phẩm', 'Ký ức', 'Tư liệu lịch sử'];
+    var self = this;
+    var st = this.state;
+    var filtered = data.map(function (a, k) { return { img: B + a[0], t: a[1], cat: a[2], d: a[3], code: 'TL · ' + ('00' + (k + 1)).slice(-3) }; }).filter(function (a) { return st.cat === 'all' || a.cat === st.cat; });
+    var n = filtered.length;
+    var o = st.open;
+    var lb = o >= 0 && o < n ? filtered[o] : null;
+    var go = function (d) { self.setState({ open: (o + d + n) % n }); };
+    return {
+      cats: cats.map(function (c, k) { var key = k === 0 ? 'all' : c; var on = key === st.cat; return { label: c, pressed: on ? 'true' : 'false', style: on ? 'background:#F3EBDD;color:#232A25;font-weight:600' : 'border:1px solid rgba(243,235,221,.4);color:#F3EBDD', pick: function () { self.setState({ cat: key, open: -1 }); } }; }),
+      shown: filtered.map(function (a, i) { return { img: a.img, code: a.code, aria: 'Mở ảnh: ' + a.t, span: spans[i % spans.length], open: function () { self.setState({ open: i }); } }; }),
+      hasItems: n > 0, empty: n === 0,
+      countLabel: n + ' tư liệu',
+      lbOpen: !!lb,
+      lb: lb ? { img: lb.img, alt: lb.t + '. ' + lb.d, t: lb.t, d: lb.d, code: lb.code, catUpper: lb.cat.toUpperCase(), pos: (o + 1) + ' / ' + n } : { img: '', alt: '', t: '', d: '', code: '', catUpper: '', pos: '' },
+      close: function () { self.setState({ open: -1 }); },
+      prev: function () { go(-1); },
+      next: function () { go(1); }
+    };
+  }
+}
+</script>
+</body>
+</html>
