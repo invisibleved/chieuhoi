@@ -72,7 +72,7 @@ tests/e2e/styleguide.e2e.spec.ts
 
 **Interfaces:**
 - Produces:
-  - `Button(props: { variant?: 'primary' | 'secondary' | 'outline-dark'; href?: string; icon?: 'play'; disabled?: boolean; type?: 'button' | 'submit'; onClick?: () => void; children: ReactNode })`. Có `href` thì render `next/link`, không có thì render `<button>` (mặc định `type="button"`). `disabled` chỉ áp cho `<button>`.
+  - `Button(props: { variant?: 'primary' | 'secondary' | 'outline-dark'; href?: string; icon?: 'play'; disabled?: boolean; type?: 'button' | 'submit'; onClick?: () => void; className?: string; children: ReactNode })`. `className` được nối sau class mặc định. Nó dùng để `/styleguide` vẽ tĩnh các trạng thái hover, focus, đang nhấn. LinkArrow cũng nhận `className` theo cách tương tự. Có `href` thì render `next/link`, không có thì render `<button>` (mặc định `type="button"`). `disabled` chỉ áp cho `<button>`.
   - `LinkArrow(props: { href: string; tone?: 'light' | 'dark'; children: ReactNode })`. Mũi tên ` →` nằm trong component, `children` không chứa mũi tên.
   - `SectionHeading(props: { eyebrow?: string; title: ReactNode; note?: ReactNode; as?: 'h2' | 'h3'; id?: string; tone?: 'light' | 'dark' })`
 
@@ -236,7 +236,10 @@ it('sourceNumbers', () => {
 **Interfaces:**
 - Consumes: `ImageView`, `PersonView`, `ProductCardView`.
 - Produces:
-  - `ContentImage(props: { image: ImageView; size?: 'thumb' | 'card' | 'wide' | 'full'; sizes?: string; className?: string; priority?: boolean; objectPosition?: string })`. Lấy `src = image.sizes[size] ?? image.url`, dùng `next/image` với `width`/`height` của ảnh. Có `className` thì đặt `object-cover w-full`. Ở chế độ preview: nếu `previewNotes(image.flags)` khác rỗng thì phủ một `Tag variant="overlay"` ở góc dưới trái ảnh.
+  - `ContentImage(props: { image: ImageView; size?: 'thumb' | 'card' | 'wide' | 'full'; sizes?: string; className?: string; priority?: boolean; objectPosition?: string; unoptimized?: boolean })`. Lấy `src = image.sizes[size] ?? image.url`, dùng `next/image` với `width`/`height` của ảnh. Có `className` thì đặt `object-cover w-full`.
+    - Khi `image.flags.length > 0`, tức ảnh chưa đủ điều kiện công khai và chỉ thấy ở preview, đặt `unoptimized`. Lý do: bộ tối ưu ảnh của Next tự tải file từ phía server mà không mang cookie đăng nhập. Endpoint file của Payload chỉ cho khách tải ảnh đã được phép, nên đi qua bộ tối ưu sẽ bị chặn (403). Với `unoptimized`, trình duyệt của người duyệt tải ảnh trực tiếp kèm cookie admin. Ảnh công khai (`flags` rỗng) vẫn đi qua bộ tối ưu.
+    - Test thêm trong `portrait.test.tsx` (hoặc `content-image.test.tsx`): với ImageView có `flags: ['rights-not-permitted']`, thuộc tính `src` của `<img>` được render là đúng URL gốc, không bắt đầu bằng `/_next/image`. Với `flags: []`, `src` bắt đầu bằng `/_next/image`.
+    - Ghi vào ledger để Phase 7 xử lý: staging bật `PREVIEW_ALL=true` cho khách chưa đăng nhập xem, nhưng endpoint file vẫn chặn ảnh chưa được phép với khách. Phase 7 phải chọn một trong hai cách: cho phép đọc file khi `APP_ENV=staging`, hoặc chỉ cho người đã đăng nhập xem staging. Ở chế độ preview: nếu `previewNotes(image.flags)` khác rỗng thì phủ một `Tag variant="overlay"` ở góc dưới trái ảnh.
   - `PortraitCard(props: { person: PersonView; href: string; size?: 'lg' | 'sm' })`
   - `ProductCardView.typeConfirmed: boolean`
 
@@ -474,12 +477,12 @@ Các test e2e (`tests/e2e/styleguide.e2e.spec.ts`), chạy ở 1440×900 và 390
 - [ ] **Step 2:** Chạy test, kết quả mong đợi: FAIL.
 - [ ] **Step 3: Viết code.**
   - `page.tsx`: `export const dynamic = 'force-dynamic'`. Nếu `!isStyleguideEnabled(process.env.APP_ENV)` thì gọi `notFound()`. `metadata.robots = { index: false, follow: false }`. Bố cục dùng breadcrumb "Trang chủ / Component", rồi tới tiêu đề nguyên văn artboard: eyebrow "HỆ THỐNG THIẾT KẾ · v0.1", h1 "Component" và đoạn mở đầu. Các section theo đúng thứ tự artboard, ngăn bằng `<div class="threads" aria-hidden>`. Mỗi mẫu có nhãn trạng thái (`MẶC ĐỊNH`, `VÔ HIỆU`…) và dòng token `font-mono text-[12px]` y như artboard.
-    - Các trạng thái hover, focus, đang nhấn được vẽ tĩnh bằng class hiển thị trạng thái, giống artboard (ví dụ Button có `className` ép `bg-accent-hover`). Để làm được việc này, Button và LinkArrow nhận thêm prop `className?: string`, chỉ dùng cho styleguide.
+    - Các trạng thái hover, focus, đang nhấn được vẽ tĩnh qua prop `className` của Button và LinkArrow (đã có từ Task 1), giống artboard. Ví dụ: `className="bg-accent-hover"`.
     - Mục "Điều hướng" tái dùng `Breadcrumb` có sẵn. Mẫu header lấy từ ảnh chụp, không cần import `DesktopNav`.
     - Mục "Bộ lọc, tab & phân trang": phần phân trang và "Xem thêm" chưa có component. Hiện `VerifyNote` sm ghi "Phân trang và Xem thêm làm ở Phase 5." **Ruling (Claude):** chưa trang nào cần, theo YAGNI.
     - Không đưa "Thành phần di sản → Bước công đoạn / Điểm hoa văn", "Form góp tư liệu", "Lightbox" vào Phase 2 (chúng thuộc Phase 4–5). Hiện mỗi mục bằng `VerifyNote` sm: "Làm ở Phase 4." hoặc "Làm ở Phase 5."
     - Thêm một mục "Thẻ khi thiếu dữ liệu": `PortraitCard` không tên không ảnh, `StoryCard` "Chủ đề đề xuất", `ProductCard` không ảnh. Mục này để người duyệt xem đúng giao diện của bản public lúc mới dựng.
-  - `fixtures.ts`: view model mẫu lấy nguyên văn từ `Components.dc.html` ("Chuyện về Trạng Chiếu", "Một ngày ở làng Hới", "Chiếu trơn", "Chiếu cạp điều", "TƯ LIỆU · 001", "In hoa văn lên chiếu bằng khuôn"…). Ảnh trỏ `/images/reference/nkc10.webp`, `nkc9.webp`, `hc9.webp`. `width`/`height` lấy từ file thật (đọc bằng `sharp` một lần lúc viết rồi ghi cứng). `flags: []`.
+  - `fixtures.ts`: view model mẫu lấy nguyên văn từ `Components.dc.html` ("Chuyện về Trạng Chiếu", "Một ngày ở làng Hới", "Chiếu trơn", "Chiếu cạp điều", "TƯ LIỆU · 001", "In hoa văn lên chiếu bằng khuôn"…). Ảnh trỏ `/images/reference/nkc10.webp`, `nkc9.webp`, `hc9.webp`. `width`/`height` lấy từ file thật (đọc bằng `sharp` một lần lúc viết rồi ghi cứng). `flags: []`. Thư mục `public/images/reference/` bị gitignore nên không có trên staging. Vì vậy `ContentImage` trong styleguide nhận thêm `unoptimized`, và nếu ảnh không tải được thì trình duyệt chỉ hiện `alt`, trang không lỗi. Ghi chú điều này ngay dưới tiêu đề trang styleguide bằng `VerifyNote` sm: "Ảnh mẫu chỉ có ở máy dev."
   - `Demos.tsx` (`'use client'`) giữ state cho hai demo:
     - FilterChips nền sáng và nền tối, với options `Tất cả`, `Lịch sử`, `Nghề truyền thống`, `Con người`, `Đời sống hôm nay` (nguyên văn StoriesIndex);
     - Tabs với `Dệt thủ công`, `Dệt bằng máy`, `So sánh`. Panel chỉ ghi tên tab, không bịa nội dung.
