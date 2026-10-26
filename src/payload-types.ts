@@ -71,6 +71,11 @@ export interface Config {
     sources: Source;
     'timeline-events': TimelineEvent;
     'archive-assets': ArchiveAsset;
+    'craft-steps': CraftStep;
+    products: Product;
+    stories: Story;
+    people: Person;
+    makers: Maker;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +87,11 @@ export interface Config {
     sources: SourcesSelect<false> | SourcesSelect<true>;
     'timeline-events': TimelineEventsSelect<false> | TimelineEventsSelect<true>;
     'archive-assets': ArchiveAssetsSelect<false> | ArchiveAssetsSelect<true>;
+    'craft-steps': CraftStepsSelect<false> | CraftStepsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    stories: StoriesSelect<false> | StoriesSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
+    makers: MakersSelect<false> | MakersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -261,6 +271,154 @@ export interface ArchiveAsset {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "craft-steps".
+ */
+export interface CraftStep {
+  id: number;
+  workflow: 'draft' | 'in_review' | 'published';
+  n: number;
+  title?: string | null;
+  subtitle?: string | null;
+  body?: string | null;
+  tools?: string | null;
+  image?: (number | null) | ArchiveAsset;
+  shotNeeded?: string | null;
+  focusX?: number | null;
+  focusY?: number | null;
+  verifiedBy?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  workflow: 'draft' | 'in_review' | 'published';
+  slug: string;
+  /**
+   * Ví dụ: HIỆN VẬT 01
+   */
+  code?: string | null;
+  name?: string | null;
+  group?: ('traditional' | 'contemporary') | null;
+  summary?: string | null;
+  images?: (number | ArchiveAsset)[] | null;
+  material?: string | null;
+  technique?: string | null;
+  size?: string | null;
+  care?: string | null;
+  annotations?:
+    | {
+        n?: number | null;
+        title?: string | null;
+        x?: number | null;
+        y?: number | null;
+        body?: string | null;
+        source?: (number | null) | Source;
+        id?: string | null;
+      }[]
+    | null;
+  typeConfirmed?: boolean | null;
+  maker?: (number | null) | Maker;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "makers".
+ */
+export interface Maker {
+  id: number;
+  workflow: 'draft' | 'in_review' | 'published';
+  name?: string | null;
+  contact?: string | null;
+  verified?: boolean | null;
+  publicConsent?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stories".
+ */
+export interface Story {
+  id: number;
+  workflow: 'idea' | 'draft' | 'in_review' | 'published';
+  slug: string;
+  title?: string | null;
+  sapo?: string | null;
+  category?: ('history' | 'village-memory' | 'traditional-craft' | 'people' | 'life-today') | null;
+  cover?: (number | null) | ArchiveAsset;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  editor?: string | null;
+  readingMinutes?: number | null;
+  sources?: (number | Source)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people".
+ */
+export interface Person {
+  id: number;
+  workflow: 'draft' | 'in_review' | 'published';
+  slug: string;
+  name?: string | null;
+  category?: ('artisan' | 'craft-family' | 'craft-keeper' | 'young-generation' | 'village-bound') | null;
+  role?: string | null;
+  note?: string | null;
+  yearsInCraft?: string | null;
+  portrait?: (number | null) | ArchiveAsset;
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  quote?: string | null;
+  quoteSource?: (number | null) | Source;
+  consent?: {
+    name?: boolean | null;
+    photo?: boolean | null;
+    quote?: boolean | null;
+  };
+  reviewedBySubject?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -298,6 +456,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'archive-assets';
         value: number | ArchiveAsset;
+      } | null)
+    | ({
+        relationTo: 'craft-steps';
+        value: number | CraftStep;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'stories';
+        value: number | Story;
+      } | null)
+    | ({
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'makers';
+        value: number | Maker;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -470,6 +648,120 @@ export interface ArchiveAssetsSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "craft-steps_select".
+ */
+export interface CraftStepsSelect<T extends boolean = true> {
+  workflow?: T;
+  n?: T;
+  title?: T;
+  subtitle?: T;
+  body?: T;
+  tools?: T;
+  image?: T;
+  shotNeeded?: T;
+  focusX?: T;
+  focusY?: T;
+  verifiedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  workflow?: T;
+  slug?: T;
+  code?: T;
+  name?: T;
+  group?: T;
+  summary?: T;
+  images?: T;
+  material?: T;
+  technique?: T;
+  size?: T;
+  care?: T;
+  annotations?:
+    | T
+    | {
+        n?: T;
+        title?: T;
+        x?: T;
+        y?: T;
+        body?: T;
+        source?: T;
+        id?: T;
+      };
+  typeConfirmed?: T;
+  maker?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stories_select".
+ */
+export interface StoriesSelect<T extends boolean = true> {
+  workflow?: T;
+  slug?: T;
+  title?: T;
+  sapo?: T;
+  category?: T;
+  cover?: T;
+  body?: T;
+  editor?: T;
+  readingMinutes?: T;
+  sources?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  workflow?: T;
+  slug?: T;
+  name?: T;
+  category?: T;
+  role?: T;
+  note?: T;
+  yearsInCraft?: T;
+  portrait?: T;
+  story?: T;
+  quote?: T;
+  quoteSource?: T;
+  consent?:
+    | T
+    | {
+        name?: T;
+        photo?: T;
+        quote?: T;
+      };
+  reviewedBySubject?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "makers_select".
+ */
+export interface MakersSelect<T extends boolean = true> {
+  workflow?: T;
+  name?: T;
+  contact?: T;
+  verified?: T;
+  publicConsent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

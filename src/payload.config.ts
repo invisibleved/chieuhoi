@@ -7,6 +7,11 @@ import sharp from 'sharp'
 import { vi } from '@payloadcms/translations/languages/vi'
 
 import { ArchiveAssets } from './collections/ArchiveAssets'
+import { CraftSteps } from './collections/CraftSteps'
+import { Makers } from './collections/Makers'
+import { People } from './collections/People'
+import { Products } from './collections/Products'
+import { Stories } from './collections/Stories'
 import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
@@ -21,7 +26,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Sources, TimelineEvents, ArchiveAssets],
+  collections: [Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers],
   i18n: { supportedLanguages: { vi }, fallbackLanguage: 'vi' },
   localization: { locales: [{ code: 'vi', label: 'Tiếng Việt' }], defaultLocale: 'vi' },
   graphQL: { disable: true },
