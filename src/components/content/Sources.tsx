@@ -10,7 +10,7 @@ export function FootnoteRef({ n }: { n: number }) {
   return (
     <a
       href={`#nguon-${n}`}
-      className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:-inset-3 before:content-['']"
+      className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:-inset-x-[18px] before:-inset-y-[13px] before:content-['']"
       aria-label={`Nguồn ${n}`}
     >
       {n}
