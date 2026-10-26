@@ -134,4 +134,75 @@ describe('lib/content', () => {
     await setGlobal('page-intros', { home: { title: 'Trang chủ' }, _status: 'published' }, false)
     expect((await content.getPageIntro('home', 'public')).title).toBe('Trang chủ')
   })
+
+  const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, detail: 0, mode: 'normal', style: '' })
+  const doc = (children: unknown[]) => ({
+    root: { type: 'root', direction: 'ltr', format: '', indent: 0, version: 1, children },
+  })
+
+  // Ghi thẳng DB, bỏ qua cấu hình editor: mô phỏng dữ liệu cũ/độc hại.
+  const rawSet = (collection: string, id: number, field: string, value: unknown) =>
+    payload.db.updateOne({ collection, id, data: { [field]: { vi: value } }, req: { payload, locale: 'vi' } } as never)
+
+  async function leakyBody() {
+    const bad = await asset({ rights: 'unknown', owner: 'CHU-ANH-BI-MAT' })
+    const person = await create('people', { slug: 'draft-p', name: 'TEN-NGUOI-BI-MAT', workflow: 'draft', _status: 'draft' }, true)
+    const maker = await create('makers', { name: 'Thợ', contact: 'LIEN-HE-BI-MAT', workflow: 'draft', _status: 'draft' }, true)
+    const src = await create('sources', { sourceId: 'leak-src', title: 'Nguồn' })
+    return doc([
+      { type: 'paragraph', version: 1, direction: 'ltr', format: '', indent: 0, children: [
+        txt('Chữ giữ lại'),
+        { type: 'inlineBlock', version: 1, fields: { blockType: 'cite', source: src.id } },
+        { type: 'link', version: 1, fields: { linkType: 'internal', doc: { relationTo: 'makers', value: maker.id } }, children: [txt('liên kết nội bộ')] },
+      ] },
+      { type: 'upload', version: 1, relationTo: 'archive-assets', value: bad.id, fields: null },
+      { type: 'relationship', version: 1, relationTo: 'people', value: person.id },
+    ])
+  }
+  const leaks = ['CHU-ANH-BI-MAT', 'TEN-NGUOI-BI-MAT', 'LIEN-HE-BI-MAT', 'tiny', 'archive-assets/file']
+
+  it('story body không nhúng upload/relationship/link nội bộ', async () => {
+    const st = await create('stories', pub({ slug: 'leak', title: 'L', workflow: 'published' }))
+    await rawSet('stories', st.id, 'body', await leakyBody())
+    const json = JSON.stringify((await content.getStory('leak', 'public'))?.body)
+    for (const l of leaks) expect(json).not.toContain(l)
+    expect(json).toContain('"sourceId":"leak-src"')
+    expect(json).toContain('Chữ giữ lại')
+    expect(json).toContain('liên kết nội bộ')
+  })
+
+  it('person story không nhúng document nội bộ', async () => {
+    const pp = await create('people', pub({
+      slug: 'pl', name: 'Bà A', workflow: 'published', consent: { name: true },
+    }))
+    await rawSet('people', pp.id, 'story', await leakyBody())
+    const json = JSON.stringify((await content.getPerson('pl', 'public'))?.story)
+    for (const l of leaks) expect(json).not.toContain(l)
+    expect(json).toContain('Chữ giữ lại')
+  })
+
+  it('người chưa đồng ý tên: ẩn tên và phần mô tả', async () => {
+    await create('people', pub({
+      slug: 'nc', name: 'Ông B', workflow: 'published', note: 'Ghi chú', yearsInCraft: '40 năm',
+      consent: { name: false }, story: doc([{ type: 'paragraph', version: 1, children: [txt('x')] }]),
+    }))
+    const p = await content.getPerson('nc', 'public')
+    expect(p?.name).toBeNull()
+    expect(p?.note).toBeNull()
+    expect(p?.yearsInCraft).toBeNull()
+    expect(p?.story).toBeNull()
+  })
+
+  it('craft step: shotNeeded hiện công khai', async () => {
+    await create('craft-steps', pub({ n: 1, title: 'Bước', workflow: 'published', shotNeeded: 'Cận cảnh khung dệt' }))
+    expect((await content.getCraftSteps('public'))[0].shotNeeded).toBe('Cận cảnh khung dệt')
+  })
+
+  it('nguồn: trường chưa xác minh bị ẩn ở public', async () => {
+    await create('sources', { sourceId: 's-x', title: 'Báo', publisher: '[cần xác minh]', url: '' })
+    const [s] = await content.getSources()
+    expect(s.publisher).toBeNull()
+    expect(s.url).toBeNull()
+    expect(s.title).toBe('Báo')
+  })
 })

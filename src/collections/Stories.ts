@@ -1,6 +1,7 @@
-import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
+import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
+import { restrictedEditor } from './restrictedEditor'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 export const Stories: CollectionConfig = {
@@ -31,21 +32,18 @@ export const Stories: CollectionConfig = {
       type: 'richText',
       label: 'Nội dung',
       localized: true,
-      editor: lexicalEditor({
-        features: ({ defaultFeatures }) => [
-          ...defaultFeatures,
-          BlocksFeature({
-            inlineBlocks: [
-              {
-                slug: 'cite',
-                fields: [
-                  { name: 'source', type: 'relationship', relationTo: 'sources', required: true },
-                ],
-              },
-            ],
-          }),
-        ],
-      }),
+      editor: restrictedEditor([
+        BlocksFeature({
+          inlineBlocks: [
+            {
+              slug: 'cite',
+              fields: [
+                { name: 'source', type: 'relationship', relationTo: 'sources', required: true },
+              ],
+            },
+          ],
+        }),
+      ]),
     },
     { name: 'editor', type: 'text', label: 'Biên tập viên' },
     { name: 'readingMinutes', type: 'number', label: 'Số phút đọc' },

@@ -3,6 +3,8 @@ import type { CollectionConfig } from 'payload'
 import { reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
+import { restrictedEditor } from './restrictedEditor'
+
 const control = { create: reviewerOnlyField, update: reviewerOnlyField }
 
 export const People: CollectionConfig = {
@@ -30,7 +32,7 @@ export const People: CollectionConfig = {
     { name: 'note', type: 'text', label: 'Ghi chú', localized: true },
     { name: 'yearsInCraft', type: 'text', label: 'Số năm theo nghề' },
     { name: 'portrait', type: 'relationship', relationTo: 'archive-assets', label: 'Ảnh chân dung' },
-    { name: 'story', type: 'richText', label: 'Câu chuyện', localized: true },
+    { name: 'story', type: 'richText', label: 'Câu chuyện', localized: true, editor: restrictedEditor() },
     { name: 'quote', type: 'textarea', label: 'Trích dẫn', localized: true },
     { name: 'quoteSource', type: 'relationship', relationTo: 'sources', label: 'Nguồn trích dẫn' },
     {

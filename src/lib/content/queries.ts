@@ -17,9 +17,10 @@ const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v
 const sourcesOf = (v: unknown): Source[] =>
   Array.isArray(v) ? v.map(sourceOf).filter((s): s is Source => s !== null) : []
 
-function toSourceView(s: Source): SourceView {
+function toSourceView(s: Source, mode: Mode = 'public'): SourceView {
   return {
-    id: s.sourceId, publisher: s.publisher ?? null, title: s.title, url: s.url ?? null, date: s.date ?? null,
+    id: s.sourceId, publisher: showText(s.publisher, mode), title: s.title,
+    url: showText(s.url, mode), date: showText(s.date, mode),
   }
 }
 
@@ -50,15 +51,15 @@ export function createContent(payload: Payload) {
   }
 
   async function findBySlug(collection: CollectionSlug, slug: string, mode: Mode) {
-    const docs = await findAll(collection, mode, { where: { slug: { equals: slug } }, depth: 2 })
+    const docs = await findAll(collection, mode, { where: { slug: { equals: slug } }, depth: 1 })
     return (docs[0] as never) ?? null
   }
 
-  async function allSources(): Promise<SourceView[]> {
+  async function allSources(mode: Mode = 'public'): Promise<SourceView[]> {
     const res = await payload.find({
       collection: 'sources', overrideAccess: true, pagination: false, depth: 0, sort: 'sourceId',
     })
-    return res.docs.map(toSourceView)
+    return res.docs.map((s) => toSourceView(s, mode))
   }
 
   async function sourceMap() {
@@ -89,8 +90,8 @@ export function createContent(payload: Payload) {
       body: showText(d.body, mode),
       tools: showText(d.tools, mode),
       image: toImageView(d.image, mode),
-      // Ghi chú nội bộ cho người chụp: không bao giờ ra công khai.
-      shotNeeded: mode === 'preview' ? (d.shotNeeded ?? null) : null,
+      // Hiện công khai dưới nhãn "ẢNH CẦN CHỤP" theo thiết kế (R15).
+      shotNeeded: showText(d.shotNeeded, mode),
       focus: [d.focusX ?? 50, d.focusY ?? 50],
       flags: flagsOf(d, mode, [d.title, d.body]),
     }))
@@ -171,7 +172,7 @@ export function createContent(payload: Payload) {
       ...storyCard(d, mode),
       body: mode === 'public' && !published ? null : sanitizeRich(d.body, await sourceMap()),
       editor: showText(d.editor, mode),
-      sources: sourcesOf(d.sources).map(toSourceView),
+      sources: sourcesOf(d.sources).map((s) => toSourceView(s, mode)),
     }
   }
 
