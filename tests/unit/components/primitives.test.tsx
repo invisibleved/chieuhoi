@@ -1,11 +1,10 @@
-import { cleanup, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 import { Button } from '@/components/ui/Button'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 
 describe('primitives', () => {
-  afterEach(cleanup)
   it('Button có href render thẻ a, không có href render button type=button', () => {
     render(
       <>

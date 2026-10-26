@@ -45,6 +45,8 @@
 .threads { height: 12px; background-image: repeating-linear-gradient(0deg, var(--decor-straw) 0 1px, transparent 1px 4px); }
 /* Hoạ tiết caro (chỉ dùng cho trạng thái đang chọn / điểm nhấn nhỏ) */
 .check { background: repeating-conic-gradient(var(--accent) 0 25%, var(--decor-straw) 0 50%) 0 0 / 6px 6px; }
+/* Hoạ tiết sợi cói cho ô ảnh cần chụp (giá trị chép từ ProductsIndex.dc.html) */
+.weave { background-color: #D7C59E; background-image: repeating-linear-gradient(90deg, rgba(40,39,36,.10) 0 2px, transparent 2px 9px), repeating-linear-gradient(0deg, rgba(243,235,221,.35) 0 3px, transparent 3px 7px); }
 
 /*
  * Ánh xạ token sang Tailwind. Màu trỏ về biến :root bên trên bằng var(),

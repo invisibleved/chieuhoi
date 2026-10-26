@@ -2,6 +2,11 @@
 
 // Load .env files
 import 'dotenv/config'
+import { cleanup } from '@testing-library/react'
+import { afterEach } from 'vitest'
+
+// Dọn DOM sau mỗi test (RTL không tự dọn vì vitest không bật globals).
+afterEach(cleanup)
 
 // Thư mục media riêng cho test, đặt trước khi bất kỳ module nào nạp payload.config.
 import { mkdtempSync, rmSync } from 'fs'
