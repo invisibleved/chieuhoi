@@ -60,9 +60,9 @@ export function ArchiveTeaser({ items }: ArchiveTeaserProps) {
           const code = item.image.code as string
           const cat = item.category ? LABELS[item.category] : null
           return (
-            <Link key={code} href={`/thu-vien?anh=${code}`} className={`relative overflow-hidden ${SLOTS[i]}`}>
+            <Link key={code} href={`/thu-vien?anh=${code}`} className={`relative overflow-hidden [&>span]:h-full ${SLOTS[i]}`}>
               <ContentImage image={item.image} size="card" sizes="(min-width: 768px) 40vw, 100vw" className="h-full" />
-              <span className="absolute bottom-2 left-2 bg-[rgba(35,42,37,.88)] px-2.5 py-1.5 text-[12px] tracking-[.1em] md:bottom-3 md:left-3 md:tracking-[.12em]">
+              <span className="absolute top-2 left-2 bg-[rgba(35,42,37,.88)] px-2.5 py-1.5 text-[12px] tracking-[.1em] md:top-3 md:left-3 md:tracking-[.12em]">
                 TL · {docNumber(code)}
                 {cat ? <span className="hidden md:inline"> · {cat.toLocaleUpperCase('vi')}</span> : null}
               </span>

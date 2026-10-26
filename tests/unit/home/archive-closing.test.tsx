@@ -53,6 +53,20 @@ describe('ArchiveTeaser', () => {
   })
 })
 
+describe('ArchiveTeaser ảnh preview', () => {
+  it('ảnh có flag: wrapper lấp đầy ô, nhãn TL ở góc trên, ghi chú ở góc dưới', () => {
+    const flagged = item(1, 'village')
+    flagged.image.flags = ['rights-not-permitted']
+    render(<ArchiveTeaser items={[flagged]} />)
+    const link = screen.getByRole('link', { name: /TL · / })
+    expect(link.className).toContain('[&>span]:h-full')
+    const label = screen.getByText(/^TL · 001/)
+    expect(label.className).toContain('top-')
+    expect(label.className).not.toContain('bottom-')
+    expect(screen.getByText('Ảnh chưa được phép đăng').parentElement!.className).toContain('bottom-3')
+  })
+})
+
 describe('Closing', () => {
   it('tiêu đề hai dòng, nút Góp một ký ức → /ket-noi', () => {
     render(<Closing />)
