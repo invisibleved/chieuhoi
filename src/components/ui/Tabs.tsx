@@ -52,6 +52,8 @@ export function Tabs<K extends string>({
     tabs.findIndex((t) => t.key === value),
   )
 
+  if (tabs.length === 0) return null
+
   function select(i: number) {
     onChange(tabs[i].key)
     refs.current[i]?.focus()

@@ -49,3 +49,13 @@ describe('labels', () => {
     expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Ảnh cần chụp: Chiếu trơn chụp phẳng')
   })
 })
+
+describe('ShotNeeded không mô tả', () => {
+  it('light và dark: chỉ ẢNH CẦN CHỤP, aria-label Ảnh cần chụp', () => {
+    const { rerender } = render(<ShotNeeded />)
+    expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Ảnh cần chụp')
+    expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()
+    rerender(<ShotNeeded tone="dark" />)
+    expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Ảnh cần chụp')
+  })
+})

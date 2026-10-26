@@ -30,3 +30,10 @@ describe('Sources', () => {
     expect(sourceNumbers(S).get('nourl')).toBe(2)
   })
 })
+
+describe('SourceList rỗng', () => {
+  it('không render gì khi không có nguồn', () => {
+    const { container } = render(<SourceList sources={[]} />)
+    expect(container.innerHTML).toBe('')
+  })
+})

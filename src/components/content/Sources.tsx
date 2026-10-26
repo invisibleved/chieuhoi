@@ -10,10 +10,10 @@ export function FootnoteRef({ n }: { n: number }) {
   return (
     <a
       href={`#nguon-${n}`}
-      className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:-inset-x-[18px] before:-inset-y-[13px] before:content-['']"
+      className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:left-1/2 before:top-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
       aria-label={`Nguồn ${n}`}
     >
-      {n}
+      <span className="relative z-[1]">{n}</span>
     </a>
   )
 }
@@ -28,6 +28,7 @@ export function SourceList({
   headingId?: string
   title?: string
 }) {
+  if (sources.length === 0) return null
   return (
     <section
       aria-labelledby={headingId}

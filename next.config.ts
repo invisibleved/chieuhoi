@@ -12,7 +12,8 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/archive-assets/file/**',
       },
-      { pathname: '/images/reference/**' },
+      // Ảnh tham khảo chỉ dùng cho dev/preview, không vào bản production.
+      ...(process.env.APP_ENV !== 'production' ? [{ pathname: '/images/reference/**' }] : []),
     ],
   },
   webpack: (webpackConfig) => {

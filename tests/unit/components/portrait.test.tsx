@@ -48,3 +48,12 @@ describe('ContentImage', () => {
     expect(screen.getByAltText('Ảnh thử').getAttribute('src')).toBe('/api/archive-assets/file/c.webp')
   })
 })
+
+describe('PortraitCard ghi chú ảnh', () => {
+  it('không lặp nhãn đã hiện trên ảnh chân dung', () => {
+    const portrait = img(['rights-not-permitted'])
+    render(<PortraitCard person={{ ...base, portrait, flags: ['rights-not-permitted', 'unverified'] }} href="#" />)
+    expect(screen.getAllByText('Ảnh chưa được phép đăng')).toHaveLength(1)
+    expect(screen.getByText('[cần xác minh]')).toBeTruthy()
+  })
+})

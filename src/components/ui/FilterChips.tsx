@@ -34,7 +34,7 @@ export function FilterChips<K extends string>({
     <div
       role="group"
       aria-label={label}
-      className="flex max-w-full flex-nowrap gap-2 overflow-x-auto md:flex-wrap md:overflow-x-visible"
+      className="-m-[5px] flex max-w-full flex-nowrap gap-2 overflow-x-auto p-[5px] md:flex-wrap md:overflow-x-visible"
     >
       {options.map((o) => {
         const on = o.key === value

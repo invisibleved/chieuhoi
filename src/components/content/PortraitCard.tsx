@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { PersonView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
-import { previewNotes } from './labels'
+import { PreviewNotes } from './PreviewNotes'
 import { Tag } from './Tag'
 
 type PortraitCardProps = { person: PersonView; href: string; size?: 'lg' | 'sm' }
@@ -10,7 +10,7 @@ type PortraitCardProps = { person: PersonView; href: string; size?: 'lg' | 'sm' 
 export function PortraitCard({ person, href, size = 'lg' }: PortraitCardProps) {
   const lg = size === 'lg'
   const h = lg ? 'h-[380px]' : 'h-[220px]'
-  const notes = previewNotes(person.flags)
+  const cardFlags = person.flags.filter((f) => !person.portrait?.flags.includes(f))
   return (
     <Link href={href} className="group flex flex-col gap-3 text-text-primary no-underline">
       <span className="relative block">
@@ -36,13 +36,7 @@ export function PortraitCard({ person, href, size = 'lg' }: PortraitCardProps) {
         <span className={`font-display ${lg ? 'text-[24px] leading-[1.2]' : 'text-[19px] leading-[1.25]'}`}>{person.name}</span>
       )}
       {lg && person.role && <span className="text-[14px] leading-[1.55] text-text-secondary">{person.role}</span>}
-      {notes.length > 0 && (
-        <span className="flex flex-wrap gap-2">
-          {notes.map((n) => (
-            <Tag key={n} variant="dashed">{n}</Tag>
-          ))}
-        </span>
-      )}
+      <PreviewNotes flags={cardFlags} />
       {lg && (
         <span className="text-[15px] font-medium text-accent underline-offset-4 group-hover:underline">Xem chân dung →</span>
       )}

@@ -53,3 +53,12 @@ describe('ExhibitCard', () => {
     expect(screen.getByRole('link').getAttribute('href')).toBe('/x')
   })
 })
+
+describe('ProductCard không tên', () => {
+  it('không bịa tên: chỉ ẢNH CẦN CHỤP, aria-label ngắn', () => {
+    const { container } = render(<ProductCard product={{ ...product, name: null }} href="#" />)
+    expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()
+    expect(container.textContent).not.toContain('Sản phẩm')
+    expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Ảnh cần chụp')
+  })
+})

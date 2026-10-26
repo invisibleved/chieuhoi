@@ -24,7 +24,7 @@ export function LinkArrow({ href, tone = 'light', className, children }: LinkArr
     .join(' ')
   return (
     <Link href={href} className={cls}>
-      {children} →
+      {children} <span aria-hidden="true">→</span>
     </Link>
   )
 }

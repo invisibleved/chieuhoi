@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import type { StoryCardView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
-import { previewNotes, storyStatus } from './labels'
+import { storyStatus } from './labels'
+import { PreviewNotes } from './PreviewNotes'
 import { Tag } from './Tag'
 
 type StoryCardProps = { story: StoryCardView; href: string; variant: 'featured' | 'grid' | 'compact' }
@@ -9,7 +10,6 @@ type StoryCardProps = { story: StoryCardView; href: string; variant: 'featured' 
 // Thẻ bài viết. Không có ảnh bìa thì bỏ hẳn khối ảnh.
 export function StoryCard({ story, href, variant }: StoryCardProps) {
   const status = storyStatus(story.flags)
-  const notes = previewNotes(story.flags)
   const cta = story.hasDetail ? 'Đọc bài →' : 'Xem đề cương →'
   const compact = variant === 'compact'
   const eyebrowText = [
@@ -41,13 +41,7 @@ export function StoryCard({ story, href, variant }: StoryCardProps) {
         <span className={`font-display transition-colors duration-[var(--dur-micro)] ease-[var(--ease-weave)] group-hover:text-accent ${titleCls}`}>{story.title}</span>
       )}
       {!compact && story.sapo && <span className={`font-serif text-text-secondary ${sapoCls}`}>{story.sapo}</span>}
-      {notes.length > 0 && (
-        <span className="flex flex-wrap gap-2">
-          {notes.map((n) => (
-            <Tag key={n} variant="dashed">{n}</Tag>
-          ))}
-        </span>
-      )}
+      <PreviewNotes flags={story.flags} />
       <span className={`font-medium text-accent underline-offset-4 group-hover:underline ${compact ? 'text-[14px]' : 'text-[15px]'}`}>{cta}</span>
     </span>
   )

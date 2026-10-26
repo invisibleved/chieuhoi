@@ -62,3 +62,10 @@ describe('interactive', () => {
     expect(document.activeElement?.textContent).toBe('Dệt thủ công')
   })
 })
+
+describe('Tabs rỗng', () => {
+  it('không throw, không render', () => {
+    const { container } = render(<Tabs label="x" tabs={[]} value={'a' as never} onChange={() => {}} />)
+    expect(container.innerHTML).toBe('')
+  })
+})

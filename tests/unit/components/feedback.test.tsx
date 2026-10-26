@@ -11,7 +11,7 @@ describe('feedback', () => {
         action={{ href: '/ket-noi', label: 'Góp một ký ức' }}
       />,
     )
-    expect(screen.getByRole('link', { name: 'Góp một ký ức →' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'Góp một ký ức' }).getAttribute('href')).toBe(
       '/ket-noi',
     )
   })
@@ -36,7 +36,7 @@ describe('feedback', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
     unmount()
     render(<ErrorState title="t" body="b" retry={{ label: 'Thử tải lại', href: '/x' }} />)
-    expect(screen.getByRole('link', { name: 'Thử tải lại →' }).getAttribute('href')).toBe('/x')
+    expect(screen.getByRole('link', { name: 'Thử tải lại' }).getAttribute('href')).toBe('/x')
   })
 
   it('Skeleton ẩn khỏi trình đọc màn hình và dùng motion-safe', () => {

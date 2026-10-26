@@ -79,7 +79,37 @@ test.describe('styleguide 390 mobile', () => {
       return { before: [b.width, b.height], link: [r.width, r.height] }
     })
     const [w, h] = m.before.map(parseFloat)
-    expect(w).toBeGreaterThan(0)
-    expect(h).toBeGreaterThan(0)
+    console.log(`fn ::before = ${w}x${h}`)
+    expect(w).toBeGreaterThanOrEqual(44)
+    expect(h).toBeGreaterThanOrEqual(44)
+  })
+
+  test('chú thích liền kề: bấm đúng glyph mở đúng nguồn', async ({ page }) => {
+    await page.goto('/styleguide')
+    const fns = page.locator('a.fn')
+    await fns.first().scrollIntoViewIfNeeded()
+    const hits = await page.evaluate(() => {
+      const links = [...document.querySelectorAll<HTMLAnchorElement>('a.fn')].slice(0, 2)
+      return links.map((a) => {
+        const r = (a.firstElementChild ?? a).getBoundingClientRect()
+        const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+        return { href: a.getAttribute('href'), hit: el?.closest('a')?.getAttribute('href') ?? null }
+      })
+    })
+    console.log(`elementFromPoint: ${JSON.stringify(hits)}`)
+    for (const h of hits) expect(h.hit).toBe(h.href)
+  })
+
+  test('FilterChips: vòng focus không bị dải cuộn cắt', async ({ page }) => {
+    await page.goto('/styleguide')
+    const chip = page.getByRole('group', { name: 'Lọc câu chuyện (nền sáng)' }).getByRole('button').first()
+    await chip.scrollIntoViewIfNeeded()
+    await chip.focus()
+    const m = await chip.evaluate((el) => {
+      const strip = el.parentElement!.getBoundingClientRect()
+      const c = el.getBoundingClientRect()
+      return { l: c.left - 5 - strip.left, t: c.top - 5 - strip.top, r: strip.right - (c.right + 5), b: strip.bottom - (c.bottom + 5) }
+    })
+    for (const v of Object.values(m)) expect(v).toBeGreaterThanOrEqual(-0.01)
   })
 })
