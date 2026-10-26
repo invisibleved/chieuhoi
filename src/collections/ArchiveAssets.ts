@@ -1,5 +1,5 @@
 import path from 'path'
-import type { Access, CollectionConfig, Where } from 'payload'
+import { ValidationError, type Access, type CollectionConfig, type Where } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { isLoggedIn, isReviewer, reviewerOnlyField } from '@/access/roles'
@@ -112,7 +112,13 @@ export const ArchiveAssets: CollectionConfig = {
         if (merged.inArchive) {
           const missing = ['code', 'category', 'era'].filter((f) => !merged[f])
           if (missing.length) {
-            throw new Error(`Ảnh thuộc kho tư liệu cần có: ${missing.join(', ')}`)
+            throw new ValidationError({
+              collection: 'archive-assets',
+              errors: missing.map((path) => ({
+                message: 'Bắt buộc khi ảnh thuộc kho tư liệu.',
+                path,
+              })),
+            })
           }
         }
         return data

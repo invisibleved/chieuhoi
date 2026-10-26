@@ -1,9 +1,10 @@
 // @vitest-environment node
-import { mkdtempSync, rmSync } from 'fs'
+import { mkdtempSync } from 'fs'
 import { tmpdir } from 'os'
+import sharp from 'sharp'
 import path from 'path'
 import { handleEndpoints, type Payload, type RequiredDataFromCollectionSlug } from 'payload'
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { isAssetPubliclyAllowed } from '@/collections/ArchiveAssets'
 
@@ -11,8 +12,6 @@ import type { ArchiveAsset } from '@/payload-types'
 import { getTestPayload, makeUser, resetDb } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
-const mediaDir = mkdtempSync(path.join(tmpdir(), 'chieuhoi-media-'))
-process.env.MEDIA_DIR = mediaDir
 
 let payload: Payload
 
@@ -47,8 +46,12 @@ describe('archive-assets', () => {
   beforeEach(async () => {
     await resetDb(payload)
   })
-  afterAll(() => {
-    rmSync(mediaDir, { recursive: true, force: true })
+
+  it('upload ghi vào thư mục media của test, không phải media dev', () => {
+    const dir = (payload.collections['archive-assets'].config.upload as { staticDir?: string })
+      .staticDir
+    expect(dir).toBe(process.env.MEDIA_DIR)
+    expect(dir).toContain('chieuhoi-media-')
   })
 
   it('isAssetPubliclyAllowed', () => {
@@ -86,7 +89,14 @@ describe('archive-assets', () => {
   })
 
   it('inArchive thiếu code thì lỗi validate', async () => {
-    await expect(makeAsset({ inArchive: true })).rejects.toThrow()
+    const err = await makeAsset({ inArchive: true }).catch((e) => e)
+    expect(err.name).toBe('ValidationError')
+    expect(err.status).toBe(400)
+    expect(err.data.errors.map((e: { path: string }) => e.path).sort()).toEqual([
+      'category',
+      'code',
+      'era',
+    ])
     const ok = await makeAsset({ inArchive: true, code: 'TL-001', category: 'village', era: 'old' })
     expect(ok.code).toBe('TL-001')
   })
@@ -104,5 +114,46 @@ describe('archive-assets', () => {
     expect(updated.alt).toBe('Đổi alt')
     expect(updated.rights).toBe('unknown')
     expect(updated.subjectConsent).toBe('pending')
+  })
+
+  it('editor tạo ảnh với rights/consent tự đặt thì bị đưa về mặc định', async () => {
+    const editor = await makeUser(payload, 'editor')
+    const doc = await payload.create({
+      collection: 'archive-assets',
+      data: {
+        alt: 'x',
+        rights: 'permitted',
+        subjectConsent: 'given',
+      } as RequiredDataFromCollectionSlug<'archive-assets'>,
+      filePath: fixture,
+      user: editor,
+      overrideAccess: false,
+    })
+    const read = await payload.findByID({ collection: 'archive-assets', id: doc.id })
+    expect(read.rights).toBe('unknown')
+    expect(read.subjectConsent).toBe('pending')
+  })
+
+  it('khách không lấy được file kích thước phụ của ảnh không được phép', async () => {
+    const big = path.join(mkdtempSync(path.join(tmpdir(), 'chieuhoi-big-')), 'big.webp')
+    await sharp({
+      create: { width: 1200, height: 800, channels: 3, background: { r: 90, g: 120, b: 60 } },
+      noise: { type: 'gaussian', mean: 128, sigma: 30 },
+    } as never)
+      .webp()
+      .toFile(big)
+    const reviewer = await makeUser(payload, 'reviewer')
+    const doc = await payload.create({
+      collection: 'archive-assets',
+      data: { alt: 'x' } as RequiredDataFromCollectionSlug<'archive-assets'>,
+      filePath: big,
+      user: reviewer,
+      overrideAccess: false,
+    })
+    const thumb = doc.sizes?.thumb?.filename as string
+    expect(thumb).toBeTruthy()
+    expect(thumb).not.toBe(doc.filename)
+    const res = await anonGetFile(thumb)
+    expect([403, 404]).toContain(res.status)
   })
 })
