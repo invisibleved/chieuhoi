@@ -1,6 +1,9 @@
 import { Forbidden } from 'payload'
 import type {
   CollectionBeforeChangeHook,
+  CollectionBeforeOperationHook,
+  GlobalBeforeOperationHook,
+  PayloadRequest,
   CollectionConfig,
   GlobalBeforeChangeHook,
   SelectField,
@@ -34,26 +37,84 @@ export function workflowField(options: { allowIdea?: boolean } = {}): SelectFiel
   }
 }
 
+const DRAFT_ARG_KEY = 'publishingDraftArg'
+
 /**
- * Chặn người không phải reviewer đăng. Dùng được cho cả collection và global.
- * Payload đã gán data._status = 'published' cho update không draft, và 'draft'
- * cho draft:true; lưu nháp trên bản đã đăng chỉ tạo version mới, không gỡ đăng.
- * Validate của field bị bỏ qua khi lưu nháp, nên workflow cũng kiểm ở đây.
+ * beforeOperation cho collection và global: ghi lại đối số `draft` của thao tác
+ * vào req.context để guardPublish biết đây có phải lưu nháp hay không.
+ * Phải đứng trong hooks.beforeOperation cùng với guardPublish.
  */
-export const guardPublish: CollectionBeforeChangeHook & GlobalBeforeChangeHook = ({
-  data,
-  originalDoc,
-  req,
+export const recordDraftArg = ((hookArgs: { args: { draft?: boolean; req: PayloadRequest } }) => {
+  const { args } = hookArgs
+  args.req.context = { ...args.req.context, [DRAFT_ARG_KEY]: Boolean(args.draft) }
+  return args
+}) as unknown as CollectionBeforeOperationHook & GlobalBeforeOperationHook
+
+/** Trạng thái của bản chính (đang hiển thị công khai), không phải bản nháp mới nhất. */
+async function isLivePublished(args: {
+  collection?: { slug: string }
+  global?: { slug: string }
+  originalDoc?: { id?: number | string }
+  req: PayloadRequest
+}): Promise<boolean> {
+  const { collection, global, originalDoc, req } = args
+  if (global) {
+    const live = await req.payload.findGlobal({
+      slug: global.slug as never,
+      draft: false,
+      depth: 0,
+      overrideAccess: true,
+      req,
+    })
+    return (live as { _status?: string })._status === 'published'
+  }
+  if (collection && originalDoc?.id !== undefined) {
+    const live = await req.payload.findByID({
+      collection: collection.slug as never,
+      id: originalDoc.id,
+      draft: false,
+      depth: 0,
+      overrideAccess: true,
+      req,
+    })
+    return (live as { _status?: string })._status === 'published'
+  }
+  return false
+}
+
+/**
+ * Chặn người không phải reviewer đăng, gỡ đăng hoặc sửa trực tiếp bản đã đăng.
+ * Dùng được cho cả collection và global (kèm recordDraftArg ở beforeOperation).
+ * - data._status/workflow = 'published' bị chặn (field validate bị bỏ qua khi lưu
+ *   nháp nên workflow cũng kiểm ở đây; so với originalDoc vì data mang giá trị cũ).
+ * - Khi bản chính đang đăng, chỉ cho lưu nháp (draft:true, tạo version mới). Mọi
+ *   cập nhật không phải nháp ghi thẳng vào bản chính nên bị từ chối, kể cả
+ *   `_status: 'draft'` (gỡ đăng) hay không có `_status`.
+ */
+export const guardPublish = (async (args: {
+  data?: unknown
+  originalDoc?: unknown
+  req: PayloadRequest
+  collection?: { slug: string }
+  global?: { slug: string }
 }) => {
+  const { data, originalDoc, req } = args
   if (isReviewerUser(req.user)) return data
   const d = (data ?? {}) as { _status?: unknown; workflow?: unknown }
   const wasPublished = (originalDoc as { workflow?: unknown } | undefined)?.workflow === 'published'
-  // data của update có thể mang sẵn workflow cũ: chỉ chặn khi là thay đổi mới.
   if (d._status === 'published' || (d.workflow === 'published' && !wasPublished)) {
     throw new Forbidden(req.t)
   }
+  const isDraftSave = Boolean(req.context?.[DRAFT_ARG_KEY])
+  if (
+    !isDraftSave &&
+    originalDoc &&
+    (await isLivePublished({ ...args, originalDoc: originalDoc as { id?: number | string } }))
+  ) {
+    throw new Forbidden(req.t)
+  }
   return data
-}
+}) as CollectionBeforeChangeHook & GlobalBeforeChangeHook
 
 /** Reviewer đăng thì workflow thành published (trừ khi là ý tưởng). */
 export const syncWorkflow: CollectionBeforeChangeHook = ({ data }) => {
@@ -72,5 +133,8 @@ export const contentCollectionDefaults = {
     update: isLoggedIn,
     delete: isReviewer,
   },
-  hooks: { beforeChange: [guardPublish, syncWorkflow] },
+  hooks: {
+    beforeOperation: [recordDraftArg],
+    beforeChange: [guardPublish, syncWorkflow],
+  },
 } satisfies Partial<CollectionConfig>

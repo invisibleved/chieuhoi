@@ -6,7 +6,7 @@ export const Sources: CollectionConfig = {
   slug: 'sources',
   labels: { singular: 'Nguồn', plural: 'Nguồn' },
   admin: { useAsTitle: 'title', defaultColumns: ['sourceId', 'title', 'publisher', 'date'] },
-  access: { read: isLoggedIn, create: isLoggedIn, update: isLoggedIn, delete: isReviewer },
+  access: { read: isLoggedIn, create: isLoggedIn, update: isReviewer, delete: isReviewer },
   fields: [
     {
       name: 'sourceId',
