@@ -15,6 +15,8 @@ import { Stories } from './collections/Stories'
 import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
+import { PageIntros } from './globals/PageIntros'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,6 +29,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers],
+  globals: [SiteSettings, PageIntros],
   i18n: { supportedLanguages: { vi }, fallbackLanguage: 'vi' },
   localization: { locales: [{ code: 'vi', label: 'Tiếng Việt' }], defaultLocale: 'vi' },
   graphQL: { disable: true },

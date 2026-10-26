@@ -101,8 +101,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | 'vi' | 'vi'[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    'page-intros': PageIntro;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'page-intros': PageIntrosSelect<false> | PageIntrosSelect<true>;
+  };
   locale: 'vi';
   widgets: {
     collections: CollectionsWidget;
@@ -802,6 +808,160 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  tagline?: string | null;
+  description?: string | null;
+  address?: string | null;
+  addressNote?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  visitInfo?: string | null;
+  copyright?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-intros".
+ */
+export interface PageIntro {
+  id: number;
+  home?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+    heroTitle?: string | null;
+  };
+  'lang-hoi'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'cau-chuyen'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'nghe-det-chieu'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'con-nguoi'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'san-pham'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'thu-vien'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  'ket-noi'?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    lead?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  tagline?: T;
+  description?: T;
+  address?: T;
+  addressNote?: T;
+  email?: T;
+  phone?: T;
+  visitInfo?: T;
+  copyright?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-intros_select".
+ */
+export interface PageIntrosSelect<T extends boolean = true> {
+  home?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+        heroTitle?: T;
+      };
+  'lang-hoi'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'cau-chuyen'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'nghe-det-chieu'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'con-nguoi'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'san-pham'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'thu-vien'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  'ket-noi'?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        lead?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
