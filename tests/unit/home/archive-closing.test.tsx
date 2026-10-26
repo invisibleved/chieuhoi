@@ -59,8 +59,12 @@ describe('ArchiveTeaser ảnh preview', () => {
     flagged.image.flags = ['rights-not-permitted']
     render(<ArchiveTeaser items={[flagged]} />)
     const link = screen.getByRole('link', { name: /TL · / })
-    expect(link.className).toContain('[&>span]:h-full')
+    expect(link.className).not.toContain('h-full')
+    const wrapper = link.querySelector('img')!.parentElement!
+    expect(wrapper.className).toContain('relative')
+    expect(wrapper.className).toContain('h-full')
     const label = screen.getByText(/^TL · 001/)
+    expect(label.className).not.toContain('h-full')
     expect(label.className).toContain('top-')
     expect(label.className).not.toContain('bottom-')
     expect(screen.getByText('Ảnh chưa được phép đăng').parentElement!.className).toContain('bottom-3')
