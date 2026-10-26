@@ -68,6 +68,20 @@ describe('Hero', () => {
     expect(screen.getByAltText('Cuộn chiếu dựng đứng')).toBeTruthy()
     expect(within(container.querySelector('figure')!).getAllByText('In hoa văn lên chiếu bằng khuôn').length).toBeGreaterThan(0)
   })
+  it('không có mã, tiêu đề, chú thích thì không có figcaption', () => {
+    const media = { ...full, hero: { image: img({ code: null }), title: null, caption: null } }
+    const { container } = render(<Hero intro={intro} media={media} storyHref={STORY} />)
+    expect(container.querySelector('figure')).not.toBeNull()
+    expect(container.querySelector('figcaption')).toBeNull()
+  })
+  it('h1 chỉ nowrap từ xl và chỉ với heroTitle', () => {
+    const { rerender } = render(<Hero intro={intro} media={empty} storyHref={STORY} />)
+    const cls = screen.getByRole('heading', { level: 1 }).className
+    expect(cls).toContain('xl:whitespace-nowrap')
+    expect(cls).not.toMatch(/(^|\s)md:whitespace-nowrap/)
+    rerender(<Hero intro={{ ...intro, heroTitle: null }} media={empty} storyHref={STORY} />)
+    expect(screen.getByRole('heading', { level: 1 }).className).not.toContain('nowrap')
+  })
   it('code không khớp TL-n thì bỏ dòng mã', () => {
     const media = { ...full, hero: { ...full.hero!, image: img({ code: '[cần xác minh]' }) } }
     const { container } = render(<Hero intro={intro} media={media} storyHref={STORY} />)

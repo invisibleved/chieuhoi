@@ -8,13 +8,15 @@ type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string
 
 // Tiêu đề hero: tách theo \n, dòng cuối nghiêng màu accent.
 function HeroTitle({ intro }: { intro: PageIntroView }) {
-  const cls = 'font-display text-display leading-[1.12] tracking-[-.01em] md:whitespace-nowrap'
+  const cls = 'font-display text-display leading-[1.12] tracking-[-.01em]'
   const raw = intro.heroTitle ?? intro.title
   if (!raw) return <h1 className="sr-only">Chiếu Hới</h1>
   if (!intro.heroTitle) return <h1 className={cls}>{raw}</h1>
+  // Chỉ ≥1280px mới ép không xuống dòng; dưới đó 70px sẽ tràn cột chữ.
+  const lineCls = `${cls} xl:whitespace-nowrap`
   const lines = raw.split('\n')
   return (
-    <h1 className={cls}>
+    <h1 className={lineCls}>
       {lines.map((line, i) => {
         const last = i === lines.length - 1
         return (
@@ -31,6 +33,7 @@ function HeroTitle({ intro }: { intro: PageIntroView }) {
 export function Hero({ intro, media, storyHref }: HeroProps) {
   const { hero, heroInset } = media
   const num = hero ? docNumber(hero.image.code) : null
+  const hasLabel = hero !== null && (num !== null || !!hero.title || !!hero.caption)
   return (
     <section className="relative md:grid md:h-[840px] md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-16">
       <div className="flex flex-col gap-[22px] px-5 pt-8 md:col-span-6 md:justify-center md:gap-8 md:px-0 md:pt-0 md:pb-[120px]">
@@ -49,7 +52,7 @@ export function Hero({ intro, media, storyHref }: HeroProps) {
             Khám phá làng nghề
           </Button>
           {storyHref ? (
-            <Button variant="secondary" href={storyHref} icon="play" iconSize={36} className="justify-center max-md:min-h-12 max-md:[&_svg]:size-7">
+            <Button variant="secondary" href={storyHref} icon="play" className="justify-center max-md:min-h-12 max-md:[&_svg]:size-7">
               Nghe chuyện làng Hới
             </Button>
           ) : null}
@@ -65,13 +68,14 @@ export function Hero({ intro, media, storyHref }: HeroProps) {
             className="h-[440px] md:h-[700px]"
             objectPosition="62% 50%"
           />
+          {hasLabel ? (
           <figcaption className="absolute right-3 bottom-3 left-3 md:right-6 md:bottom-6 md:left-auto md:w-[280px]">
             <div className="hidden md:block">
               <DocumentLabel
                 code={num}
                 title={hero.title ?? ''}
                 meta={hero.caption}
-                className="border-0! bg-bg-primary! gap-1.5"
+                className="border-0! bg-bg-primary!"
               />
             </div>
             <div className="flex flex-col gap-[3px] bg-bg-primary px-3 py-2.5 md:hidden">
@@ -81,6 +85,7 @@ export function Hero({ intro, media, storyHref }: HeroProps) {
               </span>
             </div>
           </figcaption>
+          ) : null}
           {heroInset ? (
             <div className="absolute -bottom-[72px] -left-16 hidden size-[220px] box-content border-[10px] border-bg-primary md:block">
               <ContentImage image={heroInset} size="card" sizes="220px" className="h-[220px] w-[220px]" />

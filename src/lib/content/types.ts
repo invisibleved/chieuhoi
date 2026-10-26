@@ -65,6 +65,8 @@ export interface ProductCardView {
 
 export interface ProductView extends ProductCardView {
   images: ImageView[]
+  /** Ảnh CMS đầu tiên (nơi các điểm annotation đặt toạ độ); null khi ảnh đó chưa được dùng ở mode hiện tại. */
+  primaryImage: ImageView | null
   material: string | null
   technique: string | null
   size: string | null

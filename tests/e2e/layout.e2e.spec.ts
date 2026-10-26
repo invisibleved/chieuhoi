@@ -45,6 +45,8 @@ test.describe('desktop 1440', () => {
   })
 
   test('axe không có lỗi serious/critical ở / (1440)', async ({ page }) => {
+    // Giảm chuyển động để axe không đo tương phản giữa lúc Reveal đang mờ dần.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     const r = await new AxeBuilder({ page }).analyze()
     expect(r.violations.filter((v) => ['serious', 'critical'].includes(v.impact ?? ''))).toEqual([])
@@ -90,6 +92,7 @@ test.describe('mobile 390', () => {
   })
 
   test('axe không có lỗi serious/critical ở / (390)', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     const r = await new AxeBuilder({ page }).analyze()
     expect(r.violations.filter((v) => ['serious', 'critical'].includes(v.impact ?? ''))).toEqual([])

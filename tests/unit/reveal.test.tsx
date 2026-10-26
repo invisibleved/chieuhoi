@@ -53,6 +53,13 @@ describe('Reveal', () => {
     act(() => ioCallbacks[0]([{ isIntersecting: false, target: el }]))
     expect(el.className).toContain('opacity-100')
   })
+  it('trạng thái ẩn vẫn hiện khi in', () => {
+    installIO(); mockMatchMedia(false); rect(5000)
+    const { container } = render(<Reveal><p>x</p></Reveal>)
+    const cls = (container.firstElementChild as HTMLElement).className
+    expect(cls).toContain('print:opacity-100')
+    expect(cls).toContain('print:translate-y-0')
+  })
   it('giảm chuyển động: không ẩn gì', () => {
     installIO(); mockMatchMedia(true); rect(5000)
     const { container } = render(<Reveal><p>x</p></Reveal>)

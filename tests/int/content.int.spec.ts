@@ -114,6 +114,19 @@ describe('lib/content', () => {
     for (const c of await content.getProducts('preview')) expect(typeof c.typeConfirmed).toBe('boolean')
   })
 
+  it('primaryImage là ảnh CMS đầu tiên: ảnh đầu bị hạn chế thì public trả null dù ảnh thứ hai được phép', async () => {
+    const a = await asset({ rights: 'unknown' })
+    const b = await asset()
+    await create('products', pub({ slug: 'pp', name: 'Chiếu', workflow: 'published', images: [a.id, b.id] }))
+    const pubView = await content.getProduct('pp', 'public')
+    expect(pubView?.images).toHaveLength(1)
+    expect(pubView?.primaryImage).toBeNull()
+    const prev = await content.getProduct('pp', 'preview')
+    expect(prev?.primaryImage).not.toBeNull()
+    await create('products', pub({ slug: 'pq', name: 'Chiếu 2', workflow: 'published', images: [b.id, a.id] }))
+    expect((await content.getProduct('pq', 'public'))?.primaryImage).not.toBeNull()
+  })
+
   it('thư viện chỉ lấy inArchive và ảnh được phép', async () => {
     const k = { category: 'village', era: 'old' }
     await asset({ code: 'A-1', inArchive: true, ...k })

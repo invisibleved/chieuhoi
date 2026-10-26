@@ -11,7 +11,10 @@ export function StoriesTeaser({ stories }: StoriesTeaserProps) {
   if (stories.length === 0) return null
   const featured = stories.find((s) => s.hasDetail) ?? stories[0]
   const rest = stories.filter((s) => s !== featured).slice(0, 3)
-  const note = rest.some((s) => !s.hasDetail)
+  // Ghi chú tính trên các thẻ đang hiện: thẻ nổi bật + thẻ nhỏ. Mobile ẩn thẻ nhỏ thứ 3 nên có bản riêng.
+  const noteDesktop = !featured.hasDetail || rest.some((s) => !s.hasDetail)
+  const noteMobile = !featured.hasDetail || rest.slice(0, 2).some((s) => !s.hasDetail)
+  const NOTE = 'Chủ đề biên tập đề xuất — bài viết chưa được soạn.'
   return (
     <>
       <div aria-hidden="true" className="threads mx-5 h-[14px] md:mx-20" />
@@ -28,15 +31,15 @@ export function StoriesTeaser({ stories }: StoriesTeaserProps) {
         <div className="md:col-span-7">
           <StoryCard story={featured} href={href(featured)} variant="featured" size="large" hideCta />
         </div>
-        {rest.length > 0 ? (
+        {rest.length > 0 || noteDesktop ? (
           <div className="flex flex-col md:col-span-4 md:col-start-9 md:-mt-7">
             {rest.map((s, i) => (
               <div key={s.slug} className={i === 2 ? 'hidden md:block' : undefined}>
                 <StoryCard story={s} href={href(s)} variant="compact" size="large" hideCta />
               </div>
             ))}
-            {note ? (
-              <p className="mt-5 text-[13px] text-text-muted">Chủ đề biên tập đề xuất — bài viết chưa được soạn.</p>
+            {noteDesktop ? (
+              <p className={`mt-5 text-[13px] text-text-muted ${noteMobile ? '' : 'max-md:hidden'}`}>{NOTE}</p>
             ) : null}
           </div>
         ) : null}

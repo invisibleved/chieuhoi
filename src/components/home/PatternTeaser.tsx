@@ -2,15 +2,16 @@
 
 import { useState } from 'react'
 import type { ProductView } from '@/lib/content'
+import { hasPattern } from './hasPattern'
 import { ContentImage } from '@/components/content/ContentImage'
 import { FootnoteRef } from '@/components/content/Sources'
 
 // Ảnh sản phẩm có các điểm hoa văn; bấm điểm để đổi chú thích. Trạng thái đầu (annotations[0]) render sẵn ở server.
 export function PatternTeaser({ product }: { product: ProductView }) {
-  const { annotations, images, slug } = product
+  const { annotations, primaryImage, slug } = product
   const [openN, setOpenN] = useState(annotations[0]?.n)
   const open = annotations.find((a) => a.n === openN) ?? annotations[0]
-  if (!open || images.length === 0) return null
+  if (!open || !hasPattern(product) || !primaryImage) return null
 
   // Số nguồn theo thứ tự xuất hiện của các sourceId khác nhau; trang hiện vật (Phase 5) phải đánh số giống vậy.
   const sourceIds = [...new Set(annotations.map((a) => a.sourceId).filter((id): id is string => id !== null))]
@@ -20,7 +21,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
   return (
     <>
       <figure className="relative -mx-5 m-0 md:col-span-8 md:mx-0">
-        <ContentImage image={images[0]} size="wide" sizes="(min-width: 768px) 66vw, 100vw" className="block h-[300px] md:h-[560px]" />
+        <ContentImage image={primaryImage} size="wide" sizes="(min-width: 768px) 66vw, 100vw" className="block h-[300px] md:h-[560px]" />
         {annotations.map((a) => {
           const on = a.n === open.n
           return (

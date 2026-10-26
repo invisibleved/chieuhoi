@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 
+import { hasPattern } from '@/components/home/hasPattern'
 import { HomeView } from '@/components/home/HomeView'
 import {
   getArchive, getCraftSteps, getHomeMedia, getMode, getPageIntro, getPeople,
   getProduct, getProducts, getStories,
+  type ProductView,
 } from '@/lib/content'
 
 const STORY_SLUG = 'chuyen-ve-trang-chieu'
@@ -20,10 +22,10 @@ export default async function HomePage() {
     getStories(mode), getProducts(mode), getArchive(mode),
   ])
   // Sản phẩm nổi bật: sản phẩm đầu tiên có đủ ảnh và chú thích.
-  let featured = null
+  let featured: ProductView | null = null
   for (const p of products) {
     const detail = await getProduct(p.slug, mode)
-    if (detail && detail.images.length > 0 && detail.annotations.length > 0) { featured = detail; break }
+    if (hasPattern(detail)) { featured = detail; break }
   }
   const storyHref = stories.some((s) => s.slug === STORY_SLUG && s.hasDetail) ? `/cau-chuyen/${STORY_SLUG}` : null
   return (

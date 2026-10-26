@@ -79,7 +79,6 @@ test.describe('styleguide 390 mobile', () => {
       return { before: [b.width, b.height], link: [r.width, r.height] }
     })
     const [w, h] = m.before.map(parseFloat)
-    console.log(`fn ::before = ${w}x${h}`)
     expect(w).toBeGreaterThanOrEqual(44)
     expect(h).toBeGreaterThanOrEqual(44)
   })
@@ -96,7 +95,6 @@ test.describe('styleguide 390 mobile', () => {
         return { href: a.getAttribute('href'), hit: el?.closest('a')?.getAttribute('href') ?? null }
       })
     })
-    console.log(`elementFromPoint: ${JSON.stringify(hits)}`)
     for (const h of hits) expect(h.hit).toBe(h.href)
   })
 

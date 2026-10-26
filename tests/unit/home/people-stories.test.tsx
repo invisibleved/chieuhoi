@@ -46,6 +46,14 @@ describe('StoriesTeaser', () => {
     render(<StoriesTeaser stories={[s('d1'), s('y1', { hasDetail: false })]} />)
     expect(screen.getByText('Chủ đề biên tập đề xuất — bài viết chưa được soạn.')).toBeTruthy()
   })
+  it('tất cả là chủ đề đề xuất (kể cả bài nổi bật) vẫn có ghi chú', () => {
+    render(<StoriesTeaser stories={[s('y1', { hasDetail: false })]} />)
+    expect(screen.getByText('Chủ đề biên tập đề xuất — bài viết chưa được soạn.')).toBeTruthy()
+  })
+  it('chỉ thẻ gọn thứ 3 (ẩn ở mobile) là đề xuất thì ghi chú ẩn ở mobile', () => {
+    render(<StoriesTeaser stories={[s('d1'), s('d2'), s('d3'), s('y1', { hasDetail: false })]} />)
+    expect(screen.getByText('Chủ đề biên tập đề xuất — bài viết chưa được soạn.').className).toContain('max-md:hidden')
+  })
   it('không có bài gọn thiếu trang thì không có ghi chú', () => {
     render(<StoriesTeaser stories={[s('d1'), s('d2')]} />)
     expect(screen.queryByText(/Chủ đề biên tập đề xuất/)).toBeNull()

@@ -141,6 +141,7 @@ export function createContent(payload: Payload) {
     return {
       ...card,
       flags,
+      primaryImage: toImageView(Array.isArray(d.images) ? d.images[0] : null, mode),
       images: (Array.isArray(d.images) ? d.images : [])
         .map((i) => toImageView(i, mode)).filter((i) => i !== null),
       material: showText(d.material, mode),

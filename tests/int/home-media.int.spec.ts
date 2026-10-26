@@ -109,7 +109,9 @@ describe('getHomeMedia', () => {
     const m = await content.getHomeMedia('preview')
     expect(m.village).toHaveLength(1)
   })
-  it('global chưa đăng: public trả rỗng, không lỗi', async () => {
+  // Chỉ chứng minh: sau resetDb các tham chiếu ảnh của global bị xoá (FK ON DELETE SET NULL), public trả rỗng, không lỗi.
+  // Nhánh global chưa đăng (readGlobal) được phủ ở content.int 'global chưa từng đăng'.
+  it('tham chiếu ảnh bị xoá qua FK SET NULL: public trả rỗng, không lỗi', async () => {
     const m = await content.getHomeMedia('public')
     expect(m).toEqual({ hero: null, heroInset: null, village: [] })
   })

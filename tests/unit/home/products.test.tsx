@@ -11,7 +11,7 @@ const img: ImageView = {
 }
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', summary: null, image: img,
-  typeConfirmed: false, flags: [], images: [img], material: null, technique: null, size: null, care: null, maker: null,
+  typeConfirmed: false, flags: [], images: [img], primaryImage: img, material: null, technique: null, size: null, care: null, maker: null,
   annotations: [
     { n: 1, title: 'Viền chiếu', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null },
     { n: 2, title: 'Hoa văn in', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026' },
@@ -24,6 +24,16 @@ const card = (i: number, over: Partial<ProductCardView> = {}): ProductCardView =
 const six = [1, 2, 3, 4, 5, 6].map((i) => card(i))
 
 describe('PatternTeaser', () => {
+  it('ảnh dùng primaryImage, không dùng images[0]', () => {
+    const other = { ...img, url: '/images/reference/other.webp', alt: 'Ảnh khác' }
+    render(<PatternTeaser product={{ ...product, images: [other], primaryImage: img }} />)
+    expect(screen.getByAltText('Ảnh sản phẩm')).toBeTruthy()
+    expect(screen.queryByAltText('Ảnh khác')).toBeNull()
+  })
+  it('primaryImage null thì không render', () => {
+    const { container } = render(<PatternTeaser product={{ ...product, primaryImage: null }} />)
+    expect(container.firstChild).toBeNull()
+  })
   it('điểm 1 mở mặc định, aria-pressed, đổi khi bấm điểm khác', () => {
     render(<PatternTeaser product={product} />)
     const b1 = screen.getByRole('button', { name: 'Chi tiết 1: viền chiếu' })
@@ -68,6 +78,10 @@ describe('ProductsTeaser', () => {
     unmount()
     render(<ProductsTeaser featured={null} products={six} mode="preview" />)
     expect(screen.getByText('Danh mục đang xác minh với cơ sở dệt.')).toBeTruthy()
+  })
+  it('featured có primaryImage null thì không hiện khối điểm', () => {
+    render(<ProductsTeaser featured={{ ...product, primaryImage: null }} products={six} mode="public" />)
+    expect(screen.queryByRole('button', { name: /Chi tiết 1/ })).toBeNull()
   })
   it('có featured thì hiện khối điểm; rỗng cả hai thì không render', () => {
     const { unmount } = render(<ProductsTeaser featured={product} products={[]} mode="public" />)
