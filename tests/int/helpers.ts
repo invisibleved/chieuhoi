@@ -29,7 +29,20 @@ export async function resetDb(payload: Payload): Promise<void> {
   }
 }
 
-/** Tạo user theo vai trò. Viết ở Task 3 (khi Users có trường roles). */
-export async function makeUser(_payload: Payload, _role: 'editor' | 'reviewer'): Promise<User> {
-  throw new Error('makeUser: implemented in Task 3')
+let userSeq = 0
+
+/** Tạo user theo vai trò (bỏ qua access). */
+export async function makeUser(payload: Payload, role: 'editor' | 'reviewer'): Promise<User> {
+  userSeq += 1
+  return payload.create({
+    collection: 'users',
+    data: {
+      email: `${role}-${Date.now()}-${userSeq}@example.test`,
+      password: 'Test-password-123',
+      name: `Test ${role}`,
+      role,
+    },
+    overrideAccess: true,
+    context: { skipFirstUserBootstrap: true },
+  }) as Promise<User>
 }

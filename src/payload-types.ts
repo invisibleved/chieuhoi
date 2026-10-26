@@ -84,10 +84,10 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | 'vi' | 'vi'[];
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'vi';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -121,6 +121,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  name?: string | null;
+  role: 'editor' | 'reviewer';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -215,6 +217,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

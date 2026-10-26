@@ -4,6 +4,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { vi } from '@payloadcms/translations/languages/vi'
 
 import { Users } from './collections/Users'
 
@@ -18,6 +19,9 @@ export default buildConfig({
     },
   },
   collections: [Users],
+  i18n: { supportedLanguages: { vi }, fallbackLanguage: 'vi' },
+  localization: { locales: [{ code: 'vi', label: 'Tiếng Việt' }], defaultLocale: 'vi' },
+  graphQL: { disable: true },
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
