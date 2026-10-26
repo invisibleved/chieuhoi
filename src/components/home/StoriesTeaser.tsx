@@ -21,7 +21,7 @@ export function StoriesTeaser({ stories }: StoriesTeaserProps) {
             <span className="text-eyebrow font-semibold tracking-[.22em] text-accent md:tracking-[.24em]">CÂU CHUYỆN</span>
             <h2 className="font-display text-h2 leading-[1.15] font-normal md:leading-[1.1]">Chuyện làng, kể chậm.</h2>
           </div>
-          <LinkArrow href="/cau-chuyen" className="hidden md:inline-flex">
+          <LinkArrow href="/cau-chuyen" className="max-md:hidden md:inline-flex">
             Tất cả câu chuyện
           </LinkArrow>
         </div>

@@ -32,7 +32,7 @@ export function VillageIntro({ media, mode }: VillageIntroProps) {
               </div>
             </>
           ) : null}
-          <LinkArrow href="/lang-hoi" className="hidden self-start md:inline-flex">
+          <LinkArrow href="/lang-hoi" className="max-md:hidden self-start md:inline-flex">
             Đọc về làng Hới
           </LinkArrow>
         </div>

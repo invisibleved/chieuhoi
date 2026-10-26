@@ -44,7 +44,7 @@ export function PeopleTeaser({ people }: PeopleTeaserProps) {
           ))}
         </div>
         {shown.length >= 2 ? <p className="text-[13px] text-text-muted md:hidden">Vuốt ngang để xem thêm</p> : null}
-        <LinkArrow href="/con-nguoi" className="hidden self-start md:col-span-12 md:inline-flex md:justify-self-start">
+        <LinkArrow href="/con-nguoi" className="max-md:hidden self-start md:col-span-12 md:inline-flex md:justify-self-start">
           Gặp những người làng Hới
         </LinkArrow>
       </section>

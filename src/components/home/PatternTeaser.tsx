@@ -31,7 +31,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
               aria-label={a.title ? `Chi tiết ${a.n}: ${a.title.toLocaleLowerCase('vi')}` : `Chi tiết ${a.n}`}
               onClick={() => setOpenN(a.n)}
               style={{ left: `${a.x}%`, top: `${a.y}%` }}
-              className={`absolute size-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-2 font-sans text-[15px] font-semibold motion-safe:transition-transform motion-safe:hover:scale-[1.08] ${
+              className={`absolute z-10 size-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-2 font-sans text-[15px] font-semibold motion-safe:transition-transform motion-safe:hover:scale-[1.08] ${
                 on ? 'border-bg-primary bg-accent text-bg-primary ring-[6px] ring-[rgba(160,68,53,.35)]' : 'border-accent bg-bg-primary text-accent'
               }`}
             >

@@ -212,7 +212,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
         })}
       </div>
 
-      <LinkArrow href="/nghe-det-chieu" tone="dark" className="hidden self-start md:inline-flex">
+      <LinkArrow href="/nghe-det-chieu" tone="dark" className="max-md:hidden self-start md:inline-flex">
         Đi theo hành trình một tấm chiếu
       </LinkArrow>
     </section>

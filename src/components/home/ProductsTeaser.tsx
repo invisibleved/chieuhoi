@@ -24,7 +24,7 @@ export function ProductsTeaser({ featured, products, mode }: ProductsTeaserProps
         <>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-x-6 md:col-span-12 md:mt-4">
             <p className="m-0 font-display text-[24px] md:text-[30px]">Bộ sưu tập chiếu</p>
-            <LinkArrow href="/san-pham">Xem toàn bộ sưu tập</LinkArrow>
+            <LinkArrow href="/san-pham" className="max-md:hidden">Xem toàn bộ sưu tập</LinkArrow>
           </div>
           <div className="flex flex-col gap-4 md:col-span-12 md:-mt-6 md:grid md:grid-cols-4 md:gap-6">
             {cards.map(({ p, index }) => (
