@@ -170,6 +170,10 @@ export default function StyleguidePage() {
               <FootnoteRef n={1} /> Chính bài trên Dân Việt cũng ghi nhận rằng tiểu sử của ông dựa nhiều vào truyền khẩu, và cơ quan văn hoá nơi có lăng mộ ông chưa lưu giữ hồ sơ về ông.
               <FootnoteRef n={2} />
             </p>
+            <Lab>CHÚ THÍCH LIỀN NHAU</Lab>
+            <p id="sg-fn-adjacent" className="text-[15px] leading-[1.6] text-text-secondary">
+              Hai nguồn đứng sát nhau.<FootnoteRef n={1} /><FootnoteRef n={2} />
+            </p>
             <Tok>footnote/ref · source/list</Tok>
           </div>
         </div>

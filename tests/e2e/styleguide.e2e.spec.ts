@@ -113,3 +113,32 @@ test.describe('styleguide 390 mobile', () => {
     for (const v of Object.values(m)) expect(v).toBeGreaterThanOrEqual(-0.01)
   })
 })
+
+test.describe('styleguide desktop 1440', () => {
+  test.use({ viewport: { width: 1440, height: 900 } })
+
+  test('hai chú thích sát nhau: mỗi số mở đúng nguồn của nó', async ({ page }) => {
+    await page.goto('/styleguide')
+    const links = page.locator('#sg-fn-adjacent a.fn')
+    await expect(links).toHaveCount(2)
+    await links.first().scrollIntoViewIfNeeded()
+    const probes = await page.evaluate(() => {
+      const as = [...document.querySelectorAll('#sg-fn-adjacent a.fn')]
+      const hrefAt = (x: number, y: number) =>
+        document.elementFromPoint(x, y)?.closest('a')?.getAttribute('href') ?? null
+      const r = as.map((a) => (a.querySelector('span') ?? a).getBoundingClientRect())
+      return {
+        centre1: { x: r[0].left + r[0].width / 2, y: r[0].top + r[0].height / 2 },
+        edge1: { x: r[0].right - 1, y: r[0].top + r[0].height / 2 },
+        centre2: { x: r[1].left + r[1].width / 2, y: r[1].top + r[1].height / 2 },
+        got: [
+          hrefAt(r[0].left + r[0].width / 2, r[0].top + r[0].height / 2),
+          hrefAt(r[0].right - 1, r[0].top + r[0].height / 2),
+          hrefAt(r[1].left + r[1].width / 2, r[1].top + r[1].height / 2),
+        ],
+      }
+    })
+    console.log('probes', JSON.stringify(probes))
+    expect(probes.got).toEqual(['#nguon-1', '#nguon-1', '#nguon-2'])
+  })
+})
