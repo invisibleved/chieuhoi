@@ -22,9 +22,9 @@ export const storyCategory: Record<string, string> = {
   'Đời sống hôm nay': 'life-today',
 }
 
-/** PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng `mau-nghe-nhan` của seed JSON. */
+/** PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng slug `mau-nghe-nhan` của seed JSON; note theo artboard (R17). */
 export const peopleSamples: { slug: string; category: string; note: string; portrait: string }[] = [
-  { slug: 'mau-nghe-nhan', category: 'artisan', note: 'Mẫu — chưa có người thật đồng ý', portrait: 'nkc10.webp' },
+  { slug: 'mau-nghe-nhan', category: 'artisan', note: 'Dệt chiếu tay · vai trò cần xác minh', portrait: 'nkc10.webp' },
   { slug: 'mau-nguoi-2', category: 'craft-family', note: 'Đôi tay trên khung dệt · cần xác minh', portrait: 'nkc14.webp' },
   { slug: 'mau-nguoi-3', category: 'craft-keeper', note: 'In hoa văn bằng khuôn · cần xác minh', portrait: 'kn14.webp' },
   { slug: 'mau-nguoi-4', category: 'craft-family', note: 'Nạp cói cho máy dệt · cần xác minh', portrait: 'nkc2.webp' },

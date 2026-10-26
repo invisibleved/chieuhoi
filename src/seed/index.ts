@@ -11,6 +11,7 @@ import type { Payload, RichTextField, TypedUser } from 'payload'
 import { injectCitations } from './citations'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples, productSummary, storyCategory, storyExtras } from './data/extras'
+import { timelineCopy } from './data/timeline'
 import { pageIntros, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
 
@@ -157,11 +158,13 @@ export async function seed(payload: Payload): Promise<void> {
   // Dòng thời gian
   type TimelineJson = { label: string; title: string; body: string; confidence: string; sources: string[] }
   const timeline = readJson<TimelineJson[]>('content/seed/timeline.json')
+  if (timeline.length !== timelineCopy.length) throw new Error('timeline.json lệch số mốc so với artboard.')
   for (const [i, t] of timeline.entries()) {
+    const copy = timelineCopy[i]
     await upsert(
       payload, user, 'timeline-events', { field: 'order', value: i + 1 },
       {
-        label: t.label, title: t.title, body: t.body, order: i + 1, confidence: t.confidence,
+        label: copy.label, title: copy.title, body: copy.body, order: i + 1, confidence: t.confidence,
         sources: t.sources.map((s) => sourceIds[s]), workflow: 'published',
       },
       'published',
@@ -208,14 +211,11 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Con người (mẫu): tên null, mọi consent false
-  type PersonJson = { slug: string; note?: string }
-  const seedPeople = readJson<PersonJson[]>('content/seed/people.json')
   for (const p of peopleSamples) {
-    const fromJson = seedPeople.find((x) => x.slug === p.slug)
     await upsert(
       payload, user, 'people', { field: 'slug', value: p.slug },
       {
-        slug: p.slug, name: null, category: p.category, note: fromJson?.note ?? p.note,
+        slug: p.slug, name: null, category: p.category, note: p.note,
         portrait: asset(p.portrait),
         consent: { name: false, photo: false, quote: false }, reviewedBySubject: false,
         workflow: 'published',

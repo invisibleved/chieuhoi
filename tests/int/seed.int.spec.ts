@@ -59,4 +59,15 @@ describe('seed', () => {
     const published = await payload.find({ collection: 'sources', overrideAccess: true })
     expect(published.totalDocs).toBe(3)
   })
+
+  it('mốc 1531 khớp nguyên văn artboard', async () => {
+    const res = await payload.find({
+      collection: 'timeline-events',
+      where: { label: { equals: '1531' } },
+      overrideAccess: true,
+      limit: 1,
+    })
+    expect(res.docs[0]?.body).toBe('Dân làng tôn ông làm Phúc thần và gọi là "Trạng Chiếu".')
+    expect(res.docs[0]?.confidence).toBe('press')
+  })
 })
