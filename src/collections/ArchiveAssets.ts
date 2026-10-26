@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto'
 import path from 'path'
-import { Forbidden, ValidationError, type Access, type CollectionConfig } from 'payload'
+import { ValidationError, type Access, type CollectionConfig, type Where } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
@@ -16,6 +16,22 @@ const readAccess: Access = ({ req, isReadingStaticFile }) => {
   return isReadingStaticFile ? publicAssetQuery : false
 }
 
+// R20: ảnh đã duyệt công khai chỉ người duyệt được sửa (kể cả thay file). Kiểm tra ở access
+// để Payload từ chối trước khi xoá file cũ khi thay file.
+const notYetPublic: Where = {
+  or: [
+    { rights: { not_equals: 'permitted' } },
+    { subjectConsent: { not_in: ['not_applicable', 'given'] } },
+    { subjectConsent: { exists: false } },
+  ],
+}
+
+const updateAccess: Access = ({ req }) => {
+  if (!req.user) return false
+  if (isReviewerUser(req.user)) return true
+  return notYetPublic
+}
+
 const webp = { formatOptions: { format: 'webp' as const } }
 
 export const ArchiveAssets: CollectionConfig = {
@@ -25,7 +41,7 @@ export const ArchiveAssets: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['code', 'title', 'category', 'rights', 'subjectConsent'],
   },
-  access: { read: readAccess, create: isLoggedIn, update: isLoggedIn, delete: isReviewer },
+  access: { read: readAccess, create: isLoggedIn, update: updateAccess, delete: isReviewer },
   upload: {
     staticDir: process.env.MEDIA_DIR || path.resolve(dirname, '../../media'),
     mimeTypes: ['image/*'],
@@ -111,10 +127,10 @@ export const ArchiveAssets: CollectionConfig = {
     { name: 'inArchive', type: 'checkbox', label: 'Thuộc kho tư liệu', defaultValue: false },
   ],
   hooks: {
-    // R24: tên file công khai là mã tư liệu hoặc UUID, không bao giờ là tên file gốc.
+    // R24: tên file công khai là mã tư liệu hoặc UUID, không bao giờ là tên file gốc (cả khi thay file).
     beforeOperation: [
       ({ args, operation }) => {
-        if (operation !== 'create') return
+        if (operation !== 'create' && operation !== 'update') return
         const req = (args as { req?: { file?: { name: string } } }).req
         const data = (args as { data?: { code?: string } }).data
         if (!req?.file) return
@@ -124,18 +140,6 @@ export const ArchiveAssets: CollectionConfig = {
       },
     ],
     beforeValidate: [
-      // R20: ảnh đã duyệt công khai chỉ người duyệt được sửa (kể cả thay file).
-      ({ originalDoc, operation, req }) => {
-        if (
-          operation === 'update' &&
-          req.user &&
-          !isReviewerUser(req.user) &&
-          originalDoc &&
-          isAssetPubliclyAllowed(originalDoc)
-        ) {
-          throw new Forbidden(req.t)
-        }
-      },
       ({ data, originalDoc }) => {
         const merged = { ...originalDoc, ...data }
         if (merged.inArchive) {

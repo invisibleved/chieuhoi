@@ -1,4 +1,4 @@
-import type { Access, CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import { Forbidden, type Access, type CollectionBeforeChangeHook, type CollectionConfig } from 'payload'
 
 import { isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
@@ -21,7 +21,7 @@ const readOwnOrReviewer: Access = ({ req }) => {
   return { id: { equals: req.user.id } }
 }
 
-/** User đầu tiên (bootstrap) luôn là reviewer, kể cả khi trường role bị access chặn. */
+/** User đầu tiên (bootstrap) luôn là reviewer và chỉ được tạo khi ALLOW_FIRST_USER=true. */
 const firstUserIsReviewer: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
   if (operation !== 'create') return data
   // Seed/test có thể tắt bootstrap khi chủ động chỉ định vai trò.
@@ -31,7 +31,11 @@ const firstUserIsReviewer: CollectionBeforeChangeHook = async ({ data, operation
     overrideAccess: true,
     req,
   })
-  if (totalDocs === 0) return { ...data, role: 'reviewer' }
+  if (totalDocs === 0) {
+    // Chặn cả đường /api/users/first-register (Payload gọi create với overrideAccess).
+    if (process.env.ALLOW_FIRST_USER !== 'true') throw new Forbidden(req.t)
+    return { ...data, role: 'reviewer' }
+  }
   return data
 }
 

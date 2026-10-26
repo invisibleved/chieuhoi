@@ -1,4 +1,5 @@
-import type { Payload } from 'payload'
+// @vitest-environment node
+import { handleEndpoints, type Payload } from 'payload'
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { getTestPayload, makeUser, resetDb } from './helpers'
@@ -106,5 +107,20 @@ describe('users', () => {
         overrideAccess: false,
       }),
     ).rejects.toThrow()
+  })
+  it('first-register bị chặn khi không bật ALLOW_FIRST_USER (DB trống)', async () => {
+    delete process.env.ALLOW_FIRST_USER
+    const config = (await import('@/payload.config')).default
+    const res = await handleEndpoints({
+      config,
+      request: new Request('http://localhost/api/users/first-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser('claim@example.test')),
+      }),
+    })
+    expect(res.status).toBeGreaterThanOrEqual(400)
+    const { totalDocs } = await payload.count({ collection: 'users' })
+    expect(totalDocs).toBe(0)
   })
 })

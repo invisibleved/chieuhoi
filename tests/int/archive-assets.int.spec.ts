@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtempSync } from 'fs'
+import { existsSync, mkdtempSync } from 'fs'
 import { tmpdir } from 'os'
 import sharp from 'sharp'
 import path from 'path'
@@ -117,6 +117,12 @@ describe('archive-assets', () => {
         overrideAccess: false,
       }),
     ).rejects.toThrow()
+    // Bị từ chối thì file gốc và các bản thu nhỏ vẫn còn nguyên.
+    const dir = process.env.MEDIA_DIR as string
+    expect(existsSync(path.join(dir, doc.filename as string))).toBe(true)
+    for (const size of Object.values(doc.sizes ?? {})) {
+      if (size?.filename) expect(existsSync(path.join(dir, size.filename))).toBe(true)
+    }
   })
 
   it('editor vẫn sửa được ảnh chưa duyệt', async () => {
@@ -151,6 +157,20 @@ describe('archive-assets', () => {
     const noCode = await makeAsset({})
     expect(noCode.filename).not.toContain('tiny')
     expect(noCode.filename).toMatch(/^[0-9a-f-]{36}\.webp$/)
+  })
+
+  it('thay file vẫn giữ tên mờ, không lộ tên gốc', async () => {
+    const doc = await makeAsset({ code: 'TL-078' })
+    const reviewer = await makeUser(payload, 'reviewer')
+    const updated = await payload.update({
+      collection: 'archive-assets',
+      id: doc.id,
+      data: {},
+      filePath: fixture,
+      user: reviewer,
+      overrideAccess: false,
+    })
+    expect(updated.filename).not.toContain('tiny')
   })
 
   it('inArchive thiếu code thì lỗi validate', async () => {
