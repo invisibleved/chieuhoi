@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { vi } from '@payloadcms/translations/languages/vi'
 
+import { ArchiveAssets } from './collections/ArchiveAssets'
 import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
@@ -20,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Sources, TimelineEvents],
+  collections: [Users, Sources, TimelineEvents, ArchiveAssets],
   i18n: { supportedLanguages: { vi }, fallbackLanguage: 'vi' },
   localization: { locales: [{ code: 'vi', label: 'Tiếng Việt' }], defaultLocale: 'vi' },
   graphQL: { disable: true },

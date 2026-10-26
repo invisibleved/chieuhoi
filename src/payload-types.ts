@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     sources: Source;
     'timeline-events': TimelineEvent;
+    'archive-assets': ArchiveAsset;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     sources: SourcesSelect<false> | SourcesSelect<true>;
     'timeline-events': TimelineEventsSelect<false> | TimelineEventsSelect<true>;
+    'archive-assets': ArchiveAssetsSelect<false> | ArchiveAssetsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -189,6 +191,76 @@ export interface TimelineEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "archive-assets".
+ */
+export interface ArchiveAsset {
+  id: number;
+  /**
+   * Ví dụ: TL-001
+   */
+  code?: string | null;
+  title?: string | null;
+  description?: string | null;
+  alt: string;
+  category?: ('village' | 'weaving' | 'people' | 'products' | 'memory' | 'history') | null;
+  era?: ('old' | 'now') | null;
+  takenAt?: string | null;
+  relatedLabel?: string | null;
+  relatedHref?: string | null;
+  photographer?: string | null;
+  owner?: string | null;
+  source?: string | null;
+  rights: 'unknown' | 'permitted' | 'restricted';
+  subjectConsent: 'not_applicable' | 'pending' | 'given';
+  inArchive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumb?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    wide?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    full?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -222,6 +294,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'timeline-events';
         value: number | TimelineEvent;
+      } | null)
+    | ({
+        relationTo: 'archive-assets';
+        value: number | ArchiveAsset;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -318,6 +394,82 @@ export interface TimelineEventsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "archive-assets_select".
+ */
+export interface ArchiveAssetsSelect<T extends boolean = true> {
+  code?: T;
+  title?: T;
+  description?: T;
+  alt?: T;
+  category?: T;
+  era?: T;
+  takenAt?: T;
+  relatedLabel?: T;
+  relatedHref?: T;
+  photographer?: T;
+  owner?: T;
+  source?: T;
+  rights?: T;
+  subjectConsent?: T;
+  inArchive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumb?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        wide?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        full?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
