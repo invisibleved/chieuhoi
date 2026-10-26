@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/archive-assets/file/**',
       },
+      { pathname: '/images/reference/**' },
     ],
   },
   webpack: (webpackConfig) => {

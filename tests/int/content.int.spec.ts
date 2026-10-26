@@ -104,6 +104,7 @@ describe('lib/content', () => {
     const m2 = await create('makers', pub({ name: 'Chú Ba', publicConsent: true, workflow: 'published' }))
     await create('products', pub({ slug: 'p2', name: 'Chiếu 2', workflow: 'published', maker: m2.id }))
     expect((await content.getProduct('p2', 'public'))?.maker?.name).toBe('Chú Ba')
+    for (const c of await content.getProducts('preview')) expect(typeof c.typeConfirmed).toBe('boolean')
   })
 
   it('thư viện chỉ lấy inArchive và ảnh được phép', async () => {

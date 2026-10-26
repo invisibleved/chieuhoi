@@ -59,6 +59,7 @@ export interface ProductCardView {
   group: 'traditional' | 'contemporary' | null
   summary: string | null
   image: ImageView | null
+  typeConfirmed: boolean
   flags: Flag[]
 }
 
@@ -69,7 +70,6 @@ export interface ProductView extends ProductCardView {
   size: string | null
   care: string | null
   annotations: { n: number; title: string | null; x: number; y: number; body: string; sourceId: string | null }[]
-  typeConfirmed: boolean
   maker: { name: string | null; verified: boolean } | null
 }
 

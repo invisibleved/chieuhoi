@@ -111,6 +111,7 @@ export function createContent(payload: Payload) {
     group: d.group ?? null,
     summary: showText(d.summary, mode),
     image: toImageView(Array.isArray(d.images) ? d.images.find((i) => toImageView(i, mode)) : null, mode),
+    typeConfirmed: !!d.typeConfirmed,
     flags: flagsOf(d, mode, [d.name, d.summary]),
   })
 
@@ -146,7 +147,6 @@ export function createContent(payload: Payload) {
       size: showText(d.size, mode),
       care: showText(d.care, mode),
       annotations,
-      typeConfirmed: !!d.typeConfirmed,
       maker: makerOk ? { name: showText(m.name, mode), verified: !!m.verified } : null,
     }
   }
