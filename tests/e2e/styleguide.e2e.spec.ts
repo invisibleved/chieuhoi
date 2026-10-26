@@ -138,7 +138,6 @@ test.describe('styleguide desktop 1440', () => {
         ],
       }
     })
-    console.log('probes', JSON.stringify(probes))
     expect(probes.got).toEqual(['#nguon-1', '#nguon-1', '#nguon-2'])
   })
 })

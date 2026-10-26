@@ -172,7 +172,7 @@ export default function StyleguidePage() {
             </p>
             <Lab>CHÚ THÍCH LIỀN NHAU</Lab>
             <p id="sg-fn-adjacent" className="text-[15px] leading-[1.6] text-text-secondary">
-              Hai nguồn đứng sát nhau.<FootnoteRef n={1} /><FootnoteRef n={2} />
+              <FootnoteRef n={1} /><FootnoteRef n={2} />
             </p>
             <Tok>footnote/ref · source/list</Tok>
           </div>
