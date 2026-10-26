@@ -4,12 +4,22 @@ import { ContentImage } from './ContentImage'
 import { PreviewNotes } from './PreviewNotes'
 import { Tag } from './Tag'
 
-type PortraitCardProps = { person: PersonView; href: string; size?: 'lg' | 'sm' }
+type PortraitCardProps = {
+  person: PersonView
+  href: string
+  size?: 'lg' | 'sm'
+  /** Chữ nút cuối thẻ (mặc định "Xem chân dung →"). */
+  cta?: string
+  /** Ghi đè chiều cao ảnh (và ô giữ chỗ). */
+  imageClassName?: string
+  /** Ghi đè cỡ chữ tên. */
+  nameClassName?: string
+}
 
 // Thẻ chân dung. Chưa có đồng ý thì không có tên: nhãn "Chờ đồng ý" thay thế, không in placeholder.
-export function PortraitCard({ person, href, size = 'lg' }: PortraitCardProps) {
+export function PortraitCard({ person, href, size = 'lg', cta = 'Xem chân dung →', imageClassName, nameClassName }: PortraitCardProps) {
   const lg = size === 'lg'
-  const h = lg ? 'h-[380px]' : 'h-[220px]'
+  const h = imageClassName ?? (lg ? 'h-[380px]' : 'h-[220px]')
   const cardFlags = person.flags.filter((f) => !person.portrait?.flags.includes(f))
   return (
     <Link href={href} className="group flex flex-col gap-3 text-text-primary no-underline">
@@ -33,12 +43,12 @@ export function PortraitCard({ person, href, size = 'lg' }: PortraitCardProps) {
         {person.category.toUpperCase()}
       </span>
       {person.name && (
-        <span className={`font-display ${lg ? 'text-[24px] leading-[1.2]' : 'text-[19px] leading-[1.25]'}`}>{person.name}</span>
+        <span className={`font-display ${nameClassName ?? (lg ? 'text-[24px] leading-[1.2]' : 'text-[19px] leading-[1.25]')}`}>{person.name}</span>
       )}
       {lg && person.role && <span className="text-[14px] leading-[1.55] text-text-secondary">{person.role}</span>}
       <PreviewNotes flags={cardFlags} />
       {lg && (
-        <span className="text-[15px] font-medium text-accent underline-offset-4 group-hover:underline">Xem chân dung →</span>
+        <span className="text-[15px] font-medium text-accent underline-offset-4 group-hover:underline">{cta}</span>
       )}
     </Link>
   )
