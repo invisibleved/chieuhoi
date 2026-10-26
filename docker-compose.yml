@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chieuhoi
+    ports:
+      # Host port 5433 để không đụng Postgres cục bộ khác dùng 5432.
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  pgdata:

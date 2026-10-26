@@ -11,11 +11,14 @@ Thiết kế đã hoàn tất. Việc của bạn là **triển khai đúng thi�
 5. `content/seed/*.json`: dữ liệu mẫu (timeline, công đoạn, sản phẩm, bài viết, nguồn).
 
 ## Stack
-- Next.js (App Router) + React + TypeScript (strict) + Tailwind CSS. Dùng phiên bản ổn định hiện hành; kiểm tra lại API trước khi dùng thay vì đoán.
-- Nếu là Tailwind v4 (cấu hình CSS-first): khai báo token trong `@theme` của `app/globals.css`, giá trị lấy từ `tokens.css`; bỏ qua `tailwind.preset.ts`.
+- Next.js (App Router, 16.4.x) + Payload CMS 3 nhúng cùng app (`/admin`) + Postgres + React + TypeScript (strict) + Tailwind CSS 4. Chạy Node >= 22.23.4 (`.nvmrc`). Dùng phiên bản ổn định hiện hành; kiểm tra lại API trước khi dùng thay vì đoán.
+- Tailwind v4 (cấu hình CSS-first): khai báo token trong `@theme` của `app/globals.css`, giá trị lấy từ `tokens.css`; bỏ qua `tailwind.preset.ts`.
 - Font: `next/font/google` cho Noto Serif Display, Noto Serif và Be Vietnam Pro, khai báo `subsets: ['vietnamese','latin']`.
-- Dữ liệu: giai đoạn đầu đọc từ `content/seed` qua một lớp `lib/content.ts`, để sau thay bằng headless CMS mà không phải sửa component.
-- KHÔNG làm: giỏ hàng, thanh toán, đăng nhập người dùng, backend nhận form (form chỉ là minh hoạ, phải giữ dòng "minh hoạ").
+- Dữ liệu: component chỉ đọc qua lớp `src/lib/content`, không gọi Payload trực tiếp; nguồn thật là Payload/Postgres, `content/seed` dùng để seed (`npm run seed`).
+- Postgres cục bộ: `docker compose up -d` (host port 5433; DB `chieuhoi` và `chieuhoi_test`). Biến môi trường: xem `.env.example`.
+- Test: `npm run test:unit` (vitest, `tests/unit`), `npm run test:int` (vitest, `tests/int`, dùng `DATABASE_URI_TEST`, chạy tuần tự), `npm run test:e2e` (Playwright).
+- Spec thiết kế kiến trúc: `docs/superpowers/specs/2026-10-26-chieu-hoi-web-design.md`.
+- KHÔNG làm: giỏ hàng, thanh toán, đăng nhập người xem, form Kết nối (form chỉ là minh hoạ, phải giữ dòng "minh hoạ"). Đăng nhập chỉ dành cho biên tập viên và người duyệt qua Payload admin.
 
 ## Quy tắc nội dung (bắt buộc, không thoả hiệp)
 - **Không bịa** sự kiện, ngày tháng, tên người, lời trích, ý nghĩa hoa văn. Thiếu dữ liệu thì hiển thị `[cần xác minh]` (bản preview) hoặc ẩn (bản production), không tự điền.
