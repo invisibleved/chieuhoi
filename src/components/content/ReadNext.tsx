@@ -13,18 +13,20 @@ type ReadNextProps = {
   action?: { href: string; label: string }
   /** Chiều cao ảnh thẻ (mặc định h-[260px]). */
   imageClassName?: string
+  /** Thêm vào section (ví dụ khoảng cách phía trên): ẩn cùng khối khi mobile không còn mục nào. */
+  className?: string
 }
 
 // "Đọc tiếp": desktop 3 thẻ ảnh; mobile danh sách hàng 56px. Mỗi mục là một liên kết.
 // Mục `mobile: false` chỉ hiện từ md.
-export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[260px]' }: ReadNextProps) {
+export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[260px]', className }: ReadNextProps) {
   if (items.length === 0) return null
   const lastOnMobile = items.reduce((last, it, i) => (it.mobile !== false ? i : last), -1)
   const labelId = title || eyebrow ? 'read-next-h' : undefined
   // Không còn mục nào cho mobile thì ẩn cả khối (kể cả eyebrow) dưới md, không để dải trống.
   const mobileEmpty = lastOnMobile === -1 ? 'max-md:hidden ' : ''
   return (
-    <section aria-labelledby={labelId} className={`${mobileEmpty}flex flex-col gap-1 bg-bg-secondary px-5 py-10 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-8 md:px-20 md:py-24`}>
+    <section aria-labelledby={labelId} className={`${mobileEmpty}flex flex-col gap-1 bg-bg-secondary px-5 py-10 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-8 md:px-20 md:py-24${className ? ` ${className}` : ''}`}>
       {title ? (
         <div className="md:col-span-12 md:flex md:items-end md:justify-between">
           {eyebrow ? (

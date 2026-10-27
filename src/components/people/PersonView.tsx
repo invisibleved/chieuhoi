@@ -8,6 +8,7 @@ import { RichText, StoryPlaceholder } from '@/components/content/RichText'
 import { SourceList } from '@/components/content/Sources'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { BackLink } from '@/components/ui/BackLink'
+import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
 import { NoteBanner } from '@/components/ui/NoteBanner'
@@ -29,14 +30,17 @@ export function PersonView({ page }: { page: PersonPageView }) {
     { label: p.heading },
   ]
 
-  const facts = [
-    { term: d.facts.role, detail: p.role },
-    { term: d.facts.years, detail: p.yearsInCraft },
-    { term: d.facts.hamlet, detail: p.hamlet },
-    { term: d.facts.recorded, detail: p.recorded },
-  ].flatMap((f) => (f.term && f.detail ? [{ term: f.term, detail: f.detail }] : []))
+  const rows = [
+    { key: 'role', term: d.facts.role, detail: p.role },
+    { key: 'years', term: d.facts.years, detail: p.yearsInCraft },
+    { key: 'hamlet', term: d.facts.hamlet, detail: p.hamlet },
+    { key: 'recorded', term: d.facts.recorded, detail: p.recorded },
+  ] as const
+  const factsOf = (keys: readonly string[]) =>
+    rows.flatMap((f) => (keys.includes(f.key) && f.term && f.detail ? [{ term: f.term, detail: f.detail }] : []))
+  const facts = factsOf(['role', 'years', 'hamlet', 'recorded'])
   // Mobile chỉ có Vai trò và Năm làm nghề (PersonMobile).
-  const mobileFacts = facts.filter((f) => f.term === d.facts.role || f.term === d.facts.years)
+  const mobileFacts = factsOf(['role', 'years'])
   const intro = p.intro ?? pv?.intro ?? null
 
   const [before, after] = p.storyParts
@@ -76,7 +80,9 @@ export function PersonView({ page }: { page: PersonPageView }) {
             />
             {cap && (cap.code || cap.line.desktop || cap.line.mobile) ? (
               <figcaption className="absolute bottom-3 left-3 md:bottom-5 md:left-5">
-                <DocumentLabel variant="overlay" size="sm" label={cap.label} code={cap.code} title={cap.line.desktop} className="gap-[3px] px-3.5 py-3 max-md:hidden" />
+                {cap.code || cap.line.desktop ? (
+                  <DocumentLabel variant="overlay" size="sm" label={cap.label} code={cap.code} title={cap.line.desktop} className="gap-[3px] px-3.5 py-3 max-md:hidden" />
+                ) : null}
                 {cap.line.mobile ? (
                   <DocumentLabel variant="overlay" size="sm" label={null} title={cap.line.mobile} className="px-2.5 py-2 md:hidden" />
                 ) : null}
@@ -90,12 +96,10 @@ export function PersonView({ page }: { page: PersonPageView }) {
           }`}
         >
           {p.category ? <Eyebrow as="p">{p.category.toLocaleUpperCase('vi')}</Eyebrow> : null}
-          <h1 className="m-0 font-display text-[40px] leading-[1.12] font-normal md:text-[64px] md:leading-[1.1]">{p.heading}</h1>
+          <DetailTitle size="person">{p.heading}</DetailTitle>
           {facts.length > 0 ? <FactList layout="inline" items={facts} className="max-md:hidden" /> : null}
           {mobileFacts.length > 0 ? <FactList layout="inline" items={mobileFacts} className="mt-1 md:hidden" /> : null}
-          {intro ? (
-            <p className="m-0 mt-1.5 font-serif text-[17px] leading-[1.65] text-text-secondary italic md:mt-0 md:text-[19px]">{intro}</p>
-          ) : null}
+          {intro ? <Lede size="person">{intro}</Lede> : null}
         </div>
       </header>
 
@@ -110,9 +114,9 @@ export function PersonView({ page }: { page: PersonPageView }) {
           <div className="flex flex-col gap-6 md:col-span-6 md:col-start-5 md:gap-8">
             {placeholders ? (
               <>
-                {placeholders[0] ? <StoryPlaceholder title={placeholders[0].title ?? ''} body={placeholders[0].body} /> : null}
+                {placeholders[0] ? <StoryPlaceholder title={placeholders[0].title} body={placeholders[0].body} /> : null}
                 {quote}
-                {placeholders.slice(1).map((s, i) => <StoryPlaceholder key={i} title={s.title ?? ''} body={s.body} />)}
+                {placeholders.slice(1).map((s, i) => <StoryPlaceholder key={i} title={s.title} body={s.body} />)}
               </>
             ) : (
               <>
@@ -138,9 +142,8 @@ export function PersonView({ page }: { page: PersonPageView }) {
         <ConsentPanel consent={p.consent} copy={d.consent} />
       </div>
 
-      <div className="mt-10 md:mt-28">
-        <ReadNext items={related} eyebrow={d.related.eyebrow} title={d.related.title ?? undefined} imageClassName="h-[220px]" />
-      </div>
+      {/* Khoảng cách nằm trong ReadNext để ẩn cùng khối khi mobile không còn thẻ nào. */}
+      <ReadNext items={related} eyebrow={d.related.eyebrow} title={d.related.title ?? undefined} imageClassName="h-[220px]" className="mt-10 md:mt-28" />
     </div>
   )
 }

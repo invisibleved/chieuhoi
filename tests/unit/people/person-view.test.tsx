@@ -119,6 +119,30 @@ describe('PersonView preview', () => {
     expect(container.textContent).toContain('[Một câu giới thiệu ngắn, do chính người được kể duyệt.]')
   })
 
+  it('chú thích chân dung: nhánh desktop chỉ render khi có mã hoặc dòng desktop', () => {
+    const p: PersonDetailView = { ...previewPerson, portraitCaption: { label: 'CHÂN DUNG', code: null, line: { desktop: null, mobile: 'Chỉ mobile' } } }
+    const { container } = render(<PersonView page={page(p, 'preview')} />)
+    const blocks = container.querySelectorAll('figcaption > div')
+    expect(blocks).toHaveLength(1)
+    expect(blocks[0].className).toContain('md:hidden')
+    expect(blocks[0].textContent).toBe('Chỉ mobile')
+  })
+
+  it('mobile chỉ Vai trò và Năm làm nghề, theo khoá dòng (không theo chữ nhãn)', () => {
+    const p: PersonDetailView = { ...previewPerson, role: null }
+    const { container } = render(<PersonView page={page(p, 'preview')} />)
+    const dls = container.querySelectorAll('dl')
+    expect([...dls[0].querySelectorAll('dt')].map((e) => e.textContent)).toEqual(['Năm làm nghề', 'Xóm, thôn', 'Ghi lại bởi'])
+    expect([...dls[1].querySelectorAll('dt')].map((e) => e.textContent)).toEqual(['Năm làm nghề'])
+  })
+
+  it('Liên quan: khoảng cách trên nằm trong section ReadNext (ẩn cùng khối ở mobile)', () => {
+    const { container } = render(<PersonView page={page(publicPerson, 'public')} />)
+    const rn = container.querySelector('section[aria-labelledby="read-next-h"]')!
+    expect(rn.className).toContain('mt-10')
+    expect(rn.className).toContain('max-md:hidden')
+  })
+
   it('bảng dữ kiện: desktop 4 dòng, mobile 2 dòng', () => {
     const { container } = render(<PersonView page={page(previewPerson, 'preview')} />)
     const dls = container.querySelectorAll('dl')

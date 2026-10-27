@@ -35,6 +35,7 @@ import { NoteBanner } from '@/components/ui/NoteBanner'
 import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
+import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
@@ -249,6 +250,14 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>TIÊU ĐỀ TRANG CHI TIẾT · BÀI ĐỌC</Lab>
+            <DetailTitle size="story" as="p">Chuyện về Trạng Chiếu</DetailTitle>
+            <Lede size="story">Ông Trạng, khung dệt và nghề chiếu theo làng qua nhiều thế kỷ.</Lede>
+            <Lab>TIÊU ĐỀ TRANG CHI TIẾT · CHÂN DUNG</Lab>
+            <DetailTitle size="person" as="p">Chờ đồng ý</DetailTitle>
+            <Lede size="person">[Một câu giới thiệu ngắn, do chính người được kể duyệt.]</Lede>
           </div>
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN · HAI CỘT</Lab>

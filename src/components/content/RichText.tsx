@@ -13,6 +13,9 @@ type RichTextProps = {
   dropCap?: boolean
 }
 
+// Đoạn lời kể chân dung (không màu): RichText dùng màu chữ chính, StoryPlaceholder dùng màu mờ.
+const STORY_P = 'm-0 font-serif text-[17px] leading-[1.75] md:text-[19px]'
+
 const styles = {
   article: {
     wrap: 'flex flex-col gap-[22px] md:gap-7',
@@ -24,7 +27,7 @@ const styles = {
   },
   story: {
     wrap: 'flex flex-col gap-5 md:gap-6',
-    p: 'm-0 font-serif text-[17px] leading-[1.75] text-text-primary md:text-[19px]',
+    p: `${STORY_P} text-text-primary`,
     h: 'm-0 font-display text-[22px] font-normal leading-[1.2] md:text-[26px]',
     h3: 'm-0 font-display text-[22px] font-normal leading-[1.2] md:text-[26px]',
     figcaption: 'font-serif text-[14px] italic leading-[1.5] text-text-secondary',
@@ -138,11 +141,11 @@ export function RichText({ value, variant, dropCap = false }: RichTextProps) {
  * Mục gợi ý phỏng vấn ở bản xem trước (R14): tiêu đề như h3 của lời kể, đoạn chữ mờ (.ph của artboard).
  * Thân là Variant: desktop có câu hỏi gợi ý, mobile rút gọn.
  */
-export function StoryPlaceholder({ title, body }: { title: string; body: Variant }) {
+export function StoryPlaceholder({ title, body }: { title: string | null; body: Variant }) {
   return (
     <div className="flex flex-col gap-2 md:gap-2.5">
-      <h3 className={styles.story.h3}>{title}</h3>
-      <p className="m-0 font-serif text-[17px] leading-[1.75] text-text-muted md:text-[19px]">
+      {title ? <h3 className={styles.story.h3}>{title}</h3> : null}
+      <p className={`${STORY_P} text-text-muted`}>
         <VariantText value={body} />
       </p>
     </div>

@@ -131,4 +131,11 @@ describe('StoryPlaceholder', () => {
     expect(screen.getByText('[Gợi ý dài]').className).toBe('max-md:hidden')
     expect(screen.getByText('[Ngắn]').className).toBe('md:hidden')
   })
+  it('không có tiêu đề thì không có h3 rỗng; đoạn dùng cùng kiểu với lời kể, màu mờ', () => {
+    const { container } = render(<StoryPlaceholder title={null} body={{ desktop: 'A', mobile: 'A' }} />)
+    expect(container.querySelector('h3')).toBeNull()
+    const p = container.querySelector('p')!.className
+    expect(p).toContain('leading-[1.75]')
+    expect(p).not.toContain('text-text-primary')
+  })
 })

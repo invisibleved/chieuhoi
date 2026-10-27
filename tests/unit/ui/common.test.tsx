@@ -10,6 +10,7 @@ import { NoteBanner } from '@/components/ui/NoteBanner'
 import { StatusDot } from '@/components/ui/StatusDot'
 import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
+import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { FactList } from '@/components/ui/FactList'
 import { PagerButton } from '@/components/ui/PagerButton'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
@@ -148,6 +149,34 @@ describe('Callout', () => {
   })
 })
 
+describe('DetailTitle, Lede', () => {
+  it('h1 font display 40px; cỡ desktop theo size (story 72, person 64)', () => {
+    const { rerender } = render(<DetailTitle size="story">Chuyện về Trạng Chiếu</DetailTitle>)
+    const h1 = screen.getByRole('heading', { level: 1 })
+    expect(h1.className).toContain('font-display')
+    expect(h1.className).toContain('text-[40px]')
+    expect(h1.className).toContain('md:text-[72px]')
+    rerender(<DetailTitle size="person">Chờ đồng ý</DetailTitle>)
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('md:text-[64px]')
+  })
+  it('as="p" (styleguide): cùng kiểu chữ, không phải heading', () => {
+    const { container } = render(<DetailTitle size="person" as="p">Mẫu</DetailTitle>)
+    expect(screen.queryByRole('heading')).toBeNull()
+    expect(container.querySelector('p')!.className).toContain('md:text-[64px]')
+  })
+  it('Lede: đoạn nghiêng chữ phụ; story 18/22 rộng tối đa 720, person 17/19', () => {
+    const { container, rerender } = render(<Lede size="story">Sapo</Lede>)
+    const p = container.querySelector('p')!
+    expect(p.className).toContain('italic')
+    expect(p.className).toContain('text-text-secondary')
+    expect(p.className).toContain('md:max-w-[720px]')
+    expect(p.className).toContain('md:text-[22px]')
+    rerender(<Lede size="person">Giới thiệu</Lede>)
+    expect(container.querySelector('p')!.className).toContain('md:text-[19px]')
+    expect(container.querySelector('p')!.className).not.toContain('md:max-w-[720px]')
+  })
+})
+
 describe('FactList', () => {
   it('dl > div > dt + dd', () => {
     const { container } = render(<FactList items={[{ term: 'Nơi dệt', detail: 'Hải Triều' }, { term: 'Chất liệu', detail: 'Cói' }]} />)
@@ -274,6 +303,12 @@ describe('ReadNext', () => {
     expect(container.querySelector('section')!.className).toContain('max-md:hidden')
     rerender(<ReadNext items={items} eyebrow="LIÊN QUAN" title="Liên quan" />)
     expect(container.querySelector('section')!.className).not.toContain('max-md:hidden')
+  })
+  it('className thêm vào section, nằm trong phạm vi ẩn ở mobile khi không còn mục', () => {
+    const { container } = render(<ReadNext items={[items[2]]} eyebrow="LIÊN QUAN" className="mt-10 md:mt-28" />)
+    const cls = container.querySelector('section')!.className
+    expect(cls).toContain('mt-10 md:mt-28')
+    expect(cls).toContain('max-md:hidden')
   })
   it('imageClassName đổi chiều cao ảnh', () => {
     const img = { url: '/x.webp', alt: 'a', width: 10, height: 10, sizes: {}, photographer: null, code: null, docNumber: null, flags: [] as [] }

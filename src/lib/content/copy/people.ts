@@ -112,7 +112,8 @@ export const peopleCopy = {
         desktop: 'Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc · Nguồn: [mã ghi âm, ngày]',
         mobile: 'Chỉ hiện khi có ghi âm gốc',
       },
-      quoteNotePrefix: 'Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc · ',
+      // Ghép với "Nguồn: …" bằng " · " ở lib (R15).
+      quoteNotePrefix: 'Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc',
       galleryNote: {
         desktop: 'Ảnh cùng buổi chụp · cần xác minh tác giả và quyền dùng',
         mobile: 'Ảnh cùng buổi chụp · cần xác minh tác giả',

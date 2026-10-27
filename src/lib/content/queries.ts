@@ -334,7 +334,7 @@ export function createContent(payload: Payload) {
     const qSourceView = qSource ? toSourceView(qSource, mode) : null
     const qLine = qSourceView ? sourceLine([qSourceView]) : null
     const qNote = [
-      preview ? peopleCopy.detail.preview.quoteNotePrefix.replace(/\s*·\s*$/, '') : null,
+      preview ? peopleCopy.detail.preview.quoteNotePrefix : null,
       qLine ? `${peopleCopy.detail.quoteSource}${qLine}` : null,
     ].filter(Boolean).join(' · ') || null
     const quote: PersonDetailView['quote'] = cardQuote && (preview || qSourceView)

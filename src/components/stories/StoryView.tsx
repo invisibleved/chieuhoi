@@ -8,6 +8,7 @@ import { Tag } from '@/components/content/Tag'
 import { VerifyNote } from '@/components/content/VerifyNote'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { BackLink } from '@/components/ui/BackLink'
+import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { ReadingProgress } from '@/components/ui/ReadingProgress'
 import { ShareButtons } from '@/components/ui/ShareButtons'
@@ -43,10 +44,8 @@ export function StoryView({ page }: { page: StoryPageView }) {
               {story.category ? <Eyebrow tracking="label">{story.category.toLocaleUpperCase('vi')}</Eyebrow> : null}
               {story.status === 'Bản nháp' && d.draftTag ? <Tag variant="dashed">{d.draftTag}</Tag> : null}
             </div>
-            <h1 className="m-0 font-display text-[40px] leading-[1.12] font-normal md:text-[72px] md:leading-[1.1]">{story.title}</h1>
-            {story.sapo ? (
-              <p className="m-0 font-serif text-[18px] leading-[1.6] text-text-secondary italic md:max-w-[720px] md:text-[22px]">{story.sapo}</p>
-            ) : null}
+            <DetailTitle size="story">{story.title}</DetailTitle>
+            {story.sapo ? <Lede size="story">{story.sapo}</Lede> : null}
             {meta.length > 0 ? (
               <p data-meta className="m-0 flex flex-wrap gap-x-2 text-[13px] leading-[1.6] text-text-muted md:justify-center md:gap-x-[18px] md:text-[14px]">
                 {meta.map((m, i) => (
@@ -97,15 +96,14 @@ export function StoryView({ page }: { page: StoryPageView }) {
         <SourceList sources={story.sources} variant="notes" headingId="ghi-chu-nguon" title={d.notesTitle ?? undefined} />
       </article>
 
-      <div className="mt-12 md:mt-28">
-        <ReadNext
-          items={readNext}
-          eyebrow={d.readNext.eyebrow}
-          title={d.readNext.title ?? undefined}
-          action={d.readNext.all ? { href: LIST_HREF, label: d.readNext.all } : undefined}
-          imageClassName="h-[240px]"
-        />
-      </div>
+      <ReadNext
+        items={readNext}
+        eyebrow={d.readNext.eyebrow}
+        title={d.readNext.title ?? undefined}
+        action={d.readNext.all ? { href: LIST_HREF, label: d.readNext.all } : undefined}
+        imageClassName="h-[240px]"
+        className="mt-12 md:mt-28"
+      />
     </div>
   )
 }
