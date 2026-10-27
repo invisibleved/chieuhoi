@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Button } from './Button'
+import { ErrorIcon } from './ErrorIcon'
 import { LinkArrow } from './LinkArrow'
 
 // Skeleton: khối ảnh + các dòng chữ giả. Nơi dùng tự thêm chữ đọc màn hình "Đang tải".
@@ -61,18 +62,7 @@ export function ErrorState({
   return (
     <div role="alert" className="flex flex-col gap-3 border-t-[3px] border-accent bg-bg-raised p-6">
       <span className="flex items-center gap-2.5 text-[17px] font-semibold text-accent">
-        <svg
-          aria-hidden="true"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-        >
-          <circle cx="10" cy="10" r="9" />
-          <path d="M10 5.5v5.5M10 13.5v1" />
-        </svg>
+        <ErrorIcon />
         {title}
       </span>
       <span className="text-[14px] leading-[1.6] text-text-secondary">{body}</span>

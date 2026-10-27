@@ -45,7 +45,7 @@ import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-import { FilterDemos, InteractiveDemos, LightboxDemo, PatternExplorerDemo, SegmentedDemos, SuccessActionDemo, StepperDemos, TabDemo } from './Demos'
+import { FilterDemos, FormDemos, InteractiveDemos, LightboxDemo, PatternExplorerDemo, SegmentedDemos, SuccessActionDemo, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -479,7 +479,7 @@ export default function StyleguidePage() {
       {/* Form góp tư liệu */}
       <section aria-labelledby="sg-form" className="flex flex-col gap-8">
         <h2 id="sg-form" className={h2}>Form góp tư liệu</h2>
-        <VerifyNote size="sm">Làm ở Phase 5.</VerifyNote>
+        <FormDemos />
       </section>
 
       {rowThreads}

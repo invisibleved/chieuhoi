@@ -20,6 +20,12 @@ import { PillButton } from '@/components/ui/PillButton'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { Tabs } from '@/components/ui/Tabs'
+import { TextField } from '@/components/ui/form/TextField'
+import { TextArea } from '@/components/ui/form/TextArea'
+import { ChoiceGroup } from '@/components/ui/form/ChoiceGroup'
+import { ConsentCheck } from '@/components/ui/form/ConsentCheck'
+import { ErrorSummary } from '@/components/ui/form/ErrorSummary'
+import { UploadPlaceholder } from '@/components/ui/form/UploadPlaceholder'
 
 const FILTERS = [
   { key: 'all', label: 'Tất cả' },
@@ -294,6 +300,65 @@ export function LightboxDemo({ copy }: { copy: ArchiveCopyView }) {
       <Lab>HỘP XEM ẢNH + LƯỚI THƯ VIỆN · bấm một ô để mở hộp xem ảnh (Esc hoặc nút Đóng để thu; ảnh dev)</Lab>
       <div className="bg-bg-deep p-4 md:p-8">
         <ArchiveGallery page={{ ...archivePageBase, copy }} initialCode={null} />
+      </div>
+    </div>
+  )
+}
+
+const CHOICES = [
+  { value: 'photo', label: 'Ảnh hoặc giấy tờ cũ' },
+  { value: 'story', label: 'Một câu chuyện, ký ức' },
+  { value: 'person', label: 'Giới thiệu người giữ nghề' },
+  { value: 'other', label: 'Hợp tác, câu hỏi khác' },
+]
+
+export function FormDemos() {
+  const [name, setName] = useState('')
+  const [contact, setContact] = useState('0912 345')
+  const [story, setStory] = useState('')
+  const [type, setType] = useState('photo')
+  const [consent, setConsent] = useState(false)
+  const [consentOk, setConsentOk] = useState(true)
+  return (
+    <div className="flex min-w-0 flex-col gap-8">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="flex flex-col gap-3">
+          <Lab>Ô NHẬP · MẶC ĐỊNH</Lab>
+          <TextField id="sg-f-name" label="Họ và tên" value={name} onChange={setName} autoComplete="name" />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>Ô NHẬP · CÓ GIÁ TRỊ (BẤM VÀO ĐỂ XEM FOCUS)</Lab>
+          <TextField id="sg-f-contact" label="Số điện thoại hoặc email" value={contact} onChange={setContact} />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>Ô NHẬP · LỖI</Lab>
+          <TextField id="sg-f-err" type="email" label="Email" value="ban@email" onChange={() => {}} error="Email chưa đúng định dạng" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <Lab>LỰA CHỌN · ĐÃ CHỌN MỘT THẺ</Lab>
+          <ChoiceGroup name="sg-type" legend="Bạn muốn góp gì?" options={CHOICES} value={type} onChange={setType} />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>Ô NHIỀU DÒNG, KHUNG TẢI TỆP TĨNH</Lab>
+          <TextArea id="sg-f-story" label="Câu chuyện hoặc mô tả" value={story} onChange={setStory} hint="Ví dụ: ảnh chụp năm nào, ai trong ảnh, ở đâu trong làng." rows={4} />
+          <UploadPlaceholder label="Ảnh hoặc tệp" title="Kéo ảnh vào đây hoặc chọn tệp" hint="JPG, PNG · minh hoạ, chưa có hệ thống tải lên" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="flex flex-col gap-3">
+          <Lab>ĐỒNG Ý · CHƯA CHỌN / LỖI</Lab>
+          <ConsentCheck id="sg-f-consent" label="Tôi là chủ sở hữu hoặc được phép chia sẻ tư liệu này." checked={consent} onChange={setConsent} error="Cần xác nhận quyền chia sẻ trước khi gửi." />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐỒNG Ý · ĐÃ CHỌN</Lab>
+          <ConsentCheck id="sg-f-consent2" label="Tôi là chủ sở hữu hoặc được phép chia sẻ tư liệu này." checked={consentOk} onChange={setConsentOk} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <Lab>TỔNG HỢP LỖI (count = 2)</Lab>
+        <ErrorSummary count={2} text={{ count: 'Còn {n} mục cần bổ sung.', rest: 'Xem các ô được đánh dấu bên dưới.' }} />
       </div>
     </div>
   )
