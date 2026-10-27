@@ -48,6 +48,18 @@ describe('labels', () => {
     rerender(<DocumentLine label="TL" code={null} caption={null} />)
     expect(container.innerHTML).toBe('')
   })
+  it('Tag overlay: size md có chấm 8px nét đứt 1.5px, sm không chấm, fluid ẩn chấm ở mobile', () => {
+    const dot = (c: HTMLElement) => c.querySelector('[aria-hidden="true"]') as HTMLElement | null
+    const md = render(<Tag variant="overlay">A</Tag>).container
+    expect(dot(md)?.style.width).toBe('8px')
+    expect(dot(md)?.style.borderWidth).toBe('1.5px')
+    expect(dot(md)?.className).toContain('border-dashed')
+    const sm = render(<Tag variant="overlay" size="sm">B</Tag>).container
+    expect(dot(sm)).toBeNull()
+    expect(sm.firstElementChild!.className).toContain('px-[7px]')
+    const fluid = render(<Tag variant="overlay" size="fluid">C</Tag>).container
+    expect(dot(fluid)!.parentElement!.className).toContain('max-md:hidden')
+  })
   it('Tag overlay có chấm aria-hidden', () => {
     const { container } = render(<Tag variant="overlay">Chờ đồng ý</Tag>)
     expect(screen.getByText('Chờ đồng ý')).toBeTruthy()

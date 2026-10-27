@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { LinkArrow } from './LinkArrow'
 
 // Skeleton: khối ảnh + các dòng chữ giả. Nơi dùng tự thêm chữ đọc màn hình "Đang tải".
@@ -27,7 +28,8 @@ export function EmptyState({
   size = 'md',
 }: {
   title: string
-  body: string
+  /** Chữ thường hoặc <VariantText> khi có hai bản desktop/mobile. */
+  body?: ReactNode
   action?: { href: string; label: string }
   /** lg: khung rộng của trang danh sách (đệm 56px, tiêu đề 32px từ md). */
   size?: 'md' | 'lg'
@@ -36,7 +38,7 @@ export function EmptyState({
   return (
     <div className={`flex flex-col justify-center border border-dashed border-border-dashed p-6 ${lg ? 'items-start gap-3.5 md:max-w-[720px] md:p-14' : 'gap-3'}`}>
       <span className={`font-display ${lg ? 'text-[24px] md:text-[32px]' : 'text-[24px]'}`}>{title}</span>
-      <span className={`leading-[1.6] text-text-secondary ${lg ? 'text-[14px] md:text-[16px] md:leading-[1.65]' : 'text-[14px]'}`}>{body}</span>
+      {body ? <span className={`leading-[1.6] text-text-secondary ${lg ? 'text-[14px] md:text-[16px] md:leading-[1.65]' : 'text-[14px]'}`}>{body}</span> : null}
       {action ? <LinkArrow href={action.href}>{action.label}</LinkArrow> : null}
     </div>
   )

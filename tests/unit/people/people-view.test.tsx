@@ -60,6 +60,21 @@ describe('PeopleView', () => {
     expect(screen.getByRole('status').textContent).toBe('2 chân dung')
   })
 
+  it('nhãn Chờ đồng ý có chấm đứt (StatusDot) ở bản desktop, ẩn ở mobile', () => {
+    const { container } = render(<PeopleView page={view([person(0)])} />)
+    const label = screen.getByText('Chờ đồng ý')
+    const dot = label.querySelector('[aria-hidden="true"]')
+    expect(dot).toBeTruthy()
+    expect(dot!.parentElement!.className).toContain('max-md:hidden')
+    expect(container.querySelector('.border-dashed')).toBeTruthy()
+  })
+
+  it('khung trống: body chỉ có bản desktop (mobile null)', () => {
+    render(<PeopleView page={view(people)} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Thế hệ trẻ' }))
+    expect(screen.getByText(/Nếu bạn là người trẻ/).className).toContain('max-md:hidden')
+  })
+
   it('lọc nhóm không có ai hiện khung trống', () => {
     render(<PeopleView page={view(people)} />)
     fireEvent.click(screen.getByRole('button', { name: 'Thế hệ trẻ' }))

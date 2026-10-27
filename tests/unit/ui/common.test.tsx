@@ -4,6 +4,7 @@ import { ReadNext } from '@/components/content/ReadNext'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { Callout } from '@/components/ui/Callout'
 import { BackLink } from '@/components/ui/BackLink'
+import { VariantText } from '@/components/ui/VariantText'
 import { EmptyState } from '@/components/ui/Feedback'
 import { NoteBanner } from '@/components/ui/NoteBanner'
 import { StatusDot } from '@/components/ui/StatusDot'
@@ -210,6 +211,16 @@ describe('Callout tone dark', () => {
   it('mặc định vẫn là light', () => {
     const { container } = render(<Callout title="LƯU Ý">x</Callout>)
     expect(container.firstElementChild!.className).toContain('border-accent')
+  })
+})
+
+describe('EmptyState body hai bản', () => {
+  it('nhận VariantText: bản mobile null thì chỉ có span desktop; không body thì không có dòng chữ', () => {
+    const { container, rerender } = render(<EmptyState title="T" body={<VariantText value={{ desktop: 'Bản desktop', mobile: null }} />} />)
+    expect(screen.getByText('Bản desktop').className).toContain('max-md:hidden')
+    expect(container.querySelector('.md\\:hidden')).toBeNull()
+    rerender(<EmptyState title="T" />)
+    expect(container.querySelectorAll('span')).toHaveLength(1)
   })
 })
 

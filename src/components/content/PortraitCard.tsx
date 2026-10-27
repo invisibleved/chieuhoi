@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { PersonView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
 import { PreviewNotes } from './PreviewNotes'
-import { StatusDot } from '@/components/ui/StatusDot'
+import { Tag } from './Tag'
 
 type PortraitCardProps = {
   person: PersonView
@@ -27,8 +27,6 @@ const looks = {
     gap: 'gap-3',
     image: 'h-[380px]',
     tagPos: 'left-3 top-3',
-    tag: 'px-2.5 py-[5px]',
-    dot: '',
     category: 'tracking-meta',
     name: 'text-[24px] leading-[1.2]',
     more: '',
@@ -37,9 +35,7 @@ const looks = {
     gap: 'gap-3',
     image: 'h-[220px]',
     tagPos: 'left-1.5 top-1.5',
-    tag: 'px-[7px] py-[3px]',
-    dot: '',
-    category: 'tracking-[.1em]',
+    category: 'tracking-meta-sm',
     name: 'text-[19px] leading-[1.25]',
     more: '',
   },
@@ -47,9 +43,7 @@ const looks = {
     gap: 'gap-2 md:gap-2.5',
     image: 'h-[220px] md:h-[380px]',
     tagPos: 'left-1.5 top-1.5 md:left-3 md:top-3',
-    tag: 'px-[7px] py-[3px] md:px-2.5 md:py-[5px]',
-    dot: 'max-md:hidden',
-    category: 'tracking-[.1em] md:tracking-meta',
+    category: 'tracking-meta-sm md:tracking-meta',
     name: 'text-[19px] leading-[1.25] md:text-[24px] md:leading-[1.2]',
     more: 'max-md:hidden',
   },
@@ -71,14 +65,7 @@ export function PortraitCard({ person, href, size = 'lg', detail = 'role', class
         )}
         {person.consentPending && (
           <span className={`absolute ${look.tagPos}`}>
-            <span className={`inline-flex items-center gap-2 bg-surface-on-image text-[12px] font-semibold text-text-secondary ${look.tag}`}>
-              {size !== 'sm' && (
-                <span className={look.dot}>
-                  <StatusDot state="none" size={8} />
-                </span>
-              )}
-              Chờ đồng ý
-            </span>
+            <Tag variant="overlay" size={size === 'lg' ? 'md' : size}>Chờ đồng ý</Tag>
           </span>
         )}
       </span>

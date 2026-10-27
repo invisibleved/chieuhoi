@@ -8,7 +8,6 @@ import { Callout } from '@/components/ui/Callout'
 import { EmptyState } from '@/components/ui/Feedback'
 import { FilterableList } from '@/components/ui/FilterableList'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
-import { useVariantString } from '@/components/ui/useVariant'
 import { VariantText } from '@/components/ui/VariantText'
 
 const fill = (template: string, values: Record<string, string | number>) =>
@@ -20,7 +19,6 @@ const offset = (index: number) => (index % 4 === 1 || index % 4 === 3 ? 'md:mt-1
 // Trang danh sách Con người: đầu trang kèm khung nguyên tắc, lưới chân dung có lọc, khối mời.
 export function PeopleView({ page }: { page: PeoplePageView }) {
   const { copy, intro, people, filters } = page
-  const emptyBody = useVariantString(copy.empty.body)
   const crumbs = [
     { label: copy.breadcrumb.home ?? '', href: '/' },
     { label: copy.breadcrumb.current ?? '' },
@@ -79,7 +77,7 @@ export function PeopleView({ page }: { page: PeoplePageView }) {
             <EmptyState
               size="lg"
               title={copy.empty.title ?? ''}
-              body={emptyBody}
+              body={<VariantText value={copy.empty.body} />}
               action={
                 copy.empty.action.href && copy.empty.action.label
                   ? { href: copy.empty.action.href, label: copy.empty.action.label }

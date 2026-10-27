@@ -9,5 +9,5 @@ const looks = {
 } as const
 
 export function StatusDot({ state, size = 12 }: StatusDotProps) {
-  return <span aria-hidden="true" className={`inline-block flex-none rounded-full ${looks[state]}`} style={{ width: size, height: size }} />
+  return <span aria-hidden="true" className={`inline-block flex-none rounded-full ${looks[state]}`} style={{ width: size, height: size, borderWidth: size === 8 ? 1.5 : 2 }} />
 }

@@ -7,8 +7,8 @@ import { StoryCard } from '@/components/content/StoryCard'
 import { EmptyState } from '@/components/ui/Feedback'
 import { FilterableList } from '@/components/ui/FilterableList'
 import { SearchField } from '@/components/ui/SearchField'
+import { VariantText } from '@/components/ui/VariantText'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
-import { useVariantString } from '@/components/ui/useVariant'
 
 const PAGE_SIZE = 9
 const DRAFT = 'Bản nháp'
@@ -23,7 +23,6 @@ const searchText = (s: StoryCardView) => [s.title, s.sapo, s.category].filter(Bo
 export function StoriesView({ page }: { page: StoriesPageView }) {
   const { copy, intro, stories, filters, featured } = page
   const [query, setQuery] = useState('')
-  const emptyBody = useVariantString(copy.empty.body)
   const crumbs = [
     { label: copy.breadcrumb.home ?? '', href: '/' },
     { label: copy.breadcrumb.current ?? '' },
@@ -96,7 +95,7 @@ export function StoriesView({ page }: { page: StoriesPageView }) {
             <EmptyState
               size="lg"
               title={copy.empty.title ?? ''}
-              body={emptyBody}
+              body={<VariantText value={copy.empty.body} />}
               action={
                 copy.empty.action.href && copy.empty.action.label
                   ? { href: copy.empty.action.href, label: copy.empty.action.label }
