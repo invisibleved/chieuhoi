@@ -1,4 +1,4 @@
-import { expect, type BrowserContext, type Page } from '@playwright/test'
+import { expect, test, type BrowserContext, type Page } from '@playwright/test'
 import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { REVIEWER_STATE } from '../global-setup'
 
@@ -9,9 +9,12 @@ export const VIEWPORTS = [
   { name: '390', width: 390, height: 844 },
 ] as const
 
-/** Dùng phiên người duyệt seed đã đăng nhập sẵn ở global-setup để bản preview hiện ảnh chưa được phép. */
+/**
+ * Dùng phiên người duyệt seed đã đăng nhập sẵn ở global-setup để bản preview hiện ảnh chưa được phép.
+ * Không có phiên (thiếu SEED_REVIEWER_EMAIL/PASSWORD) thì bỏ qua test kèm lý do, không để test qua rỗng.
+ */
 export async function loginReviewer(page: Page) {
-  if (!existsSync(REVIEWER_STATE)) return
+  test.skip(!existsSync(REVIEWER_STATE), `Thiếu phiên người duyệt (${REVIEWER_STATE}): đặt SEED_REVIEWER_EMAIL và SEED_REVIEWER_PASSWORD để global-setup đăng nhập.`)
   const { cookies } = JSON.parse(readFileSync(REVIEWER_STATE, 'utf8')) as { cookies: Parameters<BrowserContext['addCookies']>[0] }
   await page.context().addCookies(cookies)
   const me = await page.request.get('/api/users/me')

@@ -82,6 +82,17 @@ test.describe('nghề dệt chiếu mobile 390', () => {
     expect(small).toEqual([])
   })
 
+  test('bấm Tiếp không làm trang nhảy dọc, dải công đoạn cuộn theo', async ({ page }) => {
+    await open(page)
+    const next = page.getByRole('button', { name: 'Công đoạn tiếp' })
+    await next.scrollIntoViewIfNeeded()
+    const y = await page.evaluate(() => window.scrollY)
+    for (let i = 0; i < 5; i++) await next.click()
+    expect(await page.evaluate(() => window.scrollY)).toBe(y)
+    const rail = page.getByRole('group', { name: 'Chọn công đoạn' })
+    await expect.poll(() => rail.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0)
+  })
+
   test('chọn pill 07 thì pill nằm trong khung nhìn ngang của dải', async ({ page }) => {
     await open(page)
     const rail = page.getByRole('group', { name: 'Chọn công đoạn' })
@@ -98,6 +109,29 @@ test.describe('nghề dệt chiếu mobile 390', () => {
         }, await pill.elementHandle()),
       )
       .toBe(true)
+  })
+})
+
+test.describe('nghề dệt chiếu tablet 768', () => {
+  test.use({ viewport: { width: 768, height: 1024 } })
+
+  test('không cuộn ngang; nút Trước/Tiếp và phóng ảnh nằm trong cột sân khấu', async ({ page }) => {
+    await open(page)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(768)
+    const stage = page.getByTestId('stage-zoom').locator('xpath=ancestor::figure[1]')
+    const col = await stage.boundingBox()
+    expect(col).not.toBeNull()
+    const controls = [
+      page.getByRole('button', { name: 'Công đoạn trước' }),
+      page.getByRole('button', { name: 'Công đoạn tiếp' }),
+      visible(page, 'button[aria-pressed]').filter({ hasText: 'Xem cận cảnh' }),
+    ]
+    for (const c of controls) {
+      const b = await c.boundingBox()
+      expect(b).not.toBeNull()
+      expect(b!.x).toBeGreaterThanOrEqual(col!.x - 1)
+      expect(b!.x + b!.width).toBeLessThanOrEqual(col!.x + col!.width + 1)
+    }
   })
 })
 
