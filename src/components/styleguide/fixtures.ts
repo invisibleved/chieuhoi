@@ -39,6 +39,8 @@ export const storyFeatured: StoryCardView = {
   cover: imgStory,
   readingMinutes: null,
   hasDetail: true,
+  status: null,
+  sourceCount: 3,
   flags: [],
 }
 
@@ -50,6 +52,8 @@ export const storyCompact: StoryCardView = {
   cover: imgCompact,
   readingMinutes: null,
   hasDetail: true,
+  status: null,
+  sourceCount: 0,
   flags: [],
 }
 
@@ -58,7 +62,9 @@ export const storyIdea: StoryCardView = {
   cover: null,
   sapo: null,
   hasDetail: false,
-  flags: ['idea'],
+  status: 'Chủ đề đề xuất',
+  sourceCount: 0,
+  flags: [],
 }
 
 export const productNoImage: ProductCardView = {

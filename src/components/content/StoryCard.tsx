@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import type { StoryCardView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
-import { storyStatus } from './labels'
 import { PreviewNotes } from './PreviewNotes'
 import { Tag } from './Tag'
 
@@ -14,7 +13,7 @@ type StoryCardProps = { story: StoryCardView; href: string; variant: 'featured' 
 
 // Thẻ bài viết. Không có ảnh bìa thì bỏ hẳn khối ảnh.
 export function StoryCard({ story, href, variant, size = 'default', hideCta = false }: StoryCardProps) {
-  const status = storyStatus(story.flags)
+  const status = story.status
   const cta = story.hasDetail ? 'Đọc bài →' : 'Xem đề cương →'
   const compact = variant === 'compact'
   const eyebrowText = [

@@ -21,8 +21,8 @@ export const homeMedia = {
 
 type Slot = { slot: string; file: string; caption?: string }
 
-/** Ảnh theo ô của hai trang Nghề dệt chiếu và Làng Hới. File và chú thích nguyên văn từ artboard. */
-export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi', Slot[]> = {
+/** Ảnh theo ô của các trang Nghề dệt chiếu, Làng Hới và Câu chuyện. File và chú thích nguyên văn từ artboard. */
+export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen', Slot[]> = {
   'nghe-det-chieu': [
     { slot: 'hero', file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]' },
     { slot: 'tool-1', file: 'nkc13.webp' },
@@ -39,6 +39,11 @@ export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi', Slot[]> = {
     { slot: 'life-1', file: 'hc8.webp', caption: 'Chiếu phơi trên bãi đất trống. [Địa điểm, thời gian — cần xác minh]' },
     { slot: 'life-2', file: 'hc2.webp', caption: 'Bày chiếu. [cần xác minh]' },
     { slot: 'life-3', file: 'kn2.webp', caption: 'Xem chiếu. [cần xác minh]' },
+  ],
+  // Thẻ "Đọc tiếp" của bài (StoryDetail.dc.html).
+  'cau-chuyen': [
+    { slot: 'next-village', file: 'hc9.webp' },
+    { slot: 'next-craft', file: 'nkc5.webp' },
   ],
 }
 
@@ -57,7 +62,8 @@ export const pageIntros: Record<string, Intro> = {
     title: 'Có một làng Hới...',
     lead: 'Một ngôi làng ven sông, nơi nghề dệt chiếu được kể là đã có từ hơn năm trăm năm, và nơi người ta vẫn nhắc đến một ông Trạng đã mang khung dệt về quê.',
   },
-  'cau-chuyen': { eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.' },
+  // Lead là bản mobile (StoriesMobile.dc.html), chỉ hiện ở mobile (R12).
+  'cau-chuyen': { eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.', lead: 'Ký ức, lịch sử và đời sống hôm nay của làng Hới.' },
   'nghe-det-chieu': {
     eyebrow: '03 — NGHỀ DỆT CHIẾU',
     title: 'Một tấm chiếu,\nmuôn công đoạn.',

@@ -8,7 +8,7 @@ const p = (slug: string, over: Partial<PersonView> = {}): PersonView => ({
   slug, category: 'Nghệ nhân', role: null, name: `Tên ${slug}`, portrait: null, quote: null, consentPending: false, flags: [], ...over,
 })
 const s = (slug: string, over: Partial<StoryCardView> = {}): StoryCardView => ({
-  slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail: true, flags: [], ...over,
+  slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail: true, status: null, sourceCount: 0, flags: [], ...over,
 })
 const hrefs = () => screen.getAllByRole('link').map((a) => a.getAttribute('href'))
 
@@ -35,7 +35,7 @@ describe('PeopleTeaser', () => {
 
 describe('StoriesTeaser', () => {
   it('bài nổi bật là bài có trang; idea trỏ /cau-chuyen; ghi chú đề xuất hiện', () => {
-    render(<StoriesTeaser stories={[s('y1', { hasDetail: false, flags: ['unpublished', 'idea'] }), s('d1', { flags: ['unpublished'] })]} />)
+    render(<StoriesTeaser stories={[s('y1', { hasDetail: false, status: 'Chủ đề đề xuất', flags: ['unpublished'] }), s('d1', { status: 'Bản nháp', flags: ['unpublished'] })]} />)
     const links = hrefs()
     expect(links).toContain('/cau-chuyen')
     expect(links).toContain('/cau-chuyen/d1')

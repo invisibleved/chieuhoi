@@ -1,11 +1,28 @@
 // Trường seed JSON còn thiếu, lấy nguyên văn từ artboard.
 
-/** StoriesIndex.dc.html (`data`); riêng sapo bài Trạng Chiếu lấy từ StoryDetail.dc.html. */
-export const storyExtras: Record<string, { sapo: string; cover: string; readingMinutes?: number }> = {
+type StoryExtra = {
+  sapo: string
+  cover: string
+  readingMinutes?: number
+  coverCaption?: string
+  reviewChecklist?: string[]
+}
+
+/**
+ * StoriesIndex.dc.html (`data`); riêng bài Trạng Chiếu lấy sapo, chú thích ảnh bìa và danh sách
+ * "CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG" từ StoryDetail.dc.html. Ngày đăng để trống (chờ thẩm định).
+ */
+export const storyExtras: Record<string, StoryExtra> = {
   'chuyen-ve-trang-chieu': {
     sapo: 'Phạm Đôn Lễ và khung dệt mang về làng Hới — những gì báo chí ghi lại, và những gì làng vẫn kể.',
     cover: 'nkc13.webp',
     readingMinutes: 4,
+    coverCaption: 'Khung dệt thủ công ngày nay. Ảnh minh hoạ cho bài, không phải khung dệt thời Lê.',
+    reviewChecklist: [
+      'Đối chiếu năm sinh, năm mất, năm đỗ với sử liệu khoa bảng.',
+      'Xác nhận ngày lễ tế tổ nghề với người làng.',
+      'Xin phép và ghi công tác giả ảnh.',
+    ],
   },
   'nhung-ky-uc-ben-khung-det': { sapo: 'Chờ ghi chép từ các gia đình làm nghề.', cover: 'kn1.webp' },
   'mot-ngay-o-lang-hoi': { sapo: 'Phóng sự ảnh một ngày làm chiếu, chờ chụp tại làng.', cover: 'hc8.webp' },

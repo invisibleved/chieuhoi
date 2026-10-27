@@ -86,7 +86,7 @@ describe('lib/content', () => {
     expect(await content.getStory('y', 'public')).toBeNull()
   })
 
-  it('khối cite chỉ còn sourceId', async () => {
+  it('khối cite chỉ còn số chú thích, nguồn vào danh sách của bài', async () => {
     const src = await create('sources', { sourceId: 'vnp-1', title: 'Báo' })
     const body = {
       root: {
@@ -99,8 +99,9 @@ describe('lib/content', () => {
     }
     await create('stories', pub({ slug: 'c', title: 'C', workflow: 'published', body }))
     const s = await content.getStory('c', 'public')
-    expect(JSON.stringify(s?.body)).toContain('"sourceId":"vnp-1"')
+    expect(JSON.stringify(s?.body)).toContain('{"type":"cite","n":1}')
     expect(JSON.stringify(s?.body)).not.toContain('Báo')
+    expect(s?.sources.map((x) => x.id)).toEqual(['vnp-1'])
   })
 
   it('maker chưa đồng ý bị ẩn', async () => {
@@ -231,7 +232,7 @@ describe('lib/content', () => {
     await rawSet('stories', st.id, 'body', await leakyBody())
     const json = JSON.stringify((await content.getStory('leak', 'public'))?.body)
     for (const l of leaks) expect(json).not.toContain(l)
-    expect(json).toContain('"sourceId":"leak-src"')
+    expect(json).toContain('{"type":"cite","n":1}')
     expect(json).toContain('Chữ giữ lại')
     expect(json).toContain('liên kết nội bộ')
   })

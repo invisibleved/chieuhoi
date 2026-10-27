@@ -366,6 +366,7 @@ export interface Story {
   sapo?: string | null;
   category?: ('history' | 'village-memory' | 'traditional-craft' | 'people' | 'life-today') | null;
   cover?: (number | null) | ArchiveAsset;
+  coverCaption?: string | null;
   body?: {
     root: {
       type: string;
@@ -382,8 +383,15 @@ export interface Story {
     [k: string]: unknown;
   } | null;
   editor?: string | null;
+  publishedAt?: string | null;
   readingMinutes?: number | null;
   sources?: (number | Source)[] | null;
+  reviewChecklist?:
+    | {
+        item?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -728,10 +736,18 @@ export interface StoriesSelect<T extends boolean = true> {
   sapo?: T;
   category?: T;
   cover?: T;
+  coverCaption?: T;
   body?: T;
   editor?: T;
+  publishedAt?: T;
   readingMinutes?: T;
   sources?: T;
+  reviewChecklist?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -875,6 +891,14 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot: 'next-village' | 'next-craft';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'nghe-det-chieu'?: {
     eyebrow?: string | null;
@@ -984,6 +1008,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'nghe-det-chieu'?:
     | T

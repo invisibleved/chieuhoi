@@ -106,7 +106,21 @@ describe('seed', () => {
       overrideAccess: true,
       limit: 1,
     })
-    expect(JSON.stringify(res.docs[0]?.body)).toContain('"blockType":"cite"')
+    const json = JSON.stringify(res.docs[0]?.body)
+    expect(json).toContain('"blockType":"cite"')
+    // Đúng một khối ảnh, thay cho đoạn chứa token; không còn token thô trong bài.
+    expect(json.match(/"blockType":"figure"/g)).toHaveLength(1)
+    expect(json).not.toContain('[[figure:')
+    expect(res.docs[0]?.reviewChecklist).toHaveLength(3)
+  })
+
+  it('page-intros.cau-chuyen: lead mobile và 2 ảnh Đọc tiếp', async () => {
+    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as {
+      'cau-chuyen': { lead: string; media: { slot: string; image: number | null }[] }
+    }
+    expect(g['cau-chuyen'].lead).toBe('Ký ức, lịch sử và đời sống hôm nay của làng Hới.')
+    expect(g['cau-chuyen'].media.map((m) => m.slot)).toEqual(['next-village', 'next-craft'])
+    expect(g['cau-chuyen'].media.every((m) => m.image)).toBe(true)
   })
 
   it('trạng thái đăng theo seed', async () => {

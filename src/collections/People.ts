@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { slugify } from '@/lib/slugify'
 
 import { restrictedEditor } from './restrictedEditor'
 
@@ -13,16 +14,6 @@ export const PERSON_CATEGORY_OPTIONS = [
   { label: 'Thế hệ trẻ', value: 'young-generation' },
   { label: 'Những người gắn bó với làng', value: 'village-bound' },
 ]
-
-/** Chữ thường, bỏ dấu, khoảng trắng và ký tự lạ thành '-'. */
-const slugify = (v: string) =>
-  v
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/gi, 'd')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
 
 const control = { create: reviewerOnlyField, update: reviewerOnlyField }
 

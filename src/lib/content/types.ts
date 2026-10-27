@@ -1,10 +1,11 @@
 import type { ArchiveAsset } from '@/payload-types'
 
 import type { CraftCopyView } from './copy/craft'
+import type { StoriesCopyView } from './copy/stories'
 import type { VillageCopyView } from './copy/village'
 
 export type Mode = 'public' | 'preview'
-export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified' | 'idea'
+export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified'
 
 export interface ImageView {
   url: string
@@ -95,6 +96,15 @@ export interface ProductView extends ProductCardView {
   maker: { name: string | null; verified: boolean } | null
 }
 
+/**
+ * Cây Lexical đã lọc (xem rich.ts). Nút đặc biệt:
+ * - heading h2 có thêm `anchor: string` (R5);
+ * - `{ type: 'cite', n: number }`: số chú thích, trỏ tới `sources[n - 1]` (R4);
+ * - `{ type: 'figure', image: ImageView, caption: string | null }` (R3).
+ */
+export type RichNode = Record<string, unknown>
+export type Rich = { root: RichNode }
+
 export interface StoryCardView {
   slug: string
   title: string | null
@@ -103,20 +113,56 @@ export interface StoryCardView {
   cover: ImageView | null
   readingMinutes: number | null
   hasDetail: boolean
+  /** "Chủ đề đề xuất" cho bài idea ở mọi mode; "Bản nháp" chỉ ở preview (R2). */
+  status: 'Bản nháp' | 'Chủ đề đề xuất' | null
+  /** Số nguồn nhìn thấy được ở mode hiện tại. */
+  sourceCount: number
   flags: Flag[]
 }
 
 export interface StoryView extends StoryCardView {
-  /** Lexical JSON; khối cite chỉ còn sourceId. Hiển thị ở Phase 5. */
-  body: unknown | null
-  editor: string | null
+  body: Rich | null
+  /** Các h2 của bài, theo thứ tự (R5). */
+  toc: { id: string; title: string }[]
+  /** Đánh số theo lần trích đầu tiên, nguồn không được trích xếp sau (R4); date dạng dd/mm/yyyy. */
   sources: SourceView[]
+  editor: string | null
+  /** dd/mm/yyyy */
+  publishedAt: string | null
+  coverCaption: string | null
+  /** Việc cần thẩm định trước khi đăng: luôn null ở public. */
+  reviewChecklist: string[] | null
+}
+
+export type ReadNextItem = {
+  href: string
+  eyebrow: string
+  title: string
+  cta: string
+  image: ImageView | null
+  /** false: không hiện ở mobile (R8). */
+  mobile?: boolean
+}
+
+export interface StoriesPageView {
+  intro: PageIntroView
+  stories: StoryCardView[]
+  /** Chip "Tất cả" (key all) rồi các chủ đề theo thứ tự option. */
+  filters: { key: string; label: string }[]
+  copy: StoriesCopyView
+}
+
+export interface StoryPageView {
+  story: StoryView
+  /** Hai thẻ cố định và một bài khác (R8). */
+  readNext: ReadNextItem[]
+  copy: StoriesCopyView
 }
 
 export interface PersonDetailView extends PersonView {
   note: string | null
   yearsInCraft: string | null
-  story: unknown | null
+  story: Rich | null
 }
 
 /** Giá trị chủ đề ảnh tư liệu, lấy từ kiểu Payload (nguồn là ARCHIVE_CATEGORY_OPTIONS). */
@@ -180,7 +226,7 @@ export interface CraftPageView {
       muted: { hand: boolean; machine: boolean; mobile: boolean[] }
     }[]
   }
-  readNext: { href: string; eyebrow: string; title: string; cta: string; image: ImageView | null }[]
+  readNext: ReadNextItem[]
   copy: CraftCopyView
 }
 
@@ -197,4 +243,4 @@ export interface VillagePageView {
   copy: VillageCopyView
 }
 
-export type { CraftCopyView, VillageCopyView }
+export type { CraftCopyView, StoriesCopyView, VillageCopyView }

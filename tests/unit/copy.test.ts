@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { craftCopy } from '@/lib/content/copy/craft'
+import { storiesCopy } from '@/lib/content/copy/stories'
 import { villageCopy } from '@/lib/content/copy/village'
 
 describe('applyMode', () => {
@@ -45,5 +46,13 @@ describe('applyMode', () => {
       { text: null, cite: [] }, { text: 'B', cite: ['y'] }, { text: 'C', cite: [] },
     ])
     expect(applyMode(copy, 'preview', { cites }).parts[0]).toEqual({ text: 'A', cite: [] })
+  })
+  it('stories: public làm mọi nhánh preview thành null, preview giữ nguyên văn', () => {
+    const pub = applyMode(storiesCopy, 'public')
+    expect(pub.detail.preview).toBeNull()
+    expect(JSON.stringify(pub)).not.toContain('CẦN THẨM ĐỊNH')
+    expect(pub.detail.draftTag).toBe('Bản nháp — cần thẩm định')
+    expect(pub.filter.label).toEqual({ desktop: 'Lọc theo chủ đề', mobile: 'Lọc' })
+    expect(applyMode(storiesCopy, 'preview')).toEqual(storiesCopy)
   })
 })

@@ -26,3 +26,9 @@ export const archiveCategoryOptions: { key: ArchiveCategory; label: string }[] =
   key: o.value as ArchiveCategory,
   label: o.label,
 }))
+
+/** Chủ đề bài viết theo thứ tự option, cho bộ lọc (không gồm chip "Tất cả"). */
+export const storyCategoryOptions: { key: string; label: string }[] = STORY_CATEGORY_OPTIONS.map((o) => ({
+  key: o.value,
+  label: o.label,
+}))

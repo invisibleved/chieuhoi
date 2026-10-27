@@ -38,3 +38,38 @@ export function injectCitations(
   clone.root = walk(clone.root)
   return clone as unknown as SerializedEditorState
 }
+
+const FIGURE = /^\[\[figure:([^|\]]+)\|([\s\S]*)\]\]$/
+
+/**
+ * Thay paragraph chỉ chứa token `[[figure:<file>|<chú thích>]]` bằng block `figure` (R3).
+ * Chú thích có thể chứa dấu `[...]` nên token phải chiếm trọn đoạn.
+ */
+export function injectFigures(
+  root: SerializedEditorState,
+  assetIdByFile: Record<string, number>,
+): SerializedEditorState {
+  const textOf = (n: Node): string | null => {
+    const kids = n.children ?? []
+    return kids.every((c) => c.type === 'text') ? kids.map((c) => c.text as string).join('').trim() : null
+  }
+  const walk = (node: Node): Node => {
+    if (!Array.isArray(node.children)) return node
+    const children = node.children.map((child, i) => {
+      const m = child.type === 'paragraph' ? textOf(child)?.match(FIGURE) : null
+      if (!m) return walk(child)
+      const image = assetIdByFile[m[1]]
+      if (image === undefined) throw new Error(`Không tìm thấy ảnh "${m[1]}" để chèn vào bài.`)
+      return {
+        type: 'block',
+        version: 2,
+        format: '',
+        fields: { id: `figure-${m[1]}-${i}`, blockName: '', blockType: 'figure', image, caption: m[2] },
+      }
+    })
+    return { ...node, children }
+  }
+  const clone = structuredClone(root) as unknown as { root: Node }
+  clone.root = walk(clone.root)
+  return clone as unknown as SerializedEditorState
+}

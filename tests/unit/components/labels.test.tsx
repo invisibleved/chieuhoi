@@ -1,17 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { previewNotes, productTag, storyStatus } from '@/components/content/labels'
+import { previewNotes, productTag } from '@/components/content/labels'
 import { ArchiveChip, DocumentLabel, DocumentLine } from '@/components/content/DocumentLabel'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { Tag } from '@/components/content/Tag'
 import { VerifyNote } from '@/components/content/VerifyNote'
 
 describe('labels', () => {
-  it('storyStatus', () => {
-    expect(storyStatus(['unpublished', 'idea'])).toBe('Chủ đề đề xuất')
-    expect(storyStatus(['unpublished'])).toBe('Bản nháp')
-    expect(storyStatus([])).toBeNull()
-  })
   it('productTag', () => {
     expect(productTag({ image: null, typeConfirmed: false })).toEqual({ text: 'Chưa có ảnh', style: 'dashed' })
     expect(productTag({ image: {}, typeConfirmed: false })).toEqual({ text: 'Ảnh cần xác nhận loại', style: 'filled' })

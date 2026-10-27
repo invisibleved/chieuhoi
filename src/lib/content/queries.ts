@@ -8,7 +8,7 @@ import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-type
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { sanitizeRich } from './rich'
 import type {
-  ArchiveItemView, CraftStepView, Flag, HomeMediaView, Mode, PageIntroView, PersonDetailView, PersonView,
+  ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
   ProductCardView, ProductView, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView,
 } from './types'
@@ -194,8 +194,7 @@ export function createContent(payload: Payload) {
   }
 
   const storyCard = (d: Story, mode: Mode): StoryCardView => {
-    const flags = flagsOf(d, mode, [d.title, d.sapo])
-    if (d.workflow === 'idea' && mode === 'preview') flags.push('idea')
+    const idea = d.workflow === 'idea'
     return {
       slug: d.slug,
       title: showText(d.title, mode),
@@ -203,8 +202,11 @@ export function createContent(payload: Payload) {
       category: storyCategoryLabel(d.category),
       cover: toImageView(d.cover, mode),
       readingMinutes: d.readingMinutes ?? null,
-      hasDetail: d.workflow !== 'idea',
-      flags,
+      hasDetail: !idea,
+      // R2: "Chủ đề đề xuất" ở mọi mode; "Bản nháp" chỉ có ở preview (public không có bài chưa đăng).
+      status: idea ? 'Chủ đề đề xuất' : d._status !== 'published' ? 'Bản nháp' : null,
+      sourceCount: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable).length,
+      flags: flagsOf(d, mode, [d.title, d.sapo]),
     }
   }
 
@@ -213,15 +215,59 @@ export function createContent(payload: Payload) {
     return docs.map((d) => storyCard(d, mode))
   }
 
+  /** Ảnh của các khối figure trong bài, đã áp mode (null: không được dùng ở mode này). */
+  async function figureAssets(body: unknown, mode: Mode): Promise<Map<number, ImageView | null>> {
+    const ids = new Set<number>()
+    const visit = (n: unknown) => {
+      if (!n || typeof n !== 'object') return
+      const node = n as { type?: unknown; fields?: { blockType?: unknown; image?: unknown }; children?: unknown[] }
+      if (node.type === 'block' && node.fields?.blockType === 'figure') {
+        const img = node.fields.image
+        const id = typeof img === 'number' ? img : (img as { id?: unknown } | null)?.id
+        if (typeof id === 'number') ids.add(id)
+      }
+      if (Array.isArray(node.children)) node.children.forEach(visit)
+    }
+    visit((body as { root?: unknown } | null)?.root)
+    if (ids.size === 0) return new Map()
+    const res = await payload.find({
+      collection: 'archive-assets', overrideAccess: true, pagination: false, depth: 0,
+      where: { id: { in: [...ids] } },
+    })
+    return new Map(res.docs.map((a) => [a.id, toImageView(a, mode)]))
+  }
+
+  /** Ngữ cảnh lọc rich text: nguồn nhìn thấy được ở mode này và ảnh của khối figure. */
+  async function richContext(body: unknown, mode: Mode) {
+    const [visible, sources, assets] = await Promise.all([getSources(mode), sourceMap(), figureAssets(body, mode)])
+    return { visible, ctx: { sources, visibleSourceIds: visible.map((s) => s.id), assets, mode } }
+  }
+
   async function getStory(slug: string, mode: Mode): Promise<StoryView | null> {
     const d = (await findBySlug('stories', slug, mode)) as Story | null
     if (!d || d.workflow === 'idea') return null
-    const published = d._status === 'published'
+    const { visible, ctx } = await richContext(d.body, mode)
+    const { rich, citedOrder, toc } = sanitizeRich(d.body, ctx)
+    // R4: nguồn được trích theo thứ tự trích đầu tiên, rồi các nguồn còn lại của bài.
+    const byId = new Map(visible.map((s) => [s.id, s]))
+    const order = [...citedOrder]
+    for (const s of sourcesOf(d.sources)) if (!order.includes(s.sourceId)) order.push(s.sourceId)
+    const sources = order
+      .map((id) => byId.get(id))
+      .filter((s): s is SourceView => s !== undefined)
+      .map((s) => ({ ...s, date: formatDate(s.date) }))
     return {
       ...storyCard(d, mode),
-      body: mode === 'public' && !published ? null : sanitizeRich(d.body, await sourceMap(), mode),
+      body: rich,
+      toc,
+      sources,
       editor: showText(d.editor, mode),
-      sources: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable),
+      publishedAt: formatDate(showText(d.publishedAt, mode)),
+      coverCaption: showText(d.coverCaption, mode),
+      // Việc biên tập: chỉ hiện ở preview.
+      reviewChecklist: mode === 'preview'
+        ? (d.reviewChecklist ?? []).map((r) => r.item).filter((t): t is string => !!t && t.trim() !== '')
+        : null,
     }
   }
 
@@ -244,7 +290,7 @@ export function createContent(payload: Payload) {
       flags: [...flagsOf(d, mode), ...v.flags],
       note: identifying ? showText(d.note, mode) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
-      story: identifying ? sanitizeRich(d.story, await sourceMap(), mode) : null,
+      story: identifying ? sanitizeRich(d.story, (await richContext(d.story, mode)).ctx).rich : null,
     }
   }
 
