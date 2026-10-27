@@ -8,9 +8,11 @@ type SectionHeadingProps = {
   as?: 'h2' | 'h3'
   id?: string
   tone?: 'light' | 'dark'
+  /** Thêm vào ghi chú (ví dụ ẩn trên mobile). */
+  noteClassName?: string
 }
 
-export function SectionHeading({ eyebrow, title, note, as: Tag = 'h2', id, tone = 'light' }: SectionHeadingProps) {
+export function SectionHeading({ eyebrow, title, note, as: Tag = 'h2', id, tone = 'light', noteClassName }: SectionHeadingProps) {
   const dark = tone === 'dark'
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -26,7 +28,7 @@ export function SectionHeading({ eyebrow, title, note, as: Tag = 'h2', id, tone 
         </Tag>
       </div>
       {note ? (
-        <p className={`max-w-[340px] text-small md:text-right ${dark ? 'text-text-on-dark-muted' : 'text-text-muted'}`}>
+        <p className={`max-w-[340px] text-small md:text-right ${dark ? 'text-text-on-dark-muted' : 'text-text-muted'} ${noteClassName ?? ''}`}>
           {note}
         </p>
       ) : null}
