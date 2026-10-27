@@ -71,8 +71,14 @@ export default function StyleguidePage() {
         <p className="max-w-[760px] text-body-lg leading-[1.65] text-text-secondary">
           Mỗi component vẽ đủ các trạng thái: mặc định, hover, focus, đang chọn, vô hiệu và lỗi khi có. Tên token ghi dưới mỗi mẫu để bàn giao cho dev.
         </p>
-        <div className="max-w-[760px]">
+        <div className="flex max-w-[760px] flex-col gap-4">
           <VerifyNote size="sm">Ảnh mẫu chỉ có ở máy dev.</VerifyNote>
+          <VerifyNote title="CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG">
+            <ul className="m-0 list-disc pl-5">
+              <li>Đối chiếu năm sinh, năm mất, năm đỗ với sử liệu khoa bảng.</li>
+              <li>Xác nhận ngày lễ tế tổ nghề với người làng.</li>
+            </ul>
+          </VerifyNote>
         </div>
       </div>
 
@@ -215,6 +221,9 @@ export default function StyleguidePage() {
         </div>
         <div className="-mx-5 -my-8 md:-mx-20 md:-my-16">
           <SourceList sources={fx.sources} headingId="sg-nguon" title="Nguồn" />
+        </div>
+        <div className="-mx-5 -my-8 md:-mx-20 md:-my-16">
+          <SourceList sources={fx.sources} headingId="sg-ghi-chu" title="Ghi chú nguồn" variant="notes" idPrefix="sg-ghi-chu" />
         </div>
       </section>
 

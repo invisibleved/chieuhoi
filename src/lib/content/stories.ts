@@ -6,7 +6,7 @@ import { applyMode } from './copy/applyMode'
 import { storiesCopy, storiesReadNext } from './copy/stories'
 import { createPages } from './pages'
 import type { createContent } from './queries'
-import type { Mode, ReadNextItem, StoriesPageView, StoryCardView, StoryPageView } from './types'
+import type { Mode, ReadNextItem, StoriesPageView, StoryCardView, StoryPageView, StoryView } from './types'
 
 type Content = ReturnType<typeof createContent>
 
@@ -21,6 +21,17 @@ function otherStory(s: StoryCardView): ReadNextItem | null {
     image: s.cover,
     mobile: false,
   }
+}
+
+/** Dòng meta của bài: phần trống bị bỏ (kèm dấu ngăn khi hiển thị). */
+function storyMeta(s: StoryView): string[] {
+  const m = storiesCopy.detail.meta
+  return [
+    s.editor ? m.editor + s.editor : null,
+    s.publishedAt ? m.published + s.publishedAt : null,
+    s.readingMinutes !== null ? m.minutes.replace('{m}', String(s.readingMinutes)) : null,
+    s.sourceCount > 0 ? m.sources.replace('{s}', String(s.sourceCount)) : null,
+  ].filter((p): p is string => p !== null)
 }
 
 export function createStories(payload: Payload, content: Content) {
@@ -55,7 +66,7 @@ export function createStories(payload: Payload, content: Content) {
     }))
     const other = stories.filter((s) => s.slug !== slug).map(otherStory).find((r) => r !== null)
     if (other) readNext.push(other)
-    return { story, readNext, copy: applyMode(storiesCopy, mode) }
+    return { story, meta: storyMeta(story), readNext, copy: applyMode(storiesCopy, mode) }
   }
 
   /** Slug đủ điều kiện public (đã đăng, không phải idea) cho generateStaticParams (R20). */

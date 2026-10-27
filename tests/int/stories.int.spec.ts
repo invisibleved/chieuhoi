@@ -111,6 +111,8 @@ describe('view model Câu chuyện', () => {
       const v = await stories.getStoryPage(SLUG, 'preview')
       expect(v).not.toBeNull()
       const s = v!.story
+      // Seed chưa có biên tập viên và ngày đăng: preview hiện [cần xác minh], dòng meta dựng ở lib.
+      expect(v!.meta).toEqual(['Biên tập: [cần xác minh]', 'Ngày đăng: [cần xác minh]', 'Khoảng 4 phút đọc', '3 nguồn'])
       expect(s.toc.map((t) => t.title)).toEqual([
         'Một Tam nguyên của làng Hải Triều',
         'Khung dệt từ phương Bắc',

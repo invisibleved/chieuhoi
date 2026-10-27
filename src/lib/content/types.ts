@@ -165,6 +165,8 @@ export interface StoriesPageView {
 
 export interface StoryPageView {
   story: StoryView
+  /** Dòng meta đã dựng ở lib: "Biên tập: …", "Ngày đăng: …", "Khoảng N phút đọc", "N nguồn"; phần trống bị bỏ. */
+  meta: string[]
   /** Hai thẻ cố định và một bài khác (R8). */
   readNext: ReadNextItem[]
   copy: StoriesCopyView

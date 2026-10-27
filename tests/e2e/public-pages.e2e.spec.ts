@@ -122,3 +122,12 @@ for (const vp of [
     })
   })
 }
+
+test.describe('bài đọc public', () => {
+  for (const slug of ['chuyen-ve-trang-chieu', 'mot-ngay-o-lang-hoi']) {
+    test(`/cau-chuyen/${slug} trả 404 (bài nháp và bài idea không công khai)`, async ({ page }) => {
+      const res = await page.goto(`/cau-chuyen/${slug}`)
+      expect(res?.status()).toBe(404)
+    })
+  }
+})

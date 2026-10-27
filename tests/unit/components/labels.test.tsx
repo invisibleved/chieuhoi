@@ -53,6 +53,12 @@ describe('labels', () => {
     expect(screen.getByText('Chờ đồng ý')).toBeTruthy()
     expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull()
   })
+  it('VerifyNote có title: khung aside với tiêu đề và nội dung dạng danh sách', () => {
+    const { container } = render(<VerifyNote title="CẦN THẨM ĐỊNH"><ul><li>Việc một</li></ul></VerifyNote>)
+    expect(container.querySelector('aside')?.textContent).toContain('CẦN THẨM ĐỊNH')
+    expect(container.querySelector('li')?.textContent).toBe('Việc một')
+    expect(container.querySelector('p.border-dashed')).toBeNull()
+  })
   it('VerifyNote render p', () => {
     const { container } = render(<VerifyNote size="sm">[CẦN XÁC MINH] x</VerifyNote>)
     expect(container.querySelector('p')?.textContent).toBe('[CẦN XÁC MINH] x')

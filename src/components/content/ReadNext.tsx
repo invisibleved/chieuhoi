@@ -9,6 +9,7 @@ type ReadNextProps = {
   eyebrow: string | null
   /** Có title: desktop hiện h2 40px (và `action` bên phải), mobile chỉ hiện eyebrow. */
   title?: string
+  /** Nhãn có thể kèm mũi tên cuối (copy artboard); LinkArrow tự thêm mũi tên nên bị cắt. */
   action?: { href: string; label: string }
   /** Chiều cao ảnh thẻ (mặc định h-[260px]). */
   imageClassName?: string
@@ -34,7 +35,7 @@ export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[2
           </h2>
           {action ? (
             <LinkArrow href={action.href} className="max-md:hidden">
-              {action.label}
+              {action.label.replace(/\s*→$/, '')}
             </LinkArrow>
           ) : null}
         </div>

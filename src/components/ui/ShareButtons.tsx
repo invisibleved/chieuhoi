@@ -8,8 +8,8 @@ type ShareCopy = {
   copy: Variant
   facebook: Variant
   zalo: Variant
-  copied: string
-  zaloFallback: string
+  copied: string | null
+  zaloFallback: string | null
 }
 
 const square =
@@ -19,10 +19,10 @@ const square =
 export function ShareButtons({ copy }: { copy: ShareCopy }) {
   const [message, setMessage] = useState('')
 
-  const copyLink = async (ok: string) => {
+  const copyLink = async (ok: string | null) => {
     try {
       await navigator.clipboard.writeText(window.location.href)
-      setMessage(ok)
+      setMessage(ok ?? '')
     } catch {
       setMessage('')
     }

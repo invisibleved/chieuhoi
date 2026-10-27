@@ -238,7 +238,7 @@ describe('ReadNext', () => {
   it('có title: h2 và action; eyebrow còn cho mobile', () => {
     render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '/cau-chuyen', label: 'Tất cả câu chuyện →' }} />)
     expect(screen.getByRole('heading', { level: 2, name: 'Đọc tiếp' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Tất cả câu chuyện →' }).getAttribute('href')).toBe('/cau-chuyen')
+    expect(screen.getByRole('link', { name: 'Tất cả câu chuyện' }).getAttribute('href')).toBe('/cau-chuyen')
     expect(screen.getByText('ĐỌC TIẾP').className).toContain('md:hidden')
   })
   it('mục mobile:false có max-md:hidden; mục cuối hiện ở mobile giữ viền dưới', () => {

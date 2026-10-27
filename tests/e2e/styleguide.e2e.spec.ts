@@ -81,7 +81,7 @@ test.describe('styleguide 390 mobile', () => {
       [...document.querySelectorAll('main a, main button')]
         .filter((el) => {
           // Ngoại lệ WCAG 2.5.8 (link nằm trong dòng chữ): chú thích .fn, link trong <p>, link trích nguồn.
-          if (el.classList.contains('fn') || el.closest('p') || el.matches('[id^="nguon-"] a')) return false
+          if (el.classList.contains('fn') || el.closest('p') || el.matches('[id^="nguon-"] a, [id^="sg-ghi-chu-"] a')) return false
           const r = el.getBoundingClientRect()
           return r.width > 0 && r.height > 0 && r.height < 44
         })
