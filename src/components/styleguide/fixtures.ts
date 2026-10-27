@@ -48,6 +48,11 @@ export const storyFeatured: StoryCardView = {
   flags: [],
 }
 
+export const storyHeroFeatured = {
+  eyebrow: 'BÀI NỔI BẬT · LỊCH SỬ',
+  meta: '3 nguồn báo chí · khoảng 4 phút đọc',
+}
+
 export const storyCompact: StoryCardView = {
   slug: 'mot-ngay-o-lang-hoi',
   title: 'Một ngày ở làng Hới',

@@ -99,7 +99,7 @@ export function FilterableList<T>({
             setPages(1)
           }}
         />
-        <p role="status" className="m-0 text-[14px] text-text-muted">
+        <p role="status" className="m-0 text-[13px] md:text-[14px] text-text-muted">
           <VariantText value={status(matches)} />
         </p>
       </div>

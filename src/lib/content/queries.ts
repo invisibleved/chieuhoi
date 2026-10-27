@@ -216,7 +216,7 @@ export function createContent(payload: Payload) {
   }
 
   async function getStories(mode: Mode): Promise<StoryCardView[]> {
-    const docs = (await findAll('stories', mode, { sort: '-updatedAt' })) as Story[]
+    const docs = (await findAll('stories', mode, { sort: 'createdAt' })) as Story[]
     return docs.map((d) => storyCard(d, mode))
   }
 

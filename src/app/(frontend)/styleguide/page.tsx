@@ -149,7 +149,11 @@ export default function StyleguidePage() {
             </div>
           </div>
         </div>
-        <Tok>card/portrait · card/story-featured · card/story-compact · card/object — cả thẻ là một link; hover: ảnh mờ 12%, CTA gạch chân</Tok>
+        <div className="hidden flex-col gap-3 md:flex">
+          <Lab>STORY CARD · HERO (BÀI NỔI BẬT ĐẦU TRANG, TỪ MD)</Lab>
+          <StoryCard story={fx.storyFeatured} href="#" variant="hero" eyebrow={fx.storyHeroFeatured.eyebrow} meta={fx.storyHeroFeatured.meta} />
+        </div>
+        <Tok>card/portrait · card/story-hero · card/story-featured · card/story-compact · card/object — cả thẻ là một link; hover: ảnh mờ 12%, CTA gạch chân</Tok>
 
         <h3 className="mt-6 font-display text-[28px] font-normal">Thẻ khi thiếu dữ liệu</h3>
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
@@ -160,6 +164,10 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>STORY · CHỦ ĐỀ ĐỀ XUẤT</Lab>
             <StoryCard story={fx.storyIdea} href="#" variant="grid" />
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-3">
+            <Lab>STORY · KHÔNG LINK (ARTICLE, KHÔNG CTA)</Lab>
+            <StoryCard story={fx.storyIdea} variant="grid" />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PRODUCT · KHÔNG ẢNH</Lab>
@@ -264,6 +272,21 @@ export default function StyleguidePage() {
                 heroTitle: null,
               }}
               note={<VerifyNote size="sm">{craftCopy.intro.preview.verifyNote.desktop}</VerifyNote>}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐẦU TRANG · LEAD CHỈ MOBILE (leadClassName) · CỘT CHỮ RỘNG (wideIntro) · Ô TÌM Ở CỘT PHẢI</Lab>
+          <div className="-mx-5 border border-dashed border-border-dashed md:-mx-0">
+            <PageHeader
+              crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Câu chuyện' }]}
+              intro={{ eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.', lead: 'Lead chỉ hiện ở mobile.', heroTitle: null }}
+              titleClassName="text-[38px] md:text-[76px]"
+              leadClassName="md:hidden"
+              wideIntro
+              aside={<p className="m-0 text-small text-text-muted">Cột phải (ô tìm)</p>}
+              asideSpan="narrow"
+              asideClassName="max-md:hidden md:max-w-[360px] md:justify-self-end md:self-end"
             />
           </div>
         </div>

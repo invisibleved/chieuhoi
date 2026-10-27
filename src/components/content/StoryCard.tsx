@@ -84,12 +84,12 @@ export function StoryCard({
         image={story.cover}
         size={hero ? 'full' : 'card'}
         sizes={hero ? '(min-width: 1024px) 58vw, 100vw' : '(min-width: 1024px) 40vw, 100vw'}
-        priority={hero}
-        wrapperClassName={hero ? 'md:col-span-7' : undefined}
-        className={`${hero ? 'h-[520px] md:col-span-7' : imgH} block transition-opacity duration-[var(--dur-micro)] group-hover:opacity-[.88]`}
+        className={`${hero ? 'h-[520px]' : imgH} block transition-opacity duration-[var(--dur-micro)] group-hover:opacity-[.88]`}
       />
     )
   ) : null
+  // Hero chỉ hiện từ md nên không ưu tiên tải ảnh (mobile không bao giờ thấy).
+  const imageSlot = hero && image ? <span className="block md:col-span-7">{image}</span> : image
   const text = (
     <span
       className={`flex min-w-0 flex-col ${hero ? 'gap-[18px] md:col-span-4 md:col-start-9' : 'gap-3'}`}
@@ -137,7 +137,7 @@ export function StoryCard({
     return wrap(
       `grid border-b border-border-subtle text-text-primary ${large ? 'gap-4 pb-5 md:gap-5 md:py-7' : 'gap-4 pb-5'} ${image ? (large ? 'grid-cols-[96px_1fr] md:grid-cols-[140px_1fr]' : 'grid-cols-[120px_1fr]') : 'grid-cols-1'}`,
       <>
-        {image}
+        {imageSlot}
         {text}
       </>,
     )
@@ -148,7 +148,7 @@ export function StoryCard({
   return wrap(
     `${layout} text-text-primary`,
     <>
-      {image}
+      {imageSlot}
       {text}
     </>,
   )

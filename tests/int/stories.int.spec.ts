@@ -88,6 +88,17 @@ describe('view model Câu chuyện', () => {
       expect(v.stories.filter((s) => s.status === 'Bản nháp')).toHaveLength(1)
       expect(v.copy.detail.preview?.checklistTitle).toBe('CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG')
     })
+    it('thứ tự theo createdAt tăng dần: bài Trạng Chiếu (seed đầu tiên) đứng đầu', async () => {
+      const v = await stories.getStoriesPage('preview')
+      expect(v.stories[0].slug).toBe(SLUG)
+    })
+    it('featured: preview là Trạng Chiếu với eyebrow và meta dựng ở lib; public là null', async () => {
+      const pv = await stories.getStoriesPage('preview')
+      expect(pv.featured?.story.slug).toBe(SLUG)
+      expect(pv.featured?.eyebrow).toBe('BÀI NỔI BẬT · LỊCH SỬ')
+      expect(pv.featured?.meta).toBe('3 nguồn báo chí · khoảng 4 phút đọc')
+      expect((await stories.getStoriesPage('public')).featured).toBeNull()
+    })
   })
 
   describe('getStoryPage', () => {
@@ -132,6 +143,7 @@ describe('view model Câu chuyện', () => {
       expect(third.mobile).toBe(false)
       expect(third.href).toBe('/cau-chuyen')
       expect(third.title).not.toBe('Chuyện về Trạng Chiếu')
+      expect(third.title).toBe('Những ký ức bên khung dệt')
       expect(third.eyebrow).toMatch(/ · CHỦ ĐỀ ĐỀ XUẤT$/)
       expect(third.cta).toBe('Xem đề cương →')
     })

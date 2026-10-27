@@ -158,6 +158,8 @@ export interface StoriesPageView {
   stories: StoryCardView[]
   /** Chip "Tất cả" (key all) rồi các chủ đề theo thứ tự option. */
   filters: { key: string; label: string }[]
+  /** Bài nổi bật (desktop): bài `hasDetail` đầu tiên; null khi không có bài nào có trang chi tiết. */
+  featured: { story: StoryCardView; eyebrow: string; meta: string | null } | null
   copy: StoriesCopyView
 }
 

@@ -31,6 +31,34 @@ describe('StoryCard', () => {
   })
 })
 
+describe('StoryCard: hero và thẻ không link', () => {
+  it('hero: eyebrow ghi đè, meta, link, CTA từ story.cta', () => {
+    const { container } = render(<StoryCard story={{ ...story, readingMinutes: 4, sourceCount: 3, flags: [] }} href="/cau-chuyen/x" variant="hero" eyebrow="BÀI NỔI BẬT · LỊCH SỬ" meta="3 nguồn báo chí · khoảng 4 phút đọc" />)
+    expect(screen.getByText('BÀI NỔI BẬT · LỊCH SỬ')).toBeTruthy()
+    expect(screen.queryByText('LỊCH SỬ · 4 PHÚT ĐỌC')).toBeNull()
+    expect(screen.getByText('3 nguồn báo chí · khoảng 4 phút đọc')).toBeTruthy()
+    expect(screen.getByText('Đọc bài →')).toBeTruthy()
+    expect(container.querySelector('a')?.getAttribute('href')).toBe('/cau-chuyen/x')
+    expect(container.querySelector('a')?.className).toContain('md:grid-cols-12')
+  })
+  it('meta chỉ hiện ở hero', () => {
+    render(<StoryCard story={{ ...story, flags: [] }} href="#" variant="grid" meta="Dòng meta" />)
+    expect(screen.queryByText('Dòng meta')).toBeNull()
+  })
+  it('không có href: <article>, không <a>, không CTA', () => {
+    const { container } = render(<StoryCard story={{ ...story, hasDetail: false, cta: 'Xem đề cương →', status: 'Chủ đề đề xuất' }} variant="grid" />)
+    expect(container.querySelector('article')).toBeTruthy()
+    expect(container.querySelector('a')).toBeNull()
+    expect(screen.queryByText('Xem đề cương →')).toBeNull()
+    expect(screen.getByText('Chủ đề đề xuất')).toBeTruthy()
+  })
+  it('compact không href cũng là article', () => {
+    const { container } = render(<StoryCard story={{ ...story, flags: [] }} variant="compact" />)
+    expect(container.querySelector('article')).toBeTruthy()
+    expect(container.querySelector('a')).toBeNull()
+  })
+})
+
 const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, flags: [] }
 
 describe('ProductCard', () => {

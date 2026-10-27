@@ -28,9 +28,19 @@ export function createStories(payload: Payload, content: Content) {
 
   async function getStoriesPage(mode: Mode): Promise<StoriesPageView> {
     const [intro, stories] = await Promise.all([content.getPageIntro('cau-chuyen', mode), content.getStories(mode)])
+    const story = stories.find((s) => s.hasDetail)
+    const fill = (t: string) => t.replace('{s}', String(story?.sourceCount ?? '')).replace('{m}', String(story?.readingMinutes ?? ''))
+    const featured = story
+      ? {
+          story,
+          eyebrow: [storiesCopy.featured.eyebrow, story.category?.toLocaleUpperCase('vi')].filter(Boolean).join(' · '),
+          meta: story.sourceCount > 0 && story.readingMinutes !== null ? fill(storiesCopy.featured.meta) : null,
+        }
+      : null
     return {
       intro,
       stories,
+      featured,
       filters: [{ key: 'all', label: storiesCopy.filter.all }, ...storyCategoryOptions],
       copy: applyMode(storiesCopy, mode),
     }

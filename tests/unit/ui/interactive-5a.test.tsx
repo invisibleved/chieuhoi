@@ -23,6 +23,13 @@ describe('SearchField', () => {
   })
 })
 
+describe('SearchField className', () => {
+  it('thêm lớp vào khung ngoài', () => {
+    const { container } = render(<SearchField id="q2" label="Tìm" placeholder={{ desktop: 'x', mobile: 'x' }} value="" onChange={() => {}} className="md:hidden" />)
+    expect((container.firstElementChild as HTMLElement).className).toContain('md:hidden')
+  })
+})
+
 type Item = { id: string; cat: string | null; text: string }
 const ITEMS: Item[] = [
   { id: 'a', cat: 'history', text: 'Chuyện về Trạng Chiếu' },
@@ -55,6 +62,54 @@ function renderList(props: Partial<React.ComponentProps<typeof FilterableList<It
     />,
   )
 }
+
+describe('FilterableList: props tuỳ biến', () => {
+  it('query/onQueryChange điều khiển từ ngoài: lọc theo query, gõ gọi onQueryChange', () => {
+    const onQueryChange = vi.fn()
+    const { rerender } = renderList({ query: 'khung', onQueryChange })
+    expect(screen.getAllByTestId('item')).toHaveLength(1)
+    expect((screen.getByLabelText('Tìm') as HTMLInputElement).value).toBe('khung')
+    fireEvent.change(screen.getByLabelText('Tìm'), { target: { value: 'coi' } })
+    expect(onQueryChange).toHaveBeenCalledWith('coi')
+    // Không tự đổi khi cha chưa cập nhật query.
+    expect(screen.getAllByTestId('item')).toHaveLength(1)
+    rerender(
+      <FilterableList<Item>
+        items={ITEMS} getKey={(t) => t.id} getCategory={(t) => t.cat} getSearchText={(t) => t.text} filters={FILTERS}
+        filterLabel={{ desktop: 'a', mobile: 'a' }} query="coi" onQueryChange={onQueryChange}
+        status={(m) => ({ desktop: `${m.length} bài`, mobile: `${m.length} bài` })} empty={<p>trống</p>} renderItem={(t) => <article data-testid="item">{t.text}</article>}
+      />,
+    )
+    expect(screen.getAllByTestId('item')[0].textContent).toBe('Cói và sợi')
+  })
+  it('đổi query từ ngoài đưa danh sách về trang đầu', () => {
+    const many = Array.from({ length: 8 }, (_, i) => ({ id: `n${i}`, cat: 'history', text: `Bài ${i}` }))
+    const props = { items: many, getKey: (t: Item) => t.id, getCategory: (t: Item) => t.cat, getSearchText: (t: Item) => t.text, filters: FILTERS, filterLabel: { desktop: 'a', mobile: 'a' }, pageSize: 3, more: { label: 'Xem thêm', done: 'Hết' }, status: (m: Item[]) => ({ desktop: `${m.length}`, mobile: `${m.length}` }), empty: <p>trống</p>, renderItem: (t: Item) => <article data-testid="item">{t.text}</article> }
+    const { rerender } = render(<FilterableList<Item> {...props} query="" onQueryChange={() => {}} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Xem thêm' }))
+    expect(screen.getAllByTestId('item')).toHaveLength(6)
+    rerender(<FilterableList<Item> {...props} query="bai" onQueryChange={() => {}} />)
+    expect(screen.getAllByTestId('item')).toHaveLength(3)
+  })
+  it('className và toolbarClassName áp vào khung ngoài và khung chip + đếm', () => {
+    const { container } = renderList({ className: 'khung-ngoai', toolbarClassName: 'thanh-cong-cu' })
+    expect((container.firstElementChild as HTMLElement).className).toBe('khung-ngoai')
+    const bar = container.querySelector('.thanh-cong-cu') as HTMLElement
+    expect(bar.querySelector('[role="group"]')).toBeTruthy()
+    expect(bar.querySelector('[role="status"]')).toBeTruthy()
+  })
+  it('mặc định: khung cột, thanh công cụ là contents; search.className vào ô tìm', () => {
+    const { container } = renderList({ search: { id: 'q', label: 'Tìm', placeholder: { desktop: 'x', mobile: 'x' }, className: 'md:hidden' } })
+    expect((container.firstElementChild as HTMLElement).className).toBe('flex flex-col gap-6')
+    expect(container.querySelector('.contents [role="status"]')).toBeTruthy()
+    expect(screen.getByLabelText('Tìm').closest('div.md\\:hidden')).toBeTruthy()
+  })
+  it('dòng đếm 13px mobile, 14px từ md', () => {
+    renderList()
+    expect(screen.getByRole('status').className).toContain('text-[13px]')
+    expect(screen.getByRole('status').className).toContain('md:text-[14px]')
+  })
+})
 
 describe('FilterableList', () => {
   it('mặc định hiện hết, chip Tất cả bật', () => {

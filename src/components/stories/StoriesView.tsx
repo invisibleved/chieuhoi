@@ -21,7 +21,7 @@ const searchText = (s: StoryCardView) => [s.title, s.sapo, s.category].filter(Bo
 
 // Trang danh sách Câu chuyện: đầu trang + ô tìm (desktop), bài nổi bật (desktop), lưới có lọc/tìm/xem thêm.
 export function StoriesView({ page }: { page: StoriesPageView }) {
-  const { copy, intro, stories, filters } = page
+  const { copy, intro, stories, filters, featured } = page
   const [query, setQuery] = useState('')
   const emptyBody = useVariantString(copy.empty.body)
   const crumbs = [
@@ -29,12 +29,6 @@ export function StoriesView({ page }: { page: StoriesPageView }) {
     { label: copy.breadcrumb.current ?? '' },
   ]
   const search = { id: 'mq', label: copy.search.label ?? '', placeholder: copy.search.placeholder }
-
-  const featured = stories.find((s) => s.hasDetail)
-  const featuredMeta =
-    featured && featured.sourceCount > 0 && featured.readingMinutes !== null && copy.featured.meta
-      ? fill(copy.featured.meta, { s: featured.sourceCount, m: featured.readingMinutes })
-      : null
 
   const status = (matches: StoryCardView[]): Variant => {
     const drafts = matches.filter((s) => s.status === DRAFT).length
@@ -69,13 +63,11 @@ export function StoriesView({ page }: { page: StoriesPageView }) {
           className="px-20 pb-24 max-md:hidden"
         >
           <StoryCard
-            story={featured}
-            href={`/cau-chuyen/${featured.slug}`}
+            story={featured.story}
+            href={`/cau-chuyen/${featured.story.slug}`}
             variant="hero"
-            eyebrow={[copy.featured.eyebrow, featured.category?.toLocaleUpperCase('vi')]
-              .filter(Boolean)
-              .join(' · ')}
-            meta={featuredMeta}
+            eyebrow={featured.eyebrow}
+            meta={featured.meta}
           />
         </section>
       ) : null}
