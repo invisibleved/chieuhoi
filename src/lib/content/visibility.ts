@@ -98,7 +98,8 @@ export function toPersonView(p: Person, mode: Mode): PersonView {
     slug: p.slug,
     category: personCategoryLabel(p.category),
     categoryKey: personCategoryLabel(p.category) ? (p.category ?? null) : null,
-    role: showText(p.role, mode),
+    // Vai trò có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên (T2a).
+    role: consent.name || isPreview ? showText(p.role, mode) : null,
     name,
     // Ghi chú có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên.
     note: consent.name || isPreview ? showText(p.note, mode) : null,

@@ -168,3 +168,16 @@ export function splitAtHeading(rich: Rich | null, n: number): [Rich | null, Rich
     { root: { ...rich.root, children: children.slice(at) } },
   ]
 }
+
+const hasFigure = (n: unknown): boolean =>
+  !!n && typeof n === 'object' &&
+  ((n as Node).type === 'figure' || (Array.isArray((n as Node).children) && ((n as Node).children as unknown[]).some(hasFigure)))
+
+/**
+ * Cây không còn chữ (ngoài khoảng trắng) và không còn ảnh thì coi như trống: null.
+ * Ví dụ đoạn rỗng do trình soạn thảo lưu, hoặc public đã lọc hết nội dung.
+ */
+export function nonEmptyRich(rich: Rich | null): Rich | null {
+  if (!rich) return null
+  return collectText(rich.root).trim() !== '' || hasFigure(rich.root) ? rich : null
+}

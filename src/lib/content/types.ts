@@ -181,8 +181,10 @@ export type PersonDetailView = Omit<PersonView, 'quote'> & {
   hamlet: string | null
   /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống. */
   recorded: string | null
-  /** Câu chuyện tách tại heading thứ hai; lời trích đặt giữa hai phần (R15). */
+  /** Câu chuyện tách tại heading thứ hai; lời trích đặt giữa hai phần (R15). Cây rỗng là null. */
   storyParts: [Rich | null, Rich | null]
+  /** Nguồn mà câu chuyện trích, đánh số theo lần trích đầu tiên (R4, T2c); [] khi câu chuyện không hiện. */
+  sources: SourceView[]
   /** `sourceLine`: "Nhà xuất bản (dd/mm/yyyy)", chưa có tiền tố "Nguồn: " (copy.detail.quoteSource). */
   quote: { text: string; sourceLine: string | null } | null
   gallery: { image: ImageView; caption: string | null }[]

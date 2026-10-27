@@ -8,10 +8,10 @@ import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payl
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { applyMode } from './copy/applyMode'
 import { peopleCopy } from './copy/people'
-import { sanitizeRich, splitAtHeading } from './rich'
+import { nonEmptyRich, sanitizeRich, splitAtHeading } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
-  ProductCardView, ProductView, SiteSettingsView, SourceView, StoryCardView, StoryView,
+  ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView,
 } from './types'
 import { isUnverified, showText, toImageView, toPersonView } from './visibility'
@@ -311,7 +311,21 @@ export function createContent(payload: Payload) {
     /** Trường trống là null ở cả hai mode (preview dùng gợi ý trong copy, R14); còn lại theo showText. */
     const filled = (s: string | null | undefined) => (s && s.trim() !== '' ? showText(s, mode) : null)
 
-    const story = identifying ? sanitizeRich(d.story, { ...(await richContext(d.story, mode)).ctx, anchors: false }).rich : null
+    // Lọc cả cây trước rồi mới tách (R15): số cite ở hai phần khớp một danh sách nguồn (T2c, R4).
+    let story: Rich | null = null
+    let sources: SourceView[] = []
+    if (identifying) {
+      const { visible, ctx } = await richContext(d.story, mode)
+      const r = sanitizeRich(d.story, { ...ctx, anchors: false })
+      story = nonEmptyRich(r.rich)
+      if (story) {
+        const byId = new Map(visible.map((s) => [s.id, s]))
+        sources = r.citedOrder
+          .map((id) => byId.get(id))
+          .filter((s): s is SourceView => s !== undefined)
+          .map((s) => ({ ...s, date: formatDate(s.date) }))
+      }
+    }
 
     // Lời trích: nguồn phải còn nhìn thấy được ở mode này (public), như cite trong bài (R4, R15).
     const qSource = sourceOf(d.quoteSource)
@@ -344,11 +358,14 @@ export function createContent(payload: Payload) {
     return {
       ...v,
       flags: [...flagsOf(d, mode), ...v.flags],
+      // intro trống là null để preview hiện gợi ý phỏng vấn (R14); yearsInCraft/hamlet là dòng dữ kiện nên
+      // giữ dấu [cần xác minh] của showText ở preview, như các bảng dữ kiện khác.
       intro: identifying ? filled(d.intro) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
       hamlet: identifying ? showText(d.hamlet, mode) : null,
       recorded,
       storyParts: splitAtHeading(story, 2),
+      sources,
       quote,
       gallery,
       consent: {

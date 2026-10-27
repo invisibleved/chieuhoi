@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
 
-import { sanitizeRich, splitAtHeading, type RichContext } from '@/lib/content/rich'
+import { nonEmptyRich, sanitizeRich, splitAtHeading, type RichContext } from '@/lib/content/rich'
 import type { ImageView, Mode } from '@/lib/content/types'
 
 const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 })
@@ -212,5 +212,23 @@ describe('splitAtHeading (R15)', () => {
   })
   it('null: [null, null]', () => {
     expect(splitAtHeading(null, 2)).toEqual([null, null])
+  })
+})
+
+describe('nonEmptyRich', () => {
+  it('cây chỉ có đoạn rỗng hoặc khoảng trắng: null', () => {
+    expect(nonEmptyRich(doc(para(), para(txt('  ')), h('h3', ' ')) as never)).toBeNull()
+    expect(nonEmptyRich(null)).toBeNull()
+  })
+  it('public lọc hết nội dung (đoạn mất hết cite): null', () => {
+    const r = sanitizeRich(doc(para(txt('x'), cite(9))), ctx('public')).rich
+    expect(r).not.toBeNull()
+    expect(nonEmptyRich(r)).toBeNull()
+  })
+  it('còn chữ hoặc còn ảnh: giữ nguyên', () => {
+    const withText = doc(para(txt('có chữ')))
+    expect(nonEmptyRich(withText as never)).toBe(withText)
+    const withFigure = sanitizeRich(doc(figure(7, null)), ctx('public')).rich
+    expect(nonEmptyRich(withFigure)).toBe(withFigure)
   })
 })

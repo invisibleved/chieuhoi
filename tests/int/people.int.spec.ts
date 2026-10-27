@@ -170,6 +170,64 @@ describe('view model Con người', () => {
     })
   })
 
+  describe('vai trò, nguồn của câu chuyện, câu chuyện rỗng', () => {
+    const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, detail: 0, mode: 'normal', style: '' })
+    const para = (...children: unknown[]) => ({ type: 'paragraph', version: 1, direction: 'ltr', format: '', indent: 0, children })
+    const h3 = (text: string) => ({ type: 'heading', tag: 'h3', version: 1, direction: 'ltr', format: '', indent: 0, children: [txt(text)] })
+    const doc = (...children: unknown[]) => ({ root: { type: 'root', version: 1, direction: 'ltr', format: '', indent: 0, children } })
+    const cite = (source: number) => ({ type: 'inlineBlock', version: 1, fields: { blockType: 'cite', source } })
+    type N = { type: string; children?: N[]; [k: string]: unknown }
+    const nodes = (n: N | undefined): N[] => (n ? [n, ...(n.children ?? []).flatMap(nodes)] : [])
+    const sourceDoc = async (sourceId: string) =>
+      (await payload.find({ collection: 'sources', where: { sourceId: { equals: sourceId } }, overrideAccess: true })).docs[0]
+
+    it('public chưa đồng ý tên: vai trò không lộ ở thẻ lẫn trang chân dung (T2a)', async () => {
+      const p = await createPerson({ slug: 'thu-vai-tro', role: 'Thợ dệt VAI-TRO-BI-MAT', consent: { name: false, photo: false, quote: false } })
+      try {
+        expect(JSON.stringify(await people.getPeoplePage('public'))).not.toContain('VAI-TRO-BI-MAT')
+        expect(JSON.stringify(await people.getPersonPage('thu-vai-tro', 'public'))).not.toContain('VAI-TRO-BI-MAT')
+        expect((await people.getPersonPage('thu-vai-tro', 'preview'))!.person.role).toBe('Thợ dệt VAI-TRO-BI-MAT')
+      } finally {
+        await payload.delete({ collection: 'people', id: p.id, overrideAccess: true })
+      }
+    })
+
+    it('câu chuyện trích một nguồn ở cả hai phần: sources có 1 nguồn, mọi cite là n=1 (T2c)', async () => {
+      const src = await sourceDoc('vietnamplus-2026')
+      const story = doc(h3('Phần một'), para(txt('Đoạn một'), cite(src.id)), h3('Phần hai'), para(txt('Đoạn hai'), cite(src.id)))
+      const ok = await createPerson({ slug: 'thu-nguon', name: 'Bà Nguồn', consent: { name: true }, story })
+      const no = await createPerson({ slug: 'thu-nguon-an', consent: { name: false }, story })
+      try {
+        const v = (await people.getPersonPage('thu-nguon', 'public'))!.person
+        expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026'])
+        expect(v.sources[0].date).toBe('14/08/2026')
+        expect(v.storyParts.every((r) => r !== null)).toBe(true)
+        const cites = v.storyParts.flatMap((r) => nodes(r?.root as N)).filter((n) => n.type === 'cite')
+        expect(cites).toEqual([{ type: 'cite', n: 1 }, { type: 'cite', n: 1 }])
+
+        const w = (await people.getPersonPage('thu-nguon-an', 'public'))!.person
+        expect(w.sources).toEqual([])
+        expect(w.storyParts).toEqual([null, null])
+      } finally {
+        await payload.delete({ collection: 'people', id: ok.id, overrideAccess: true })
+        await payload.delete({ collection: 'people', id: no.id, overrideAccess: true })
+      }
+    })
+
+    it('câu chuyện chỉ có đoạn rỗng: storyParts [null, null] ở cả hai mode', async () => {
+      const p = await createPerson({ slug: 'thu-rong', name: 'Ông Rỗng', consent: { name: true }, story: doc(para(), para(txt('   '))) })
+      try {
+        for (const mode of ['public', 'preview'] as const) {
+          const v = (await people.getPersonPage('thu-rong', mode))!.person
+          expect(v.storyParts).toEqual([null, null])
+          expect(v.sources).toEqual([])
+        }
+      } finally {
+        await payload.delete({ collection: 'people', id: p.id, overrideAccess: true })
+      }
+    })
+  })
+
   describe('getPersonPage mẫu (preview)', () => {
     it('có phóng sự ảnh 2 ảnh, dòng đồng ý chân dung, thẻ công đoạn 05', async () => {
       const v = await people.getPersonPage(SLUG, 'preview')

@@ -208,6 +208,18 @@ describe('toPersonView: note', () => {
   })
 })
 
+describe('toPersonView: role (T2a)', () => {
+  it('public chưa đồng ý tên: null', () => {
+    expect(toPersonView(person({ role: 'Thợ dệt', consent: { name: false, photo: true, quote: true } }), 'public').role).toBeNull()
+  })
+  it('public đã đồng ý tên: chuỗi', () => {
+    expect(toPersonView(person({ role: 'Thợ dệt' }), 'public').role).toBe('Thợ dệt')
+  })
+  it('preview chưa đồng ý tên: chuỗi', () => {
+    expect(toPersonView(person({ role: 'Thợ dệt', consent: { name: false } }), 'preview').role).toBe('Thợ dệt')
+  })
+})
+
 describe('docNumber', () => {
   it('lấy phần số của mã TL-<số>, mã khác trả null', () => {
     expect(docNumber('TL-002')).toBe('002')
