@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 import { Lab } from '@/components/styleguide/Lab'
+import { PatternExplorer } from '@/components/content/PatternExplorer'
+import { applyMode } from '@/lib/content/copy/applyMode'
+import { productsCopy } from '@/lib/content/copy/products'
+import type { ImageView, ProductView } from '@/lib/content'
 import { FilterChips } from '@/components/ui/FilterChips'
 import { FilterableList } from '@/components/ui/FilterableList'
 import { ReadingProgress } from '@/components/ui/ReadingProgress'
@@ -254,5 +258,30 @@ export function InteractiveDemos() {
         </div>
       </div>
     </>
+  )
+}
+
+const sgImg = (code: string, alt: string): ImageView => ({
+  url: `/images/reference/${code}.webp`, alt, width: 1200, height: 800, sizes: {}, photographer: null, code: null, docNumber: null, flags: [],
+})
+const SG_IMAGES = [sgImg('kn8', 'Tấm chiếu hoa văn đỏ (mẫu)'), sgImg('kn2', 'Ảnh mẫu 2'), sgImg('hc9', 'Ảnh mẫu 3'), sgImg('kn1', 'Ảnh mẫu 4')]
+const SG_PRODUCT: ProductView = {
+  slug: 'mau', code: null, name: 'Hiện vật mẫu', group: null, groupLabel: null, summary: null, image: SG_IMAGES[0], typeConfirmed: false, tag: null, flags: [],
+  images: SG_IMAGES, primaryImage: SG_IMAGES[0], hasPattern: true, material: null, technique: null, size: null, care: null, maker: null, context: null, pattern: null, typeNote: null,
+  imageCaptions: ['Ảnh 1/4 (mẫu)', 'Ảnh 2/4 (mẫu)', 'Ảnh 3/4 (mẫu)', 'Ảnh 4/4 (mẫu)'],
+  sources: [],
+  annotations: [
+    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Chú thích mẫu cho điểm thứ nhất.', sourceId: null, sourceN: null, sourceLine: 'Quan sát từ ảnh · chưa xác minh' },
+    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Chú thích mẫu có số nguồn.', sourceId: 'mau', sourceN: 1, sourceLine: 'Nguồn mẫu' },
+    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Chú thích mẫu cho điểm thứ ba.', sourceId: null, sourceN: null, sourceLine: null },
+  ],
+}
+
+export function PatternExplorerDemo() {
+  return (
+    <div className="flex min-w-0 flex-col gap-3">
+      <Lab>KHÁM PHÁ ĐƯỜNG DỆT · SÂN KHẤU, ẢNH NHỎ, ĐIỂM, CHÚ THÍCH (ảnh dev)</Lab>
+      <PatternExplorer product={SG_PRODUCT} copy={applyMode(productsCopy, 'preview').detail} aside={<p className="m-0 text-[14px] text-text-muted">Khối tiêu đề (aside)</p>} />
+    </div>
   )
 }

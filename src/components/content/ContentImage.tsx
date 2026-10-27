@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import type { CSSProperties } from 'react'
 import type { ImageView } from '@/lib/content'
 import { previewNotes } from './labels'
 import { Tag } from './Tag'
@@ -16,6 +17,8 @@ type ContentImageProps = {
   fit?: 'cover' | 'contain'
   /** Góc đặt nhãn xem trước, để không đè lên chú thích đặt ở góc dưới trái. */
   notesPosition?: 'bottom-left' | 'bottom-right' | 'top-right'
+  /** Style thêm cho thẻ ảnh (ví dụ phóng to quanh một điểm). */
+  imageStyle?: CSSProperties
 }
 
 const fits = { cover: 'object-cover', contain: 'object-contain' } as const
@@ -28,7 +31,7 @@ const notePositions = {
 // Ảnh nội dung qua next/image. Ảnh chưa đủ điều kiện công khai (có flag, chỉ thấy ở preview)
 // phải tải trực tiếp từ trình duyệt kèm cookie đăng nhập: bộ tối ưu của Next tải từ server,
 // không có cookie nên endpoint file của Payload sẽ chặn (403).
-export function ContentImage({ image, size = 'card', sizes, className, priority, objectPosition, unoptimized, wrapperClassName, fit = 'cover', notesPosition = 'bottom-left' }: ContentImageProps) {
+export function ContentImage({ image, size = 'card', sizes, className, priority, objectPosition, unoptimized, wrapperClassName, fit = 'cover', notesPosition = 'bottom-left', imageStyle }: ContentImageProps) {
   const src = image.sizes[size] ?? image.url
   const notes = previewNotes(image.flags)
   const direct = unoptimized || image.flags.length > 0
@@ -42,7 +45,7 @@ export function ContentImage({ image, size = 'card', sizes, className, priority,
       priority={priority}
       unoptimized={direct}
       className={className ? `${className} w-full ${fits[fit]}` : undefined}
-      style={objectPosition ? { objectPosition } : undefined}
+      style={objectPosition || imageStyle ? { ...(objectPosition ? { objectPosition } : null), ...imageStyle } : undefined}
     />
   )
   if (notes.length === 0) return el

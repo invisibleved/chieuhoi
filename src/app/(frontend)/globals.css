@@ -39,6 +39,8 @@
   --surface-on-dark-hover: rgba(243,235,221,.06);  /* nền dòng hover / đang chọn trong danh sách trên nền tối */
   --surface-on-dark-active: rgba(243,235,221,.08); /* nền dòng đang chọn (danh sách công đoạn) */
   --surface-deep-on-image: rgba(35,42,37,.88);     /* nền chip mã tư liệu phủ trên ảnh */
+  --surface-ink-on-image: rgba(40,39,36,.85);      /* nền chip gợi ý phủ trên sân khấu ảnh */
+  --accent-halo: rgba(160,68,53,.35);              /* vòng quanh điểm hoa văn đang chọn */
   --focus-light: #344B3D;
   --focus-dark: #E3CD9C;
   /* Chuyển động */
@@ -95,6 +97,8 @@
   --color-surface-on-dark-hover: var(--surface-on-dark-hover);
   --color-surface-on-dark-active: var(--surface-on-dark-active);
   --color-surface-deep-on-image: var(--surface-deep-on-image);
+  --color-surface-ink-on-image: var(--surface-ink-on-image);
+  --color-accent-halo: var(--accent-halo);
   --color-border-strong: var(--border-strong);
   --color-border-dashed: var(--border-dashed);
   --color-focus-light: var(--focus-light);
