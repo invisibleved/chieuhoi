@@ -58,7 +58,7 @@ export function CraftView({ page }: { page: CraftPageView }) {
           note={copy.tools.preview?.note.desktop ?? undefined}
           noteClassName="max-md:hidden"
         />
-        <ScrollStrip className="gap-3 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
+        <ScrollStrip focusable label={copy.tools.title ?? undefined} className="gap-3 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
           {tools.map((t) => (
             <FigureCard key={t.n} label={`${copy.tools.itemLabel} · ${pad(t.n)}`} title={t.name} caption={t.note} image={t.image} />
           ))}

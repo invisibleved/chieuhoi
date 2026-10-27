@@ -5,11 +5,13 @@ type ScrollStripProps = {
   /** Có nhãn thì dải được đọc như một nhóm có tên. */
   label?: string
   as?: 'div' | 'ol'
+  /** Dải không có phần tử tương tác bên trong: cho focus bằng bàn phím để cuộn được (axe: scrollable-region-focusable). */
+  focusable?: boolean
   className?: string
 }
 
 // Dải vuốt ngang trên mobile, tràn ra lề trang (-mx-5), ẩn thanh cuộn. Bố cục từ md do nơi gọi đặt qua className (kể cả khoảng cách gap).
-export function ScrollStrip({ children, label, as: Tag = 'div', className }: ScrollStripProps) {
+export function ScrollStrip({ children, label, as: Tag = 'div', focusable = false, className }: ScrollStripProps) {
   const cls = [
     '-mx-5 flex snap-x overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
     className,
@@ -17,7 +19,7 @@ export function ScrollStrip({ children, label, as: Tag = 'div', className }: Scr
     .filter(Boolean)
     .join(' ')
   return (
-    <Tag className={cls} {...(label ? { role: 'group', 'aria-label': label } : {})}>
+    <Tag className={cls} {...(label ? { role: 'group', 'aria-label': label } : {})} {...(focusable ? { tabIndex: 0 } : {})}>
       {children}
     </Tag>
   )

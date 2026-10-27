@@ -120,9 +120,9 @@ for (const vp of [
     await open(page)
     // Cuộn hết trang để ảnh lazy tải xong.
     await page.evaluate(async () => {
-      for (let y = 0; y < document.body.scrollHeight; y += 600) {
+      for (let y = 0; y < document.body.scrollHeight; y += 300) {
         window.scrollTo(0, y)
-        await new Promise((r) => setTimeout(r, 120))
+        await new Promise((r) => setTimeout(r, 200))
       }
       window.scrollTo(0, 0)
     })

@@ -30,13 +30,13 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /home-public\.e2e/,
+      testIgnore: /public-pages\.e2e/,
       use: { ...devices['Desktop Chrome'], channel: 'chromium' },
     },
     {
       // Trang chủ ở chế độ public (PREVIEW_ALL=false) trên máy chủ production riêng, cổng 3100.
       name: 'public',
-      testMatch: /home-public\.e2e/,
+      testMatch: /public-pages\.e2e/,
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },
   ],
