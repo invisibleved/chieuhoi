@@ -15,19 +15,6 @@ import { showText, toImageView } from './visibility'
 type Content = ReturnType<typeof createContent>
 type MediaRow = { slot?: string; image?: unknown; caption?: string | null }
 
-/** Bỏ các sourceId không có trong `allowed` ở mọi mảng `cite` của một cây copy. */
-function filterCites<T>(value: T, allowed: Set<string>): T {
-  const walk = (v: unknown, key?: string): unknown => {
-    if (key === 'cite' && Array.isArray(v)) return v.filter((id) => allowed.has(id))
-    if (Array.isArray(v)) return v.map((x) => walk(x))
-    if (v && typeof v === 'object') {
-      return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x, k)]))
-    }
-    return v
-  }
-  return walk(value) as T
-}
-
 export function createPages(payload: Payload, content: Content) {
   async function getPageMedia<R extends PageMediaRoute>(
     route: R, mode: Mode,
@@ -53,7 +40,8 @@ export function createPages(payload: Payload, content: Content) {
     for (const r of craftCompare.rows) {
       const hand = showText(r.hand, mode)
       const machine = showText(r.machine, mode)
-      if (hand !== null || machine !== null) rows.push({ aspect: r.aspect, hand, machine })
+      const mobile = r.mobile.map((l) => showText(l, mode)).filter((l): l is string => l !== null)
+      if (hand !== null || machine !== null) rows.push({ aspect: r.aspect, hand, machine, mobile })
     }
     const card = (c: typeof craftCompare.hand, slot: 'hand' | 'machine') => ({
       title: c.title, image: media[slot]?.image ?? null,
@@ -91,12 +79,22 @@ export function createPages(payload: Payload, content: Content) {
     const visible = new Set(sources.map((s) => s.id))
 
     const add = applyMode(villageTimelineAdd, mode)
-    const facts = villageFacts.map((f) => ({
-      term: f.term,
-      detail: f.detail,
-      note: f.note ? (mode === 'preview' && f.notePreview ? `${f.note} · ${f.notePreview}` : f.note) : null,
-      cite: f.cite.filter((id) => visible.has(id)),
-    }))
+    // Ghi chú "· cần đối chiếu…" chỉ ở preview (R4).
+    const noteOf = (f: (typeof villageFacts)[number], k: 'desktop' | 'mobile') => {
+      const note = f.note[k]
+      return note && mode === 'preview' && f.notePreview[k] ? `${note} · ${f.notePreview[k]}` : note
+    }
+    const facts = villageFacts.flatMap((f) => {
+      const cite = f.cite.filter((id) => visible.has(id))
+      // Thông tin có nguồn mà mọi nguồn bị ẩn thì không hiện ở public.
+      if (mode === 'public' && cite.length === 0) return []
+      return [{
+        term: f.term,
+        detail: applyMode(f.detail, mode),
+        note: applyMode({ desktop: noteOf(f, 'desktop'), mobile: noteOf(f, 'mobile') }, mode),
+        cite,
+      }]
+    })
 
     return {
       intro,
@@ -111,7 +109,7 @@ export function createPages(payload: Payload, content: Content) {
       ],
       life: (['life-1', 'life-2', 'life-3'] as const).flatMap((s) => (media[s] ? [media[s]] : [])),
       sources,
-      copy: filterCites(applyMode(villageCopy, mode), visible),
+      copy: applyMode(villageCopy, mode, { cites: visible }),
     }
   }
 

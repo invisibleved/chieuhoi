@@ -170,8 +170,8 @@ export interface CraftPageView {
   compare: {
     hand: { title: string; image: ImageView | null; text: Variant; note: Variant }
     machine: { title: string; image: ImageView | null; text: Variant; note: Variant }
-    /** Ô bị ẩn để null; hàng cả hai ô null đã bị bỏ. */
-    rows: { aspect: string; hand: string | null; machine: string | null }[]
+    /** Ô desktop bị ẩn để null; hàng cả hai ô null đã bị bỏ. `mobile`: các dòng mobile còn hiện được. */
+    rows: { aspect: string; hand: string | null; machine: string | null; mobile: string[] }[]
   }
   readNext: { href: string; eyebrow: string; title: string; cta: string; image: ImageView | null }[]
   copy: CraftCopyView
@@ -180,7 +180,8 @@ export interface CraftPageView {
 export interface VillagePageView {
   intro: PageIntroView
   hero: MediaView | null
-  facts: { term: string; detail: string; note: string | null; cite: string[] }[]
+  /** Mục có nguồn mà mọi nguồn bị ẩn thì bị bỏ ở public. */
+  facts: { term: string; detail: Variant; note: Variant; cite: string[] }[]
   /** Mốc từ CMS, mốc tĩnh '+' ở cuối. */
   timeline: TimelineEventView[]
   life: MediaView[]

@@ -60,13 +60,15 @@ export const villageCopy = {
           },
           cite: ['danviet-2024'],
         },
-        {
-          text: { desktop: 'Cần đối chiếu với sử liệu khoa bảng trước khi đăng chính thức.', mobile: null },
-          cite: [],
-        },
       ],
+      // Ghi chú quy trình, nối vào cuối đoạn; chỉ preview.
+      preview: { closing: { desktop: 'Cần đối chiếu với sử liệu khoa bảng trước khi đăng chính thức.', mobile: null } },
     },
-    noPortrait: 'Không có chân dung lịch sử của Phạm Đôn Lễ. Trang này không dùng ảnh minh hoạ cho nhân vật.',
+    // Chỉ có ở artboard desktop.
+    noPortrait: {
+      desktop: 'Không có chân dung lịch sử của Phạm Đôn Lễ. Trang này không dùng ảnh minh hoạ cho nhân vật.',
+      mobile: null,
+    },
   },
   timeline: {
     eyebrow: 'DÒNG THỜI GIAN',
@@ -77,25 +79,36 @@ export const villageCopy = {
     sourceLabel: { desktop: 'NGUỒN · ', mobile: 'Nguồn: ' },
     prev: 'Mốc trước',
     next: 'Mốc sau',
-    hint: 'Hình dạng điểm mốc cho biết độ tin cậy, không chỉ dựa vào màu. Mọi mốc dùng được bằng bàn phím và chạm.',
+    // Chỉ có ở artboard desktop.
+    hint: {
+      desktop: 'Hình dạng điểm mốc cho biết độ tin cậy, không chỉ dựa vào màu. Mọi mốc dùng được bằng bàn phím và chạm.',
+      mobile: null,
+    },
   },
   location: {
     eyebrow: 'VỊ TRÍ',
     title: 'Làng bên sông Luộc.',
     body: { text: 'Sông Luộc bao quanh làng rồi đổ ra sông Hồng; bên kia sông là thành phố Hưng Yên.', cite: ['daidoanket-2021'] },
     preview: {
-      note: 'Mô tả này theo bài báo năm 2021, trước khi địa giới thay đổi. Cần cập nhật theo đơn vị hành chính hiện hành.',
+      note: {
+        desktop: 'Mô tả này theo bài báo năm 2021, trước khi địa giới thay đổi. Cần cập nhật theo đơn vị hành chính hiện hành.',
+        mobile: null,
+      },
       map: {
         label: 'BẢN ĐỒ VỊ TRÍ',
         title: 'Chờ dữ liệu địa lý chính xác',
-        body: 'Bản đồ đơn giản hoá: làng, sông Luộc, sông Hồng và đền thờ tổ nghề. Chỉ vẽ khi có toạ độ đã kiểm chứng.',
+        body: {
+          desktop: 'Bản đồ đơn giản hoá: làng, sông Luộc, sông Hồng và đền thờ tổ nghề. Chỉ vẽ khi có toạ độ đã kiểm chứng.',
+          mobile: null,
+        },
       },
     },
   },
+  // Cả mục chỉ có ở artboard desktop: mọi chữ là { desktop, mobile: null }.
   life: {
-    eyebrow: 'ĐỜI SỐNG LÀNG',
-    title: 'Nhịp làng, nhịp chiếu.',
-    link: { label: 'Xem thêm trong Thư viện →', href: '/thu-vien' },
+    eyebrow: { desktop: 'ĐỜI SỐNG LÀNG', mobile: null },
+    title: { desktop: 'Nhịp làng, nhịp chiếu.', mobile: null },
+    link: { label: { desktop: 'Xem thêm trong Thư viện →', mobile: null }, href: '/thu-vien' },
   },
   heritage: {
     eyebrow: 'DI SẢN HÔM NAY',
@@ -115,7 +128,10 @@ export const villageCopy = {
     ],
     link: { label: 'Xem quy trình dệt chiếu →', href: '/nghe-det-chieu' },
     preview: {
-      note: 'Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.',
+      note: {
+        desktop: 'Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.',
+        mobile: null,
+      },
     },
   },
   sources: { title: 'Nguồn tham khảo' },
@@ -127,23 +143,29 @@ export type VillageCopyView = ApplyMode<typeof villageCopy>
 export const villageFacts = [
   {
     term: 'TÊN GỌI',
-    detail: 'Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ',
-    note: null as string | null,
-    notePreview: null as string | null,
+    detail: { desktop: 'Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ', mobile: 'Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ' },
+    note: { desktop: null, mobile: null } as { desktop: string | null; mobile: string | null },
+    notePreview: { desktop: null, mobile: null } as { desktop: string | null; mobile: string | null },
     cite: ['vietnamplus-2026', 'daidoanket-2021'],
   },
   {
     term: 'ĐỊA GIỚI HIỆN NAY',
-    detail: 'Xã Long Hưng, tỉnh Hưng Yên',
-    note: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình' as string | null,
-    notePreview: 'cần đối chiếu văn bản hành chính' as string | null,
+    detail: { desktop: 'Xã Long Hưng, tỉnh Hưng Yên', mobile: 'Xã Long Hưng, tỉnh Hưng Yên' },
+    note: {
+      desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
+      mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',
+    } as { desktop: string | null; mobile: string | null },
+    notePreview: {
+      desktop: 'cần đối chiếu văn bản hành chính',
+      mobile: 'cần đối chiếu',
+    } as { desktop: string | null; mobile: string | null },
     cite: ['vietnamplus-2026'],
   },
   {
     term: 'TỔ NGHỀ',
-    detail: 'Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"',
-    note: null as string | null,
-    notePreview: null as string | null,
+    detail: { desktop: 'Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"', mobile: 'Phạm Đôn Lễ, "Trạng Chiếu"' },
+    note: { desktop: null, mobile: null } as { desktop: string | null; mobile: string | null },
+    notePreview: { desktop: null, mobile: null } as { desktop: string | null; mobile: string | null },
     cite: ['vietnamplus-2026', 'danviet-2024'],
   },
 ]

@@ -21,18 +21,6 @@ export const craftCopy = {
     railLabel: 'Chọn công đoạn',
     noImage: 'ẢNH CẦN CHỤP',
     docLabel: { desktop: 'TƯ LIỆU', mobile: 'TL' },
-    docNone: '—',
-    noImageCaption: { desktop: 'Chưa có ảnh cho công đoạn này', mobile: 'Chưa có ảnh' },
-    // Chú thích riêng từng công đoạn (theo thứ tự n = 1..7).
-    stepCaptions: [
-      { desktop: 'Sợi cói · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-      { desktop: 'Chuẩn bị cói · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-      { desktop: 'Chưa có ảnh cho công đoạn này', mobile: 'Chưa có ảnh' },
-      { desktop: 'Khung dệt · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-      { desktop: 'Dệt chiếu bằng khung thủ công · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-      { desktop: 'In hoa văn bằng khuôn · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-      { desktop: 'Chiếu thành phẩm · Ảnh: [cần xác minh]', mobile: 'Ảnh: [cần xác minh]' },
-    ],
     prev: 'Trước',
     next: 'Tiếp',
     prevAria: 'Công đoạn trước',
@@ -40,14 +28,18 @@ export const craftCopy = {
     zoomOn: 'Xem cận cảnh',
     zoomOff: { desktop: 'Thu nhỏ', mobile: 'Thu nhỏ ảnh' },
     toolsLabel: 'DỤNG CỤ',
-    hint: 'Dùng phím Tab và Enter để chọn công đoạn. Khi bật chế độ giảm chuyển động, ảnh đổi ngay không có hiệu ứng.',
+    // Chỉ có ở artboard desktop (mobile: null).
+    hint: {
+      desktop: 'Dùng phím Tab và Enter để chọn công đoạn. Khi bật chế độ giảm chuyển động, ảnh đổi ngay không có hiệu ứng.',
+      mobile: null,
+    },
     preview: { toRecordLabel: 'CẦN GHI LẠI' },
   },
   tools: {
     eyebrow: 'DỤNG CỤ',
     title: 'Những vật dụng của nghề.',
     itemLabel: 'DỤNG CỤ',
-    preview: { note: 'Tên gọi địa phương của từng dụng cụ cần được người làng xác nhận.' },
+    preview: { note: { desktop: 'Tên gọi địa phương của từng dụng cụ cần được người làng xác nhận.', mobile: null } },
   },
   compare: {
     eyebrow: 'HAI CÁCH DỆT',
@@ -65,8 +57,7 @@ export const craftCopy = {
       compare: 'So sánh',
     },
     columns: { aspect: 'KHÍA CẠNH', hand: 'THỦ CÔNG', machine: 'BẰNG MÁY' },
-    rowPrefix: { hand: 'Thủ công', machine: 'Bằng máy', machineShort: 'Máy' },
-    preview: { note: 'Chỉ điền ô khi có thông tin từ nghệ nhân hoặc cơ sở dệt.' },
+    preview: { note: { desktop: 'Chỉ điền ô khi có thông tin từ nghệ nhân hoặc cơ sở dệt.', mobile: null } },
   },
   readNext: { eyebrow: 'ĐỌC TIẾP' },
 }
@@ -89,6 +80,7 @@ export const craftTools = [
   },
 ]
 
+// Mỗi hàng: ô desktop (hand/machine) và các dòng mobile (nguyên văn CraftMobile).
 export const craftCompare = {
   hand: {
     title: 'Dệt thủ công',
@@ -113,10 +105,22 @@ export const craftCompare = {
     },
   },
   rows: [
-    { aspect: 'Việc của đôi tay', hand: 'Đưa sợi và dệt trên khung', machine: 'Nạp cói vào máy' },
-    { aspect: 'Thời gian một tấm', hand: '[cần xác minh]', machine: '[cần xác minh]' },
-    { aspect: 'Hoa văn', hand: '[cần xác minh]', machine: '[cần xác minh]' },
-    { aspect: 'Khâu vẫn làm tay', hand: '[cần xác minh]', machine: '[cần xác minh]' },
+    {
+      aspect: 'Việc của đôi tay', hand: 'Đưa sợi và dệt trên khung', machine: 'Nạp cói vào máy',
+      mobile: ['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'],
+    },
+    {
+      aspect: 'Thời gian một tấm', hand: '[cần xác minh]', machine: '[cần xác minh]',
+      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
+    },
+    {
+      aspect: 'Hoa văn', hand: '[cần xác minh]', machine: '[cần xác minh]',
+      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
+    },
+    {
+      aspect: 'Khâu vẫn làm tay', hand: '[cần xác minh]', machine: '[cần xác minh]',
+      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
+    },
   ],
 }
 

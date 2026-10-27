@@ -52,6 +52,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.compare.rows.map((r) => r.aspect)).toEqual(['Việc của đôi tay'])
       expect(v.intro.title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
       expect(v.compare.hand.note.desktop).toBeNull()
+      expect(v.compare.rows[0].mobile).toEqual(['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'])
       expect(JSON.stringify(v.copy)).not.toContain('CẦN GHI LẠI')
     })
     it('preview: đủ 7 công đoạn, công đoạn thiếu ảnh có shotNeeded, toRecord hiện', async () => {
@@ -62,6 +63,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.steps[0].toRecord).toBe('Giống cói, nơi trồng, mùa thu hoạch.')
       expect(v.steps[1].shortTitle).toBe('Xử lý')
       expect(v.compare.rows).toHaveLength(4)
+      expect(v.compare.rows[1].mobile).toEqual(['Thủ công: [cần xác minh] · Máy: [cần xác minh]'])
       expect(v.hero?.image.url).toBeTruthy()
       expect(v.copy.journey.preview?.toRecordLabel).toBe('CẦN GHI LẠI')
     })
@@ -112,14 +114,21 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.timeline[0].sourceLine).toBe('Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021)')
       expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026', 'danviet-2024', 'daidoanket-2021'])
       expect(v.sources[0].date).toBe('14/08/2026')
-      expect(v.facts[1].note).toBe('Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình · cần đối chiếu văn bản hành chính')
+      expect(v.facts[1].note).toEqual({
+        desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình · cần đối chiếu văn bản hành chính',
+        mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình · cần đối chiếu',
+      })
+      expect(v.facts[2].detail.mobile).toBe('Phạm Đôn Lễ, "Trạng Chiếu"')
       expect(v.copy.location.preview?.map?.label).toBe('BẢN ĐỒ VỊ TRÍ')
       expect(v.life).toHaveLength(3)
     })
     it('public: mốc tĩnh vẫn có, ghi chú quy trình ẩn, ảnh chưa được phép ẩn', async () => {
       const v = await pages.getVillagePage('public')
       expect(v.timeline.at(-1)?.title).toBe('Mốc của bạn')
-      expect(v.facts[1].note).toBe('Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình')
+      expect(v.facts[1].note).toEqual({
+        desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
+        mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',
+      })
       expect(v.copy.location.preview).toBeNull()
       expect(v.hero).toBeNull()
       expect(v.life).toEqual([])
@@ -135,6 +144,15 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         expect(JSON.stringify(v.copy)).not.toContain('danviet-2024')
         expect(v.timeline[0].sourceLine).toBe('Đại Đoàn Kết (07/08/2021)')
         expect(v.timeline[0].sourceIds).toEqual(['daidoanket-2021'])
+        // Câu chỉ trích [2] không đứng một mình; câu trích [2][3] vẫn còn với [3].
+        expect(v.copy.founder.conflict.parts[1]).toEqual({ text: { desktop: null, mobile: null }, cite: [] })
+        expect(v.copy.founder.conflict.parts[0].text.desktop).toBeTruthy()
+        expect(v.copy.founder.paragraphs[0].parts[0].cite).toEqual(['daidoanket-2021'])
+        expect(v.copy.founder.paragraphs[0].parts[0].text.desktop).toBeTruthy()
+        expect(v.facts.map((f) => f.term)).toContain('TỔ NGHỀ')
+        expect(v.facts[2].cite).toEqual(['vietnamplus-2026'])
+        const w0 = await pages.getVillagePage('preview')
+        expect(w0.copy.founder.conflict.parts[1].cite).toEqual(['danviet-2024'])
         // Mốc chỉ có nguồn bị ẩn thì không có dòng nguồn: dùng nhánh đơn nguồn khác để kiểm chứng riêng.
         const only = await sourceDoc('vietnamplus-2026')
         await payload.update({ collection: 'sources', id: only.id, data: { title: '[cần xác minh]' }, overrideAccess: true })
@@ -150,12 +168,13 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
     })
     it('mốc thiếu mức tin cậy được trả là pending', async () => {
       const ev = (await payload.find({ collection: 'timeline-events', where: { order: { equals: 1 } }, overrideAccess: true })).docs[0]
+      const originalConfidence = ev.confidence
       await payload.update({ collection: 'timeline-events', id: ev.id, data: { confidence: null }, user: await reviewer(), overrideAccess: true, draft: false } as never)
       try {
         const v = await pages.getVillagePage('preview')
         expect(v.timeline[0].confidence).toBe('pending')
       } finally {
-        await payload.update({ collection: 'timeline-events', id: ev.id, data: { confidence: 'press' }, user: await reviewer(), overrideAccess: true, draft: false } as never)
+        await payload.update({ collection: 'timeline-events', id: ev.id, data: { confidence: originalConfidence }, user: await reviewer(), overrideAccess: true, draft: false } as never)
       }
     })
   })
