@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
 
 const SHOTS = process.env.SHOTS_DIR
-const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Thành phần chung', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
+const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Thành phần chung', 'Khối trang Nghề & Làng', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
 
 for (const vp of [
   { name: '1440', width: 1440, height: 900 },
@@ -32,10 +32,10 @@ for (const vp of [
       const chip = page.getByRole('button', { name: 'Lịch sử' }).first()
       await chip.click()
       await expect(chip).toHaveAttribute('aria-pressed', 'true')
-      const tab1 = page.getByRole('tab', { name: 'Dệt thủ công' })
+      const tab1 = page.getByRole('tab', { name: 'Dệt thủ công' }).first()
       await tab1.focus()
       await page.keyboard.press('ArrowRight')
-      const tab2 = page.getByRole('tab', { name: 'Dệt bằng máy' })
+      const tab2 = page.getByRole('tab', { name: 'Dệt bằng máy' }).first()
       await expect(tab2).toHaveAttribute('aria-selected', 'true')
       await expect(tab2).toBeFocused()
     })
@@ -46,6 +46,16 @@ for (const vp of [
       await page.goto('/styleguide')
       await page.waitForLoadState('networkidle')
       await page.screenshot({ path: `${SHOTS}/styleguide-${vp.name}.png`, fullPage: true })
+    })
+
+    test('khối trang Nghề & Làng: hành trình, dòng thời gian, so sánh hoạt động', async ({ page }) => {
+      await page.goto('/styleguide')
+      const block = page.locator('section[aria-labelledby="sg-trang"]')
+      await expect(block.getByRole('progressbar').first()).toBeVisible()
+      await expect(block.getByRole('img', { name: /Ảnh cần chụp: Cói phơi trên sân/ }).first()).toBeVisible()
+      await expect(block.getByRole('tablist')).toBeVisible()
+      await expect(block.getByRole('link', { name: /Gặp những người dệt/ })).toBeVisible()
+      await expect(block.locator('[data-confidence]').first()).toBeVisible()
     })
   })
 }
