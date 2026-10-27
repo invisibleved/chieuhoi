@@ -2,7 +2,6 @@ import type { HomeMediaView, PageIntroView } from '@/lib/content'
 import { Button } from '@/components/ui/Button'
 import { ContentImage } from '@/components/content/ContentImage'
 import { DocumentLabel } from '@/components/content/DocumentLabel'
-import { docNumber } from './tlCode'
 
 type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string | null }
 
@@ -32,7 +31,7 @@ function HeroTitle({ intro }: { intro: PageIntroView }) {
 
 export function Hero({ intro, media, storyHref }: HeroProps) {
   const { hero, heroInset } = media
-  const num = hero ? docNumber(hero.image.code) : null
+  const num = hero?.image.docNumber ?? null
   const hasLabel = hero !== null && (num !== null || !!hero.title || !!hero.caption)
   return (
     <section className="relative md:grid md:h-[840px] md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-16">

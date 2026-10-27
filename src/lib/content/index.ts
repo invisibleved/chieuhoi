@@ -9,7 +9,7 @@ export { getMode } from './mode'
 
 const bound = async () => createContent(await getPayload({ config }))
 
-export const getSources = async () => (await bound()).getSources()
+export const getSources = async (...a: Parameters<ReturnType<typeof createContent>['getSources']>) => (await bound()).getSources(...a)
 export const getTimeline = async (...a: Parameters<ReturnType<typeof createContent>['getTimeline']>) => (await bound()).getTimeline(...a)
 export const getCraftSteps = async (...a: Parameters<ReturnType<typeof createContent>['getCraftSteps']>) => (await bound()).getCraftSteps(...a)
 export const getProducts = async (...a: Parameters<ReturnType<typeof createContent>['getProducts']>) => (await bound()).getProducts(...a)

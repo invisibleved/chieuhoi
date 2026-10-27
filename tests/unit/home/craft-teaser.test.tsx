@@ -11,6 +11,7 @@ const img = (n: number, over: Partial<ImageView> = {}): ImageView => ({
   sizes: {},
   photographer: null,
   code: `TL-0${n}4`,
+  docNumber: `0${n}4`,
   flags: [],
   ...over,
 })
@@ -20,7 +21,7 @@ const steps: CraftStepView[] = [1, 2, 3].map((n) => ({
   subtitle: null,
   body: n === 1 ? 'Mô tả bước một' : null,
   tools: null,
-  image: n === 3 ? null : img(n, n === 2 ? { photographer: 'Nguyễn A', code: '[cần xác minh]' } : {}),
+  image: n === 3 ? null : img(n, n === 2 ? { photographer: 'Nguyễn A', code: '[cần xác minh]', docNumber: null } : {}),
   shotNeeded: n === 3 ? 'Phơi cói ngoài sân' : null,
   focus: [50, 50] as [number, number],
   flags: [],

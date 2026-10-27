@@ -19,12 +19,13 @@ const img = (over: Partial<ImageView> = {}): ImageView => ({
   sizes: {},
   photographer: null,
   code: 'TL-002',
+  docNumber: '002',
   flags: [],
   ...over,
 })
 const full: HomeMediaView = {
   hero: { image: img(), title: 'In hoa văn lên chiếu bằng khuôn', caption: 'Ảnh: Bảo tàng' },
-  heroInset: img({ url: '/images/reference/kn5.webp', alt: 'Cuộn chiếu dựng đứng', code: null }),
+  heroInset: img({ url: '/images/reference/kn5.webp', alt: 'Cuộn chiếu dựng đứng', code: null, docNumber: null }),
   village: [
     { image: img({ alt: 'Bãi phơi chiếu', url: '/images/reference/hc8.webp' }), caption: 'Chiếu trải phơi.' },
     { image: img({ alt: 'Gấp chiếu', url: '/images/reference/kn11.webp' }), caption: 'Gấp chiếu thành phẩm.' },
@@ -69,7 +70,7 @@ describe('Hero', () => {
     expect(within(container.querySelector('figure')!).getAllByText('In hoa văn lên chiếu bằng khuôn').length).toBeGreaterThan(0)
   })
   it('không có mã, tiêu đề, chú thích thì không có figcaption', () => {
-    const media = { ...full, hero: { image: img({ code: null }), title: null, caption: null } }
+    const media = { ...full, hero: { image: img({ code: null, docNumber: null }), title: null, caption: null } }
     const { container } = render(<Hero intro={intro} media={media} storyHref={STORY} />)
     expect(container.querySelector('figure')).not.toBeNull()
     expect(container.querySelector('figcaption')).toBeNull()
@@ -83,7 +84,7 @@ describe('Hero', () => {
     expect(screen.getByRole('heading', { level: 1 }).className).not.toContain('nowrap')
   })
   it('code không khớp TL-n thì bỏ dòng mã', () => {
-    const media = { ...full, hero: { ...full.hero!, image: img({ code: '[cần xác minh]' }) } }
+    const media = { ...full, hero: { ...full.hero!, image: img({ code: '[cần xác minh]', docNumber: null }) } }
     const { container } = render(<Hero intro={intro} media={media} storyHref={STORY} />)
     expect(container.textContent).not.toContain('TƯ LIỆU')
   })

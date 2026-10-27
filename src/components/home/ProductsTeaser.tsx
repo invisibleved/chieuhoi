@@ -1,13 +1,12 @@
 import type { Mode, ProductCardView, ProductView } from '@/lib/content'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
 import { LinkArrow } from '@/components/ui/LinkArrow'
-import { hasPattern } from './hasPattern'
 import { PatternTeaser } from './PatternTeaser'
 
 type ProductsTeaserProps = { featured: ProductView | null; products: ProductCardView[]; mode: Mode }
 
 export function ProductsTeaser({ featured, products, mode }: ProductsTeaserProps) {
-  const showPattern = hasPattern(featured)
+  const showPattern = featured?.hasPattern === true
   // Số HIỆN VẬT là vị trí gốc trong danh sách; thẻ thiếu tên thì bỏ, không đánh số lại.
   const cards = products
     .slice(0, 4)

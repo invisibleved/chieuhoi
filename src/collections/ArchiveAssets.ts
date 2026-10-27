@@ -10,6 +10,20 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export { isAssetPubliclyAllowed }
 
+/** Nguồn duy nhất của nhãn chủ đề và thời kỳ ảnh tư liệu. */
+export const ARCHIVE_CATEGORY_OPTIONS = [
+  { label: 'Làng quê', value: 'village' },
+  { label: 'Nghề dệt', value: 'weaving' },
+  { label: 'Con người', value: 'people' },
+  { label: 'Sản phẩm', value: 'products' },
+  { label: 'Ký ức', value: 'memory' },
+  { label: 'Tư liệu lịch sử', value: 'history' },
+]
+export const ARCHIVE_ERA_OPTIONS = [
+  { label: 'Xưa', value: 'old' },
+  { label: 'Nay', value: 'now' },
+]
+
 // R19: khách chỉ được tải file (isReadingStaticFile), không liệt kê/đọc metadata qua REST.
 const readAccess: Access = ({ req, isReadingStaticFile }) => {
   if (req.user) return true
@@ -67,23 +81,13 @@ export const ArchiveAssets: CollectionConfig = {
       name: 'category',
       type: 'select',
       label: 'Chủ đề',
-      options: [
-        { label: 'Làng quê', value: 'village' },
-        { label: 'Nghề dệt', value: 'weaving' },
-        { label: 'Con người', value: 'people' },
-        { label: 'Sản phẩm', value: 'products' },
-        { label: 'Ký ức', value: 'memory' },
-        { label: 'Tư liệu lịch sử', value: 'history' },
-      ],
+      options: ARCHIVE_CATEGORY_OPTIONS,
     },
     {
       name: 'era',
       type: 'select',
       label: 'Thời kỳ',
-      options: [
-        { label: 'Xưa', value: 'old' },
-        { label: 'Nay', value: 'now' },
-      ],
+      options: ARCHIVE_ERA_OPTIONS,
     },
     { name: 'takenAt', type: 'text', label: 'Thời điểm chụp' },
     { name: 'relatedLabel', type: 'text', label: 'Nhãn liên quan' },

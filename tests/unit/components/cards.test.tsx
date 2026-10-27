@@ -31,7 +31,7 @@ describe('StoryCard', () => {
   })
 })
 
-const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', summary: null, image: null, typeConfirmed: false, flags: [] }
+const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, flags: [] }
 
 describe('ProductCard', () => {
   it('không ảnh: khung ẢNH CẦN CHỤP + nhãn Chưa có ảnh', () => {

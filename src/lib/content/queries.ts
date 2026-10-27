@@ -5,7 +5,7 @@ import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
 import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-types'
 
-import { storyCategoryLabel } from './categories'
+import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { sanitizeRich } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, Mode, PageIntroView, PersonDetailView, PersonView,
@@ -63,7 +63,7 @@ export function createContent(payload: Payload) {
     return (docs[0] as never) ?? null
   }
 
-  async function allSources(mode: Mode = 'public'): Promise<SourceView[]> {
+  async function getSources(mode: Mode): Promise<SourceView[]> {
     const res = await payload.find({
       collection: 'sources', overrideAccess: true, pagination: false, depth: 0, sort: 'sourceId',
     })
@@ -110,6 +110,7 @@ export function createContent(payload: Payload) {
     code: showText(d.code, mode),
     name: showText(d.name, mode),
     group: d.group ?? null,
+    groupLabel: productGroupLabel(d.group),
     summary: showText(d.summary, mode),
     image: toImageView(Array.isArray(d.images) ? d.images.find((i) => toImageView(i, mode)) : null, mode),
     typeConfirmed: !!d.typeConfirmed,
@@ -138,10 +139,12 @@ export function createContent(payload: Payload) {
         body, sourceId: sourceOf(a.source)?.sourceId ?? null,
       })
     }
+    const primaryImage = toImageView(Array.isArray(d.images) ? d.images[0] : null, mode)
     return {
       ...card,
       flags,
-      primaryImage: toImageView(Array.isArray(d.images) ? d.images[0] : null, mode),
+      primaryImage,
+      hasPattern: primaryImage !== null && annotations.length > 0,
       images: (Array.isArray(d.images) ? d.images : [])
         .map((i) => toImageView(i, mode)).filter((i) => i !== null),
       material: showText(d.material, mode),
@@ -228,7 +231,9 @@ export function createContent(payload: Payload) {
         title: showText(d.title, mode),
         description: showText(d.description, mode),
         category: d.category ?? null,
+        categoryLabel: archiveCategoryLabel(d.category),
         era: d.era ?? null,
+        eraLabel: archiveEraLabel(d.era),
         related: label && internalHref ? { label, href: internalHref } : null,
         flags: image.flags,
       })
@@ -288,7 +293,7 @@ export function createContent(payload: Payload) {
   }
 
   return {
-    getHomeMedia, getSources: allSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
+    getHomeMedia, getSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
     getStory, getPeople, getPerson, getArchive, getSiteSettings, getPageIntro,
   }
 }

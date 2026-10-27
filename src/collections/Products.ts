@@ -3,6 +3,12 @@ import type { CollectionConfig } from 'payload'
 import { reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
+/** Nguồn duy nhất của nhãn nhóm sản phẩm. */
+export const PRODUCT_GROUP_OPTIONS = [
+  { label: 'Chiếu cói truyền thống', value: 'traditional' },
+  { label: 'Chiếu đương đại', value: 'contemporary' },
+]
+
 export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'Sản phẩm', plural: 'Sản phẩm' },
@@ -23,10 +29,7 @@ export const Products: CollectionConfig = {
       name: 'group',
       type: 'select',
       label: 'Nhóm',
-      options: [
-        { label: 'Chiếu cói truyền thống', value: 'traditional' },
-        { label: 'Chiếu đương đại', value: 'contemporary' },
-      ],
+      options: PRODUCT_GROUP_OPTIONS,
     },
     { name: 'summary', type: 'textarea', label: 'Tóm tắt', localized: true },
     { name: 'images', type: 'relationship', relationTo: 'archive-assets', hasMany: true, label: 'Ảnh' },

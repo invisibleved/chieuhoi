@@ -7,7 +7,6 @@ import { ContentImage } from '@/components/content/ContentImage'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { docNumber } from './tlCode'
 
 type CraftTeaserProps = { steps: CraftStepView[]; mode: Mode }
 
@@ -46,7 +45,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
   if (steps.length === 0) return null
   const total = steps.length
   const step = steps[index]
-  const num = step.image ? docNumber(step.image.code) : null
+  const num = step.image?.docNumber ?? null
 
   // Chọn công đoạn; trên mobile cuộn nút được chọn vào giữa dải (chỉ trong handler, không trong effect).
   const select = (i: number) => {

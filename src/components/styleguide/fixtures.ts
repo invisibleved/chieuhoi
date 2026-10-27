@@ -3,7 +3,7 @@ import type { ImageView, PersonView, ProductCardView, SourceView, StoryCardView 
 // Dữ liệu mẫu cho /styleguide, lấy nguyên văn từ artboard Components.
 // Ảnh nằm ở public/images/reference (gitignore, chỉ có ở máy dev); width/height đọc từ file thật.
 function img(file: string, alt: string, width: number, height: number): ImageView {
-  return { url: `/images/reference/${file}`, alt, width, height, sizes: {}, photographer: null, code: null, flags: [] }
+  return { url: `/images/reference/${file}`, alt, width, height, sizes: {}, photographer: null, code: null, docNumber: null, flags: [] }
 }
 
 export const imgPortrait = img('nkc10.webp', 'Người phụ nữ lớn tuổi ngồi dệt chiếu', 840, 560)
@@ -64,6 +64,7 @@ export const productNoImage: ProductCardView = {
   code: null,
   name: 'Chiếu trơn',
   group: null,
+  groupLabel: null,
   summary: null,
   image: null,
   typeConfirmed: false,

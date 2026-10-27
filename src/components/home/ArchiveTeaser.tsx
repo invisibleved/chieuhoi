@@ -6,11 +6,10 @@ import type { ArchiveItemView } from '@/lib/content'
 import { ContentImage } from '@/components/content/ContentImage'
 import { FilterChips } from '@/components/ui/FilterChips'
 import { LinkArrow } from '@/components/ui/LinkArrow'
-import { docNumber } from './tlCode'
 
 type ArchiveTeaserProps = { items: ArchiveItemView[] }
 
-type FilterKey = 'all' | 'village' | 'weaving' | 'people' | 'products' | 'memory' | 'history'
+type FilterKey = 'all' | NonNullable<ArchiveItemView['category']>
 
 const OPTIONS: { key: FilterKey; label: string }[] = [
   { key: 'all', label: 'Tất cả' },
@@ -21,7 +20,6 @@ const OPTIONS: { key: FilterKey; label: string }[] = [
   { key: 'memory', label: 'Ký ức' },
   { key: 'history', label: 'Tư liệu lịch sử' },
 ]
-const LABELS = Object.fromEntries(OPTIONS.map((o) => [o.key, o.label])) as Record<string, string>
 
 // Vị trí ô trên lưới desktop 4 cột x 2 hàng; mobile: ô 1 rộng 2 cột cao 180, ô 2-3 cao 210, ô 4-5 chỉ hiện từ md.
 const SLOTS = [
@@ -37,7 +35,7 @@ export function ArchiveTeaser({ items }: ArchiveTeaserProps) {
   if (items.length === 0) return null
   const hasHistory = items.some((i) => i.category === 'history')
   const tiles = items
-    .filter((i) => docNumber(i.image.code) !== null)
+    .filter((i) => i.image.docNumber !== null)
     .filter((i) => filter === 'all' || i.category === filter)
     .slice(0, 5)
 
@@ -58,12 +56,12 @@ export function ArchiveTeaser({ items }: ArchiveTeaserProps) {
       <div className="grid grid-cols-2 gap-2 md:auto-rows-[280px] md:grid-cols-4 md:gap-4">
         {tiles.map((item, i) => {
           const code = item.image.code as string
-          const cat = item.category ? LABELS[item.category] : null
+          const cat = item.categoryLabel
           return (
             <Link key={code} href={`/thu-vien?anh=${code}`} className={`relative overflow-hidden ${SLOTS[i]}`}>
               <ContentImage image={item.image} size="card" sizes="(min-width: 768px) 40vw, 100vw" className="h-full" wrapperClassName="h-full" />
               <span className="absolute top-2 left-2 bg-[rgba(35,42,37,.88)] px-2.5 py-1.5 text-[12px] tracking-[.1em] md:top-3 md:left-3 md:tracking-[.12em]">
-                TL · {docNumber(code)}
+                TL · {item.image.docNumber}
                 {cat ? <span className="hidden md:inline"> · {cat.toLocaleUpperCase('vi')}</span> : null}
               </span>
             </Link>

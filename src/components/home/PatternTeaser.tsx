@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import type { ProductView } from '@/lib/content'
-import { hasPattern } from './hasPattern'
 import { ContentImage } from '@/components/content/ContentImage'
 import { FootnoteRef } from '@/components/content/Sources'
 
@@ -11,7 +10,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
   const { annotations, primaryImage, slug } = product
   const [openN, setOpenN] = useState(annotations[0]?.n)
   const open = annotations.find((a) => a.n === openN) ?? annotations[0]
-  if (!open || !hasPattern(product) || !primaryImage) return null
+  if (!open || !product.hasPattern || !primaryImage) return null
 
   // Số nguồn theo thứ tự xuất hiện của các sourceId khác nhau; trang hiện vật (Phase 5) phải đánh số giống vậy.
   const sourceIds = [...new Set(annotations.map((a) => a.sourceId).filter((id): id is string => id !== null))]

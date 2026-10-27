@@ -9,6 +9,8 @@ export interface ImageView {
   sizes: Partial<Record<'thumb' | 'card' | 'wide' | 'full', string>>
   photographer: string | null
   code: string | null
+  /** Phần số của mã `TL-<số>`; null khi mã không đúng dạng đó. */
+  docNumber: string | null
   flags: Flag[]
 }
 
@@ -57,6 +59,7 @@ export interface ProductCardView {
   code: string | null
   name: string | null
   group: 'traditional' | 'contemporary' | null
+  groupLabel: string | null
   summary: string | null
   image: ImageView | null
   typeConfirmed: boolean
@@ -67,6 +70,8 @@ export interface ProductView extends ProductCardView {
   images: ImageView[]
   /** Ảnh CMS đầu tiên (nơi các điểm annotation đặt toạ độ); null khi ảnh đó chưa được dùng ở mode hiện tại. */
   primaryImage: ImageView | null
+  /** Đủ ảnh đầu tiên và ít nhất một chú thích để dựng khối hoa văn. */
+  hasPattern: boolean
   material: string | null
   technique: string | null
   size: string | null
@@ -103,8 +108,10 @@ export interface ArchiveItemView {
   image: ImageView
   title: string | null
   description: string | null
-  category: string | null
+  category: 'village' | 'weaving' | 'people' | 'products' | 'memory' | 'history' | null
+  categoryLabel: string | null
   era: 'old' | 'now' | null
+  eraLabel: string | null
   related: { label: string; href: string } | null
   flags: Flag[]
 }
