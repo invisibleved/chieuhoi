@@ -6,10 +6,11 @@ import type { ArchiveAsset } from '@/payload-types'
 import { PAGE_MEDIA_SLOTS, type PageMediaRoute, type PageMediaSlot } from '@/globals/pageMedia'
 
 import { applyMode } from './copy/applyMode'
+import { connectCopy } from './copy/connect'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft'
 import { villageCopy, villageFacts, villageSourceOrder, villageTimelineAdd } from './copy/village'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
-import type { CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
+import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
 import { isUnverified, showText, toImageView } from './visibility'
 
 type Content = ReturnType<typeof createContent>
@@ -118,5 +119,26 @@ export function createPages(payload: Payload, content: Content) {
     }
   }
 
-  return { getPageMedia, getCraftPage, getVillagePage }
+  /** Trống thì null ở cả hai mode (R-P1); có dấu chưa xác minh thì ẩn ở public, nguyên văn ở preview. */
+  const contactText = (v: unknown, mode: Mode): string | null => {
+    if (typeof v !== 'string' || v.trim() === '') return null
+    return mode === 'public' && isUnverified(v) ? null : v
+  }
+
+  async function getConnectPage(mode: Mode): Promise<ConnectPageView> {
+    const [intro, g] = await Promise.all([
+      content.getPageIntro('ket-noi', mode), readGlobalDoc(payload, 'site-settings', mode),
+    ])
+    const t = (k: string) => contactText(g[k], mode)
+    return {
+      intro,
+      contact: {
+        email: t('email'), phone: t('phone'), address: t('address'),
+        addressNote: t('addressNote'), visitInfo: t('visitInfo'),
+      },
+      copy: applyMode(connectCopy, mode),
+    }
+  }
+
+  return { getPageMedia, getCraftPage, getVillagePage, getConnectPage }
 }

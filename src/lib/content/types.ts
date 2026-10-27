@@ -1,5 +1,7 @@
 import type { ArchiveAsset } from '@/payload-types'
 
+import type { ArchiveCopyView } from './copy/archive'
+import type { ConnectCopyView } from './copy/connect'
 import type { CraftCopyView } from './copy/craft'
 import type { PeopleCopyView } from './copy/people'
 import type { ProductsCopyView } from './copy/products'
@@ -287,6 +289,41 @@ export interface ArchiveItemView {
   eraLabel: string | null
   related: { label: string; href: string } | null
   flags: Flag[]
+  /** Mã gốc `TL-001`, khoá của `?anh=`. */
+  code: string
+  takenAt: string | null
+  photographer: string | null
+  source: string | null
+  /** Nhãn quyền dùng đã chọn theo bản (R14). */
+  rights: Variant
+  /** Đủ thời gian, người chụp và nguồn đã xác minh (R12). */
+  sourceVerified: boolean
+}
+
+export interface ArchivePageView {
+  intro: PageIntroView
+  /** Chỉ tư liệu có mã. */
+  items: ArchiveItemView[]
+  stats: { total: number; verified: number }
+  /** Chip "Tất cả" rồi mọi chủ đề theo thứ tự option (R13). */
+  categories: { key: string; label: string }[]
+  eras: { key: 'all' | 'old' | 'now'; label: string }[]
+  hasOld: boolean
+  copy: ArchiveCopyView
+}
+
+export interface ConnectPageView {
+  /** title giữ nguyên '\n' (R17) */
+  intro: PageIntroView
+  /** Trống thì null ở cả hai mode; component tự hiện placeholder `copy.contact.preview` ở preview. */
+  contact: {
+    email: string | null
+    phone: string | null
+    address: string | null
+    addressNote: string | null
+    visitInfo: string | null
+  }
+  copy: ConnectCopyView
 }
 
 export interface SiteSettingsView {
@@ -352,4 +389,4 @@ export interface VillagePageView {
   copy: VillageCopyView
 }
 
-export type { CraftCopyView, PeopleCopyView, StoriesCopyView, VillageCopyView }
+export type { ArchiveCopyView, ConnectCopyView, CraftCopyView, PeopleCopyView, StoriesCopyView, VillageCopyView }

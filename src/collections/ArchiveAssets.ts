@@ -19,6 +19,11 @@ export const ARCHIVE_CATEGORY_OPTIONS = [
   { label: 'Ký ức', value: 'memory' },
   { label: 'Tư liệu lịch sử', value: 'history' },
 ]
+export const ARCHIVE_RIGHTS_OPTIONS = [
+  { label: 'Chưa rõ', value: 'unknown' },
+  { label: 'Được phép', value: 'permitted' },
+  { label: 'Hạn chế', value: 'restricted' },
+]
 export const ARCHIVE_ERA_OPTIONS = [
   { label: 'Xưa', value: 'old' },
   { label: 'Nay', value: 'now' },
@@ -101,11 +106,7 @@ export const ArchiveAssets: CollectionConfig = {
       label: 'Quyền sử dụng',
       defaultValue: 'unknown',
       required: true,
-      options: [
-        { label: 'Chưa rõ', value: 'unknown' },
-        { label: 'Được phép', value: 'permitted' },
-        { label: 'Hạn chế', value: 'restricted' },
-      ],
+      options: ARCHIVE_RIGHTS_OPTIONS,
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
     },
     {

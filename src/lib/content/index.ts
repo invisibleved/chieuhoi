@@ -2,13 +2,14 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { createArchive } from './archive'
 import { createPages } from './pages'
 import { createPeople } from './people'
 import { createProducts } from './products'
 import { createContent } from './queries'
 import { createStories } from './stories'
 
-export { createContent, createPages, createPeople, createProducts, createStories }
+export { createArchive, createContent, createPages, createPeople, createProducts, createStories }
 export * from './types'
 export { getMode } from './mode'
 export { archiveCategoryOptions, productGroupOptions } from './categories'
@@ -26,6 +27,10 @@ const boundPeople = async () => {
 const boundStories = async () => {
   const payload = await getPayload({ config })
   return createStories(payload, createContent(payload))
+}
+const boundArchive = async () => {
+  const payload = await getPayload({ config })
+  return createArchive(payload, createContent(payload))
 }
 const boundProducts = async () => {
   const payload = await getPayload({ config })
@@ -62,3 +67,6 @@ export const getPersonSlugs = async () => (await boundPeople()).getPersonSlugs()
 export const getProductsPage = cache(async (...a: Parameters<ReturnType<typeof createProducts>['getProductsPage']>) => (await boundProducts()).getProductsPage(...a))
 export const getProductPage = cache(async (...a: Parameters<ReturnType<typeof createProducts>['getProductPage']>) => (await boundProducts()).getProductPage(...a))
 export const getProductSlugs = async () => (await boundProducts()).getProductSlugs()
+
+export const getArchivePage = cache(async (...a: Parameters<ReturnType<typeof createArchive>['getArchivePage']>) => (await boundArchive()).getArchivePage(...a))
+export const getConnectPage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getConnectPage']>) => (await boundPages()).getConnectPage(...a))

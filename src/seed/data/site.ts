@@ -90,7 +90,7 @@ export const pageIntros: Record<string, Intro> = {
   },
   'ket-noi': {
     eyebrow: 'KẾT NỐI',
-    title: 'Làng vẫn còn đó. Chuyện nghề vẫn được kể tiếp.',
+    title: 'Làng vẫn còn đó.\nChuyện nghề vẫn được kể tiếp.',
     lead: 'Góp một tấm ảnh, giới thiệu một người giữ nghề, hay chỉ muốn tìm hiểu thêm về làng Hới, đây là nơi bắt đầu.',
   },
 }

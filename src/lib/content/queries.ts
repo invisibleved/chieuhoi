@@ -6,8 +6,9 @@ import type { RouteKey } from '@/globals/PageIntros'
 import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payload-types'
 import { fillTemplate } from '@/lib/template'
 
-import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
+import { archiveCategoryLabel, archiveEraLabel, archiveRightsLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { applyMode } from './copy/applyMode'
+import { archiveCopy } from './copy/archive'
 import { peopleCopy } from './copy/people'
 import { productsCopy } from './copy/products'
 import { storiesCopy } from './copy/stories'
@@ -15,7 +16,7 @@ import { nonEmptyRich, sanitizeRich, splitStoryParts } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
   ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
-  TimelineEventView,
+  TimelineEventView, Variant,
 } from './types'
 import { isUnverified, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
 
@@ -449,6 +450,15 @@ export function createContent(payload: Payload) {
     }
   }
 
+  /** Nhãn quyền dùng (R14): "Được phép" lấy từ option; nhãn còn lại theo copy artboard. */
+  const rightsVariant = (rights: ArchiveAsset['rights']): Variant => {
+    if (rights === 'permitted') {
+      const l = archiveRightsLabel(rights)
+      return { desktop: l, mobile: l }
+    }
+    return archiveCopy.rights[rights === 'restricted' ? 'restricted' : 'unknown']
+  }
+
   async function getArchive(mode: Mode): Promise<ArchiveItemView[]> {
     const and: Where[] = [{ inArchive: { equals: true } }]
     if (mode === 'public') and.push(publicAssetQuery)
@@ -460,6 +470,8 @@ export function createContent(payload: Payload) {
     for (const d of res.docs) {
       const image = toImageView(d, mode)
       if (!image) continue
+      // Tư liệu không có mã thì không có khoá ?anh=, bỏ qua.
+      if (typeof d.code !== 'string' || d.code.trim() === '') continue
       const label = showText(d.relatedLabel, mode)
       // Chỉ nhận đường dẫn nội bộ (bắt đầu bằng một dấu '/'), tránh liên kết ra ngoài/giao thức lạ.
       const href = showText(d.relatedHref, mode)
@@ -474,6 +486,12 @@ export function createContent(payload: Payload) {
         eraLabel: archiveEraLabel(d.era),
         related: label && internalHref ? { label, href: internalHref } : null,
         flags: image.flags,
+        code: d.code,
+        takenAt: showText(d.takenAt, mode),
+        photographer: showText(d.photographer, mode),
+        source: showText(d.source, mode),
+        rights: rightsVariant(d.rights),
+        sourceVerified: ![d.takenAt, d.photographer, d.source].some((v) => isUnverified(v)),
       })
     }
     return items

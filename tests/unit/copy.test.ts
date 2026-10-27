@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import { applyMode } from '@/lib/content/copy/applyMode'
+import { archiveCopy } from '@/lib/content/copy/archive'
+import { connectCopy } from '@/lib/content/copy/connect'
 import { craftCopy } from '@/lib/content/copy/craft'
 import { productsCopy } from '@/lib/content/copy/products'
 import { storiesCopy } from '@/lib/content/copy/stories'
@@ -22,6 +24,11 @@ describe('applyMode', () => {
     expect(json).toContain('CÁC NGUỒN CHƯA THỐNG NHẤT')
     expect(json).toContain('Không có chân dung lịch sử')
     expect(json).not.toContain('Cần đối chiếu với sử liệu')
+  })
+  it('connect: placeholder liên hệ chỉ ở preview; archive giữ nhãn quyền', () => {
+    expect(applyMode(connectCopy, 'public').contact.preview).toBeNull()
+    expect(applyMode(connectCopy, 'preview').contact.preview?.email).toBe('[Email liên hệ]')
+    expect(applyMode(archiveCopy, 'public').rights.unknown.mobile).toBe('Chưa xin phép')
   })
   it('preview: giữ nguyên văn', () => {
     expect(applyMode(craftCopy, 'preview')).toEqual(craftCopy)
