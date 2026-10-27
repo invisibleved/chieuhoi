@@ -22,6 +22,8 @@ import { applyMode } from '@/lib/content/copy/applyMode'
 import { peopleCopy } from '@/lib/content/copy/people'
 import { storiesCopy } from '@/lib/content/copy/stories'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
+import { productsCopy } from '@/lib/content/copy/products'
+import { archiveCopy } from '@/lib/content/copy/archive'
 import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
@@ -458,8 +460,8 @@ export default function StyleguidePage() {
         <div className="flex min-w-0 flex-col gap-8">
           <FilterDemos />
           <SegmentedDemos />
-          <PatternExplorerDemo />
-          <LightboxDemo />
+          <PatternExplorerDemo copy={applyMode(productsCopy, 'preview').detail} />
+          <LightboxDemo copy={applyMode(archiveCopy, 'preview')} />
           <TabDemo />
           <div className="flex flex-col gap-3">
             <Lab>CHỮ HAI BẢN (DESKTOP / MOBILE)</Lab>

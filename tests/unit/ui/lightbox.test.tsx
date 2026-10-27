@@ -1,8 +1,15 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { Lightbox } from '@/components/ui/Lightbox'
 
-afterEach(cleanup)
+// jsdom không có bố cục: getClientRects luôn rỗng. Giả lập mọi phần tử đều hiển thị, trừ khi test nói khác.
+beforeEach(() => {
+  vi.spyOn(HTMLElement.prototype, 'getClientRects').mockImplementation(() => [{}] as unknown as DOMRectList)
+})
+afterEach(() => {
+  cleanup()
+  vi.restoreAllMocks()
+})
 
 function setup(extra: Partial<React.ComponentProps<typeof Lightbox>> = {}) {
   const fns = { onClose: vi.fn(), onPrev: vi.fn(), onNext: vi.fn() }
@@ -61,6 +68,21 @@ describe('Lightbox', () => {
     expect(document.activeElement).toBe(close)
     fireEvent.keyDown(close, { key: 'Tab', shiftKey: true })
     expect(document.activeElement).toBe(last)
+  })
+  it('bỏ qua phần tử đang ẩn khi vòng Tab (ví dụ liên kết chỉ hiện từ md)', () => {
+    setup()
+    const close = screen.getByRole('link', { name: 'Đóng' })
+    const next = screen.getByRole('link', { name: 'Ảnh tiếp' })
+    const hidden = screen.getByRole('link', { name: 'Liên quan' })
+    vi.spyOn(HTMLElement.prototype, 'getClientRects').mockImplementation(function (this: HTMLElement) {
+      return this === hidden ? ([] as unknown as DOMRectList) : ([{}] as unknown as DOMRectList)
+    })
+    // aside là phần tử cuối thật sự hiển thị? Ở đây Liên quan ẩn nên phần tử cuối hiển thị là Ảnh tiếp.
+    next.focus()
+    fireEvent.keyDown(next, { key: 'Tab' })
+    expect(document.activeElement).toBe(close)
+    fireEvent.keyDown(close, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(next)
   })
   it('Tab khi focus lạc ra ngoài hộp thì đưa focus về trong hộp', () => {
     setup()

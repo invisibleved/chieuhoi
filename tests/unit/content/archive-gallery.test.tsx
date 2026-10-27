@@ -57,17 +57,18 @@ const tiles = () => screen.getAllByRole('link', { name: /^Mở ảnh:/ })
 
 let replaceState: ReturnType<typeof vi.spyOn>
 beforeEach(() => {
+  vi.spyOn(HTMLElement.prototype, 'getClientRects').mockImplementation(() => [{}] as unknown as DOMRectList)
   replaceState = vi.spyOn(window.history, 'replaceState')
   window.history.replaceState(null, '', '/thu-vien?x=1')
   replaceState.mockClear()
 })
-afterEach(() => replaceState.mockRestore())
+afterEach(() => vi.restoreAllMocks())
 
 describe('ArchiveGallery', () => {
   it('ô ảnh là liên kết thật tới ?anh=, ảnh có alt rỗng', () => {
     render(<ArchiveGallery page={page(three())} initialCode={null} />)
     expect(tiles()).toHaveLength(3)
-    const first = screen.getByRole('link', { name: 'Mở ảnh: Tiêu đề TL-001' })
+    const first = screen.getByRole('link', { name: /^Mở ảnh: Tiêu đề TL-001, TL · 001 · Làng quê$/ })
     expect(first.getAttribute('href')).toBe('/thu-vien?anh=TL-001')
     expect(first.querySelector('img')?.getAttribute('alt')).toBe('')
     expect(screen.getByRole('status').textContent).toBe('3 tư liệu')
@@ -103,7 +104,7 @@ describe('ArchiveGallery', () => {
   })
   it('bấm ô mở dialog, cập nhật URL, Ảnh tiếp sang ảnh sau, đóng thì bỏ ?anh= và trả focus về ô đã mở', () => {
     render(<ArchiveGallery page={page(three())} initialCode={null} />)
-    const tile = screen.getByRole('link', { name: 'Mở ảnh: Tiêu đề TL-001' })
+    const tile = screen.getByRole('link', { name: /^Mở ảnh: Tiêu đề TL-001, TL · 001 · Làng quê$/ })
     expect(fireEvent.click(tile)).toBe(false)
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).getByRole('heading', { level: 2 }).textContent).toBe('Tiêu đề TL-001')

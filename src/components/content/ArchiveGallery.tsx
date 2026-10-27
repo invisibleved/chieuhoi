@@ -139,7 +139,8 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
               key={item.code}
               data-code={item.code}
               href={hrefFor(item.code)}
-              aria-label={fillTemplate(t(copy.open), { title: item.title ?? item.code })}
+              // Tên đọc chứa cả chữ hiển thị trên chip (mã · chủ đề) để đạt WCAG 2.5.3 / axe label-content-name-mismatch.
+              aria-label={[fillTemplate(t(copy.open), { title: item.title ?? item.code }), [docCode(t(copy.docLabel), item.image.docNumber ?? item.code), item.categoryLabel].filter(Boolean).join(' · ')].join(', ')}
               onClick={(e) => {
                 if (!isPlainClick(e)) return
                 e.preventDefault()

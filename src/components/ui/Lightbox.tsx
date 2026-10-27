@@ -81,8 +81,9 @@ export function Lightbox({
         e.preventDefault()
         latest.current.onNext()
       } else if (e.key === 'Tab') {
-        const nodes = dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE)
-        if (!nodes || nodes.length === 0) return
+        // Bỏ phần tử đang ẩn (display:none, ví dụ dòng chỉ hiện từ md): không focus được.
+        const nodes = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter((el) => el.getClientRects().length > 0)
+        if (nodes.length === 0) return
         const first = nodes[0]
         const last = nodes[nodes.length - 1]
         const active = document.activeElement
