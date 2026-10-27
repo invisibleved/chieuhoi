@@ -1,7 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { ReadNext } from '@/components/content/ReadNext'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { Callout } from '@/components/ui/Callout'
+import { BackLink } from '@/components/ui/BackLink'
+import { EmptyState } from '@/components/ui/Feedback'
+import { NoteBanner } from '@/components/ui/NoteBanner'
+import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
 import { PagerButton } from '@/components/ui/PagerButton'
@@ -149,5 +154,104 @@ describe('FactList', () => {
     expect(divs[0].querySelector('dt + dd')).not.toBeNull()
     expect(divs[0].className).toContain('border-border-strong')
     expect(divs[1].className).toContain('border-border-soft')
+  })
+})
+
+describe('PullQuote', () => {
+  it('article: viền trên dưới, chữ nghiêng; có ghi chú thì hiện', () => {
+    const { container } = render(<PullQuote variant="article" note="Trích từ bài viết">Một nghề theo làng.</PullQuote>)
+    const bq = container.querySelector('blockquote')!
+    expect(bq.className).toContain('border-y')
+    expect(container.querySelector('p')?.className).toContain('italic')
+    expect(container.querySelector('p')?.className).toContain('text-accent')
+    expect(screen.getByText('Trích từ bài viết')).toBeTruthy()
+  })
+  it('testimony: viền trái rơm, chữ muted, không ghi chú thì không có', () => {
+    const { container } = render(<PullQuote variant="testimony">“Lời kể”</PullQuote>)
+    const bq = container.querySelector('blockquote')!
+    expect(bq.className).toContain('border-l-[3px]')
+    expect(bq.className).toContain('border-decor-straw')
+    expect(container.querySelector('p')?.className).toContain('text-text-muted')
+    expect(bq.querySelectorAll('span')).toHaveLength(0)
+  })
+})
+
+describe('BackLink', () => {
+  it('có mũi tên, chữ, href; ẩn từ md; cao tối thiểu 44px', () => {
+    render(<BackLink href="/cau-chuyen" label="Câu chuyện" />)
+    const a = screen.getByRole('link', { name: /Câu chuyện/ })
+    expect(a.getAttribute('href')).toBe('/cau-chuyen')
+    expect(a.textContent).toBe('← Câu chuyện')
+    expect(a.className).toContain('min-h-11')
+    expect(a.className).toContain('md:hidden')
+  })
+})
+
+describe('NoteBanner', () => {
+  it('role=note, chữ đậm + chữ thường, chấm nét đứt', () => {
+    const { container } = render(<NoteBanner strong="Mẫu trang." text="Người trong ảnh chưa được hỏi ý." />)
+    const note = screen.getByRole('note')
+    expect(note.className).toContain('bg-bg-secondary')
+    expect(note.querySelector('strong')?.textContent).toBe('Mẫu trang.')
+    expect(note.textContent).toContain('Người trong ảnh chưa được hỏi ý.')
+    expect(container.querySelector('[aria-hidden="true"]')?.className).toContain('border-dashed')
+  })
+})
+
+describe('Callout tone dark', () => {
+  it('nền xanh làng, eyebrow vàng, chữ sáng, aria-label', () => {
+    render(<Callout tone="dark" title="NGUYÊN TẮC CHÂN DUNG" label="Nguyên tắc chân dung">Nội dung</Callout>)
+    const aside = screen.getByRole('complementary', { name: 'Nguyên tắc chân dung' })
+    expect(aside.className).toContain('bg-bg-inverse')
+    expect(aside.className).not.toContain('border-accent')
+    expect(screen.getByText('NGUYÊN TẮC CHÂN DUNG').className).toContain('text-accent-on-dark')
+  })
+  it('mặc định vẫn là light', () => {
+    const { container } = render(<Callout title="LƯU Ý">x</Callout>)
+    expect(container.firstElementChild!.className).toContain('border-accent')
+  })
+})
+
+describe('EmptyState size lg', () => {
+  it('lg: đệm 56px và tiêu đề 32px từ md; md giữ nguyên', () => {
+    const { container, rerender } = render(<EmptyState title="Chưa có bài" body="Nội dung" />)
+    expect(container.firstElementChild!.className).toContain('p-6')
+    rerender(<EmptyState size="lg" title="Chưa có bài" body="Nội dung" action={{ href: '/ket-noi', label: 'Góp một câu chuyện' }} />)
+    expect(container.firstElementChild!.className).toContain('md:p-14')
+    expect(screen.getByText('Chưa có bài').className).toContain('md:text-[32px]')
+    expect(screen.getByRole('link', { name: /Góp một câu chuyện/ })).toBeTruthy()
+  })
+})
+
+describe('ReadNext', () => {
+  const items = [
+    { href: '/lang-hoi', eyebrow: 'LÀNG HỚI', title: 'Dòng thời gian làng Hới', cta: 'Xem các mốc →', image: null },
+    { href: '/nghe-det-chieu', eyebrow: 'NGHỀ DỆT CHIẾU', title: 'Một tấm chiếu, muôn công đoạn', cta: 'Đi theo hành trình →', image: null },
+    { href: '/cau-chuyen', eyebrow: 'CHỦ ĐỀ · BẢN NHÁP', title: 'Bài khác', cta: 'Đọc bài →', image: null, mobile: false },
+  ]
+  it('không title: giữ hành vi cũ (eyebrow, không h2, không action)', () => {
+    render(<ReadNext items={items.slice(0, 2)} eyebrow="ĐỌC TIẾP" />)
+    expect(screen.getByText('ĐỌC TIẾP')).toBeTruthy()
+    expect(screen.queryByRole('heading', { level: 2 })).toBeNull()
+  })
+  it('có title: h2 và action; eyebrow còn cho mobile', () => {
+    render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '/cau-chuyen', label: 'Tất cả câu chuyện →' }} />)
+    expect(screen.getByRole('heading', { level: 2, name: 'Đọc tiếp' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Tất cả câu chuyện →' }).getAttribute('href')).toBe('/cau-chuyen')
+    expect(screen.getByText('ĐỌC TIẾP').className).toContain('md:hidden')
+  })
+  it('mục mobile:false có max-md:hidden; mục cuối hiện ở mobile giữ viền dưới', () => {
+    const { container } = render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" />)
+    const lis = container.querySelectorAll('li')
+    expect(lis[2].className).toContain('max-md:hidden')
+    expect(lis[0].className).not.toContain('max-md:hidden')
+    expect(lis[1].querySelector('a')!.className).toContain('max-md:border-b')
+    expect(lis[2].querySelector('a')!.className).not.toContain('max-md:border-b')
+  })
+  it('imageClassName đổi chiều cao ảnh', () => {
+    const img = { url: '/x.webp', alt: 'a', width: 10, height: 10, sizes: {}, photographer: null, code: null, docNumber: null, flags: [] as [] }
+    const { container } = render(<ReadNext items={[{ ...items[0], image: img }]} eyebrow={null} imageClassName="h-[220px]" />)
+    expect(container.querySelector('img')!.className).toContain('h-[220px]')
+    expect(container.querySelector('img')!.className).not.toContain('h-[260px]')
   })
 })

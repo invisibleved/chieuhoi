@@ -24,15 +24,19 @@ export function EmptyState({
   title,
   body,
   action,
+  size = 'md',
 }: {
   title: string
   body: string
   action?: { href: string; label: string }
+  /** lg: khung rộng của trang danh sách (đệm 56px, tiêu đề 32px từ md). */
+  size?: 'md' | 'lg'
 }) {
+  const lg = size === 'lg'
   return (
-    <div className="flex flex-col justify-center gap-3 border border-dashed border-border-dashed p-6">
-      <span className="font-display text-[24px]">{title}</span>
-      <span className="text-[14px] leading-[1.6] text-text-secondary">{body}</span>
+    <div className={`flex flex-col justify-center border border-dashed border-border-dashed p-6 ${lg ? 'items-start gap-3.5 md:max-w-[720px] md:p-14' : 'gap-3'}`}>
+      <span className={`font-display ${lg ? 'text-[24px] md:text-[32px]' : 'text-[24px]'}`}>{title}</span>
+      <span className={`leading-[1.6] text-text-secondary ${lg ? 'text-[14px] md:text-[16px] md:leading-[1.65]' : 'text-[14px]'}`}>{body}</span>
       {action ? <LinkArrow href={action.href}>{action.label}</LinkArrow> : null}
     </div>
   )

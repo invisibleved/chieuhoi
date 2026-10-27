@@ -2,11 +2,15 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArchiveChip, DocumentLabel } from '@/components/content/DocumentLabel'
 import { ComparisonTabs } from '@/components/content/ComparisonTabs'
+import { ConsentPanel } from '@/components/content/ConsentPanel'
 import { ConfidenceBadge, ConfidenceLegend, ConfidenceMark } from '@/components/content/Confidence'
 import { CraftJourney } from '@/components/content/CraftJourney'
 import { CraftStage } from '@/components/content/CraftStage'
 import { FigureCard } from '@/components/content/FigureCard'
 import { PageHeader } from '@/components/content/PageHeader'
+import { PhotoEssay } from '@/components/content/PhotoEssay'
+import { RichText } from '@/components/content/RichText'
+import { StatusDot } from '@/components/content/StatusDot'
 import { ReadNext } from '@/components/content/ReadNext'
 import { Timeline } from '@/components/content/Timeline'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
@@ -15,6 +19,8 @@ import { ProductCard } from '@/components/content/ProductCard'
 import { FootnoteRef, SourceList } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
+import { applyMode } from '@/lib/content/copy/applyMode'
+import { peopleCopy } from '@/lib/content/copy/people'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
 import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
@@ -24,7 +30,10 @@ import * as fx from '@/components/styleguide/fixtures'
 import { Lab, Tok } from '@/components/styleguide/Lab'
 import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton, SuccessState } from '@/components/ui/Feedback'
+import { BackLink } from '@/components/ui/BackLink'
 import { Callout } from '@/components/ui/Callout'
+import { NoteBanner } from '@/components/ui/NoteBanner'
+import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
 import { LinkArrow } from '@/components/ui/LinkArrow'
@@ -45,6 +54,8 @@ const h2 = 'font-display text-h3 font-normal'
 const state = 'flex min-w-0 flex-col items-start gap-2.5'
 const focusLight = 'outline outline-2 outline-offset-4 outline-focus-light'
 const rowThreads = <ThreadsDivider />
+
+const consentCopy = applyMode(peopleCopy, 'public').detail.consent
 
 const NAV_LINK = 'flex min-h-11 items-baseline gap-2 py-2.5 text-text-primary no-underline md:min-h-0 md:py-0'
 
@@ -213,6 +224,7 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3"><Lab>CALLOUT</Lab><Callout title="LƯU Ý">Nội dung này cần được xác minh với nghệ nhân trước khi đăng.</Callout></div>
+          <div className="flex flex-col gap-3"><Lab>CALLOUT · NỀN TỐI</Lab><Callout tone="dark" title="NGUYÊN TẮC CHÂN DUNG" label="Nguyên tắc chân dung"><ul className="m-0 flex flex-col gap-1.5 pl-[18px]"><li>Tên, tuổi, vai trò chỉ đăng khi người được kể đồng ý.</li><li>Lời trích chỉ đăng khi có ghi âm hoặc ghi chép gốc.</li></ul></Callout></div>
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
@@ -308,6 +320,58 @@ export default function StyleguidePage() {
 
       {rowThreads}
 
+      {/* Bài đọc và chân dung */}
+      <section aria-labelledby="sg-doc" className="flex flex-col gap-8">
+        <h2 id="sg-doc" className={h2}>Bài đọc &amp; chân dung</h2>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>RICH TEXT · BÀI ĐỌC · CHỮ CÁI ĐẦU</Lab>
+            <div className="max-w-[720px]"><RichText variant="article" dropCap value={fx.richArticle} /></div>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>RICH TEXT · LỜI KỂ CHÂN DUNG</Lab>
+            <RichText variant="story" value={fx.richStory} />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>TRÍCH DẪN · BÀI ĐỌC</Lab>
+            <PullQuote variant="article" note="Trích từ bài viết">Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
+            <Lab>TRÍCH DẪN · LỜI KỂ</Lab>
+            <PullQuote variant="testimony" note="Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc">“[Trích nguyên văn lời kể]”</PullQuote>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>PHÓNG SỰ ẢNH</Lab>
+            <PhotoEssay title="Phóng sự ảnh" note="Ảnh cùng buổi chụp · cần xác minh tác giả và quyền dùng" items={fx.gallery} />
+          </div>
+          {(['none', 'partial', 'full'] as const).map((k) => (
+            <div key={k} className="flex min-w-0 flex-col gap-3">
+              <Lab>KHUNG ĐỒNG Ý · {k === 'none' ? 'CHƯA CÓ' : k === 'partial' ? 'MỘT PHẦN' : 'ĐÃ CÓ'}</Lab>
+              <ConsentPanel consent={fx.consentStates[k]} copy={consentCopy} />
+            </div>
+          ))}
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>CHẤM TRẠNG THÁI · 8 · 10 · 12</Lab>
+            <div className="flex flex-wrap items-center gap-4">
+              {([8, 10, 12] as const).flatMap((size) => (['none', 'partial', 'full'] as const).map((st) => <StatusDot key={`${size}-${st}`} state={st} size={size} />))}
+            </div>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>BĂNG GHI CHÚ</Lab>
+            <NoteBanner strong="Mẫu trang chân dung." text="Người trong ảnh chưa được hỏi ý. Tên, tiểu sử và lời kể để trống cho đến khi có sự đồng ý bằng văn bản." />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>LINK QUAY LẠI · CHỈ DƯỚI 768PX</Lab>
+            <BackLink href="#" label="Câu chuyện" />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>ĐỌC TIẾP · CÓ TIÊU ĐỀ VÀ LIÊN KẾT · MỤC THỨ BA ẨN Ở MOBILE</Lab>
+            <ReadNext eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '#', label: 'Tất cả câu chuyện →' }} imageClassName="h-[240px]" items={fx.readNextItems} />
+          </div>
+        </div>
+        <Tok>content/rich-text · ui/pull-quote · content/photo-essay · content/consent-panel · content/status-dot · ui/note-banner · ui/back-link · content/read-next (title, action, mobile) — khung đồng ý luôn có chữ đi kèm chấm; băng ghi chú dùng role=note</Tok>
+      </section>
+
+      {rowThreads}
+
       {/* Bộ lọc, tab & phân trang */}
       <section aria-labelledby="sg-loc" className="flex flex-col gap-8">
         <h2 id="sg-loc" className={h2}>Bộ lọc, tab &amp; phân trang</h2>
@@ -346,6 +410,10 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3">
             <Lab>TRỐNG</Lab>
             <EmptyState title="Chưa có tư liệu trong nhóm này" body="Nếu gia đình bạn còn giữ ảnh cũ của làng, hãy góp cùng chúng tôi." action={{ href: '#', label: 'Góp một ký ức' }} />
+          </div>
+          <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-4">
+            <Lab>TRỐNG · KHUNG RỘNG (lg)</Lab>
+            <EmptyState size="lg" title="Chưa có bài trong chủ đề này" body="Câu chuyện về người làng chỉ được viết khi chính họ đồng ý kể. Nếu bạn muốn kể về một người thân làm nghề chiếu, hãy liên hệ với chúng tôi." action={{ href: '#', label: 'Góp một câu chuyện' }} />
           </div>
           <div className="flex flex-col gap-3">
             <Lab>LỖI</Lab>
