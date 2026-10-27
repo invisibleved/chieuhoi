@@ -3,9 +3,9 @@ import { PERSON_CATEGORY_OPTIONS } from '@/collections/People'
 import { PRODUCT_GROUP_OPTIONS } from '@/collections/Products'
 import { STORY_CATEGORY_OPTIONS } from '@/collections/Stories'
 
-type Option = { label: string; value: string }
-
 import type { ArchiveCategory } from './types'
+
+type Option = { label: string; value: string }
 
 const toMap = (options: readonly Option[]) => new Map(options.map((o) => [o.value, o.label]))
 const STORY = toMap(STORY_CATEGORY_OPTIONS)

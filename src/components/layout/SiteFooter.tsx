@@ -5,7 +5,7 @@ import type { SiteSettingsView } from '@/lib/content'
 import { CONNECT_HREF, NAV_ITEMS } from './nav'
 
 const linkCls = 'text-text-on-dark no-underline hover:text-accent-on-dark'
-const headCls = 'm-0 mb-1.5 text-[12px] tracking-[.2em] text-text-deep-muted'
+const headCls = 'm-0 mb-1.5 text-[12px] tracking-label text-text-deep-muted'
 
 export function SiteFooter({ variant, settings: s }: { variant: 'full' | 'compact'; settings: SiteSettingsView }) {
 

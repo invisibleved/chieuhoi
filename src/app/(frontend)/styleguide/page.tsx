@@ -207,7 +207,7 @@ export default function StyleguidePage() {
           </div>
           <div className="flex flex-col gap-3 md:col-span-2"><Lab>VẠCH SỢI CÓI</Lab><ThreadsDivider /></div>
         </div>
-        <Tok>ui/eyebrow · scroll-strip · step-progress · pager-button · placeholder-frame · callout · fact-list · threads-divider — nút Trước/Sau dùng aria-disabled nên focus không mất khi chạm đầu cuối</Tok>
+        <Tok>ui/eyebrow · pill-button · scroll-strip · step-progress · pager-button · placeholder-frame · callout · fact-list · threads-divider — nút Trước/Sau dùng aria-disabled nên focus không mất khi chạm đầu cuối</Tok>
       </section>
 
       {rowThreads}

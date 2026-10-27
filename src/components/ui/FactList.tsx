@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Eyebrow } from './Eyebrow'
 
 type FactListProps = { items: { term: string; detail: ReactNode }[]; className?: string }
 
@@ -8,12 +9,12 @@ export function FactList({ items, className }: FactListProps) {
     <dl className={['m-0 flex flex-col', className].filter(Boolean).join(' ')}>
       {items.map((it, i) => (
         <div
-          key={it.term}
+          key={`${i}-${it.term}`}
           className={`flex flex-col gap-1.5 border-t py-3.5 ${i === 0 ? 'border-border-strong' : 'border-border-soft'} ${
             i === items.length - 1 ? 'border-b border-b-border-soft' : ''
           }`}
         >
-          <dt className="text-eyebrow font-semibold tracking-[.2em] text-text-muted">{it.term}</dt>
+          <Eyebrow as="dt" tone="muted" tracking="label">{it.term}</Eyebrow>
           <dd className="m-0 text-[15px] leading-[1.6] text-text-primary">{it.detail}</dd>
         </div>
       ))}

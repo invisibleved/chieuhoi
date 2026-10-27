@@ -28,6 +28,7 @@
   --decor-straw: #C3A46C;     /* CHỈ trang trí — không dùng cho chữ (2.0:1) */
   /* Viền, focus */
   --border-subtle: rgba(40,39,36,.16);
+  --surface-on-image: rgba(243,235,221,.94); /* nền nhãn phủ trên ảnh */
   --border-soft: rgba(40,39,36,.2);     /* viền mảnh dưới danh sách, nguồn */
   --border-strong: #282724;
   --border-dashed: #8C857A;
@@ -47,7 +48,7 @@
   :root { --dur-micro: 0ms; --dur-ui: 0ms; --dur-reveal: 0ms; }
 }
 /* Vạch chia sợi cói */
-.threads { height: 12px; background-image: repeating-linear-gradient(0deg, var(--decor-straw) 0 1px, transparent 1px 4px); }
+.threads { background-image: repeating-linear-gradient(0deg, var(--decor-straw) 0 1px, transparent 1px 4px); }
 /* Hoạ tiết caro (chỉ dùng cho trạng thái đang chọn / điểm nhấn nhỏ) */
 .check { background: repeating-conic-gradient(var(--accent) 0 25%, var(--decor-straw) 0 50%) 0 0 / 6px 6px; }
 /* Hoạ tiết sợi cói cho ô ảnh cần chụp (giá trị chép từ ProductsIndex.dc.html) */
@@ -82,6 +83,7 @@
   --color-on-accent: var(--on-accent);
   --color-decor-straw: var(--decor-straw); /* chỉ trang trí, không dùng cho chữ */
   --color-border-subtle: var(--border-subtle);
+  --color-surface-on-image: var(--surface-on-image);
   --color-border-soft: var(--border-soft);
   --color-border-on-dark: var(--border-on-dark);
   --color-border-on-dark-strong: var(--border-on-dark-strong);
@@ -119,6 +121,7 @@
   --text-eyebrow: 12px;
 
   --tracking-eyebrow: .24em;
+  --tracking-label: .2em; /* nhãn nhỏ viết hoa trong khối (callout, danh sách, khung giữ chỗ) */
   --tracking-eyebrow-sm: .22em; /* eyebrow trên mobile */
 
   --animate-weave-pulse: weave-pulse 1.6s ease-in-out infinite;

@@ -14,7 +14,7 @@ export function VillageIntro({ media, mode }: VillageIntroProps) {
   const preview = mode === 'preview'
   return (
     <>
-      <ThreadsDivider className="mx-20 mt-[72px] hidden h-[14px] md:block" />
+      <ThreadsDivider size="lg" className="mx-20 mt-[72px] hidden md:block" />
       <section className="flex flex-col gap-5 px-5 pt-16 pb-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-16 md:px-20 md:pt-24 md:pb-[120px]">
         <div className="flex flex-col gap-5 md:col-span-4">
           <Eyebrow>LÀNG HỚI</Eyebrow>

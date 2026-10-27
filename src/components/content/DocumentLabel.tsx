@@ -5,7 +5,7 @@ export function DocumentLabel({ code, title, meta, className }: DocumentLabelPro
   const cls = ['border border-border-subtle bg-bg-raised px-4 py-3.5', className].filter(Boolean).join(' ')
   return (
     <div className={cls}>
-      {code ? <div className="text-[12px] font-semibold tracking-[.2em] text-text-muted">{`TƯ LIỆU · ${code}`}</div> : null}
+      {code ? <div className="text-[12px] font-semibold tracking-label text-text-muted">{`TƯ LIỆU · ${code}`}</div> : null}
       <div className="font-serif text-[16px]">{title}</div>
       {meta ? <div className="text-[13px] leading-[1.45] text-text-secondary">{meta}</div> : null}
     </div>

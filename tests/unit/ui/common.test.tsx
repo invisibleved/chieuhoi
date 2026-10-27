@@ -6,6 +6,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
 import { PagerButton } from '@/components/ui/PagerButton'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
+import { PillButton } from '@/components/ui/PillButton'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
@@ -14,6 +15,7 @@ describe('Eyebrow', () => {
   it('tone quyết định màu, rule thêm vạch aria-hidden', () => {
     const { container, rerender } = render(<Eyebrow>LÀNG HỚI</Eyebrow>)
     expect(screen.getByText('LÀNG HỚI').className).toContain('text-accent')
+    expect(screen.getByText('LÀNG HỚI').className).not.toContain('text-accent-on-dark')
     expect(container.querySelector('[aria-hidden="true"]')).toBeNull()
     rerender(<Eyebrow tone="dark" rule>LÀNG HỚI</Eyebrow>)
     expect(screen.getByText('LÀNG HỚI').className).toContain('text-accent-on-dark')
@@ -74,7 +76,29 @@ describe('PagerButton', () => {
   })
 })
 
+describe('PillButton', () => {
+  it('active đổi kiểu, chuyển tiếp aria-current và onClick, là button type=button', () => {
+    const onClick = vi.fn()
+    const { rerender } = render(<PillButton tone="dark" active aria-current="step" onClick={onClick}>01 Chọn cói</PillButton>)
+    const btn = screen.getByRole('button', { name: '01 Chọn cói' })
+    expect(btn.getAttribute('type')).toBe('button')
+    expect(btn.getAttribute('aria-current')).toBe('step')
+    expect(btn.className).toContain('bg-bg-primary')
+    fireEvent.click(btn)
+    expect(onClick).toHaveBeenCalledTimes(1)
+    rerender(<PillButton tone="dark" active={false} onClick={onClick}>01 Chọn cói</PillButton>)
+    expect(screen.getByRole('button').className).toContain('border-border-on-dark-strong')
+    expect(screen.getByRole('button').getAttribute('aria-current')).toBeNull()
+  })
+})
+
 describe('ThreadsDivider', () => {
+  it('size lg cao 14px, mặc định 12px', () => {
+    const { container, rerender } = render(<ThreadsDivider />)
+    expect(container.firstElementChild!.className).toContain('h-3')
+    rerender(<ThreadsDivider size="lg" />)
+    expect(container.firstElementChild!.className).toContain('h-3.5')
+  })
   it('có class threads và aria-hidden', () => {
     const { container } = render(<ThreadsDivider className="mx-5" />)
     const el = container.firstElementChild!
@@ -84,6 +108,12 @@ describe('ThreadsDivider', () => {
 })
 
 describe('PlaceholderFrame', () => {
+  it('pattern weave: nền sợi cói, không nét đứt, vẫn hiện nhãn và mô tả', () => {
+    const { container } = render(<PlaceholderFrame label="ẢNH CẦN CHỤP" description="Chiếu trơn" pattern="weave" />)
+    expect(container.firstElementChild!.className).toContain('weave')
+    expect(container.firstElementChild!.className).not.toContain('border-dashed')
+    expect(screen.getByText('Chiếu trơn')).toBeTruthy()
+  })
   it('hiện label, title, description; nét đứt theo tone', () => {
     const { container, rerender } = render(<PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói" description="Cận tay chẻ cói" />)
     expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()

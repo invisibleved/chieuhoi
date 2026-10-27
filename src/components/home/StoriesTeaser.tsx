@@ -19,7 +19,7 @@ export function StoriesTeaser({ stories }: StoriesTeaserProps) {
   const NOTE = 'Chủ đề biên tập đề xuất — bài viết chưa được soạn.'
   return (
     <>
-      <ThreadsDivider className="mx-5 h-[14px] md:mx-20" />
+      <ThreadsDivider size="lg" className="mx-5 md:mx-20" />
       <section className="flex flex-col gap-5 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-14 md:px-20 md:pt-[120px] md:pb-32">
         <div className="flex flex-col gap-5 md:col-span-12 md:flex-row md:items-end md:justify-between md:gap-10">
           <div className="flex flex-col gap-5 md:gap-[18px]">

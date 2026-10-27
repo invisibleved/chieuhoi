@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Lab } from '@/components/styleguide/Lab'
 import { FilterChips } from '@/components/ui/FilterChips'
 import { PagerButton } from '@/components/ui/PagerButton'
+import { PillButton } from '@/components/ui/PillButton'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { Tabs } from '@/components/ui/Tabs'
@@ -72,23 +73,13 @@ export function StepperDemos() {
         const dark = tone === 'dark'
         return (
           <div key={tone} className={`flex min-w-0 flex-col gap-4 p-4 ${dark ? 'bg-bg-inverse text-text-on-dark' : ''}`}>
-            <Lab tone={tone}>{dark ? 'TIẾN TRÌNH · DẢI CUỘN · TRƯỚC/SAU · NỀN TỐI' : 'TIẾN TRÌNH · DẢI CUỘN · TRƯỚC/SAU · NỀN SÁNG'}</Lab>
+            <Lab tone={tone}>{dark ? 'TIẾN TRÌNH · DẢI CUỘN · NÚT VIÊN · TRƯỚC/SAU · NỀN TỐI' : 'TIẾN TRÌNH · DẢI CUỘN · NÚT VIÊN · TRƯỚC/SAU · NỀN SÁNG'}</Lab>
             <StepProgress index={i} total={STEPS.length} unit="Công đoạn" label={`Tiến trình công đoạn (nền ${dark ? 'tối' : 'sáng'})`} tone={tone} />
-            <ScrollStrip label={`Chọn công đoạn (nền ${dark ? 'tối' : 'sáng'})`} className="max-w-full">
+            <ScrollStrip label={`Chọn công đoạn (nền ${dark ? 'tối' : 'sáng'})`} className="max-w-full gap-3">
               {STEPS.map((t, k) => (
-                <button
-                  key={t}
-                  type="button"
-                  aria-current={k === i ? 'step' : undefined}
-                  onClick={() => setI(k)}
-                  className={`inline-flex min-h-11 shrink-0 snap-start items-center px-4 text-[14px] whitespace-nowrap ${
-                    k === i
-                      ? dark ? 'bg-bg-primary font-semibold text-bg-inverse' : 'bg-text-primary font-semibold text-bg-primary'
-                      : dark ? 'border border-border-on-dark-strong' : 'border border-border-strong'
-                  }`}
-                >
+                <PillButton key={t} tone={tone} active={k === i} aria-current={k === i ? 'step' : undefined} onClick={() => setI(k)}>
                   {String(k + 1).padStart(2, '0')} {t}
-                </button>
+                </PillButton>
               ))}
             </ScrollStrip>
             <div className="flex gap-3">

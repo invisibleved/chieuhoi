@@ -31,10 +31,10 @@ export function PagerButton({ direction, label, onClick, atEnd, variant = 'outli
     </svg>
   )
   const cls = [
-    'inline-flex min-h-12 shrink-0 cursor-pointer items-center justify-center gap-2 border text-[15px]',
+    'inline-flex min-h-12 shrink-0 items-center justify-center gap-2 border text-[15px]',
     iconOnly ? 'size-12' : 'px-5',
     variants[tone === 'dark' ? 'dark' : 'light'][variant],
-    atEnd ? 'cursor-default opacity-40' : null,
+    atEnd ? 'cursor-default opacity-40' : 'cursor-pointer',
   ]
     .filter(Boolean)
     .join(' ')

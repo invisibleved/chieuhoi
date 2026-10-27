@@ -7,6 +7,7 @@ import { ContentImage } from '@/components/content/ContentImage'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { PagerButton } from '@/components/ui/PagerButton'
+import { PillButton } from '@/components/ui/PillButton'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { StepProgress } from '@/components/ui/StepProgress'
@@ -56,7 +57,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
           )}
           {step.image ? (
             <figcaption className="absolute bottom-5 left-5 hidden flex-col gap-1 bg-bg-primary px-3.5 py-3 text-[13px] leading-[1.45] text-text-primary md:flex">
-              {num ? <span className="text-[12px] font-semibold tracking-[.2em] text-text-muted">{`TƯ LIỆU · ${num}`}</span> : null}
+              {num ? <span className="text-[12px] font-semibold tracking-label text-text-muted">{`TƯ LIỆU · ${num}`}</span> : null}
               {[step.title, step.image.photographer ? `Ảnh: ${step.image.photographer}` : null].filter(Boolean).join(' · ')}
             </figcaption>
           ) : null}
@@ -70,24 +71,22 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
         </div>
 
         {/* Mobile: dải nút chọn công đoạn */}
-        <ScrollStrip label="Chọn công đoạn" className="snap-mandatory md:hidden">
+        <ScrollStrip label="Chọn công đoạn" className="snap-mandatory gap-3 md:hidden">
           {steps.map((s, i) => {
             const on = i === index
             return (
-              <button
+              <PillButton
                 key={s.n}
                 ref={(el) => {
                   pills.current[i] = el
                 }}
-                type="button"
+                tone="dark"
+                active={on}
                 aria-current={on ? 'step' : undefined}
                 onClick={() => select(i)}
-                className={`inline-flex min-h-11 shrink-0 snap-start items-center px-4 text-[14px] whitespace-nowrap ${
-                  on ? 'bg-bg-primary font-semibold text-bg-inverse' : 'border border-border-on-dark-strong text-text-on-dark'
-                }`}
               >
                 {[pad(s.n), s.title].filter(Boolean).join(' ')}
-              </button>
+              </PillButton>
             )
           })}
         </ScrollStrip>

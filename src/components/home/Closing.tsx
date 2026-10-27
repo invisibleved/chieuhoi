@@ -6,7 +6,7 @@ import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 export function Closing() {
   return (
     <section className="flex flex-col items-center gap-6 px-5 py-20 text-center md:gap-10 md:px-20 md:py-[140px]">
-      <ThreadsDivider className="h-[14px] w-20 md:w-[120px]" />
+      <ThreadsDivider size="lg" className="w-20 md:w-[120px]" />
       <h2 className="font-display text-[34px] leading-[1.2] font-normal md:text-[72px] md:leading-[1.15]">
         Làng vẫn còn đó.
         <br />
