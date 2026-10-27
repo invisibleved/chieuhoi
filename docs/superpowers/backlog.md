@@ -9,6 +9,9 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] Link 404 cho tới khi có trang (`/nghe-det-chieu`, `/lang-hoi` có từ Phase 4; `/cau-chuyen`, `/con-nguoi` có từ Phase 5a): `/san-pham`, `/thu-vien`, `/ket-noi`, và chú thích nguồn hoa văn → trang hiện vật.
 - [ ] `Sources.url` không kiểm tra giao thức; `src/components/content/Sources.tsx:49` đặt thẳng `href={s.url}` → nên chỉ nhận `http(s):` (chỉ staff nhập, update cần reviewer — rủi ro thấp).
 - [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; 9 cảnh báo `npm audit` (Phase 1).
+- [ ] `metadataBase` chưa đặt → URL ảnh OG của bài viết/chân dung là đường dẫn tương đối (Next cảnh báo). Đặt theo tên miền khi deploy (Phase 5a T6).
+- [ ] `/cau-chuyen/[slug]`, `/con-nguoi/[slug]`: `generateStaticParams` chỉ gồm bản ghi public, nhưng mode vẫn chốt lúc build như mục đầu tiên (Phase 5a R20).
+- [ ] E2E public: regex `page.content()` không bắt được URL `next/image` đã mã hoá (`%2Fimages%2Freference`), và vòng kiểm ảnh qua được khi trang không có ảnh nào. Cần seed một asset `permitted` để kiểm có đối tượng (Phase 5a T9).
 
 ## B. Phải làm trong Phase 4–5
 
@@ -35,6 +38,22 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] `home` chuyển sang `media` slot (R2): hiện trang chủ vẫn lấy ảnh từ ô cũ, chưa dùng slot media như hai trang Phase 4.
 
 ## C. Lỗi nhỏ còn mở
+
+### Phase 5a (Câu chuyện, Con người)
+- [ ] **Preview chân dung:** chú thích "CHÂN DUNG · …" (`PersonView.tsx` figcaption, absolute góc dưới trái) đè lên nhãn "Ảnh chưa được phép đăng" của `ContentImage.tsx:41` (cũng góc dưới trái) → người duyệt không thấy cảnh báo quyền ảnh trên ảnh chân dung (1440 và 390). Xếp chung một khối hoặc dời nhãn.
+- [ ] Chữ hiển thị còn viết cứng trong component: `StoryCard.tsx` "`{n} PHÚT ĐỌC`", `PortraitCard.tsx` mặc định `cta = 'Xem chân dung →'` (trùng `peopleCopy.card.cta`), `PeopleTeaser.tsx` `'Đọc câu chuyện →'`. `StoryCardView.status` dựng chuỗi hiển thị trong `queries.ts` thay vì đọc từ `storiesCopy`.
+- [ ] Ảnh thẻ "Liên quan" (công đoạn/hiện vật) chỉ kiểm quyền của asset, không kiểm đồng ý của người: nếu ảnh chân dung của người chưa đồng ý ảnh được dùng lại cho công đoạn/hiện vật thì sẽ hiện. So id asset với chân dung/phóng sự khi chưa có đồng ý ảnh.
+- [ ] `getPersonPage` tải mọi công đoạn và sản phẩm để tìm một bản ghi liên quan.
+- [ ] Featured meta "{s} nguồn báo chí" đếm mọi loại nguồn (nếu có nguồn truyền khẩu/lưu trữ thì nhãn sai).
+- [ ] `ShareButtons`: không báo khi sao chép thất bại; thông báo không xoá nên bấm lại không được đọc lại; "Sao chép link" xuống hai dòng ở 390.
+- [ ] `FilterableList`: bọc mục bằng `div.contents` (sai nếu nơi gọi dùng ul/li); giả định `filters[0]` là `all`; `useMemo` phụ thuộc hàm inline.
+- [ ] `TableOfContents`: mục đang đọc không reset khi rời heading; mục đầu chưa sáng trước khi cuộn (artboard sáng sẵn). `ReadingProgress`: bài ngắn hơn màn hình hiện 100%. Thiếu test render không JS và test gỡ listener.
+- [ ] `VerifyNote` có `title` đổi p→aside và bỏ qua `size`; `SourceList` biến thể `notes` có key rỗng thừa; `RichText` chỉ nhận định dạng đậm/nghiêng; `story.h3` trùng `story.h`.
+- [ ] `ConsentPanel` render cả khối desktop và mobile (chữ lặp trong DOM); test `StatusDot` so tên class. Lời trích chân dung có mục 2 cũng render hai lần (mỗi breakpoint ẩn một bản, Phase 5a F1).
+- [ ] `Tag` overlay gap 8px (artboard 6px); `StatusDot` cỡ 8 ngầm định viền 1.5px.
+- [ ] Heading viết riêng chưa thành biến thể `SectionHeading`: lời mời 44px (`PeopleView`), h2 câu chuyện 30/40px (`PersonView`), `ReadNext` 40px — gom nếu Phase 5b lặp lại.
+- [ ] Test: `stories-view.test.tsx` có đoạn bị prettier dàn lại; fixture tự tái tạo định dạng featured của lib; ảnh hero bài nổi bật không còn preload ở desktop; chưa có test cấp trang cho trường hợp "đồng ý ảnh nhưng chưa đồng ý tên" (lib int đã có); kiểm "Chủ đề đề xuất" ở home dùng `.first()`.
+- [ ] Ngày đăng trống ở preview hiện `[cần xác minh]` (artboard "[chờ thẩm định]").
 
 ### Phase 4 (Nghề dệt chiếu, Làng Hới)
 - [ ] `src/components/content/labels.ts` (`productTag`, `previewNotes`; `storyStatus` đã chuyển ở Phase 5a) vẫn là luật nghiệp vụ trong component → chuyển vào `lib/content`.
@@ -86,6 +105,14 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] Menu mobile vẫn mở (aria-expanded cũ) khi resize qua 1024; nền chưa `inert` khi menu mở; `text-[14px]` viết cứng; footer liên hệ hiện `[cần xác minh]` ở preview.
 
 ## D. Quyết định cần biết (không phải lỗi)
+
+- Phase 5a (đủ danh sách R1–R21 trong `docs/superpowers/plans/2026-10-27-phase-5a-cau-chuyen-con-nguoi.md`), thêm các quyết định khi chạy:
+  - Thẻ "Chủ đề đề xuất" hiện ở public (R2); trên `/cau-chuyen` không bấm được (R21).
+  - Thứ tự bài theo ngày tạo, cũ trước (T5a); "Xem thêm" giữ ở mobile (T5b).
+  - Vai trò của người chỉ hiện khi đồng ý tên (T2a). Phóng sự ảnh bỏ alt/chú thích khi chưa đồng ý tên; lời trích cần nguồn hiển thị được (T2b). Câu chuyện chân dung có danh sách nguồn riêng (T2c), biên tập viên chèn được trích dẫn nguồn (không có khối ảnh — F2).
+  - Thẻ công đoạn liên quan chỉ hiện khi công đoạn đã đăng; với seed, public chỉ còn "Những chân dung khác" (P2).
+  - Lời trích chân dung: sau mục 2 ở desktop, sau mục 1 ở mobile, đúng artboard (F1).
+  - Chữ hoa của nhãn chủ đề làm bằng CSS (text-transform), chữ gốc giữ hoa thường.
 
 - Phase 4:
   - **Nội dung trang:**
