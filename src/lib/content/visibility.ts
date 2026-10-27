@@ -97,6 +97,7 @@ export function toPersonView(p: Person, mode: Mode): PersonView {
   return {
     slug: p.slug,
     category: personCategoryLabel(p.category),
+    categoryKey: personCategoryLabel(p.category) ? (p.category ?? null) : null,
     role: showText(p.role, mode),
     name,
     portrait,

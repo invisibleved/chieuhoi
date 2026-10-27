@@ -70,6 +70,15 @@ describe('view model Câu chuyện', () => {
       ])
       expect(v.copy.detail.preview).toBeNull()
     })
+    it('categoryKey của mọi thẻ là một khoá chip (trừ all), ở cả hai mode', async () => {
+      for (const mode of ['public', 'preview'] as const) {
+        const v = await stories.getStoriesPage(mode)
+        const keys = v.filters.map((f) => f.key).filter((k) => k !== 'all')
+        for (const s of v.stories) expect(keys).toContain(s.categoryKey)
+        const label = new Map(v.filters.map((f) => [f.key, f.label]))
+        for (const s of v.stories) expect(label.get(s.categoryKey as string)).toBe(s.category)
+      }
+    })
     it('preview: 6 bài, bài Trạng Chiếu là "Bản nháp" có 3 nguồn', async () => {
       const v = await stories.getStoriesPage('preview')
       expect(v.stories).toHaveLength(6)
@@ -174,6 +183,24 @@ describe('view model Câu chuyện', () => {
         await payload.delete({ collection: 'archive-assets', id: asset.id, overrideAccess: true })
       }
     })
+  })
+
+  it('trang chi tiết: sourceCount bằng số nguồn trong "Ghi chú nguồn", kể cả nguồn được trích ngoài danh sách bài', async () => {
+    const own = await sourceDoc('daidoanket-2021')
+    const extra = await sourceDoc('vietnamplus-2026')
+    const st = await createStory({
+      slug: 'thu-dem', title: 'Thử đếm', sources: [own.id],
+      body: doc(para(txt('Trích nguồn ngoài danh sách'), cite(extra.id))),
+    })
+    try {
+      const v = await stories.getStoryPage('thu-dem', 'public')
+      expect(v?.story.sources.map((s) => s.id)).toEqual(['vietnamplus-2026', 'daidoanket-2021'])
+      expect(v?.story.sourceCount).toBe(2)
+      const card = (await stories.getStoriesPage('public')).stories.find((s) => s.slug === 'thu-dem')
+      expect(card?.sourceCount).toBe(1)
+    } finally {
+      await payload.delete({ collection: 'stories', id: st.id, overrideAccess: true })
+    }
   })
 
   it('getStorySlugs chỉ gồm bài đã đăng và không phải idea', async () => {

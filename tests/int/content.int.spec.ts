@@ -77,6 +77,8 @@ describe('lib/content', () => {
     await create('people', pub({ slug: 'nn', category: 'artisan', workflow: 'published' }))
     expect((await content.getStories('public')).find((c) => c.slug === 'h')?.category).toBe('Ký ức làng quê')
     expect((await content.getPeople('public')).find((p) => p.slug === 'nn')?.category).toBe('Nghệ nhân')
+    expect((await content.getStories('public')).find((c) => c.slug === 'h')?.categoryKey).toBe('village-memory')
+    expect((await content.getPeople('public')).find((p) => p.slug === 'nn')?.categoryKey).toBe('artisan')
   })
 
   it('idea có thẻ, không có trang', async () => {

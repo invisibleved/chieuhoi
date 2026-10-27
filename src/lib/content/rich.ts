@@ -33,6 +33,8 @@ const KEEP = new Set([
 ])
 /** Khối chữ bị bỏ ở public khi mọi cite của nó đều mất (R4). */
 const CITING_BLOCKS = new Set(['paragraph', 'listitem', 'quote'])
+/** Khung chứa bị bỏ khi mọi con của nó đều bị lọc. */
+const EMPTY_DROPS = new Set(['list', 'listitem', 'quote'])
 const STRUCT_KEYS = ['type', 'version', 'direction', 'format', 'indent', 'text', 'detail', 'mode', 'style',
   'tag', 'listType', 'start', 'value', 'checked', 'textFormat', 'textStyle'] as const
 
@@ -69,43 +71,61 @@ export function sanitizeRich(node: unknown, ctx: RichContext): RichResult {
   const visible = new Set(ctx.visibleSourceIds)
   const citedOrder: string[] = []
   const toc: RichResult['toc'] = []
-  const used = new Map<string, number>()
+  const used = new Set<string>()
   const anchors = ctx.anchors ?? true
 
-  /** Trả về các nút thay thế và số cite gặp/giữ trong cây con (để bỏ đoạn mất hết cite). */
-  function walk(obj: Node): { nodes: Node[]; seen: number; kept: number } {
+  /** Slug chưa dùng: base, base-2, base-3… (kể cả khi chữ tiêu đề khác đã ra trùng slug). */
+  const anchorFor = (title: string) => {
+    const base = slugify(title) || 'muc'
+    let anchor = base
+    for (let i = 2; used.has(anchor); i++) anchor = `${base}-${i}`
+    used.add(anchor)
+    return anchor
+  }
+
+  type Walked = { nodes: Node[]; seen: number; kept: number }
+  const none = (seen = 0): Walked => ({ nodes: [], seen, kept: 0 })
+
+  /**
+   * Trả về các nút thay thế và số cite gặp/giữ trong cây con (để bỏ đoạn mất hết cite).
+   * Nút bị bỏ thì không duyệt con: cite hay heading bên trong không được chiếm số hay mục lục.
+   */
+  function walk(obj: Node): Walked {
     const type = obj.type
-    let seen = 0
-    let kept = 0
-    const children = Array.isArray(obj.children)
-      ? (obj.children as Node[]).flatMap((c) => {
-          if (!c || typeof c !== 'object') return []
-          const r = walk(c)
-          seen += r.seen
-          kept += r.kept
-          return r.nodes
-        })
-      : undefined
 
     if (type === 'inlineBlock') {
       const fields = obj.fields as Node | undefined
-      if (fields?.blockType !== 'cite') return { nodes: [], seen: 0, kept: 0 }
+      if (fields?.blockType !== 'cite') return none()
       const id = relId(fields.source)
       const sourceId = id !== undefined ? ctx.sources.get(id) : undefined
-      if (!sourceId || !visible.has(sourceId)) return { nodes: [], seen: 1, kept: 0 }
+      if (!sourceId || !visible.has(sourceId)) return none(1)
       if (!citedOrder.includes(sourceId)) citedOrder.push(sourceId)
       return { nodes: [{ type: 'cite', n: citedOrder.indexOf(sourceId) + 1 }], seen: 1, kept: 1 }
     }
     if (type === 'block') {
       const fields = obj.fields as Node | undefined
-      if (fields?.blockType !== 'figure') return { nodes: [], seen, kept }
+      if (fields?.blockType !== 'figure') return none()
       const id = relId(fields.image)
       const image = id !== undefined ? ctx.assets.get(id) : undefined
-      if (!image) return { nodes: [], seen, kept }
+      if (!image) return none()
       const caption = showText(typeof fields.caption === 'string' ? fields.caption : null, mode)
-      return { nodes: [{ type: 'figure', image, caption }], seen, kept }
+      return { nodes: [{ type: 'figure', image, caption }], seen: 0, kept: 0 }
     }
-    if (type === 'link' || type === 'autolink') {
+    const isLink = type === 'link' || type === 'autolink'
+    if (!isLink && !(typeof type === 'string' && KEEP.has(type))) return none()
+
+    let seen = 0
+    let kept = 0
+    const original = Array.isArray(obj.children) ? (obj.children as Node[]) : undefined
+    const children = original?.flatMap((c) => {
+      if (!c || typeof c !== 'object') return []
+      const r = walk(c)
+      seen += r.seen
+      kept += r.kept
+      return r.nodes
+    })
+
+    if (isLink) {
       const fields = obj.fields as Node | undefined
       const url = typeof fields?.url === 'string' ? fields.url : null
       if (fields?.linkType === 'custom' && url && /^(https?:|mailto:|tel:)/i.test(url)) {
@@ -113,23 +133,20 @@ export function sanitizeRich(node: unknown, ctx: RichContext): RichResult {
       }
       return { nodes: children ?? [], seen, kept } // mất đích, giữ chữ
     }
-    if (typeof type === 'string' && KEEP.has(type)) {
-      if (mode === 'public' && CITING_BLOCKS.has(type) && seen > 0 && kept === 0) {
-        return { nodes: [], seen, kept }
-      }
-      const out: Node = children ? { ...pick(obj), children } : pick(obj)
-      if (anchors && type === 'heading' && obj.tag === 'h2') {
-        const title = collectText(out).trim()
-        const base = slugify(title) || 'muc'
-        const count = (used.get(base) ?? 0) + 1
-        used.set(base, count)
-        const anchor = count === 1 ? base : `${base}-${count}`
-        out.anchor = anchor
-        toc.push({ id: anchor, title })
-      }
-      return { nodes: [out], seen, kept }
+    if (mode === 'public' && CITING_BLOCKS.has(type as string) && seen > 0 && kept === 0) {
+      return { nodes: [], seen, kept }
     }
-    return { nodes: [], seen, kept }
+    // Danh sách/trích dẫn mà mọi con đều bị bỏ thì bỏ luôn, không để khung rỗng.
+    if (EMPTY_DROPS.has(type as string) && original && original.length > 0 && children?.length === 0) {
+      return { nodes: [], seen, kept }
+    }
+    const out: Node = children ? { ...pick(obj), children } : pick(obj)
+    if (anchors && type === 'heading' && obj.tag === 'h2') {
+      const title = collectText(out).trim()
+      out.anchor = anchorFor(title)
+      toc.push({ id: out.anchor as string, title })
+    }
+    return { nodes: [out], seen, kept }
   }
 
   const out = walk(root as Node).nodes[0]

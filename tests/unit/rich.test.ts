@@ -99,6 +99,15 @@ describe('sanitizeRich: cite (R4)', () => {
     expect(JSON.stringify(pre)).toContain('Mất')
     expect(cites(pre)).toEqual([])
   })
+  it('cite và heading trong nút bị bỏ (khối lạ) không chiếm số, không vào mục lục', () => {
+    const r = sanitizeRich(doc(
+      { type: 'unknown-wrapper', version: 1, children: [para(txt('ẩn'), cite(1)), h('h2', 'Ẩn')] },
+      para(txt('hiện'), cite(2)),
+    ), ctx('public'))
+    expect(r.citedOrder).toEqual(['b'])
+    expect(cites(rootOf(r))).toEqual([{ type: 'cite', n: 1 }])
+    expect(r.toc).toEqual([])
+  })
   it('đoạn không có cite không bị ảnh hưởng', () => {
     const r = sanitizeRich(doc(para(txt('Không trích'))), ctx('public'))
     expect(rootOf(r).children).toHaveLength(1)
@@ -150,9 +159,36 @@ describe('sanitizeRich: mục lục (R5)', () => {
       { id: 'doi-song-2', title: 'Đời sống' },
     ])
   })
+  it('slug sinh ra không trùng slug đã có: "A", "A", "A 2" ra a, a-2, a-2-2', () => {
+    const r = sanitizeRich(doc(h('h2', 'A'), h('h2', 'A'), h('h2', 'A 2')), ctx('public'))
+    expect(r.toc.map((t) => t.id)).toEqual(['a', 'a-2', 'a-2-2'])
+  })
   it('anchors: false thì không gắn anchor, toc rỗng', () => {
     const r = sanitizeRich(doc(h('h2', 'A')), ctx('public', { anchors: false }))
     expect(rootOf(r).children![0].anchor).toBeUndefined()
     expect(r.toc).toEqual([])
+  })
+})
+
+describe('sanitizeRich: khung rỗng', () => {
+  const list = (...items: unknown[]) => ({ type: 'list', listType: 'bullet', version: 1, children: items })
+  const li = (...children: unknown[]) => ({ type: 'listitem', version: 1, value: 1, children })
+  const quote = (...children: unknown[]) => ({ type: 'quote', version: 1, children })
+
+  it('danh sách và trích dẫn mà mọi con đều bị bỏ thì bỏ luôn', () => {
+    const r = sanitizeRich(doc(
+      list(li({ type: 'upload', version: 1, value: 5 })),
+      quote({ type: 'relationship', version: 1, value: 6 }),
+      para(txt('còn')),
+    ), ctx('preview'))
+    expect(rootOf(r).children!.map((c) => c.type)).toEqual(['paragraph'])
+  })
+  it('public: danh sách có mục duy nhất mất hết cite thì bỏ cả danh sách', () => {
+    const r = sanitizeRich(doc(list(li(txt('x'), cite(9)))), ctx('public'))
+    expect(rootOf(r).children).toEqual([])
+  })
+  it('danh sách còn mục thì giữ', () => {
+    const r = sanitizeRich(doc(list(li(txt('x')), li({ type: 'upload', version: 1 }))), ctx('public'))
+    expect(rootOf(r).children![0].children).toHaveLength(1)
   })
 })

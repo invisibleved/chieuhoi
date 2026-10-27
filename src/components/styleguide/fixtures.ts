@@ -15,6 +15,7 @@ export const imgCompact = img('hc9.webp', 'Chiếu phơi bờ ao', 1800, 841)
 export const person: PersonView = {
   slug: 'mau',
   category: 'Nghệ nhân',
+  categoryKey: 'artisan',
   role: 'Vai trò: [cần xác minh]',
   name: '[Tên nghệ nhân]',
   portrait: imgPortrait,
@@ -36,6 +37,7 @@ export const storyFeatured: StoryCardView = {
   title: 'Chuyện về Trạng Chiếu',
   sapo: 'Mô tả ngắn 1–2 dòng. [Cần nguồn]',
   category: 'Lịch sử',
+  categoryKey: 'history',
   cover: imgStory,
   readingMinutes: null,
   hasDetail: true,
@@ -49,6 +51,7 @@ export const storyCompact: StoryCardView = {
   title: 'Một ngày ở làng Hới',
   sapo: null,
   category: 'Đời sống hôm nay',
+  categoryKey: 'life-today',
   cover: imgCompact,
   readingMinutes: null,
   hasDetail: true,

@@ -5,7 +5,7 @@ import { ProductCard } from '@/components/content/ProductCard'
 import { StoryCard } from '@/components/content/StoryCard'
 import type { ProductCardView, StoryCardView } from '@/lib/content'
 
-const story: StoryCardView = { slug: 'chuyen-ve-trang-chieu', title: 'Chuyện về Trạng Chiếu', sapo: 'Mô tả ngắn', category: 'Lịch sử', cover: null, readingMinutes: null, hasDetail: true, status: 'Bản nháp', sourceCount: 0, flags: ['unpublished'] }
+const story: StoryCardView = { slug: 'chuyen-ve-trang-chieu', title: 'Chuyện về Trạng Chiếu', sapo: 'Mô tả ngắn', category: 'Lịch sử', categoryKey: 'history', cover: null, readingMinutes: null, hasDetail: true, status: 'Bản nháp', sourceCount: 0, flags: ['unpublished'] }
 
 describe('StoryCard', () => {
   it('grid: nhãn Bản nháp, CTA Đọc bài →, không có ảnh thì không có img', () => {

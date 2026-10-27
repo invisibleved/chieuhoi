@@ -200,6 +200,7 @@ export function createContent(payload: Payload) {
       title: showText(d.title, mode),
       sapo: showText(d.sapo, mode),
       category: storyCategoryLabel(d.category),
+      categoryKey: storyCategoryLabel(d.category) ? (d.category ?? null) : null,
       cover: toImageView(d.cover, mode),
       readingMinutes: d.readingMinutes ?? null,
       hasDetail: !idea,
@@ -261,6 +262,8 @@ export function createContent(payload: Payload) {
       body: rich,
       toc,
       sources,
+      // Trang chi tiết đếm đúng danh sách "Ghi chú nguồn" (gồm cả nguồn được trích ngoài danh sách của bài).
+      sourceCount: sources.length,
       editor: showText(d.editor, mode),
       publishedAt: formatDate(showText(d.publishedAt, mode)),
       coverCaption: showText(d.coverCaption, mode),

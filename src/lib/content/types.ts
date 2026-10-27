@@ -25,6 +25,8 @@ export interface PersonView {
   category: string | null
   role: string | null
   name: string | null
+  /** Giá trị option của nhóm (khoá bộ lọc); nhãn ở `category`. */
+  categoryKey: string | null
   portrait: ImageView | null
   quote: { text: string; sourceId: string } | null
   consentPending: boolean
@@ -110,6 +112,8 @@ export interface StoryCardView {
   title: string | null
   sapo: string | null
   category: string | null
+  /** Giá trị option của chủ đề (khoá bộ lọc, khớp `StoriesPageView.filters[].key`); nhãn ở `category`. */
+  categoryKey: string | null
   cover: ImageView | null
   readingMinutes: number | null
   hasDetail: boolean

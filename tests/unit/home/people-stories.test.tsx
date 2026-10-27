@@ -5,10 +5,10 @@ import { StoriesTeaser } from '@/components/home/StoriesTeaser'
 import type { PersonView, StoryCardView } from '@/lib/content'
 
 const p = (slug: string, over: Partial<PersonView> = {}): PersonView => ({
-  slug, category: 'Nghệ nhân', role: null, name: `Tên ${slug}`, portrait: null, quote: null, consentPending: false, flags: [], ...over,
+  slug, category: 'Nghệ nhân', categoryKey: 'artisan', role: null, name: `Tên ${slug}`, portrait: null, quote: null, consentPending: false, flags: [], ...over,
 })
 const s = (slug: string, over: Partial<StoryCardView> = {}): StoryCardView => ({
-  slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail: true, status: null, sourceCount: 0, flags: [], ...over,
+  slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail: true, status: null, sourceCount: 0, flags: [], ...over,
 })
 const hrefs = () => screen.getAllByRole('link').map((a) => a.getAttribute('href'))
 
