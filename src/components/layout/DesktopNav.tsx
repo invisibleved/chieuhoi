@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { isCurrent, NAV_ITEMS } from './nav'
 
 export function DesktopNav() {
@@ -24,11 +25,7 @@ export function DesktopNav() {
             <span className="text-[12px] text-text-meta">{item.n}</span>
             {item.label}
             {current ? (
-              <span
-                aria-hidden="true"
-                className="threads absolute inset-x-0 -bottom-2.5"
-                style={{ height: 6 }}
-              />
+              <ThreadsDivider className="absolute inset-x-0 -bottom-2.5 h-1.5!" />
             ) : null}
           </Link>
         )

@@ -13,8 +13,13 @@ import * as fx from '@/components/styleguide/fixtures'
 import { Lab, Tok } from '@/components/styleguide/Lab'
 import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton, SuccessState } from '@/components/ui/Feedback'
+import { Callout } from '@/components/ui/Callout'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { FactList } from '@/components/ui/FactList'
 import { LinkArrow } from '@/components/ui/LinkArrow'
-import { FilterDemos, TabDemo } from './Demos'
+import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
+import { FilterDemos, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -27,7 +32,7 @@ export const metadata: Metadata = {
 const h2 = 'font-display text-h3 font-normal'
 const state = 'flex min-w-0 flex-col items-start gap-2.5'
 const focusLight = 'outline outline-2 outline-offset-4 outline-focus-light'
-const rowThreads = <div className="threads" aria-hidden="true" />
+const rowThreads = <ThreadsDivider />
 
 const NAV_LINK = 'flex min-h-11 items-baseline gap-2 py-2.5 text-text-primary no-underline md:min-h-0 md:py-0'
 
@@ -38,7 +43,7 @@ export default function StyleguidePage() {
     <div className="mx-auto flex max-w-[1440px] flex-col gap-16 px-5 py-12 md:gap-24 md:px-20 md:py-24">
       <div className="flex flex-col gap-4">
         <Breadcrumb items={[{ label: 'Trang chủ', href: '/' }, { label: 'Component' }]} />
-        <p className="text-eyebrow font-semibold tracking-[.24em] text-accent">HỆ THỐNG THIẾT KẾ · v0.1</p>
+        <Eyebrow as="p">HỆ THỐNG THIẾT KẾ · v0.1</Eyebrow>
         <h1 className="font-display text-display font-normal leading-[1.1]">Component</h1>
         <p className="max-w-[760px] text-body-lg leading-[1.65] text-text-secondary">
           Mỗi component vẽ đủ các trạng thái: mặc định, hover, focus, đang chọn, vô hiệu và lỗi khi có. Tên token ghi dưới mỗi mẫu để bàn giao cho dev.
@@ -180,6 +185,29 @@ export default function StyleguidePage() {
         <div className="-mx-5 -my-8 md:-mx-20 md:-my-16">
           <SourceList sources={fx.sources} headingId="sg-nguon" title="Nguồn" />
         </div>
+      </section>
+
+      {rowThreads}
+
+      {/* Thành phần chung */}
+      <section aria-labelledby="sg-chung" className="flex flex-col gap-8">
+        <h2 id="sg-chung" className={h2}>Thành phần chung</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className={state}><Lab>EYEBROW · NỀN SÁNG</Lab><Eyebrow>NGHỀ DỆT CHIẾU</Eyebrow></div>
+          <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · NỀN TỐI</Lab><Eyebrow tone="dark">NGHỀ DỆT CHIẾU</Eyebrow></div>
+          <div className={state}><Lab>EYEBROW · CÓ VẠCH</Lab><Eyebrow rule>LÀNG HỚI</Eyebrow></div>
+          <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · CÓ VẠCH · NỀN TỐI</Lab><Eyebrow tone="dark" rule>LÀNG HỚI</Eyebrow></div>
+          <StepperDemos />
+          <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
+          <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
+          <div className="flex flex-col gap-3"><Lab>CALLOUT</Lab><Callout title="LƯU Ý">Nội dung này cần được xác minh với nghệ nhân trước khi đăng.</Callout></div>
+          <div className="flex flex-col gap-3">
+            <Lab>DANH SÁCH THÔNG TIN</Lab>
+            <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-2"><Lab>VẠCH SỢI CÓI</Lab><ThreadsDivider /></div>
+        </div>
+        <Tok>ui/eyebrow · scroll-strip · step-progress · pager-button · placeholder-frame · callout · fact-list · threads-divider — nút Trước/Sau dùng aria-disabled nên focus không mất khi chạm đầu cuối</Tok>
       </section>
 
       {rowThreads}

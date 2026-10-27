@@ -6,38 +6,15 @@ import type { CraftStepView, Mode } from '@/lib/content'
 import { ContentImage } from '@/components/content/ContentImage'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { LinkArrow } from '@/components/ui/LinkArrow'
+import { PagerButton } from '@/components/ui/PagerButton'
+import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { StepProgress } from '@/components/ui/StepProgress'
 
 type CraftTeaserProps = { steps: CraftStepView[]; mode: Mode }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 const VERIFY_NOTE = 'Trình tự và tên gọi các công đoạn sẽ được xác minh với nghệ nhân trước khi đăng.'
-
-// Bộ đếm "Công đoạn 04 / 06" kèm thanh tiến trình.
-function Progress({ index, total, className }: { index: number; total: number; className: string }) {
-  return (
-    <div className={className}>
-      <div className="flex justify-between text-small text-text-on-dark-muted">
-        <span>Công đoạn</span>
-        <span>
-          <strong className="font-semibold text-text-on-dark">{pad(index + 1)}</strong> / {pad(total)}
-        </span>
-      </div>
-      <div
-        role="progressbar"
-        aria-label="Tiến trình công đoạn"
-        aria-valuemin={1}
-        aria-valuemax={total}
-        aria-valuenow={index + 1}
-        className="h-[3px] bg-[rgba(243,235,221,.2)]"
-      >
-        <div className="h-full bg-accent-on-dark" style={{ width: `${((index + 1) / total) * 100}%` }} />
-      </div>
-    </div>
-  )
-}
-
-const arrow = 'inline-flex size-12 shrink-0 items-center justify-center border border-[rgba(243,235,221,.4)] disabled:opacity-40'
 
 export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
   const [index, setIndex] = useState(0)
@@ -63,7 +40,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
       </div>
 
       <div className="flex flex-col gap-6 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-0">
-        <Progress index={index} total={total} className="flex flex-col gap-2 md:hidden" />
+        <StepProgress index={index} total={total} unit="Công đoạn" label="Tiến trình công đoạn" className="md:hidden" />
 
         <figure className="relative -mx-5 md:col-span-7 md:mx-0">
           {step.image ? (
@@ -93,11 +70,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
         </div>
 
         {/* Mobile: dải nút chọn công đoạn */}
-        <div
-          role="group"
-          aria-label="Chọn công đoạn"
-          className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
-        >
+        <ScrollStrip label="Chọn công đoạn" className="snap-mandatory md:hidden">
           {steps.map((s, i) => {
             const on = i === index
             return (
@@ -110,33 +83,27 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
                 aria-current={on ? 'step' : undefined}
                 onClick={() => select(i)}
                 className={`inline-flex min-h-11 shrink-0 snap-start items-center px-4 text-[14px] whitespace-nowrap ${
-                  on ? 'bg-bg-primary font-semibold text-bg-inverse' : 'border border-[rgba(243,235,221,.4)] text-text-on-dark'
+                  on ? 'bg-bg-primary font-semibold text-bg-inverse' : 'border border-border-on-dark-strong text-text-on-dark'
                 }`}
               >
                 {[pad(s.n), s.title].filter(Boolean).join(' ')}
               </button>
             )
           })}
-        </div>
+        </ScrollStrip>
 
         {/* Mobile: Trước / Tiếp và link */}
         <div className="flex items-center gap-3 md:hidden">
-          <button type="button" aria-label="Công đoạn trước" disabled={index === 0} onClick={() => select(index - 1)} className={arrow}>
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M10 3L5 8l5 5" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            aria-label="Công đoạn tiếp"
-            disabled={index === total - 1}
+          <PagerButton direction="prev" label="Công đoạn trước" iconOnly tone="dark" atEnd={index === 0} onClick={() => select(index - 1)} />
+          <PagerButton
+            direction="next"
+            label="Công đoạn tiếp"
+            iconOnly
+            tone="dark"
+            variant="solid"
+            atEnd={index === total - 1}
             onClick={() => select(index + 1)}
-            className={`${arrow} border-bg-primary bg-bg-primary text-bg-inverse`}
-          >
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M6 3l5 5-5 5" />
-            </svg>
-          </button>
+          />
           <LinkArrow href="/nghe-det-chieu" tone="dark" className="ml-auto min-h-12">
             Xem cả hành trình
           </LinkArrow>
@@ -144,8 +111,8 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
 
         {/* Desktop: bộ đếm và danh sách công đoạn */}
         <div className="hidden flex-col justify-center gap-5 md:col-span-4 md:col-start-9 md:flex">
-          <Progress index={index} total={total} className="flex flex-col gap-2.5" />
-          <ol className="flex flex-col border-b border-[rgba(243,235,221,.22)]">
+          <StepProgress index={index} total={total} unit="Công đoạn" label="Tiến trình công đoạn" />
+          <ol className="flex flex-col border-b border-border-on-dark">
             {steps.map((s, i) => {
               const on = i === index
               return (
@@ -154,7 +121,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
                     type="button"
                     aria-current={on ? 'step' : undefined}
                     onClick={() => select(i)}
-                    className={`group flex w-full cursor-pointer gap-[18px] border-t border-[rgba(243,235,221,.22)] py-4 text-left ${
+                    className={`group flex w-full cursor-pointer gap-[18px] border-t border-border-on-dark py-4 text-left ${
                       on
                         ? 'items-center border-l-[3px] border-l-accent-on-dark bg-[rgba(243,235,221,.06)] pl-[14px] text-text-on-dark'
                         : 'items-baseline text-text-on-dark-muted hover:text-text-on-dark'

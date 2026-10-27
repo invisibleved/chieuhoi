@@ -59,8 +59,8 @@ export function SourceList({
               key={s.id}
               id={`nguon-${n}`}
               className={`border-t py-3 md:grid md:grid-cols-[40px_1fr] md:py-3.5 ${
-                i === 0 ? 'border-border-strong' : 'border-[rgba(40,39,36,.2)]'
-              } ${i === sources.length - 1 ? 'border-b border-b-[rgba(40,39,36,.2)]' : ''}`}
+                i === 0 ? 'border-border-strong' : 'border-border-soft'
+              } ${i === sources.length - 1 ? 'border-b border-b-border-soft' : ''}`}
             >
               <span className="mr-1.5 font-semibold text-text-meta md:mr-0">[{n}]</span>
               <span>

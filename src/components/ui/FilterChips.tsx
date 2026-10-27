@@ -19,7 +19,7 @@ const tones = {
   },
   dark: {
     on: 'bg-bg-primary text-bg-deep font-semibold border border-bg-primary',
-    off: 'border border-[rgba(243,235,221,.4)] text-text-on-dark hover:border-text-on-dark',
+    off: 'border border-border-on-dark-strong text-text-on-dark hover:border-text-on-dark',
   },
 }
 

@@ -54,16 +54,16 @@ describe('CraftTeaser', () => {
     expect(container.textContent).not.toContain('TƯ LIỆU')
     expect(container.textContent).toContain('Bước 2 · Ảnh: Nguyễn A')
   })
-  it('Trước/Tiếp mobile: tăng tiến trình, disabled ở hai đầu', () => {
+  it('Trước/Tiếp mobile: tăng tiến trình, aria-disabled ở hai đầu', () => {
     render(<CraftTeaser steps={steps} mode="public" />)
-    const prev = screen.getByRole('button', { name: 'Công đoạn trước' }) as HTMLButtonElement
-    const next = screen.getByRole('button', { name: 'Công đoạn tiếp' }) as HTMLButtonElement
-    expect(prev.disabled).toBe(true)
+    const prev = screen.getByRole('button', { name: 'Công đoạn trước' })
+    const next = screen.getByRole('button', { name: 'Công đoạn tiếp' })
+    expect(prev.getAttribute('aria-disabled')).toBe('true')
     fireEvent.click(next)
     expect(screen.getAllByRole('progressbar')[0].getAttribute('aria-valuenow')).toBe('2')
     fireEvent.click(next)
-    expect(next.disabled).toBe(true)
-    expect(prev.disabled).toBe(false)
+    expect(next.getAttribute('aria-disabled')).toBe('true')
+    expect(prev.getAttribute('aria-disabled')).toBeNull()
     fireEvent.click(prev)
     expect(screen.getAllByRole('progressbar')[0].getAttribute('aria-valuenow')).toBe('2')
   })

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Eyebrow } from './Eyebrow'
 
 type SectionHeadingProps = {
   eyebrow?: string
@@ -15,11 +16,7 @@ export function SectionHeading({ eyebrow, title, note, as: Tag = 'h2', id, tone 
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="flex flex-col gap-4">
         {eyebrow ? (
-          <span
-            className={`text-eyebrow font-semibold tracking-[.24em] ${dark ? 'text-accent-on-dark' : 'text-accent'}`}
-          >
-            {eyebrow}
-          </span>
+          <Eyebrow tone={tone}>{eyebrow}</Eyebrow>
         ) : null}
         <Tag
           id={id}

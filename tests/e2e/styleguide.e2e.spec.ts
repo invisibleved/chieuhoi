@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
 
 const SHOTS = process.env.SHOTS_DIR
-const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
+const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Thành phần chung', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
 
 for (const vp of [
   { name: '1440', width: 1440, height: 900 },

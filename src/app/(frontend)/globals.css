@@ -28,8 +28,13 @@
   --decor-straw: #C3A46C;     /* CHỈ trang trí — không dùng cho chữ (2.0:1) */
   /* Viền, focus */
   --border-subtle: rgba(40,39,36,.16);
+  --border-soft: rgba(40,39,36,.2);     /* viền mảnh dưới danh sách, nguồn */
   --border-strong: #282724;
   --border-dashed: #8C857A;
+  --border-on-dark: rgba(243,235,221,.22);        /* đường kẻ trên nền xanh/tối */
+  --border-on-dark-strong: rgba(243,235,221,.4);  /* nút viền, chip trên nền tối */
+  --border-on-dark-dashed: rgba(243,235,221,.45); /* khung giữ chỗ nét đứt trên nền tối */
+  --track-on-dark: rgba(243,235,221,.2);          /* rãnh thanh tiến trình trên nền tối */
   --focus-light: #344B3D;
   --focus-dark: #E3CD9C;
   /* Chuyển động */
@@ -77,6 +82,11 @@
   --color-on-accent: var(--on-accent);
   --color-decor-straw: var(--decor-straw); /* chỉ trang trí, không dùng cho chữ */
   --color-border-subtle: var(--border-subtle);
+  --color-border-soft: var(--border-soft);
+  --color-border-on-dark: var(--border-on-dark);
+  --color-border-on-dark-strong: var(--border-on-dark-strong);
+  --color-border-on-dark-dashed: var(--border-on-dark-dashed);
+  --color-track-on-dark: var(--track-on-dark);
   --color-border-strong: var(--border-strong);
   --color-border-dashed: var(--border-dashed);
   --color-focus-light: var(--focus-light);
@@ -107,6 +117,9 @@
   --text-small: 14px;
   --text-caption: 14px;
   --text-eyebrow: 12px;
+
+  --tracking-eyebrow: .24em;
+  --tracking-eyebrow-sm: .22em; /* eyebrow trên mobile */
 
   --animate-weave-pulse: weave-pulse 1.6s ease-in-out infinite;
 }

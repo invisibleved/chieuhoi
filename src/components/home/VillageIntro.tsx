@@ -2,6 +2,8 @@ import type { HomeMediaView, Mode } from '@/lib/content'
 import { ContentImage } from '@/components/content/ContentImage'
 import { VerifyNote } from '@/components/content/VerifyNote'
 import { LinkArrow } from '@/components/ui/LinkArrow'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 
 type VillageIntroProps = { media: HomeMediaView; mode: Mode }
 
@@ -12,10 +14,10 @@ export function VillageIntro({ media, mode }: VillageIntroProps) {
   const preview = mode === 'preview'
   return (
     <>
-      <div aria-hidden="true" className="threads mx-20 mt-[72px] hidden h-[14px] md:block" />
+      <ThreadsDivider className="mx-20 mt-[72px] hidden h-[14px] md:block" />
       <section className="flex flex-col gap-5 px-5 pt-16 pb-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-16 md:px-20 md:pt-24 md:pb-[120px]">
         <div className="flex flex-col gap-5 md:col-span-4">
-          <span className="text-eyebrow font-semibold tracking-[.22em] text-accent md:tracking-[.24em]">LÀNG HỚI</span>
+          <Eyebrow>LÀNG HỚI</Eyebrow>
           <h2 className="font-display text-h2 leading-[1.15] font-normal md:leading-[1.1]">Có một làng Hới...</h2>
         </div>
         <div className="flex flex-col gap-5 md:col-span-6 md:col-start-6 md:gap-6">

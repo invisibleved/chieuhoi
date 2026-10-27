@@ -6,6 +6,7 @@ import { useRef, useState, type KeyboardEvent } from 'react'
 
 import { LanguageSwitch } from './LanguageSwitch'
 import { CONNECT_HREF, isCurrent, NAV_ITEMS } from './nav'
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 
 const MENU_ID = 'menu-mobile'
 
@@ -132,7 +133,7 @@ export function MobileMenu({ tagline }: { tagline: string | null }) {
           </div>
 
           <div className="mt-auto flex flex-col gap-4 px-5 pt-6 pb-8">
-            <div className="threads" aria-hidden="true" />
+            <ThreadsDivider />
             <div className="flex items-center justify-between">
               {tagline ? (
                 <p className="m-0 font-serif text-[14px] italic text-text-secondary">{tagline}</p>

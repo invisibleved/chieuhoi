@@ -2,6 +2,7 @@ import type { HomeMediaView, PageIntroView } from '@/lib/content'
 import { Button } from '@/components/ui/Button'
 import { ContentImage } from '@/components/content/ContentImage'
 import { DocumentLabel } from '@/components/content/DocumentLabel'
+import { Eyebrow } from '@/components/ui/Eyebrow'
 
 type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string | null }
 
@@ -37,10 +38,9 @@ export function Hero({ intro, media, storyHref }: HeroProps) {
     <section className="relative md:grid md:h-[840px] md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-16">
       <div className="flex flex-col gap-[22px] px-5 pt-8 md:col-span-6 md:justify-center md:gap-8 md:px-0 md:pt-0 md:pb-[120px]">
         {intro.eyebrow ? (
-          <p className="flex items-center gap-3 text-eyebrow font-semibold tracking-[.22em] text-accent md:gap-4 md:tracking-[.24em]">
-            <span aria-hidden="true" className="h-px w-8 bg-accent md:w-12" />
+          <Eyebrow as="p" rule>
             {intro.eyebrow}
-          </p>
+          </Eyebrow>
         ) : null}
         <HeroTitle intro={intro} />
         {intro.lead ? (
