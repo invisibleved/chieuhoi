@@ -244,7 +244,7 @@ describe('lib/content', () => {
       slug: 'pl', name: 'Bà A', workflow: 'published', consent: { name: true },
     }))
     await rawSet('people', pp.id, 'story', await leakyBody())
-    const json = JSON.stringify((await content.getPerson('pl', 'public'))?.story)
+    const json = JSON.stringify((await content.getPerson('pl', 'public'))?.storyParts)
     for (const l of leaks) expect(json).not.toContain(l)
     expect(json).toContain('Chữ giữ lại')
   })
@@ -258,7 +258,7 @@ describe('lib/content', () => {
     expect(p?.name).toBeNull()
     expect(p?.note).toBeNull()
     expect(p?.yearsInCraft).toBeNull()
-    expect(p?.story).toBeNull()
+    expect(p?.storyParts).toEqual([null, null])
   })
 
   it('craft step: shotNeeded hiện công khai', async () => {

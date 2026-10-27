@@ -152,3 +152,19 @@ export function sanitizeRich(node: unknown, ctx: RichContext): RichResult {
   const out = walk(root as Node).nodes[0]
   return out ? { rich: { root: out }, citedOrder, toc } : empty
 }
+
+/**
+ * Tách cây đã lọc tại heading cấp ngoài cùng thứ `n` (mọi tag): phần trước và phần từ heading đó trở đi (R15).
+ * Không có heading thứ `n` thì `[rich, null]`.
+ */
+export function splitAtHeading(rich: Rich | null, n: number): [Rich | null, Rich | null] {
+  if (!rich) return [null, null]
+  const children = Array.isArray(rich.root.children) ? (rich.root.children as Node[]) : []
+  let seen = 0
+  const at = children.findIndex((c) => c?.type === 'heading' && ++seen === n)
+  if (at <= 0) return [rich, null]
+  return [
+    { root: { ...rich.root, children: children.slice(0, at) } },
+    { root: { ...rich.root, children: children.slice(at) } },
+  ]
+}

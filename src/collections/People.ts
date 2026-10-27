@@ -48,9 +48,31 @@ export const People: CollectionConfig = {
     },
     { name: 'role', type: 'text', label: 'Vai trò', localized: true },
     { name: 'note', type: 'text', label: 'Ghi chú', localized: true },
+    { name: 'intro', type: 'textarea', label: 'Câu giới thiệu', localized: true },
     { name: 'yearsInCraft', type: 'text', label: 'Số năm theo nghề' },
+    { name: 'hamlet', type: 'text', label: 'Xóm, thôn' },
+    { name: 'recordedBy', type: 'text', label: 'Người ghi lại' },
+    {
+      name: 'recordedAt',
+      type: 'text',
+      label: 'Ngày ghi lại (YYYY-MM-DD)',
+      validate: (value: string | null | undefined) =>
+        !value || /^\d{4}-\d{2}-\d{2}$/.test(value) ? true : 'Ngày ghi lại phải có dạng YYYY-MM-DD.',
+    },
     { name: 'portrait', type: 'relationship', relationTo: 'archive-assets', label: 'Ảnh chân dung' },
     { name: 'story', type: 'richText', label: 'Câu chuyện', localized: true, editor: restrictedEditor() },
+    {
+      name: 'gallery',
+      type: 'array',
+      label: 'Phóng sự ảnh',
+      maxRows: 6,
+      fields: [
+        { name: 'image', type: 'upload', relationTo: 'archive-assets', required: true, label: 'Ảnh' },
+        { name: 'caption', type: 'text', label: 'Chú thích', localized: true },
+      ],
+    },
+    { name: 'relatedStep', type: 'relationship', relationTo: 'craft-steps', label: 'Công đoạn liên quan' },
+    { name: 'relatedProduct', type: 'relationship', relationTo: 'products', label: 'Hiện vật liên quan' },
     { name: 'quote', type: 'textarea', label: 'Trích dẫn', localized: true },
     { name: 'quoteSource', type: 'relationship', relationTo: 'sources', label: 'Nguồn trích dẫn' },
     {

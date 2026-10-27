@@ -198,6 +198,16 @@ describe('toPersonView', () => {
   })
 })
 
+describe('toPersonView: note', () => {
+  it('public: null khi chưa đồng ý tên, chuỗi khi đã đồng ý', () => {
+    expect(toPersonView(person({ note: 'Dệt chiếu tay', consent: { name: false, photo: true, quote: true } }), 'public').note).toBeNull()
+    expect(toPersonView(person({ note: 'Dệt chiếu tay' }), 'public').note).toBe('Dệt chiếu tay')
+  })
+  it('preview: hiện cả khi chưa đồng ý tên', () => {
+    expect(toPersonView(person({ note: 'Dệt chiếu tay', consent: { name: false } }), 'preview').note).toBe('Dệt chiếu tay')
+  })
+})
+
 describe('docNumber', () => {
   it('lấy phần số của mã TL-<số>, mã khác trả null', () => {
     expect(docNumber('TL-002')).toBe('002')

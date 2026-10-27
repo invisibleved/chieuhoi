@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
 
-import { sanitizeRich, type RichContext } from '@/lib/content/rich'
+import { sanitizeRich, splitAtHeading, type RichContext } from '@/lib/content/rich'
 import type { ImageView, Mode } from '@/lib/content/types'
 
 const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 })
@@ -190,5 +190,27 @@ describe('sanitizeRich: khung rỗng', () => {
   it('danh sách còn mục thì giữ', () => {
     const r = sanitizeRich(doc(list(li(txt('x')), li({ type: 'upload', version: 1 }))), ctx('public'))
     expect(rootOf(r).children![0].children).toHaveLength(1)
+  })
+})
+
+describe('splitAtHeading (R15)', () => {
+  const tree = doc(para(txt('mở')), h('h3', 'A'), para(txt('a')), h('h3', 'B'), para(txt('b')), h('h3', 'C'), para(txt('c')))
+  const texts = (r: unknown) => ((r as { root: N } | null)?.root.children ?? []).map((c) => (c.children?.[0] as N | undefined)?.text)
+
+  it('ba heading: phần trước heading thứ hai và phần từ heading thứ hai trở đi', () => {
+    const [a, b] = splitAtHeading(tree as never, 2)
+    expect(texts(a)).toEqual(['mở', 'A', 'a'])
+    expect(texts(b)).toEqual(['B', 'b', 'C', 'c'])
+    expect((a as { root: N }).root.type).toBe('root')
+    expect((b as { root: N }).root.type).toBe('root')
+  })
+  it('không có heading thứ hai: [rich, null]', () => {
+    const one = doc(h('h3', 'A'), para(txt('a')))
+    const [a, b] = splitAtHeading(one as never, 2)
+    expect(a).toBe(one)
+    expect(b).toBeNull()
+  })
+  it('null: [null, null]', () => {
+    expect(splitAtHeading(null, 2)).toEqual([null, null])
   })
 })

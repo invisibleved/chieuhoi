@@ -21,8 +21,8 @@ export const homeMedia = {
 
 type Slot = { slot: string; file: string; caption?: string }
 
-/** Ảnh theo ô của các trang Nghề dệt chiếu, Làng Hới và Câu chuyện. File và chú thích nguyên văn từ artboard. */
-export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen', Slot[]> = {
+/** Ảnh theo ô của các trang Nghề dệt chiếu, Làng Hới, Câu chuyện và Con người. File và chú thích nguyên văn từ artboard. */
+export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'con-nguoi', Slot[]> = {
   'nghe-det-chieu': [
     { slot: 'hero', file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]' },
     { slot: 'tool-1', file: 'nkc13.webp' },
@@ -45,6 +45,8 @@ export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen', Slo
     { slot: 'next-village', file: 'hc9.webp' },
     { slot: 'next-craft', file: 'nkc5.webp' },
   ],
+  // Thẻ cố định "Những chân dung khác" ở mục Liên quan của trang chân dung (PersonDetail.dc.html).
+  'con-nguoi': [{ slot: 'related-people', file: 'kn2.webp' }],
 }
 
 type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }
@@ -71,7 +73,7 @@ export const pageIntros: Record<string, Intro> = {
   },
   'con-nguoi': {
     eyebrow: '04 — CON NGƯỜI',
-    title: 'Những bàn tay giữ hồn làng.',
+    title: 'Những bàn tay\ngiữ hồn làng.',
     lead: 'Người dệt, người in hoa, người giữ khung dệt cũ trong nhà. Mỗi chân dung ở đây là một người thật, và chỉ được kể khi chính họ đồng ý.',
   },
   'san-pham': {

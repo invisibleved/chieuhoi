@@ -3,10 +3,12 @@ import type { CollectionSlug, Payload, Where } from 'payload'
 
 import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
-import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-types'
+import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payload-types'
 
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
-import { sanitizeRich } from './rich'
+import { applyMode } from './copy/applyMode'
+import { peopleCopy } from './copy/people'
+import { sanitizeRich, splitAtHeading } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
   ProductCardView, ProductView, SiteSettingsView, SourceView, StoryCardView, StoryView,
@@ -275,7 +277,7 @@ export function createContent(payload: Payload) {
   }
 
   async function getPeople(mode: Mode): Promise<PersonView[]> {
-    const docs = (await findAll('people', mode, { sort: 'createdAt' })) as import('@/payload-types').Person[]
+    const docs = (await findAll('people', mode, { sort: 'createdAt' })) as Person[]
     return docs.map((d) => {
       const v = toPersonView(d, mode)
       return { ...v, flags: [...flagsOf(d, mode), ...v.flags.filter((f) => f !== 'unpublished')] }
@@ -283,17 +285,84 @@ export function createContent(payload: Payload) {
   }
 
   async function getPerson(slug: string, mode: Mode): Promise<PersonDetailView | null> {
-    const d = (await findBySlug('people', slug, mode)) as import('@/payload-types').Person | null
+    return (await getPersonWithLinks(slug, mode))?.person ?? null
+  }
+
+  /**
+   * Trang chân dung kèm khoá của công đoạn/hiện vật liên quan (để dựng thẻ "Liên quan" ở people.ts).
+   * Khoá chưa qua lọc mode: nơi dùng phải tìm lại qua getCraftSteps/getProducts của cùng mode.
+   */
+  async function getPersonWithLinks(slug: string, mode: Mode): Promise<
+    { person: PersonDetailView; stepN: number | null; productSlug: string | null } | null
+  > {
+    const d = (await findBySlug('people', slug, mode)) as Person | null
     if (!d) return null
-    const v = toPersonView(d, mode)
-    // Phần mô tả có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên.
-    const identifying = mode === 'preview' || !!d.consent?.name
+    const step = d.relatedStep && typeof d.relatedStep === 'object' ? d.relatedStep : null
+    const product = d.relatedProduct && typeof d.relatedProduct === 'object' ? d.relatedProduct : null
+    return { person: await personDetail(d, mode), stepN: step?.n ?? null, productSlug: product?.slug ?? null }
+  }
+
+  async function personDetail(d: Person, mode: Mode): Promise<PersonDetailView> {
+    const { quote: cardQuote, ...v } = toPersonView(d, mode)
+    const preview = mode === 'preview'
+    const consent = { name: !!d.consent?.name, photo: !!d.consent?.photo, quote: !!d.consent?.quote }
+    // Phần mô tả có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên (R13).
+    const identifying = preview || consent.name
+    /** Trường trống là null ở cả hai mode (preview dùng gợi ý trong copy, R14); còn lại theo showText. */
+    const filled = (s: string | null | undefined) => (s && s.trim() !== '' ? showText(s, mode) : null)
+
+    const story = identifying ? sanitizeRich(d.story, { ...(await richContext(d.story, mode)).ctx, anchors: false }).rich : null
+
+    // Lời trích: nguồn phải còn nhìn thấy được ở mode này (public), như cite trong bài (R4, R15).
+    const qSource = sourceOf(d.quoteSource)
+    const qSourceView = qSource ? toSourceView(qSource, mode) : null
+    const quote: PersonDetailView['quote'] = cardQuote && (preview || qSourceView)
+      ? { text: cardQuote.text, sourceLine: qSourceView ? sourceLine([qSourceView]) : null }
+      : null
+
+    const recorded = identifying
+      ? [filled(d.recordedBy), formatDate(filled(d.recordedAt))].filter((s): s is string => !!s).join(' · ') || null
+      : null
+
+    // Phóng sự ảnh: public cần đồng ý ảnh; chưa đồng ý tên thì bỏ alt và chú thích (có thể chứa tên).
+    const gallery: PersonDetailView['gallery'] = []
+    if (preview || consent.photo) {
+      for (const row of d.gallery ?? []) {
+        const image = toImageView(row.image, mode)
+        if (!image) continue
+        gallery.push(identifying
+          ? { image, caption: showText(row.caption, mode) }
+          : { image: { ...image, alt: '' }, caption: null })
+      }
+    }
+
+    const missing = (['name', 'photo', 'quote'] as const)
+      .filter((k) => !consent[k])
+      .map((k) => ({ name: 'tên', photo: 'ảnh', quote: 'lời trích' } as const)[k])
+    const copy = applyMode(peopleCopy, mode)
+
     return {
       ...v,
       flags: [...flagsOf(d, mode), ...v.flags],
-      note: identifying ? showText(d.note, mode) : null,
+      intro: identifying ? filled(d.intro) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
-      story: identifying ? sanitizeRich(d.story, (await richContext(d.story, mode)).ctx).rich : null,
+      hamlet: identifying ? showText(d.hamlet, mode) : null,
+      recorded,
+      storyParts: splitAtHeading(story, 2),
+      quote,
+      gallery,
+      consent: {
+        state: missing.length === 0 ? 'full' : missing.length === 3 ? 'none' : 'partial',
+        missing,
+        reviewedBySubject: !!d.reviewedBySubject,
+      },
+      portraitCaption: v.portrait
+        ? {
+            label: [peopleCopy.detail.portraitLabel, v.portrait.docNumber].filter(Boolean).join(' · '),
+            photographer: v.portrait.photographer,
+            consentLine: consent.photo ? null : (copy.detail.preview?.consentLine ?? null),
+          }
+        : null,
     }
   }
 
@@ -375,6 +444,6 @@ export function createContent(payload: Payload) {
 
   return {
     getHomeMedia, getSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
-    getStory, getPeople, getPerson, getArchive, getSiteSettings, getPageIntro,
+    getStory, getPeople, getPerson, getPersonWithLinks, getArchive, getSiteSettings, getPageIntro,
   }
 }

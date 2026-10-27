@@ -1,6 +1,7 @@
 import type { ArchiveAsset } from '@/payload-types'
 
 import type { CraftCopyView } from './copy/craft'
+import type { PeopleCopyView } from './copy/people'
 import type { StoriesCopyView } from './copy/stories'
 import type { VillageCopyView } from './copy/village'
 
@@ -28,6 +29,8 @@ export interface PersonView {
   /** Giá trị option của nhóm (khoá bộ lọc); nhãn ở `category`. */
   categoryKey: string | null
   portrait: ImageView | null
+  /** Ghi chú ngắn trên thẻ; ở public chỉ khi có đồng ý tên. */
+  note: string | null
   quote: { text: string; sourceId: string } | null
   consentPending: boolean
   flags: Flag[]
@@ -163,10 +166,48 @@ export interface StoryPageView {
   copy: StoriesCopyView
 }
 
-export interface PersonDetailView extends PersonView {
-  note: string | null
+export type ConsentState = 'none' | 'partial' | 'full'
+export type ConsentKind = 'tên' | 'ảnh' | 'lời trích'
+
+/**
+ * Trang chân dung. Ở public, mọi phần có thể nhận ra người (intro, xóm thôn, ghi lại bởi, câu chuyện,
+ * năm làm nghề, ghi chú) chỉ có khi đã đồng ý tên; phóng sự ảnh chỉ khi đã đồng ý ảnh (R13).
+ * `quote` thay kiểu của PersonView (P1): có thêm dòng nguồn.
+ */
+export type PersonDetailView = Omit<PersonView, 'quote'> & {
+  /** Null khi trống (preview dùng gợi ý trong copy, R14). */
+  intro: string | null
   yearsInCraft: string | null
-  story: Rich | null
+  hamlet: string | null
+  /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống. */
+  recorded: string | null
+  /** Câu chuyện tách tại heading thứ hai; lời trích đặt giữa hai phần (R15). */
+  storyParts: [Rich | null, Rich | null]
+  /** `sourceLine`: "Nhà xuất bản (dd/mm/yyyy)", chưa có tiền tố "Nguồn: " (copy.detail.quoteSource). */
+  quote: { text: string; sourceLine: string | null } | null
+  gallery: { image: ImageView; caption: string | null }[]
+  /** Hiện ở cả public (R18). */
+  consent: { state: ConsentState; missing: ConsentKind[]; reviewedBySubject: boolean }
+  /**
+   * Chú thích ảnh chân dung; null khi không có ảnh chân dung ở mode này.
+   * `label`: "CHÂN DUNG · 001" (số từ mã TL-…). `consentLine` chỉ ở preview, khi chưa đồng ý ảnh.
+   */
+  portraitCaption: { label: string; photographer: string | null; consentLine: string | null } | null
+}
+
+export interface PeoplePageView {
+  intro: PageIntroView
+  people: PersonView[]
+  /** Chip "Tất cả" (key all) rồi các nhóm theo thứ tự option. */
+  filters: { key: string; label: string }[]
+  copy: PeopleCopyView
+}
+
+export interface PersonPageView {
+  person: PersonDetailView
+  /** Công đoạn (nếu có và nhìn thấy được), hiện vật (nếu có), thẻ cố định "Những chân dung khác". */
+  related: ReadNextItem[]
+  copy: PeopleCopyView
 }
 
 /** Giá trị chủ đề ảnh tư liệu, lấy từ kiểu Payload (nguồn là ARCHIVE_CATEGORY_OPTIONS). */
@@ -247,4 +288,4 @@ export interface VillagePageView {
   copy: VillageCopyView
 }
 
-export type { CraftCopyView, StoriesCopyView, VillageCopyView }
+export type { CraftCopyView, PeopleCopyView, StoriesCopyView, VillageCopyView }

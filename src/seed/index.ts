@@ -213,12 +213,20 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Con người (mẫu): tên null, mọi consent false
+  const stepIds = new Map(
+    (await payload.find({ collection: 'craft-steps', pagination: false, depth: 0, overrideAccess: true, draft: true })).docs
+      .map((s) => [s.n, s.id]),
+  )
   for (const p of peopleSamples) {
+    const relatedStep = p.relatedStep === undefined ? null : stepIds.get(p.relatedStep)
+    if (relatedStep === undefined) throw new Error(`Không có công đoạn ${p.relatedStep}`)
     await upsert(
       payload, user, 'people', { field: 'slug', value: p.slug },
       {
         slug: p.slug, name: null, category: p.category, note: p.note,
         portrait: asset(p.portrait),
+        gallery: (p.gallery ?? []).map((g) => ({ image: asset(g.file), caption: g.caption })),
+        relatedStep,
         consent: { name: false, photo: false, quote: false }, reviewedBySubject: false,
         workflow: 'published',
       },
@@ -278,6 +286,7 @@ export async function seed(payload: Payload): Promise<void> {
       'nghe-det-chieu': { ...pageIntros['nghe-det-chieu'], ...mediaFor('nghe-det-chieu') },
       'lang-hoi': { ...pageIntros['lang-hoi'], ...mediaFor('lang-hoi') },
       'cau-chuyen': { ...pageIntros['cau-chuyen'], ...mediaFor('cau-chuyen') },
+      'con-nguoi': { ...pageIntros['con-nguoi'], ...mediaFor('con-nguoi') },
     } as object],
   ]
   for (const [slug, data] of globals) {

@@ -39,9 +39,29 @@ export const storyCategory: Record<string, string> = {
   'Đời sống hôm nay': 'life-today',
 }
 
-/** PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng slug `mau-nghe-nhan` của seed JSON; note theo artboard (R17). */
-export const peopleSamples: { slug: string; category: string; note: string; portrait: string }[] = [
-  { slug: 'mau-nghe-nhan', category: 'artisan', note: 'Dệt chiếu tay · vai trò cần xác minh', portrait: 'nkc10.webp' },
+type PersonSample = {
+  slug: string
+  category: string
+  note: string
+  portrait: string
+  gallery?: { file: string; caption: string }[]
+  /** Số công đoạn liên quan (`n`). */
+  relatedStep?: number
+}
+
+/**
+ * PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng slug `mau-nghe-nhan` của seed JSON; note theo artboard.
+ * Phóng sự ảnh và công đoạn liên quan của mẫu đầu lấy từ PersonDetail.dc.html (R17); không seed hiện vật liên quan.
+ */
+export const peopleSamples: PersonSample[] = [
+  {
+    slug: 'mau-nghe-nhan', category: 'artisan', note: 'Dệt chiếu tay · vai trò cần xác minh', portrait: 'nkc10.webp',
+    gallery: [
+      { file: 'nkc5.webp', caption: 'Hai người cùng làm trên một khung. [Chú thích cần người trong ảnh duyệt]' },
+      { file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt.' },
+    ],
+    relatedStep: 5,
+  },
   { slug: 'mau-nguoi-2', category: 'craft-family', note: 'Đôi tay trên khung dệt · cần xác minh', portrait: 'nkc14.webp' },
   { slug: 'mau-nguoi-3', category: 'craft-keeper', note: 'In hoa văn bằng khuôn · cần xác minh', portrait: 'kn14.webp' },
   { slug: 'mau-nguoi-4', category: 'craft-family', note: 'Nạp cói cho máy dệt · cần xác minh', portrait: 'nkc2.webp' },

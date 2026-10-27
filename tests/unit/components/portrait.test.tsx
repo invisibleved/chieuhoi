@@ -4,7 +4,7 @@ import { ContentImage } from '@/components/content/ContentImage'
 import { PortraitCard } from '@/components/content/PortraitCard'
 import type { ImageView, PersonView } from '@/lib/content'
 
-const base: PersonView = { slug: 'nghe-nhan-1', category: 'Nghệ nhân', categoryKey: 'artisan', role: 'Dệt chiếu tay', name: null, portrait: null, quote: null, consentPending: true, flags: [] }
+const base: PersonView = { slug: 'nghe-nhan-1', category: 'Nghệ nhân', categoryKey: 'artisan', role: 'Dệt chiếu tay', name: null, note: null, portrait: null, quote: null, consentPending: true, flags: [] }
 
 describe('PortraitCard', () => {
   it('chưa đồng ý: có nhãn Chờ đồng ý, không in null, link vẫn có tên', () => {

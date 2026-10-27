@@ -16,6 +16,7 @@ export const person: PersonView = {
   slug: 'mau',
   category: 'Nghệ nhân',
   categoryKey: 'artisan',
+  note: null,
   role: 'Vai trò: [cần xác minh]',
   name: '[Tên nghệ nhân]',
   portrait: imgPortrait,

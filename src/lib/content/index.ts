@@ -3,10 +3,11 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { createPages } from './pages'
+import { createPeople } from './people'
 import { createContent } from './queries'
 import { createStories } from './stories'
 
-export { createContent, createPages, createStories }
+export { createContent, createPages, createPeople, createStories }
 export * from './types'
 export { getMode } from './mode'
 export { archiveCategoryOptions } from './categories'
@@ -16,6 +17,10 @@ const bound = async () => createContent(await getPayload({ config }))
 const boundPages = async () => {
   const payload = await getPayload({ config })
   return createPages(payload, createContent(payload))
+}
+const boundPeople = async () => {
+  const payload = await getPayload({ config })
+  return createPeople(payload, createContent(payload))
 }
 const boundStories = async () => {
   const payload = await getPayload({ config })
@@ -44,3 +49,7 @@ export const getVillagePage = cache(async (...a: Parameters<ReturnType<typeof cr
 export const getStoriesPage = cache(async (...a: Parameters<ReturnType<typeof createStories>['getStoriesPage']>) => (await boundStories()).getStoriesPage(...a))
 export const getStoryPage = cache(async (...a: Parameters<ReturnType<typeof createStories>['getStoryPage']>) => (await boundStories()).getStoryPage(...a))
 export const getStorySlugs = async () => (await boundStories()).getStorySlugs()
+
+export const getPeoplePage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPeoplePage']>) => (await boundPeople()).getPeoplePage(...a))
+export const getPersonPage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPersonPage']>) => (await boundPeople()).getPersonPage(...a))
+export const getPersonSlugs = async () => (await boundPeople()).getPersonSlugs()
