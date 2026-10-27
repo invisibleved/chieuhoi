@@ -1,5 +1,6 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
+import { cache } from 'react'
 
 import { createPages } from './pages'
 import { createContent } from './queries'
@@ -8,6 +9,7 @@ export { createContent, createPages }
 export * from './types'
 export { getMode } from './mode'
 export { archiveCategoryOptions } from './categories'
+export { homeCopy, type HomeCopyView } from './copy/home'
 
 const bound = async () => createContent(await getPayload({ config }))
 const boundPages = async () => {
@@ -30,5 +32,6 @@ export const getPageIntro = async (...a: Parameters<ReturnType<typeof createCont
 export const getHomeMedia = async (...a: Parameters<ReturnType<typeof createContent>['getHomeMedia']>) => (await bound()).getHomeMedia(...a)
 
 export const getPageMedia = async (...a: Parameters<ReturnType<typeof createPages>['getPageMedia']>) => (await boundPages()).getPageMedia(...a)
-export const getCraftPage = async (...a: Parameters<ReturnType<typeof createPages>['getCraftPage']>) => (await boundPages()).getCraftPage(...a)
-export const getVillagePage = async (...a: Parameters<ReturnType<typeof createPages>['getVillagePage']>) => (await boundPages()).getVillagePage(...a)
+// cache(): generateMetadata và trang dùng chung một lần đọc trong cùng request.
+export const getCraftPage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getCraftPage']>) => (await boundPages()).getCraftPage(...a))
+export const getVillagePage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getVillagePage']>) => (await boundPages()).getVillagePage(...a))

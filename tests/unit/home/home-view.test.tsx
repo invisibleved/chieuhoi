@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { HomeView } from '@/components/home/HomeView'
+import { homeCopy } from '@/lib/content/copy/home'
 import type { ArchiveItemView, CraftStepView, HomeMediaView, PageIntroView, PersonView, ProductCardView, StoryCardView } from '@/lib/content'
 
 const intro: PageIntroView = {
@@ -10,7 +11,7 @@ const intro: PageIntroView = {
   lead: 'Khám phá làng Hới.',
 }
 const media: HomeMediaView = { hero: null, heroInset: null, village: [] }
-const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], archiveCategories: [], storyHref: null }
+const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], archiveCategories: [], storyHref: null, copy: homeCopy }
 
 vi.stubGlobal('IntersectionObserver', undefined)
 

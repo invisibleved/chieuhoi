@@ -1,7 +1,9 @@
 // Chữ cố định của /lang-hoi, chép nguyên văn từ VillagePage.dc.html và VillageMobile.dc.html.
 // `cite` là sourceId; số [n] do component đánh theo villageSourceOrder (R9).
 // Nhánh `preview` là ghi chú quy trình, chỉ hiện ở bản xem trước (R4).
+// Nhãn liên kết lưu không kèm "→": LinkArrow tự thêm mũi tên.
 import type { ApplyMode } from './applyMode'
+import { docLabel } from './docLabel'
 
 /** Thứ tự đánh số nguồn trên trang: [1] [2] [3]. */
 export const villageSourceOrder = ['vietnamplus-2026', 'danviet-2024', 'daidoanket-2021']
@@ -9,7 +11,7 @@ export const villageSourceOrder = ['vietnamplus-2026', 'danviet-2024', 'daidoank
 export const villageCopy = {
   breadcrumb: { label: 'Đường dẫn', home: 'Trang chủ', current: 'Làng Hới' },
   // Nhãn mã tư liệu dưới ảnh đầu trang: desktop trong khung ảnh, mobile là dòng chữ.
-  hero: { docLabel: { desktop: 'TƯ LIỆU', mobile: 'TL' } },
+  hero: { docLabel },
   founder: {
     eyebrow: 'TỔ NGHỀ',
     title: 'Phạm Đôn Lễ, ông Trạng Chiếu.',
@@ -110,7 +112,7 @@ export const villageCopy = {
   life: {
     eyebrow: { desktop: 'ĐỜI SỐNG LÀNG', mobile: null },
     title: { desktop: 'Nhịp làng, nhịp chiếu.', mobile: null },
-    link: { label: { desktop: 'Xem thêm trong Thư viện →', mobile: null }, href: '/thu-vien' },
+    link: { label: { desktop: 'Xem thêm trong Thư viện', mobile: null }, href: '/thu-vien' },
   },
   heritage: {
     eyebrow: 'DI SẢN HÔM NAY',
@@ -128,7 +130,7 @@ export const villageCopy = {
         cite: ['vietnamplus-2026'],
       },
     ],
-    link: { label: 'Xem quy trình dệt chiếu →', href: '/nghe-det-chieu' },
+    link: { label: 'Xem quy trình dệt chiếu', href: '/nghe-det-chieu' },
     preview: {
       note: {
         desktop: 'Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.',

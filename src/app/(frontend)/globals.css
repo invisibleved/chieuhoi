@@ -36,6 +36,9 @@
   --border-on-dark-strong: rgba(243,235,221,.4);  /* nút viền, chip trên nền tối */
   --border-on-dark-dashed: rgba(243,235,221,.45); /* khung giữ chỗ nét đứt trên nền tối */
   --track-on-dark: rgba(243,235,221,.2);          /* rãnh thanh tiến trình trên nền tối */
+  --surface-on-dark-hover: rgba(243,235,221,.06);  /* nền dòng hover / đang chọn trong danh sách trên nền tối */
+  --surface-on-dark-active: rgba(243,235,221,.08); /* nền dòng đang chọn (danh sách công đoạn) */
+  --surface-deep-on-image: rgba(35,42,37,.88);     /* nền chip mã tư liệu phủ trên ảnh */
   --focus-light: #344B3D;
   --focus-dark: #E3CD9C;
   /* Chuyển động */
@@ -89,6 +92,9 @@
   --color-border-on-dark-strong: var(--border-on-dark-strong);
   --color-border-on-dark-dashed: var(--border-on-dark-dashed);
   --color-track-on-dark: var(--track-on-dark);
+  --color-surface-on-dark-hover: var(--surface-on-dark-hover);
+  --color-surface-on-dark-active: var(--surface-on-dark-active);
+  --color-surface-deep-on-image: var(--surface-deep-on-image);
   --color-border-strong: var(--border-strong);
   --color-border-dashed: var(--border-dashed);
   --color-focus-light: var(--focus-light);
@@ -124,6 +130,8 @@
   --tracking-eyebrow: .24em;
   --tracking-label: .2em; /* nhãn nhỏ viết hoa trong khối (callout, danh sách, khung giữ chỗ) */
   --tracking-eyebrow-sm: .22em; /* eyebrow trên mobile */
+  --tracking-meta: .16em; /* dòng meta viết hoa trên thẻ (chuyên mục, eyebrow thẻ đọc tiếp) */
+  --tracking-cite: .06em; /* chú thích nguồn dạng [n] */
 
   --animate-weave-pulse: weave-pulse 1.6s ease-in-out infinite;
 }

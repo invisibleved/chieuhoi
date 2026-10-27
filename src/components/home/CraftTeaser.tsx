@@ -2,33 +2,31 @@
 
 import Image from 'next/image'
 import { useRef, useState } from 'react'
-import type { CraftStepView, Mode } from '@/lib/content'
-import { ContentImage } from '@/components/content/ContentImage'
-import { ShotNeeded } from '@/components/content/ShotNeeded'
+import type { CraftStepView, HomeCopyView, Mode } from '@/lib/content'
+import { CraftStage } from '@/components/content/CraftStage'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { PagerButton } from '@/components/ui/PagerButton'
 import { PillButton } from '@/components/ui/PillButton'
-import { ScrollStrip } from '@/components/ui/ScrollStrip'
+import { centreInStrip, ScrollStrip } from '@/components/ui/ScrollStrip'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { StepProgress } from '@/components/ui/StepProgress'
 
-type CraftTeaserProps = { steps: CraftStepView[]; mode: Mode }
+type CraftTeaserProps = { steps: CraftStepView[]; mode: Mode; copy: HomeCopyView }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 const VERIFY_NOTE = 'Trình tự và tên gọi các công đoạn sẽ được xác minh với nghệ nhân trước khi đăng.'
 
-export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
+export function CraftTeaser({ steps, mode, copy }: CraftTeaserProps) {
   const [index, setIndex] = useState(0)
   const pills = useRef<(HTMLButtonElement | null)[]>([])
   if (steps.length === 0) return null
   const total = steps.length
   const step = steps[index]
-  const num = step.image?.docNumber ?? null
 
-  // Chọn công đoạn; trên mobile cuộn nút được chọn vào giữa dải (chỉ trong handler, không trong effect).
+  // Chọn công đoạn; trên mobile cuộn dải để nút được chọn vào giữa (chỉ trong handler, trang không nhảy).
   const select = (i: number) => {
     setIndex(i)
-    pills.current[i]?.scrollIntoView?.({ inline: 'center', block: 'nearest' })
+    centreInStrip(pills.current[i])
   }
 
   return (
@@ -43,25 +41,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
       <div className="flex flex-col gap-6 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-0">
         <StepProgress index={index} total={total} unit="Công đoạn" label="Tiến trình công đoạn" className="md:hidden" />
 
-        <figure className="relative -mx-5 md:col-span-7 md:mx-0">
-          {step.image ? (
-            <ContentImage
-              image={step.image}
-              size="full"
-              sizes="(min-width: 768px) 58vw, 100vw"
-              className="h-[280px] md:h-[520px]"
-              objectPosition={`${step.focus[0]}% ${step.focus[1]}%`}
-            />
-          ) : (
-            <ShotNeeded tone="dark" description={step.shotNeeded ?? undefined} className="h-[280px] md:h-[520px]" />
-          )}
-          {step.image ? (
-            <figcaption className="absolute bottom-5 left-5 hidden flex-col gap-1 bg-bg-primary px-3.5 py-3 text-[13px] leading-[1.45] text-text-primary md:flex">
-              {num ? <span className="text-[12px] font-semibold tracking-label text-text-muted">{`TƯ LIỆU · ${num}`}</span> : null}
-              {[step.title, step.image.photographer ? `Ảnh: ${step.image.photographer}` : null].filter(Boolean).join(' · ')}
-            </figcaption>
-          ) : null}
-        </figure>
+        <CraftStage step={step} size="teaser" docLabel={copy.docLabel} photoPrefix={copy.photoPrefix} className="md:col-span-7" />
 
         {/* Mobile: số, tên, mô tả của công đoạn đang chọn */}
         <div className="flex flex-col gap-2 md:hidden">
@@ -122,7 +102,7 @@ export function CraftTeaser({ steps, mode }: CraftTeaserProps) {
                     onClick={() => select(i)}
                     className={`group flex w-full cursor-pointer gap-[18px] border-t border-border-on-dark py-4 text-left ${
                       on
-                        ? 'items-center border-l-[3px] border-l-accent-on-dark bg-[rgba(243,235,221,.06)] pl-[14px] text-text-on-dark'
+                        ? 'items-center border-l-[3px] border-l-accent-on-dark bg-surface-on-dark-hover pl-[14px] text-text-on-dark'
                         : 'items-baseline text-text-on-dark-muted hover:text-text-on-dark'
                     }`}
                   >

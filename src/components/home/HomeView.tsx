@@ -1,5 +1,5 @@
 import type {
-  ArchiveCategory, ArchiveItemView, CraftStepView, HomeMediaView, Mode, PageIntroView, PersonView,
+  ArchiveCategory, ArchiveItemView, CraftStepView, HomeCopyView, HomeMediaView, Mode, PageIntroView, PersonView,
   ProductCardView, ProductView, StoryCardView,
 } from '@/lib/content'
 import { Reveal } from '@/components/ui/Reveal'
@@ -24,19 +24,20 @@ type HomeViewProps = {
   archive: ArchiveItemView[]
   archiveCategories: { key: ArchiveCategory; label: string }[]
   storyHref: string | null
+  copy: HomeCopyView
 }
 
 /** Ghép các section trang chủ theo thứ tự thiết kế. Thuần, không đọc dữ liệu. */
 export function HomeView(p: HomeViewProps) {
   return (
     <>
-      <Hero intro={p.intro} media={p.media} storyHref={p.storyHref} />
+      <Hero intro={p.intro} media={p.media} storyHref={p.storyHref} copy={p.copy} />
       <Reveal><VillageIntro media={p.media} mode={p.mode} /></Reveal>
-      <Reveal><CraftTeaser steps={p.steps} mode={p.mode} /></Reveal>
+      <Reveal><CraftTeaser steps={p.steps} mode={p.mode} copy={p.copy} /></Reveal>
       <Reveal><PeopleTeaser people={p.people} /></Reveal>
       <Reveal><StoriesTeaser stories={p.stories} /></Reveal>
       <Reveal><ProductsTeaser featured={p.featured} products={p.products} mode={p.mode} /></Reveal>
-      <Reveal><ArchiveTeaser items={p.archive} categories={p.archiveCategories} /></Reveal>
+      <Reveal><ArchiveTeaser items={p.archive} categories={p.archiveCategories} docLabel={p.copy.docLabel.mobile} /></Reveal>
       <Reveal><Closing /></Reveal>
     </>
   )

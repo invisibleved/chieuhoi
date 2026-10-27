@@ -4,11 +4,17 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { ArchiveCategory, ArchiveItemView } from '@/lib/content'
 import { ContentImage } from '@/components/content/ContentImage'
+import { ArchiveChip } from '@/components/content/DocumentLabel'
 import { FilterChips } from '@/components/ui/FilterChips'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 
-type ArchiveTeaserProps = { items: ArchiveItemView[]; categories: { key: ArchiveCategory; label: string }[] }
+type ArchiveTeaserProps = {
+  items: ArchiveItemView[]
+  categories: { key: ArchiveCategory; label: string }[]
+  /** Nhãn trước mã tư liệu trên ô ảnh (copy, "TL"). */
+  docLabel: string
+}
 
 type FilterKey = 'all' | ArchiveCategory
 
@@ -24,7 +30,7 @@ const SLOTS = [
   'hidden md:block',
 ] as const
 
-export function ArchiveTeaser({ items, categories }: ArchiveTeaserProps) {
+export function ArchiveTeaser({ items, categories, docLabel }: ArchiveTeaserProps) {
   const [filter, setFilter] = useState<FilterKey>('all')
   if (items.length === 0) return null
   const hasHistory = items.some((i) => i.category === 'history')
@@ -50,14 +56,10 @@ export function ArchiveTeaser({ items, categories }: ArchiveTeaserProps) {
       <div className="grid grid-cols-2 gap-2 md:auto-rows-[280px] md:grid-cols-4 md:gap-4">
         {tiles.map((item, i) => {
           const code = item.image.code as string
-          const cat = item.categoryLabel
           return (
             <Link key={code} href={`/thu-vien?anh=${code}`} className={`relative overflow-hidden ${SLOTS[i]}`}>
               <ContentImage image={item.image} size="card" sizes="(min-width: 768px) 40vw, 100vw" className="h-full" wrapperClassName="h-full" />
-              <span className="absolute top-2 left-2 bg-[rgba(35,42,37,.88)] px-2.5 py-1.5 text-[12px] tracking-[.1em] md:top-3 md:left-3 md:tracking-[.12em]">
-                TL · {item.image.docNumber}
-                {cat ? <span className="hidden md:inline"> · {cat.toLocaleUpperCase('vi')}</span> : null}
-              </span>
+              <ArchiveChip overlay label={docLabel} code={item.image.docNumber as string} category={item.categoryLabel} className="absolute top-2 left-2 md:top-3 md:left-3" />
             </Link>
           )
         })}

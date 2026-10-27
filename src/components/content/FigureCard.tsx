@@ -1,4 +1,5 @@
 import type { ImageView, Variant } from '@/lib/content'
+import { Eyebrow } from '@/components/ui/Eyebrow'
 import { hasVariant, VariantText } from '@/components/ui/VariantText'
 import { ContentImage } from './ContentImage'
 import { ShotNeeded } from './ShotNeeded'
@@ -22,7 +23,9 @@ export function FigureCard({ label, title, caption, image, imageClassName = 'h-[
       ) : (
         <ShotNeeded className={imageClassName} />
       )}
-      <span className="text-[12px] font-semibold tracking-label text-text-muted max-md:hidden">{label}</span>
+      <Eyebrow tone="muted" tracking="label" className="max-md:hidden">
+        {label}
+      </Eyebrow>
       <span className="font-display text-[21px] leading-[1.25] md:text-[28px]">{title}</span>
       {hasVariant(caption) ? (
         <figcaption className="text-[13px] text-text-muted md:text-[15px] md:leading-[1.6] md:text-text-secondary">

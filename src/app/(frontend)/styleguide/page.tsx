@@ -8,6 +8,7 @@ import { ProductCard } from '@/components/content/ProductCard'
 import { FootnoteRef, SourceList } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
+import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { isStyleguideEnabled } from '@/components/styleguide/enabled'
@@ -161,8 +162,8 @@ export default function StyleguidePage() {
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
           <div className="flex min-w-0 flex-col gap-3.5">
             <Lab>NHÃN TƯ LIỆU</Lab>
-            <DocumentLabel code="001" title="In hoa văn lên chiếu bằng khuôn" meta="Ảnh: [tác giả] · Niên đại: [cần xác minh] · Quyền dùng: [cần xác minh]" />
-            <div className="self-start"><ArchiveChip code="021" category="Làng quê" /></div>
+            <DocumentLabel label={docLabel.desktop} code="001" title="In hoa văn lên chiếu bằng khuôn" meta="Ảnh: [tác giả] · Niên đại: [cần xác minh] · Quyền dùng: [cần xác minh]" />
+            <div className="self-start"><ArchiveChip label={docLabel.mobile} code="021" category="Làng quê" /></div>
             <Tok>label/document · label/archive-chip</Tok>
           </div>
           <div className="flex min-w-0 flex-col gap-3.5">

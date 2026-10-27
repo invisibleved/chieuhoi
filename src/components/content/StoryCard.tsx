@@ -50,7 +50,7 @@ export function StoryCard({ story, href, variant, size = 'default', hideCta = fa
     <span className="flex min-w-0 flex-col gap-3">
       {(eyebrowText || status) && (
         <span className="flex flex-wrap items-center gap-2">
-          {eyebrowText && <span className="text-[12px] font-semibold tracking-[.16em] text-text-meta">{eyebrowText}</span>}
+          {eyebrowText && <span className="text-[12px] font-semibold tracking-meta text-text-meta">{eyebrowText}</span>}
           {status && <Tag variant={status === 'Bản nháp' ? 'dashed' : 'filled'}>{status}</Tag>}
         </span>
       )}

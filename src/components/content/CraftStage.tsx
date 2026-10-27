@@ -1,31 +1,54 @@
 import type { ReactNode } from 'react'
-import type { CraftStepView } from '@/lib/content'
+import type { CraftStepView, Variant } from '@/lib/content'
 import { ContentImage } from './ContentImage'
+import { DocumentLabel, DocumentLine } from './DocumentLabel'
 import { ShotNeeded } from './ShotNeeded'
 
 type CraftStageProps = {
   step: CraftStepView
-  zoomed: boolean
-  docLabel: { desktop: string | null; mobile: string | null }
-  /** Tiền tố tác giả ảnh, ví dụ "Ảnh: ". */
+  /** Phóng ảnh quanh điểm nhấn; nơi không có nút phóng (trang chủ) để mặc định false. */
+  zoomed?: boolean
+  /** Nhãn mã tư liệu: desktop "TƯ LIỆU", mobile "TL" (copy). */
+  docLabel: Variant
+  /** Tiền tố tác giả ảnh, ví dụ "Ảnh: " (copy). */
   photoPrefix: string | null
+  /** journey: sân khấu trang Nghề dệt chiếu (có dòng nhãn mobile); teaser: khối công đoạn trang chủ. */
+  size?: 'journey' | 'teaser'
   className?: string
   /** Lớp phủ trong khung (nút phóng trên mobile). */
   children?: ReactNode
 }
 
-// Dòng chú thích: tên công đoạn · Ảnh: tác giả (cùng quy tắc với CraftTeaser).
+const sizes = {
+  journey: {
+    frame: 'h-[300px] md:h-[560px]',
+    sizes: '(min-width: 768px) 50vw, 100vw',
+    labelPos: 'bottom-4 left-4 max-w-[360px]',
+    labelPad: 'gap-[3px] px-3.5 py-2.5',
+    line: true,
+  },
+  teaser: {
+    frame: 'h-[280px] md:h-[520px]',
+    sizes: '(min-width: 768px) 58vw, 100vw',
+    labelPos: 'bottom-5 left-5',
+    labelPad: 'gap-1 px-3.5 py-3',
+    line: false,
+  },
+} as const
+
+// Dòng chú thích: tên công đoạn · Ảnh: tác giả.
 function captionOf(step: CraftStepView, photoPrefix: string | null) {
   return [step.title, step.image?.photographer ? `${photoPrefix ?? ''}${step.image.photographer}` : null].filter(Boolean).join(' · ')
 }
 
 // Sân khấu ảnh của một công đoạn: ảnh phủ khung (phóng quanh điểm nhấn khi zoomed) hoặc khung "ảnh cần chụp".
-export function CraftStage({ step, zoomed, docLabel, photoPrefix, className, children }: CraftStageProps) {
+export function CraftStage({ step, zoomed = false, docLabel, photoPrefix, size = 'journey', className, children }: CraftStageProps) {
+  const s = sizes[size]
   const num = step.image?.docNumber ?? null
   const caption = captionOf(step, photoPrefix)
   return (
-    <figure className={['relative flex flex-col gap-4', className].filter(Boolean).join(' ')}>
-      <div className="relative h-[300px] overflow-hidden bg-bg-deep max-md:-mx-5 md:h-[560px]">
+    <figure className={['relative m-0 flex flex-col gap-4', className].filter(Boolean).join(' ')}>
+      <div className={`relative overflow-hidden bg-bg-deep max-md:-mx-5 ${s.frame}`}>
         {step.image ? (
           <div
             data-testid="stage-zoom"
@@ -35,7 +58,7 @@ export function CraftStage({ step, zoomed, docLabel, photoPrefix, className, chi
             <ContentImage
               image={step.image}
               size="full"
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes={s.sizes}
               className="h-full"
               wrapperClassName="h-full"
               objectPosition={`${step.focus[0]}% ${step.focus[1]}%`}
@@ -47,16 +70,11 @@ export function CraftStage({ step, zoomed, docLabel, photoPrefix, className, chi
         {children}
       </div>
       {step.image ? (
-        <figcaption className="absolute bottom-4 left-4 hidden max-w-[360px] flex-col gap-[3px] bg-bg-primary px-3.5 py-2.5 text-[13px] leading-[1.45] text-text-primary md:flex">
-          {num && docLabel.desktop ? <span className="text-[12px] font-semibold tracking-label text-text-muted">{`${docLabel.desktop} · ${num}`}</span> : null}
-          {caption}
+        <figcaption className={`absolute hidden md:block ${s.labelPos}`}>
+          <DocumentLabel variant="overlay" size="sm" label={docLabel.desktop} code={num} title={caption} className={s.labelPad} />
         </figcaption>
       ) : null}
-      {step.image ? (
-        <p className="-mt-1.5 text-[12px] tracking-[.14em] text-text-on-dark-muted md:hidden">
-          {[num && docLabel.mobile ? `${docLabel.mobile} · ${num}` : null, caption].filter(Boolean).join(' · ')}
-        </p>
-      ) : null}
+      {step.image && s.line ? <DocumentLine tone="dark" label={docLabel.mobile} code={num} caption={caption} className="-mt-1.5 md:hidden" /> : null}
     </figure>
   )
 }

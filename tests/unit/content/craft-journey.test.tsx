@@ -38,7 +38,9 @@ const strip = () => within(screen.getByRole('group', { name: 'Chọn công đo�
 
 describe('CraftJourney', () => {
   beforeEach(() => {
+    // Dải phải tự cuộn (scrollTo), không gọi scrollIntoView làm trang nhảy dọc.
     Element.prototype.scrollIntoView = vi.fn()
+    Element.prototype.scrollTo = vi.fn() as unknown as typeof Element.prototype.scrollTo
   })
   afterEach(cleanup)
 
@@ -67,6 +69,22 @@ describe('CraftJourney', () => {
     }
   })
 
+  it('công đoạn không ảnh (bản công khai): ShotNeeded hiện, mọi nút phóng aria-disabled, không có nhãn tư liệu', () => {
+    const pub = [step(1, { image: null, shotNeeded: 'Túm cói', toRecord: null })]
+    const { container } = render(<CraftJourney steps={pub} copy={journeyPublic} />)
+    expect(screen.getByRole('img', { name: 'Ảnh cần chụp: Túm cói' })).toBeTruthy()
+    expect(screen.queryByTestId('stage-zoom')).toBeNull()
+    const zooms = screen.getAllByRole('button', { name: 'Xem cận cảnh' })
+    expect(zooms).toHaveLength(2)
+    for (const z of zooms) expect(z.getAttribute('aria-disabled')).toBe('true')
+    expect(container.textContent).not.toContain('TƯ LIỆU')
+  })
+
+  it('h2 dùng token text-h2-section', () => {
+    render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    expect(screen.getByRole('heading', { level: 2 }).className).toContain('text-h2-section')
+  })
+
   it('phóng ảnh: scale(1.9) quanh điểm nhấn, đổi công đoạn thì thu lại', () => {
     render(<CraftJourney steps={steps} copy={journeyPreview} />)
     fireEvent.click(rail().getByRole('button', { name: /^05/ }))
@@ -81,10 +99,24 @@ describe('CraftJourney', () => {
     for (const z of screen.getAllByRole('button', { name: 'Xem cận cảnh' })) expect(z.getAttribute('aria-pressed')).toBe('false')
   })
 
-  it('chọn qua dải mobile cuộn nút vào giữa', () => {
+  it('chọn qua dải mobile: cuộn chính dải cho nút vào giữa, không scrollIntoView', () => {
     render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    const group = screen.getByRole('group', { name: 'Chọn công đoạn' })
     fireEvent.click(strip().getByRole('button', { name: '04 Ngắn 4' }))
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ inline: 'center' }))
+    expect(Element.prototype.scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))
+    expect(vi.mocked(Element.prototype.scrollTo).mock.contexts[0]).toBe(group)
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled()
+    // Nút Trước/Tiếp cũng chỉ cuộn dải.
+    fireEvent.click(screen.getByRole('button', { name: 'Công đoạn tiếp' }))
+    expect(vi.mocked(Element.prototype.scrollTo).mock.contexts.every((c) => c === group)).toBe(true)
+    expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled()
+  })
+
+  it('pill căn giữa khi snap (snap-center, không snap-start)', () => {
+    render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    const pill = strip().getByRole('button', { name: '01 Ngắn 1' })
+    expect(pill.className).toContain('snap-center')
+    expect(pill.className).not.toContain('snap-start')
   })
 
   it('khối "CẦN GHI LẠI" chỉ khi có toRecord và copy.preview', () => {
@@ -105,13 +137,13 @@ describe('CraftJourney', () => {
     expect(empty.container.innerHTML).toBe('')
   })
 
-  it('giảm chuyển động: scrollIntoView dùng behavior auto', () => {
+  it('giảm chuyển động: dải cuộn với behavior auto', () => {
     const mm = vi.fn().mockReturnValue({ matches: true })
     vi.stubGlobal('matchMedia', mm)
     window.matchMedia = mm as unknown as typeof window.matchMedia
     render(<CraftJourney steps={steps} copy={journeyPreview} />)
     fireEvent.click(strip().getByRole('button', { name: '02 Ngắn 2' }))
-    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
+    expect(Element.prototype.scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
     vi.unstubAllGlobals()
   })
 

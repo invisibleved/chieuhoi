@@ -5,7 +5,7 @@ import type { CraftPageView, CraftStepView } from '@/lib/content'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { PagerButton } from '@/components/ui/PagerButton'
 import { PillButton } from '@/components/ui/PillButton'
-import { ScrollStrip } from '@/components/ui/ScrollStrip'
+import { centreInStrip, ScrollStrip } from '@/components/ui/ScrollStrip'
 import { StepProgress } from '@/components/ui/StepProgress'
 import { CraftStage } from './CraftStage'
 
@@ -55,12 +55,11 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
   const step = steps[current]
   const noImage = !step.image
 
-  // Đổi công đoạn: thu ảnh về cỡ thường; cuộn nút được chọn vào giữa dải (chỉ trong handler).
+  // Đổi công đoạn: thu ảnh về cỡ thường; cuộn dải để nút được chọn vào giữa (chỉ trong handler, trang không nhảy).
   const select = (i: number) => {
     setIndex(i)
     setZoomed(false)
-    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    pills.current[i]?.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: reduce ? 'auto' : 'smooth' })
+    centreInStrip(pills.current[i])
   }
 
   const zoomLabelDesktop = zoomed ? copy.zoomOff.desktop : copy.zoomOn
@@ -74,7 +73,7 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
           <Eyebrow as="p" tone="dark">
             {copy.eyebrow}
           </Eyebrow>
-          <h2 id={headingId} className="font-display text-[52px] leading-[1.1] font-normal max-md:sr-only">
+          <h2 id={headingId} className="font-display text-h2-section leading-[1.1] font-normal max-md:sr-only">
             {copy.title}
           </h2>
         </div>
@@ -94,8 +93,8 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
                   onClick={() => select(i)}
                   className={`flex min-h-[52px] w-full cursor-pointer items-baseline gap-4 px-3 py-3.5 text-left transition-colors motion-reduce:transition-none ${
                     on
-                      ? 'bg-[rgba(243,235,221,.08)] text-[17px] font-semibold text-text-on-dark shadow-[inset_3px_0_0_var(--accent-on-dark)]'
-                      : 'text-[16px] text-text-on-dark-muted hover:bg-[rgba(243,235,221,.06)]'
+                      ? 'bg-surface-on-dark-active text-[17px] font-semibold text-text-on-dark shadow-[inset_3px_0_0_var(--accent-on-dark)]'
+                      : 'text-[16px] text-text-on-dark-muted hover:bg-surface-on-dark-hover'
                   }`}
                 >
                   <span className={`w-6 text-[13px] ${on ? 'text-accent-on-dark' : ''}`}>{pad(s.n)}</span>

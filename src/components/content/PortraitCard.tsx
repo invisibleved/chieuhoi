@@ -40,7 +40,7 @@ export function PortraitCard({ person, href, size = 'lg', cta = 'Xem chân dung 
         )}
       </span>
       {person.category && (
-        <span className={`text-[12px] font-semibold text-text-meta ${lg ? 'tracking-[.16em]' : 'tracking-[.1em]'}`}>
+        <span className={`text-[12px] font-semibold text-text-meta ${lg ? 'tracking-meta' : 'tracking-[.1em]'}`}>
           {person.category.toLocaleUpperCase('vi')}
         </span>
       )}

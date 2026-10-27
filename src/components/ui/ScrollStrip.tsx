@@ -24,3 +24,17 @@ export function ScrollStrip({ children, label, as: Tag = 'div', focusable = fals
     </Tag>
   )
 }
+
+/**
+ * Cuộn ngang chính dải chứa `item` để item nằm giữa dải. Chỉ cuộn dải, không cuộn trang
+ * (scrollIntoView làm trang nhảy dọc). Giảm chuyển động thì cuộn ngay.
+ */
+export function centreInStrip(item: HTMLElement | null | undefined) {
+  const strip = item?.parentElement
+  if (!item || !strip || typeof strip.scrollTo !== 'function') return
+  const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const s = strip.getBoundingClientRect()
+  const r = item.getBoundingClientRect()
+  const left = strip.scrollLeft + (r.left - s.left) - (strip.clientWidth - r.width) / 2
+  strip.scrollTo({ left: Math.max(0, left), behavior: reduce ? 'auto' : 'smooth' })
+}

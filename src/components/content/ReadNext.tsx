@@ -27,7 +27,7 @@ export function ReadNext({ items, eyebrow }: ReadNextProps) {
               {it.image ? (
                 <ContentImage image={{ ...it.image, alt: '' }} size="card" sizes="(min-width: 768px) 30vw, 0px" className="block h-[260px] max-md:hidden" wrapperClassName="max-md:hidden" />
               ) : null}
-              <span className="font-sans text-[12px] font-semibold tracking-[.16em] text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
+              <span className="font-sans text-[12px] font-semibold tracking-meta text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
               <span className="group-hover:text-accent">{it.title}</span>
               <span className="font-sans text-[15px] font-medium text-accent max-md:hidden">{it.cta}</span>
               <span aria-hidden="true" className="font-sans text-accent md:hidden">→</span>

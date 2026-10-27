@@ -1,6 +1,7 @@
 // Chữ cố định của /nghe-det-chieu, chép nguyên văn từ CraftPage.dc.html và CraftMobile.dc.html.
 // Nhánh `preview` là ghi chú quy trình, chỉ hiện ở bản xem trước (R4).
 import type { ApplyMode } from './applyMode'
+import { docLabel, photoPrefix } from './docLabel'
 
 export const craftCopy = {
   breadcrumb: { label: 'Đường dẫn', home: 'Trang chủ', current: 'Nghề dệt chiếu' },
@@ -19,9 +20,8 @@ export const craftCopy = {
     progressLabel: 'Tiến trình hành trình',
     listLabel: 'Các công đoạn',
     railLabel: 'Chọn công đoạn',
-    noImage: 'ẢNH CẦN CHỤP',
-    docLabel: { desktop: 'TƯ LIỆU', mobile: 'TL' },
-    photoPrefix: 'Ảnh: ',
+    docLabel,
+    photoPrefix,
     prev: 'Trước',
     next: 'Tiếp',
     prevAria: 'Công đoạn trước',

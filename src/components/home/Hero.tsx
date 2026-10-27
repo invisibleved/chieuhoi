@@ -1,10 +1,10 @@
-import type { HomeMediaView, PageIntroView } from '@/lib/content'
+import type { HomeCopyView, HomeMediaView, PageIntroView } from '@/lib/content'
 import { Button } from '@/components/ui/Button'
 import { ContentImage } from '@/components/content/ContentImage'
 import { DocumentLabel } from '@/components/content/DocumentLabel'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 
-type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string | null }
+type HeroProps = { intro: PageIntroView; media: HomeMediaView; storyHref: string | null; copy: HomeCopyView }
 
 // Tiêu đề hero: tách theo \n, dòng cuối nghiêng màu accent.
 function HeroTitle({ intro }: { intro: PageIntroView }) {
@@ -30,7 +30,7 @@ function HeroTitle({ intro }: { intro: PageIntroView }) {
   )
 }
 
-export function Hero({ intro, media, storyHref }: HeroProps) {
+export function Hero({ intro, media, storyHref, copy }: HeroProps) {
   const { hero, heroInset } = media
   const num = hero?.image.docNumber ?? null
   const hasLabel = hero !== null && (num !== null || !!hero.title || !!hero.caption)
@@ -69,20 +69,22 @@ export function Hero({ intro, media, storyHref }: HeroProps) {
           />
           {hasLabel ? (
           <figcaption className="absolute right-3 bottom-3 left-3 md:right-6 md:bottom-6 md:left-auto md:w-[280px]">
-            <div className="hidden md:block">
-              <DocumentLabel
-                code={num}
-                title={hero.title ?? ''}
-                meta={hero.caption}
-                className="border-0! bg-bg-primary!"
-              />
-            </div>
-            <div className="flex flex-col gap-[3px] bg-bg-primary px-3 py-2.5 md:hidden">
-              {num ? <span className="text-[12px] font-semibold tracking-[.18em] text-text-muted">{`TƯ LIỆU · ${num}`}</span> : null}
-              <span className="text-[13px] leading-[1.45]">
-                {[hero.title, hero.caption].filter(Boolean).join(' · ')}
-              </span>
-            </div>
+            <DocumentLabel
+              variant="overlay"
+              label={copy.docLabel.desktop}
+              code={num}
+              title={hero.title}
+              meta={hero.caption}
+              className="gap-1.5 px-4 py-3.5 max-md:hidden"
+            />
+            <DocumentLabel
+              variant="overlay"
+              size="sm"
+              label={copy.docLabel.desktop}
+              code={num}
+              title={[hero.title, hero.caption].filter(Boolean).join(' · ')}
+              className="gap-[3px] px-3 py-2.5 md:hidden"
+            />
           </figcaption>
           ) : null}
           {heroInset ? (

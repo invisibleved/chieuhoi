@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { Variant, VillagePageView } from '@/lib/content'
 import { ConfidenceLegend } from '@/components/content/Confidence'
 import { ContentImage } from '@/components/content/ContentImage'
-import { DocumentLabel } from '@/components/content/DocumentLabel'
+import { DocumentLabel, DocumentLine } from '@/components/content/DocumentLabel'
 import { PageHeader } from '@/components/content/PageHeader'
 import { Cite, SourceList, sourceNumbers } from '@/components/content/Sources'
 import { Timeline } from '@/components/content/Timeline'
@@ -87,10 +87,15 @@ export function VillageView({ page }: { page: VillagePageView }) {
           <ContentImage image={hero.image} size="full" sizes="100vw" priority className="block h-[260px] md:h-[640px]" />
           {heroDoc || hero.caption ? (
             <>
-              <DocumentLabel code={heroDoc} title={hero.caption ?? ''} size="sm" className="absolute right-20 bottom-6 max-w-[340px] max-md:hidden" />
-              <figcaption className="px-5 text-[12px] tracking-[.1em] text-text-muted md:hidden">
-                {[heroDoc && copy.hero.docLabel.mobile ? `${copy.hero.docLabel.mobile} · ${heroDoc}` : null, hero.caption].filter(Boolean).join(' · ')}
-              </figcaption>
+              <DocumentLabel
+                variant="overlay"
+                size="sm"
+                label={copy.hero.docLabel.desktop}
+                code={heroDoc}
+                title={hero.caption}
+                className="absolute right-20 bottom-6 max-w-[340px] gap-[3px] px-4 py-3 max-md:hidden"
+              />
+              <DocumentLine as="figcaption" label={copy.hero.docLabel.mobile} code={heroDoc} caption={hero.caption} className="px-5 md:hidden" />
             </>
           ) : null}
         </figure>
@@ -198,7 +203,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
           ) : null}
           {heritage.link.href && heritage.link.label ? (
             <LinkArrow href={heritage.link.href} className="self-start">
-              {heritage.link.label.replace(/\s*→$/, '')}
+              {heritage.link.label}
             </LinkArrow>
           ) : null}
         </div>
@@ -222,7 +227,7 @@ function LifeSection({ life, copy }: { life: VillagePageView['life']; copy: Vill
     <section aria-labelledby="life-h" className="hidden grid-cols-12 gap-x-6 gap-y-8 px-20 py-[120px] md:grid">
       <div className="col-span-12 flex items-end justify-between gap-10">
         <SectionHeading id="life-h" size="section" eyebrow={copy.eyebrow.desktop ?? undefined} title={copy.title.desktop} />
-        {copy.link.label.desktop && copy.link.href ? <LinkArrow href={copy.link.href}>{copy.link.label.desktop.replace(/\s*→$/, '')}</LinkArrow> : null}
+        {copy.link.label.desktop && copy.link.href ? <LinkArrow href={copy.link.href}>{copy.link.label.desktop}</LinkArrow> : null}
       </div>
       <div className="col-span-7">{fig(main, 'h-[460px]', '58vw')}</div>
       {rest.length > 0 ? (

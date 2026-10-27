@@ -10,13 +10,14 @@ const tones = {
   dark: { on: 'bg-bg-primary font-semibold text-bg-inverse', off: 'border border-border-on-dark-strong text-text-on-dark' },
 } as const
 
-// Nút chọn dạng viên trong dải cuộn (chọn công đoạn). ref và aria-current truyền qua props như nút thường.
+// Nút chọn dạng viên trong dải cuộn (chọn công đoạn). snap-center để khớp với việc cuộn nút đang chọn vào giữa dải.
+// ref và aria-current truyền qua props như nút thường.
 export function PillButton({ active, tone = 'light', children, ...rest }: PillButtonProps) {
   return (
     <button
       type="button"
       {...rest}
-      className={`inline-flex min-h-11 shrink-0 snap-start cursor-pointer items-center px-4 text-[14px] whitespace-nowrap ${
+      className={`inline-flex min-h-11 shrink-0 snap-center cursor-pointer items-center px-4 text-[14px] whitespace-nowrap ${
         active ? tones[tone].on : tones[tone].off
       }`}
     >
