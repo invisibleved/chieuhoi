@@ -127,6 +127,27 @@ describe('lib/content', () => {
     expect((await content.getProduct('pq', 'public'))?.primaryImage).not.toBeNull()
   })
 
+  it('sản phẩm: hasPattern cần ảnh đầu và chú thích; groupLabel lấy từ option', async () => {
+    const a = await asset()
+    await create('products', pub({
+      slug: 'hp', name: 'Chiếu', workflow: 'published', group: 'traditional', images: [a.id],
+      annotations: [{ n: 1, title: 'Viền', x: 10, y: 20, body: 'Phần viền.' }],
+    }))
+    await create('products', pub({ slug: 'np', name: 'Chiếu 2', workflow: 'published', images: [a.id] }))
+    const withPattern = await content.getProduct('hp', 'public')
+    expect(withPattern?.hasPattern).toBe(true)
+    expect(withPattern?.groupLabel).toBe('Chiếu cói truyền thống')
+    const without = await content.getProduct('np', 'public')
+    expect(without?.hasPattern).toBe(false)
+    expect(without?.groupLabel).toBeNull()
+  })
+
+  it('thư viện: categoryLabel và eraLabel lấy từ option', async () => {
+    await asset({ code: 'L-1', inArchive: true, category: 'history', era: 'now' })
+    const by = Object.fromEntries((await content.getArchive('public')).map((i) => [i.image.code, i]))
+    expect(by['L-1']).toMatchObject({ categoryLabel: 'Tư liệu lịch sử', eraLabel: 'Nay' })
+  })
+
   it('thư viện chỉ lấy inArchive và ảnh được phép', async () => {
     const k = { category: 'village', era: 'old' }
     await asset({ code: 'A-1', inArchive: true, ...k })
@@ -151,7 +172,7 @@ describe('lib/content', () => {
   it('nguồn có tiêu đề chưa xác minh bị bỏ khỏi public, còn ở preview', async () => {
     await create('sources', { sourceId: 's-ok', title: 'Báo A' })
     await create('sources', { sourceId: 's-bad', title: '[cần xác minh] Báo' })
-    expect((await content.getSources()).map((s) => s.id)).toEqual(['s-ok'])
+    expect((await content.getSources('public')).map((s) => s.id)).toEqual(['s-ok'])
     expect((await content.getSources('preview')).map((s) => s.id).sort()).toEqual(['s-bad', 's-ok'])
   })
 
@@ -244,7 +265,7 @@ describe('lib/content', () => {
 
   it('nguồn: trường chưa xác minh bị ẩn ở public', async () => {
     await create('sources', { sourceId: 's-x', title: 'Báo', publisher: '[cần xác minh]', url: '' })
-    const [s] = await content.getSources()
+    const [s] = await content.getSources('public')
     expect(s.publisher).toBeNull()
     expect(s.url).toBeNull()
     expect(s.title).toBe('Báo')

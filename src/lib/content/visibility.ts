@@ -21,6 +21,12 @@ export function showText(v: string | null | undefined, mode: Mode): string | nul
   return v === null || v === undefined || v.trim() === '' ? UNVERIFIED : v
 }
 
+/** Mã tư liệu chỉ hiện khi dạng TL-<số>; trả về phần số. */
+export function docNumber(code: string | null | undefined): string | null {
+  const m = code?.match(/^TL-(\d+)$/)
+  return m ? m[1] : null
+}
+
 const addFlag = (flags: Flag[], f: Flag) => {
   if (!flags.includes(f)) flags.push(f)
 }
@@ -43,6 +49,7 @@ export function toImageView(
     if (u) sizes[k] = u
   }
 
+  const code = showText(asset.code, mode)
   return {
     url: asset.url ?? '',
     // Ảnh bắt buộc có alt; nếu alt chưa xác minh ở public thì để '' (ảnh trang trí).
@@ -51,7 +58,8 @@ export function toImageView(
     height: asset.height ?? 0,
     sizes,
     photographer: showText(asset.photographer, mode),
-    code: showText(asset.code, mode),
+    code,
+    docNumber: docNumber(code),
     flags,
   }
 }

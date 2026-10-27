@@ -33,7 +33,7 @@ describe('PortraitCard', () => {
 
 const img = (flags: ImageView['flags']): ImageView => ({
   url: '/api/archive-assets/file/a.webp', alt: 'Ảnh thử', width: 800, height: 600,
-  sizes: {}, photographer: null, code: null, flags,
+  sizes: {}, photographer: null, code: null, docNumber: null, flags,
 })
 
 describe('ContentImage', () => {

@@ -1,3 +1,8 @@
+import type { ArchiveAsset } from '@/payload-types'
+
+import type { CraftCopyView } from './copy/craft'
+import type { VillageCopyView } from './copy/village'
+
 export type Mode = 'public' | 'preview'
 export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified' | 'idea'
 
@@ -9,6 +14,8 @@ export interface ImageView {
   sizes: Partial<Record<'thumb' | 'card' | 'wide' | 'full', string>>
   photographer: string | null
   code: string | null
+  /** Phần số của mã `TL-<số>`; null khi mã không đúng dạng đó. */
+  docNumber: string | null
   flags: Flag[]
 }
 
@@ -31,21 +38,31 @@ export interface SourceView {
   date: string | null
 }
 
+export type Confidence = 'press' | 'oral' | 'pending'
+
 export interface TimelineEventView {
   label: string | null
   title: string | null
   body: string | null
-  confidence: 'press' | 'oral' | 'pending' | null
+  /** Thiếu mức tin cậy thì coi là 'pending'. */
+  confidence: Confidence
   sourceIds: string[]
+  /** "Nhà xuất bản (dd/mm/yyyy); …" ghép từ các nguồn nhìn thấy được; null khi không còn nguồn nào. */
+  sourceLine: string | null
+  /** Liên kết nội bộ của dòng nguồn (chỉ mốc tĩnh "Mốc của bạn" có). */
+  sourceHref: string | null
   flags: Flag[]
 }
 
 export interface CraftStepView {
   n: number
   title: string | null
+  shortTitle: string | null
   subtitle: string | null
   body: string | null
   tools: string | null
+  /** Việc biên tập cần ghi lại thêm: luôn null ở public. */
+  toRecord: string | null
   image: ImageView | null
   shotNeeded: string | null
   focus: [number, number]
@@ -57,6 +74,7 @@ export interface ProductCardView {
   code: string | null
   name: string | null
   group: 'traditional' | 'contemporary' | null
+  groupLabel: string | null
   summary: string | null
   image: ImageView | null
   typeConfirmed: boolean
@@ -67,6 +85,8 @@ export interface ProductView extends ProductCardView {
   images: ImageView[]
   /** Ảnh CMS đầu tiên (nơi các điểm annotation đặt toạ độ); null khi ảnh đó chưa được dùng ở mode hiện tại. */
   primaryImage: ImageView | null
+  /** Đủ ảnh đầu tiên và ít nhất một chú thích để dựng khối hoa văn. */
+  hasPattern: boolean
   material: string | null
   technique: string | null
   size: string | null
@@ -99,12 +119,17 @@ export interface PersonDetailView extends PersonView {
   story: unknown | null
 }
 
+/** Giá trị chủ đề ảnh tư liệu, lấy từ kiểu Payload (nguồn là ARCHIVE_CATEGORY_OPTIONS). */
+export type ArchiveCategory = NonNullable<ArchiveAsset['category']>
+
 export interface ArchiveItemView {
   image: ImageView
   title: string | null
   description: string | null
-  category: string | null
-  era: 'old' | 'now' | null
+  category: ArchiveCategory | null
+  categoryLabel: string | null
+  era: NonNullable<ArchiveAsset['era']> | null
+  eraLabel: string | null
   related: { label: string; href: string } | null
   flags: Flag[]
 }
@@ -132,3 +157,44 @@ export interface PageIntroView {
   lead: string | null
   heroTitle: string | null
 }
+
+export type MediaView = { image: ImageView; caption: string | null }
+export type Variant = { desktop: string | null; mobile: string | null }
+
+export interface CraftPageView {
+  /** title giữ nguyên '\n' */
+  intro: PageIntroView
+  hero: MediaView | null
+  steps: CraftStepView[]
+  tools: { n: number; name: string; note: Variant; image: ImageView | null }[]
+  compare: {
+    hand: { title: string; image: ImageView | null; text: Variant; note: Variant }
+    machine: { title: string; image: ImageView | null; text: Variant; note: Variant }
+    /** Ô desktop bị ẩn để null; hàng cả hai ô null đã bị bỏ. `mobile`: các dòng mobile còn hiện được. */
+    rows: {
+      aspect: string
+      hand: string | null
+      machine: string | null
+      mobile: string[]
+      /** Ô/dòng còn chờ xác minh (hiện mờ ở preview); `mobile` song song với `mobile` ở trên. */
+      muted: { hand: boolean; machine: boolean; mobile: boolean[] }
+    }[]
+  }
+  readNext: { href: string; eyebrow: string; title: string; cta: string; image: ImageView | null }[]
+  copy: CraftCopyView
+}
+
+export interface VillagePageView {
+  intro: PageIntroView
+  hero: MediaView | null
+  /** Mục có nguồn mà mọi nguồn bị ẩn thì bị bỏ ở public. */
+  facts: { term: string; detail: Variant; note: Variant; cite: string[] }[]
+  /** Mốc từ CMS, mốc tĩnh '+' ở cuối. */
+  timeline: TimelineEventView[]
+  life: MediaView[]
+  /** Nguồn mà trang trích, theo thứ tự đánh số [1][2][3], đã lọc theo mode. */
+  sources: SourceView[]
+  copy: VillageCopyView
+}
+
+export type { CraftCopyView, VillageCopyView }

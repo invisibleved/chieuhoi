@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { ArchiveAsset, Person } from '@/payload-types'
 import { isAssetPubliclyAllowed } from '@/access/assetRules'
-import { isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
+import { docNumber, isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
 
 const asset = (over: Partial<ArchiveAsset> = {}): ArchiveAsset =>
   ({
@@ -195,5 +195,18 @@ describe('toPersonView', () => {
     expect(v.name).toBeNull()
     expect(v.portrait?.alt).toBe('')
     expect(toPersonView(person({ portrait: a }), 'public').portrait?.alt).toBe('Chân dung bà Nguyễn Thị A')
+  })
+})
+
+describe('docNumber', () => {
+  it('lấy phần số của mã TL-<số>, mã khác trả null', () => {
+    expect(docNumber('TL-002')).toBe('002')
+    expect(docNumber('XX-1')).toBeNull()
+    expect(docNumber('[cần xác minh]')).toBeNull()
+    expect(docNumber(null)).toBeNull()
+  })
+  it('toImageView điền docNumber từ code đã lọc', () => {
+    expect(toImageView(asset({ code: 'TL-007' }), 'public')?.docNumber).toBe('007')
+    expect(toImageView(asset({ code: '[cần xác minh]' }), 'public')?.docNumber).toBeNull()
   })
 })

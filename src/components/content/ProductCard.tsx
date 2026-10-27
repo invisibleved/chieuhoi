@@ -22,7 +22,7 @@ export function ProductCard({ product, href }: ProductCardProps) {
         />
       )}
       <span className="flex items-center justify-between gap-2 border-t border-border-strong pt-1">
-        <span className="text-[12px] font-semibold tracking-[.2em] text-text-muted-alt">{product.code}</span>
+        <span className="text-[12px] font-semibold tracking-label text-text-muted-alt">{product.code}</span>
         {tag && <Tag variant={tag.style}>{tag.text}</Tag>}
       </span>
       {product.name && (

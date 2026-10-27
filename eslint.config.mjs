@@ -24,6 +24,52 @@ const eslintConfig = [
     },
   },
   {
+    files: ['src/components/**'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'payload', message: 'Component không gọi Payload. Xem CLAUDE.md#Kiến trúc.' },
+            { name: '@payload-config', message: 'Component không gọi Payload. Xem CLAUDE.md#Kiến trúc.' },
+            {
+              name: '@/lib/content',
+              allowTypeImports: true,
+              message: 'Component chỉ được `import type` từ @/lib/content; dữ liệu do app (page/layout) truyền xuống. Xem CLAUDE.md#Kiến trúc.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/collections/*', '@/globals/*', '@/access/*', '@/seed/*'],
+              message: 'Component không import tầng dữ liệu Payload. Xem CLAUDE.md#Kiến trúc.',
+            },
+            {
+              group: ['@/lib/content/*'],
+              allowTypeImports: true,
+              message: 'Component chỉ được `import type` từ @/lib/content. Xem CLAUDE.md#Kiến trúc.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/lib/**', 'src/collections/**', 'src/globals/**', 'src/access/**'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/components/*', '@/app/*'],
+              message: 'Tầng dữ liệu không import ngược lên components/app. Xem CLAUDE.md#Kiến trúc.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts', 'src/migrations/'],
   },
 ]

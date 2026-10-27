@@ -1,8 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { mkdirSync } from 'node:fs'
+import { SHOTS, shootFullPage, smallTargets, VIEWPORTS } from './helpers'
 
-const SHOTS = process.env.SHOTS_DIR
 const H2 = [
   'Có một làng Hới...',
   'Một tấm chiếu, muôn công đoạn.',
@@ -83,16 +82,7 @@ test.describe('trang chủ mobile 390', () => {
   test('không cuộn ngang, nút và link ≥ 44px', async ({ page }) => {
     await open(page)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
-    const small = await page.evaluate(() => {
-      const out: string[] = []
-      document.querySelectorAll('main a, main button').forEach((el) => {
-        if (el.matches('.fn, [id^="nguon-"] a') || el.closest('p') && el.tagName === 'A') return
-        const r = el.getBoundingClientRect()
-        if (r.width === 0 || r.height === 0) return
-        if (r.height < 44 - 0.5) out.push(`${el.tagName} "${(el.textContent ?? '').trim().slice(0, 30)}" h=${r.height}`)
-      })
-      return out
-    })
+    const small = await smallTargets(page)
     expect(small).toEqual([])
   })
 
@@ -102,31 +92,10 @@ test.describe('trang chủ mobile 390', () => {
   })
 })
 
-for (const vp of [
-  { name: '1440', width: 1440, height: 900 },
-  { name: '390', width: 390, height: 844 },
-]) {
+for (const vp of VIEWPORTS) {
   test(`chụp toàn trang chủ ${vp.name}`, async ({ page }) => {
     test.skip(!SHOTS, 'đặt SHOTS_DIR để lưu ảnh chụp')
     test.setTimeout(120_000)
-    await page.setViewportSize({ width: vp.width, height: vp.height })
-    mkdirSync(SHOTS!, { recursive: true })
-    const email = process.env.SEED_REVIEWER_EMAIL
-    const password = process.env.SEED_REVIEWER_PASSWORD
-    if (email && password) {
-      const res = await page.request.post('/api/users/login', { data: { email, password } })
-      expect(res.ok()).toBeTruthy()
-    }
-    await open(page)
-    // Cuộn hết trang để ảnh lazy tải xong.
-    await page.evaluate(async () => {
-      for (let y = 0; y < document.body.scrollHeight; y += 600) {
-        window.scrollTo(0, y)
-        await new Promise((r) => setTimeout(r, 120))
-      }
-      window.scrollTo(0, 0)
-    })
-    await page.waitForLoadState('networkidle')
-    await page.screenshot({ path: `${SHOTS}/home-${vp.name}.png`, fullPage: true })
+    await shootFullPage(page, open, 'home', vp)
   })
 }

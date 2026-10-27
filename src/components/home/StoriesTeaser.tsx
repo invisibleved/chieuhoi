@@ -1,6 +1,8 @@
 import type { StoryCardView } from '@/lib/content'
 import { StoryCard } from '@/components/content/StoryCard'
 import { LinkArrow } from '@/components/ui/LinkArrow'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 
 type StoriesTeaserProps = { stories: StoryCardView[] }
 
@@ -17,11 +19,11 @@ export function StoriesTeaser({ stories }: StoriesTeaserProps) {
   const NOTE = 'Chủ đề biên tập đề xuất — bài viết chưa được soạn.'
   return (
     <>
-      <div aria-hidden="true" className="threads mx-5 h-[14px] md:mx-20" />
+      <ThreadsDivider size="lg" className="mx-5 md:mx-20" />
       <section className="flex flex-col gap-5 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-14 md:px-20 md:pt-[120px] md:pb-32">
         <div className="flex flex-col gap-5 md:col-span-12 md:flex-row md:items-end md:justify-between md:gap-10">
           <div className="flex flex-col gap-5 md:gap-[18px]">
-            <span className="text-eyebrow font-semibold tracking-[.22em] text-accent md:tracking-[.24em]">CÂU CHUYỆN</span>
+            <Eyebrow>CÂU CHUYỆN</Eyebrow>
             <h2 className="font-display text-h2 leading-[1.15] font-normal md:leading-[1.1]">Chuyện làng, kể chậm.</h2>
           </div>
           <LinkArrow href="/cau-chuyen" className="max-md:hidden md:inline-flex">

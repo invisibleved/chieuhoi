@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { HomeView } from '@/components/home/HomeView'
+import { homeCopy } from '@/lib/content/copy/home'
 import type { ArchiveItemView, CraftStepView, HomeMediaView, PageIntroView, PersonView, ProductCardView, StoryCardView } from '@/lib/content'
 
 const intro: PageIntroView = {
@@ -10,7 +11,7 @@ const intro: PageIntroView = {
   lead: 'Khám phá làng Hới.',
 }
 const media: HomeMediaView = { hero: null, heroInset: null, village: [] }
-const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], storyHref: null }
+const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], archiveCategories: [], storyHref: null, copy: homeCopy }
 
 vi.stubGlobal('IntersectionObserver', undefined)
 
@@ -25,13 +26,13 @@ describe('HomeView', () => {
     expect(container.textContent!.toLowerCase()).not.toContain('cần xác minh')
   })
   it('dữ liệu kiểu public: không chuỗi xác minh, link bài chỉ tới bài có chi tiết', () => {
-    const step: CraftStepView = { n: 1, title: 'Chọn cói', subtitle: null, body: null, tools: null, image: null, shotNeeded: null, focus: [50, 50], flags: [] }
+    const step: CraftStepView = { n: 1, title: 'Chọn cói', shortTitle: null, subtitle: null, body: null, tools: null, toRecord: null, image: null, shotNeeded: null, focus: [50, 50], flags: [] }
     const person: PersonView = { slug: 'a', category: 'Nghệ nhân', role: null, name: 'Tên a', portrait: null, quote: null, consentPending: false, flags: [] }
     const story = (slug: string, hasDetail: boolean): StoryCardView => ({ slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail, flags: [] })
     const product: ProductCardView = { slug: 'p', code: null, name: 'Chiếu', category: null, image: null, flags: [] } as unknown as ProductCardView
     const archive: ArchiveItemView = {
-      image: { url: '/images/reference/a.webp', alt: 'Ảnh', width: 800, height: 600, sizes: {}, photographer: null, code: 'TL-001', flags: [] },
-      title: null, description: null, category: 'village', era: null, related: null, flags: [],
+      image: { url: '/images/reference/a.webp', alt: 'Ảnh', width: 800, height: 600, sizes: {}, photographer: null, code: 'TL-001', docNumber: '001', flags: [] },
+      title: null, description: null, category: 'village', categoryLabel: 'Làng quê', era: null, eraLabel: null, related: null, flags: [],
     }
     const { container } = render(
       <HomeView mode="public" {...base} steps={[step]} people={[person]} stories={[story('co', true), story('khong', false)]} products={[product]} archive={[archive]} storyHref="/cau-chuyen/co" />,

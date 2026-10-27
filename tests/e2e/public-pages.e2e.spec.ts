@@ -1,4 +1,4 @@
-// Chạy bằng project "public" (máy chủ riêng, PREVIEW_ALL=false): xem playwright.config.ts.
+// Trang chủ, Nghề dệt chiếu, Làng Hới ở chế độ public. Chạy bằng project "public" (máy chủ riêng, PREVIEW_ALL=false): xem playwright.config.ts.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 import { readFileSync } from 'node:fs'
@@ -46,4 +46,36 @@ for (const vp of [
       expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
     })
   })
+}
+
+// Hai trang Phase 4: seed giữ công đoạn và mốc ở dạng nháp nên bản public thưa; chỉ kiểm không lộ placeholder/ảnh chưa được phép.
+for (const route of ['/nghe-det-chieu', '/lang-hoi']) {
+  for (const vp of [
+    { name: '1440', width: 1440, height: 900 },
+    { name: '390', width: 390, height: 844 },
+  ]) {
+    test.describe(`${route} public ${vp.name}`, () => {
+      test.use({ viewport: { width: vp.width, height: vp.height } })
+
+      test('200, một h1, không lộ placeholder hay ảnh chưa được phép', async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        const res = await page.goto(route)
+        expect(res?.status()).toBe(200)
+        await page.locator('main h1').first().waitFor()
+        await expect(page.locator('main h1')).toHaveCount(1)
+        const body = await page.evaluate(() => document.body.textContent ?? '')
+        expect(body).not.toMatch(/cần xác minh|CẦN GHI LẠI|Chờ dữ liệu địa lý/i)
+        const srcs = await page.locator('main img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
+        expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
+      })
+
+      test('axe: không có vi phạm serious/critical', async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto(route)
+        await page.locator('main h1').first().waitFor()
+        const { violations } = await new AxeBuilder({ page }).analyze()
+        expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+      })
+    })
+  }
 }

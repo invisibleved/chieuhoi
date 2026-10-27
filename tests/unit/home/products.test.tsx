@@ -7,11 +7,11 @@ import { ExhibitCard } from '@/components/content/ExhibitCard'
 import type { ImageView, ProductCardView, ProductView } from '@/lib/content'
 
 const img: ImageView = {
-  url: '/images/reference/kn8.webp', alt: 'Ảnh sản phẩm', width: 1200, height: 800, sizes: {}, photographer: null, code: null, flags: [],
+  url: '/images/reference/kn8.webp', alt: 'Ảnh sản phẩm', width: 1200, height: 800, sizes: {}, photographer: null, code: null, docNumber: null, flags: [],
 }
 const product: ProductView = {
-  slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', summary: null, image: img,
-  typeConfirmed: false, flags: [], images: [img], primaryImage: img, material: null, technique: null, size: null, care: null, maker: null,
+  slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: img,
+  typeConfirmed: false, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null,
   annotations: [
     { n: 1, title: 'Viền chiếu', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null },
     { n: 2, title: 'Hoa văn in', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026' },
@@ -19,7 +19,7 @@ const product: ProductView = {
   ],
 }
 const card = (i: number, over: Partial<ProductCardView> = {}): ProductCardView => ({
-  slug: `sp-${i}`, code: null, name: `Sản phẩm ${i}`, group: null, summary: `Tóm tắt ${i}`, image: null, typeConfirmed: false, flags: [], ...over,
+  slug: `sp-${i}`, code: null, name: `Sản phẩm ${i}`, group: null, groupLabel: null, summary: `Tóm tắt ${i}`, image: null, typeConfirmed: false, flags: [], ...over,
 })
 const six = [1, 2, 3, 4, 5, 6].map((i) => card(i))
 

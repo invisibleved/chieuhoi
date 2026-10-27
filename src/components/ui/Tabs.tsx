@@ -5,8 +5,8 @@ import type { KeyboardEvent, ReactNode } from 'react'
 
 // Tab theo mẫu APG "tabs with automatic activation": mũi tên vòng quanh, Home/End, roving tabindex.
 type TabsProps<K extends string> = {
-  label: string
-  tabs: { key: K; label: string; panel: ReactNode }[]
+  label?: string
+  tabs: { key: K; label: ReactNode; panel: ReactNode }[]
   value: K
   onChange: (k: K) => void
   variant?: 'underline' | 'segmented' | 'responsive'

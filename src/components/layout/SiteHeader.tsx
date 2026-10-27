@@ -1,14 +1,11 @@
 import Link from 'next/link'
 
-import { getMode, getSiteSettings } from '@/lib/content'
-
 import { DesktopNav } from './DesktopNav'
 import { LanguageSwitch } from './LanguageSwitch'
 import { MobileMenu } from './MobileMenu'
 import { CONNECT_HREF } from './nav'
 
-export async function SiteHeader() {
-  const settings = await getSiteSettings(await getMode())
+export function SiteHeader({ tagline }: { tagline: string | null }) {
   return (
     <header className="flex items-center justify-between border-b border-border-subtle bg-bg-primary py-2 pr-2 pl-5 lg:px-6 lg:py-[26px] xl:px-20">
       <Link
@@ -27,7 +24,7 @@ export async function SiteHeader() {
           Kết nối
         </Link>
       </div>
-      <MobileMenu tagline={settings.tagline} />
+      <MobileMenu tagline={tagline} />
     </header>
   )
 }

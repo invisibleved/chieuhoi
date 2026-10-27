@@ -34,13 +34,13 @@ export function PortraitCard({ person, href, size = 'lg', cta = 'Xem chân dung 
             {lg ? (
               <Tag variant="overlay">Chờ đồng ý</Tag>
             ) : (
-              <span className="inline-block bg-[rgba(243,235,221,.94)] px-[7px] py-[3px] text-[12px] font-semibold text-text-secondary">Chờ đồng ý</span>
+              <span className="inline-block bg-surface-on-image px-[7px] py-[3px] text-[12px] font-semibold text-text-secondary">Chờ đồng ý</span>
             )}
           </span>
         )}
       </span>
       {person.category && (
-        <span className={`text-[12px] font-semibold text-text-meta ${lg ? 'tracking-[.16em]' : 'tracking-[.1em]'}`}>
+        <span className={`text-[12px] font-semibold text-text-meta ${lg ? 'tracking-meta' : 'tracking-[.1em]'}`}>
           {person.category.toLocaleUpperCase('vi')}
         </span>
       )}

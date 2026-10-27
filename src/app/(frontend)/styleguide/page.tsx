@@ -1,20 +1,37 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArchiveChip, DocumentLabel } from '@/components/content/DocumentLabel'
+import { ComparisonTabs } from '@/components/content/ComparisonTabs'
+import { ConfidenceBadge, ConfidenceLegend, ConfidenceMark } from '@/components/content/Confidence'
+import { CraftJourney } from '@/components/content/CraftJourney'
+import { CraftStage } from '@/components/content/CraftStage'
+import { FigureCard } from '@/components/content/FigureCard'
+import { PageHeader } from '@/components/content/PageHeader'
+import { ReadNext } from '@/components/content/ReadNext'
+import { Timeline } from '@/components/content/Timeline'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
 import { PortraitCard } from '@/components/content/PortraitCard'
 import { ProductCard } from '@/components/content/ProductCard'
 import { FootnoteRef, SourceList } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
+import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
+import { docLabel } from '@/lib/content/copy/docLabel'
+import { villageCopy } from '@/lib/content/copy/village'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { isStyleguideEnabled } from '@/components/styleguide/enabled'
 import * as fx from '@/components/styleguide/fixtures'
 import { Lab, Tok } from '@/components/styleguide/Lab'
 import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton, SuccessState } from '@/components/ui/Feedback'
+import { Callout } from '@/components/ui/Callout'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { FactList } from '@/components/ui/FactList'
 import { LinkArrow } from '@/components/ui/LinkArrow'
-import { FilterDemos, TabDemo } from './Demos'
+import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
+import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
+import { VariantText } from '@/components/ui/VariantText'
+import { FilterDemos, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -27,7 +44,7 @@ export const metadata: Metadata = {
 const h2 = 'font-display text-h3 font-normal'
 const state = 'flex min-w-0 flex-col items-start gap-2.5'
 const focusLight = 'outline outline-2 outline-offset-4 outline-focus-light'
-const rowThreads = <div className="threads" aria-hidden="true" />
+const rowThreads = <ThreadsDivider />
 
 const NAV_LINK = 'flex min-h-11 items-baseline gap-2 py-2.5 text-text-primary no-underline md:min-h-0 md:py-0'
 
@@ -38,7 +55,7 @@ export default function StyleguidePage() {
     <div className="mx-auto flex max-w-[1440px] flex-col gap-16 px-5 py-12 md:gap-24 md:px-20 md:py-24">
       <div className="flex flex-col gap-4">
         <Breadcrumb items={[{ label: 'Trang chủ', href: '/' }, { label: 'Component' }]} />
-        <p className="text-eyebrow font-semibold tracking-[.24em] text-accent">HỆ THỐNG THIẾT KẾ · v0.1</p>
+        <Eyebrow as="p">HỆ THỐNG THIẾT KẾ · v0.1</Eyebrow>
         <h1 className="font-display text-display font-normal leading-[1.1]">Component</h1>
         <p className="max-w-[760px] text-body-lg leading-[1.65] text-text-secondary">
           Mỗi component vẽ đủ các trạng thái: mặc định, hover, focus, đang chọn, vô hiệu và lỗi khi có. Tên token ghi dưới mỗi mẫu để bàn giao cho dev.
@@ -153,8 +170,8 @@ export default function StyleguidePage() {
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
           <div className="flex min-w-0 flex-col gap-3.5">
             <Lab>NHÃN TƯ LIỆU</Lab>
-            <DocumentLabel code="001" title="In hoa văn lên chiếu bằng khuôn" meta="Ảnh: [tác giả] · Niên đại: [cần xác minh] · Quyền dùng: [cần xác minh]" />
-            <div className="self-start"><ArchiveChip code="021" category="Làng quê" /></div>
+            <DocumentLabel label={docLabel.desktop} code="001" title="In hoa văn lên chiếu bằng khuôn" meta="Ảnh: [tác giả] · Niên đại: [cần xác minh] · Quyền dùng: [cần xác minh]" />
+            <div className="self-start"><ArchiveChip label={docLabel.mobile} code="021" category="Làng quê" /></div>
             <Tok>label/document · label/archive-chip</Tok>
           </div>
           <div className="flex min-w-0 flex-col gap-3.5">
@@ -184,12 +201,125 @@ export default function StyleguidePage() {
 
       {rowThreads}
 
+      {/* Thành phần chung */}
+      <section aria-labelledby="sg-chung" className="flex flex-col gap-8">
+        <h2 id="sg-chung" className={h2}>Thành phần chung</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className={state}><Lab>EYEBROW · NỀN SÁNG</Lab><Eyebrow>NGHỀ DỆT CHIẾU</Eyebrow></div>
+          <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · NỀN TỐI</Lab><Eyebrow tone="dark">NGHỀ DỆT CHIẾU</Eyebrow></div>
+          <div className={state}><Lab>EYEBROW · CÓ VẠCH</Lab><Eyebrow rule>LÀNG HỚI</Eyebrow></div>
+          <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · CÓ VẠCH · NỀN TỐI</Lab><Eyebrow tone="dark" rule>LÀNG HỚI</Eyebrow></div>
+          <StepperDemos />
+          <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
+          <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
+          <div className="flex flex-col gap-3"><Lab>CALLOUT</Lab><Callout title="LƯU Ý">Nội dung này cần được xác minh với nghệ nhân trước khi đăng.</Callout></div>
+          <div className="flex flex-col gap-3">
+            <Lab>DANH SÁCH THÔNG TIN</Lab>
+            <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
+          </div>
+          <div className="flex flex-col gap-4 bg-bg-inverse p-4 md:col-span-2">
+            <Lab tone="dark">MỨC TIN CẬY · NỀN TỐI</Lab>
+            <ConfidenceLegend label={villageCopy.timeline.legendLabel.desktop} labels={villageCopy.timeline.confidence} />
+            <div className="flex flex-wrap items-center gap-6 p-2">
+              <ConfidenceMark level="press" /><ConfidenceMark level="oral" /><ConfidenceMark level="pending" />
+              <ConfidenceMark level="press" active /><ConfidenceMark level="oral" active /><ConfidenceMark level="pending" active />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <ConfidenceBadge level="press" labels={villageCopy.timeline.confidence} />
+              <ConfidenceBadge level="oral" labels={villageCopy.timeline.confidence} />
+              <ConfidenceBadge level="pending" labels={villageCopy.timeline.confidence} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-2"><Lab>VẠCH SỢI CÓI</Lab><ThreadsDivider /></div>
+        </div>
+        <Tok>ui/eyebrow · pill-button · scroll-strip · step-progress · pager-button · placeholder-frame · callout · fact-list · threads-divider — nút Trước/Sau dùng aria-disabled nên focus không mất khi chạm đầu cuối</Tok>
+      </section>
+
+      {rowThreads}
+
+      {/* Khối trang Nghề dệt chiếu và Làng Hới */}
+      <section aria-labelledby="sg-trang" className="flex flex-col gap-8">
+        <h2 id="sg-trang" className={h2}>Khối trang Nghề &amp; Làng</h2>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐẦU TRANG CON · PAGE HEADER</Lab>
+          <div className="-mx-5 border border-dashed border-border-dashed md:-mx-0">
+            <PageHeader
+              crumbs={[{ label: craftCopy.breadcrumb.home, href: '/' }, { label: craftCopy.breadcrumb.current }]}
+              intro={{
+                eyebrow: '03 — NGHỀ DỆT CHIẾU',
+                title: 'Một tấm chiếu,\nmuôn công đoạn.',
+                lead: 'Từ bó cói ngoài đồng đến tấm chiếu trải giữa nhà là một hành trình của đôi tay, thời tiết và sự kiên nhẫn. Đi theo từng công đoạn bên dưới.',
+                heroTitle: null,
+              }}
+              note={<VerifyNote size="sm">{craftCopy.intro.preview.verifyNote.desktop}</VerifyNote>}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-3 bg-bg-inverse p-5 text-text-on-dark">
+            <Lab tone="dark">SÂN KHẤU CÔNG ĐOẠN · CÓ ẢNH</Lab>
+            <CraftStage step={fx.craftSteps[0]} docLabel={docLabel} photoPrefix={craftCopy.journey.photoPrefix} />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 bg-bg-inverse p-5 text-text-on-dark">
+            <Lab tone="dark">SÂN KHẤU CÔNG ĐOẠN · ẢNH CẦN CHỤP</Lab>
+            <CraftStage step={fx.craftSteps[2]} docLabel={docLabel} photoPrefix={craftCopy.journey.photoPrefix} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>HÀNH TRÌNH CÔNG ĐOẠN · NỀN TỐI</Lab>
+          <div className="-mx-5 md:mx-0">
+            <CraftJourney steps={fx.craftSteps} copy={craftCopy.journey} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>DÒNG THỜI GIAN · NỀN TỐI</Lab>
+          <div className="-mx-5 bg-bg-inverse px-5 py-10 text-text-on-dark md:mx-0 md:px-10">
+            <Timeline events={fx.timelineEvents} copy={villageCopy.timeline} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>THẺ HÌNH · CÓ ẢNH VÀ ẢNH CẦN CHỤP</Lab>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <FigureCard label={`${craftCopy.tools.itemLabel} · 01`} title={craftTools[0].name} caption={craftTools[0].note} image={fx.imgStep1} />
+            <FigureCard label={`${craftCopy.tools.itemLabel} · 02`} title={craftTools[1].name} caption={craftTools[1].note} image={null} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>HAI CÁCH DỆT · TAB</Lab>
+          <ComparisonTabs
+            hand={{ ...craftCompare.hand, image: fx.imgHand }}
+            machine={{ ...craftCompare.machine, image: null }}
+            rows={fx.compareRows}
+            rowsNote={craftCopy.compare.preview.note}
+            labels={craftCopy.compare}
+          />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐỌC TIẾP</Lab>
+          <div className="-mx-5 md:mx-0">
+            <ReadNext
+              eyebrow={craftCopy.readNext.eyebrow}
+              items={craftReadNext.map((r, i) => ({ href: r.href, eyebrow: r.eyebrow, title: r.title, cta: r.cta, image: i === 0 ? fx.imgPortrait : i === 1 ? fx.imgStory : null }))}
+            />
+          </div>
+        </div>
+        <Tok>content/page-header · craft-stage · craft-journey · timeline · figure-card · comparison-tabs · read-next — nút phóng và Trước/Sau dùng aria-disabled; mốc thời gian phân biệt độ tin cậy bằng hình dạng</Tok>
+      </section>
+
+      {rowThreads}
+
       {/* Bộ lọc, tab & phân trang */}
       <section aria-labelledby="sg-loc" className="flex flex-col gap-8">
         <h2 id="sg-loc" className={h2}>Bộ lọc, tab &amp; phân trang</h2>
         <div className="flex min-w-0 flex-col gap-8">
           <FilterDemos />
           <TabDemo />
+          <div className="flex flex-col gap-3">
+            <Lab>CHỮ HAI BẢN (DESKTOP / MOBILE)</Lab>
+            <p className="text-[14px] text-text-secondary">
+              <VariantText value={{ desktop: 'Dệt thủ công (từ 768px)', mobile: 'Thủ công (dưới 768px)' }} />
+            </p>
+          </div>
           <div className="flex flex-col gap-3">
             <Lab>XEM THÊM / PHÂN TRANG</Lab>
             <VerifyNote size="sm">Phân trang và Xem thêm làm ở Phase 5.</VerifyNote>

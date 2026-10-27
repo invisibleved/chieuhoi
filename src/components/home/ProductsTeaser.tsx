@@ -1,13 +1,13 @@
 import type { Mode, ProductCardView, ProductView } from '@/lib/content'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
 import { LinkArrow } from '@/components/ui/LinkArrow'
-import { hasPattern } from './hasPattern'
 import { PatternTeaser } from './PatternTeaser'
+import { Eyebrow } from '@/components/ui/Eyebrow'
 
 type ProductsTeaserProps = { featured: ProductView | null; products: ProductCardView[]; mode: Mode }
 
 export function ProductsTeaser({ featured, products, mode }: ProductsTeaserProps) {
-  const showPattern = hasPattern(featured)
+  const showPattern = featured?.hasPattern === true
   // Số HIỆN VẬT là vị trí gốc trong danh sách; thẻ thiếu tên thì bỏ, không đánh số lại.
   const cards = products
     .slice(0, 4)
@@ -17,7 +17,7 @@ export function ProductsTeaser({ featured, products, mode }: ProductsTeaserProps
   return (
     <section className="flex flex-col gap-5 bg-bg-secondary px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-14 md:px-20 md:py-[120px]">
       <div className="flex flex-col gap-5 md:col-span-12 md:gap-[18px]">
-        <span className="text-eyebrow font-semibold tracking-[.22em] text-accent md:tracking-[.24em]">SẢN PHẨM</span>
+        <Eyebrow>SẢN PHẨM</Eyebrow>
         <h2 className="font-display text-h2 leading-[1.15] font-normal md:leading-[1.1]">Nét đẹp từ những đường dệt.</h2>
       </div>
       {showPattern && featured ? <PatternTeaser product={featured} /> : null}

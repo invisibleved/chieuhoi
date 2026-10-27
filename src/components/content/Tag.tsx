@@ -6,7 +6,7 @@ type TagProps = { variant: 'dashed' | 'filled' | 'overlay'; children: ReactNode 
 export function Tag({ variant, children }: TagProps) {
   if (variant === 'overlay') {
     return (
-      <span className="inline-flex items-center gap-2 bg-[rgba(243,235,221,.94)] px-2.5 py-[5px] text-[12px] font-semibold text-text-secondary">
+      <span className="inline-flex items-center gap-2 bg-surface-on-image px-2.5 py-[5px] text-[12px] font-semibold text-text-secondary">
         <span aria-hidden="true" className="size-2 rounded-full border-[1.5px] border-dashed border-text-secondary" />
         {children}
       </span>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import type { ProductView } from '@/lib/content'
-import { hasPattern } from './hasPattern'
 import { ContentImage } from '@/components/content/ContentImage'
 import { FootnoteRef } from '@/components/content/Sources'
 
@@ -11,7 +10,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
   const { annotations, primaryImage, slug } = product
   const [openN, setOpenN] = useState(annotations[0]?.n)
   const open = annotations.find((a) => a.n === openN) ?? annotations[0]
-  if (!open || !hasPattern(product) || !primaryImage) return null
+  if (!open || !product.hasPattern || !primaryImage) return null
 
   // Số nguồn theo thứ tự xuất hiện của các sourceId khác nhau; trang hiện vật (Phase 5) phải đánh số giống vậy.
   const sourceIds = [...new Set(annotations.map((a) => a.sourceId).filter((id): id is string => id !== null))]
@@ -46,7 +45,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
         </figcaption>
       </figure>
       <div className="relative -mt-10 flex flex-col gap-3 md:col-span-3 md:col-start-10 md:mt-0 md:justify-center md:gap-[22px]">
-        <p className="m-0 hidden text-[12px] font-semibold tracking-[.2em] text-text-muted-alt md:block">KHÁM PHÁ ĐƯỜNG DỆT</p>
+        <p className="m-0 hidden text-[12px] font-semibold tracking-label text-text-muted-alt md:block">KHÁM PHÁ ĐƯỜNG DỆT</p>
         <div
           aria-live="polite"
           className="flex flex-col gap-2 border-t-[3px] border-accent bg-bg-primary p-[18px] md:gap-2.5 md:border-l-[3px] md:border-t-0 md:bg-transparent md:p-0 md:pl-[18px]"

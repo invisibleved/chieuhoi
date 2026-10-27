@@ -2,24 +2,27 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ArchiveTeaser } from '@/components/home/ArchiveTeaser'
 import { Closing } from '@/components/home/Closing'
+import { archiveCategoryOptions } from '@/lib/content/categories'
 import type { ArchiveItemView } from '@/lib/content'
 
-const item = (n: number, category: string | null, code: string | null = `TL-${String(n).padStart(3, '0')}`): ArchiveItemView => ({
-  image: { url: `/images/reference/a${n}.webp`, alt: `Ảnh ${n}`, width: 800, height: 600, sizes: {}, photographer: null, code, flags: [] },
-  title: null, description: null, category, era: null, related: null, flags: [],
+const CATEGORIES = archiveCategoryOptions
+const CATEGORY_LABELS = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label]))
+const item = (n: number, category: ArchiveItemView['category'], code: string | null = `TL-${String(n).padStart(3, '0')}`): ArchiveItemView => ({
+  image: { url: `/images/reference/a${n}.webp`, alt: `Ảnh ${n}`, width: 800, height: 600, sizes: {}, photographer: null, code, docNumber: code?.match(/^TL-(\d+)$/)?.[1] ?? null, flags: [] },
+  title: null, description: null, category, categoryLabel: CATEGORY_LABELS[category ?? ''] ?? null, era: null, eraLabel: null, related: null, flags: [],
 })
 const items = [item(1, 'village'), item(2, 'weaving'), item(3, 'weaving'), item(4, 'products'), item(5, 'village'), item(6, 'memory')]
 const tenItems = Array.from({ length: 10 }, (_, i) => item(i + 1, 'weaving'))
 
 describe('ArchiveTeaser', () => {
   it('chip lọc đủ 7 nhóm nguyên văn, Tất cả đang chọn', () => {
-    render(<ArchiveTeaser items={items} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={items} />)
     const g = screen.getByRole('group', { name: 'Lọc theo nhóm ảnh' })
     expect(within(g).getAllByRole('button').map((b) => b.textContent)).toEqual(['Tất cả', 'Làng quê', 'Nghề dệt', 'Con người', 'Sản phẩm', 'Ký ức', 'Tư liệu lịch sử'])
     expect(within(g).getByRole('button', { name: 'Tất cả' }).getAttribute('aria-pressed')).toBe('true')
   })
   it('lọc Làng quê chỉ còn ảnh village; ô chờ tư liệu luôn ở cuối', () => {
-    render(<ArchiveTeaser items={items} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={items} />)
     fireEvent.click(screen.getByRole('button', { name: 'Làng quê' }))
     const tiles = screen.getAllByRole('link', { name: /TL · / })
     expect(tiles).toHaveLength(2)
@@ -27,28 +30,28 @@ describe('ArchiveTeaser', () => {
     expect(screen.getByText('Ảnh xưa của làng')).toBeTruthy()
   })
   it('ô ảnh trỏ /thu-vien?anh=TL-xxx, tối đa 5 ô', () => {
-    render(<ArchiveTeaser items={tenItems} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={tenItems} />)
     const tiles = screen.getAllByRole('link', { name: /TL · / })
     expect(tiles.length).toBe(5)
     expect(tiles[0].getAttribute('href')).toBe('/thu-vien?anh=TL-001')
   })
   it('bỏ ảnh không có mã TL hợp lệ', () => {
-    render(<ArchiveTeaser items={[item(1, 'village', 'xyz'), item(2, 'village', null), item(3, 'village')]} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={[item(1, 'village', 'xyz'), item(2, 'village', null), item(3, 'village')]} />)
     expect(screen.getAllByRole('link', { name: /TL · / })).toHaveLength(1)
   })
   it('ghi chú phải chỉ hiện khi chưa có ảnh history', () => {
     const note = /Chưa có ảnh tư liệu lịch sử/
-    const { unmount } = render(<ArchiveTeaser items={items} />)
+    const { unmount } = render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={items} />)
     expect(screen.getByText(note)).toBeTruthy()
     unmount()
-    render(<ArchiveTeaser items={[...items, item(7, 'history')]} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={[...items, item(7, 'history')]} />)
     expect(screen.queryByText(note)).toBeNull()
   })
   it('link Mở thư viện ảnh và rỗng thì không render', () => {
-    const { container, unmount } = render(<ArchiveTeaser items={[]} />)
+    const { container, unmount } = render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={[]} />)
     expect(container.innerHTML).toBe('')
     unmount()
-    render(<ArchiveTeaser items={items} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={items} />)
     expect(screen.getByRole('link', { name: 'Mở thư viện ảnh' }).getAttribute('href')).toBe('/thu-vien')
   })
 })
@@ -57,7 +60,7 @@ describe('ArchiveTeaser ảnh preview', () => {
   it('ảnh có flag: wrapper lấp đầy ô, nhãn TL ở góc trên, ghi chú ở góc dưới', () => {
     const flagged = item(1, 'village')
     flagged.image.flags = ['rights-not-permitted']
-    render(<ArchiveTeaser items={[flagged]} />)
+    render(<ArchiveTeaser docLabel="TL" categories={CATEGORIES} items={[flagged]} />)
     const link = screen.getByRole('link', { name: /TL · / })
     expect(link.className).not.toContain('h-full')
     const wrapper = link.querySelector('img')!.parentElement!
