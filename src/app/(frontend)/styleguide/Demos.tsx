@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import { Lab } from '@/components/styleguide/Lab'
+import { ArchiveGallery } from '@/components/content/ArchiveGallery'
+import { archivePageBase } from '@/components/styleguide/fixtures'
 import { PatternExplorer } from '@/components/content/PatternExplorer'
 import { applyMode } from '@/lib/content/copy/applyMode'
+import { archiveCopy } from '@/lib/content/copy/archive'
 import { productsCopy } from '@/lib/content/copy/products'
 import type { ImageView, ProductView } from '@/lib/content'
 import { FilterChips } from '@/components/ui/FilterChips'
@@ -282,6 +285,17 @@ export function PatternExplorerDemo() {
     <div className="flex min-w-0 flex-col gap-3">
       <Lab>KHÁM PHÁ ĐƯỜNG DỆT · SÂN KHẤU, ẢNH NHỎ, ĐIỂM, CHÚ THÍCH (ảnh dev)</Lab>
       <PatternExplorer product={SG_PRODUCT} copy={applyMode(productsCopy, 'preview').detail} aside={<p className="m-0 text-[14px] text-text-muted">Khối tiêu đề (aside)</p>} />
+    </div>
+  )
+}
+
+export function LightboxDemo() {
+  return (
+    <div className="flex min-w-0 flex-col gap-3">
+      <Lab>HỘP XEM ẢNH + LƯỚI THƯ VIỆN · mở sẵn TL-001 (Esc hoặc nút Đóng để thu, bấm ô để mở lại; ảnh dev)</Lab>
+      <div className="bg-bg-deep p-4 md:p-8">
+        <ArchiveGallery page={{ ...archivePageBase, copy: applyMode(archiveCopy, 'preview') }} initialCode="TL-001" />
+      </div>
     </div>
   )
 }

@@ -40,6 +40,10 @@
   --surface-on-dark-active: rgba(243,235,221,.08); /* nền dòng đang chọn (danh sách công đoạn) */
   --surface-deep-on-image: rgba(35,42,37,.88);     /* nền chip mã tư liệu phủ trên ảnh */
   --surface-ink-on-image: rgba(40,39,36,.85);      /* nền chip gợi ý phủ trên sân khấu ảnh */
+  --overlay-lightbox: rgba(16,20,17,.97);          /* nền hộp xem ảnh phủ toàn màn hình */
+  --overlay-lightbox-button: rgba(16,20,17,.7);    /* nền nút Trước/Tiếp đè lên ảnh trong hộp xem ảnh */
+  --bg-lightbox-stage: #101411;                    /* sân khấu ảnh trong hộp xem ảnh */
+  --border-on-dark-soft: rgba(243,235,221,.18);    /* đường kẻ mảnh trên nền tối (ngăn metadata) */
   --accent-halo: rgba(160,68,53,.35);              /* vòng quanh điểm hoa văn đang chọn */
   --focus-light: #344B3D;
   --focus-dark: #E3CD9C;
@@ -98,6 +102,10 @@
   --color-surface-on-dark-active: var(--surface-on-dark-active);
   --color-surface-deep-on-image: var(--surface-deep-on-image);
   --color-surface-ink-on-image: var(--surface-ink-on-image);
+  --color-overlay-lightbox: var(--overlay-lightbox);
+  --color-overlay-lightbox-button: var(--overlay-lightbox-button);
+  --color-bg-lightbox-stage: var(--bg-lightbox-stage);
+  --color-border-on-dark-soft: var(--border-on-dark-soft);
   --color-accent-halo: var(--accent-halo);
   --color-border-strong: var(--border-strong);
   --color-border-dashed: var(--border-dashed);
@@ -179,6 +187,6 @@ body {
   outline-offset: 3px;
 }
 
-:is(.bg-bg-inverse, .bg-bg-deep, .bg-bg-ink) :focus-visible {
+:is(.bg-bg-inverse, .bg-bg-deep, .bg-bg-ink, .bg-overlay-lightbox) :focus-visible {
   outline-color: var(--focus-dark);
 }

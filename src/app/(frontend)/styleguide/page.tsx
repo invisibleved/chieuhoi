@@ -43,7 +43,7 @@ import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-import { FilterDemos, InteractiveDemos, PatternExplorerDemo, SegmentedDemos, SuccessActionDemo, StepperDemos, TabDemo } from './Demos'
+import { FilterDemos, InteractiveDemos, LightboxDemo, PatternExplorerDemo, SegmentedDemos, SuccessActionDemo, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -459,6 +459,7 @@ export default function StyleguidePage() {
           <FilterDemos />
           <SegmentedDemos />
           <PatternExplorerDemo />
+          <LightboxDemo />
           <TabDemo />
           <div className="flex flex-col gap-3">
             <Lab>CHỮ HAI BẢN (DESKTOP / MOBILE)</Lab>

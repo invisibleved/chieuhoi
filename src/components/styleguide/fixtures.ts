@@ -1,5 +1,5 @@
 import type {
-  CraftPageView, CraftStepView, ImageView, PersonDetailView, PersonView, ProductCardView, ReadNextItem, Rich, SourceView, StoryCardView, TimelineEventView,
+  ArchiveItemView, ArchivePageView, CraftPageView, CraftStepView, ImageView, PersonDetailView, PersonView, ProductCardView, ReadNextItem, Rich, SourceView, StoryCardView, TimelineEventView,
 } from '@/lib/content'
 
 // Dữ liệu mẫu cho /styleguide, lấy nguyên văn từ artboard Components.
@@ -206,3 +206,38 @@ export const readNextItems: ReadNextItem[] = [
   { href: '/nghe-det-chieu', eyebrow: 'NGHỀ DỆT CHIẾU', title: 'Một tấm chiếu, muôn công đoạn', cta: 'Đi theo hành trình →', image: imgHand },
   { href: '/cau-chuyen', eyebrow: 'CHỦ ĐỀ · LỊCH SỬ', title: 'Chuyện về Trạng Chiếu', cta: 'Đọc bài →', image: imgStory, mobile: false },
 ]
+
+// Thư viện mẫu cho Lightbox / ArchiveGallery: tên và mô tả lấy từ artboard Thư viện.
+function archiveItem(n: number, file: string, title: string, description: string, cat: 'village' | 'weaving', related: { label: string; href: string }): ArchiveItemView {
+  const code = `TL-00${n}`
+  return {
+    image: { ...img(file, `${title}. ${description}`, 1200, 800), code, docNumber: `00${n}` },
+    title,
+    description,
+    category: cat,
+    categoryLabel: cat === 'village' ? 'Làng quê' : 'Nghề dệt',
+    era: 'now',
+    eraLabel: 'Nay',
+    related,
+    flags: [],
+    code,
+    takenAt: '[cần xác minh]',
+    photographer: '[cần xác minh]',
+    source: 'Bộ ảnh tham khảo của dự án',
+    rights: { desktop: 'Chưa xin phép · không đăng công khai', mobile: 'Chưa xin phép' },
+    sourceVerified: false,
+  }
+}
+
+export const archivePageBase: Omit<ArchivePageView, 'copy'> = {
+  intro: { title: '', lead: null, eyebrow: null } as unknown as ArchivePageView['intro'],
+  items: [
+    archiveItem(1, 'hc9.webp', 'Chiếu phơi bên ao làng', 'Chiếu hoa văn đỏ phơi dọc bờ ao giữa làng.', 'village', { label: 'Trang Làng Hới', href: '/lang-hoi' }),
+    archiveItem(2, 'kn14.webp', 'In hoa văn bằng khuôn', 'Người thợ dùng khuôn in hoa văn đỏ lên mặt chiếu.', 'weaving', { label: 'Công đoạn 06', href: '/nghe-det-chieu' }),
+    archiveItem(3, 'nkc5.webp', 'Dệt chiếu trên khung', 'Hai người cùng làm trên một khung dệt.', 'weaving', { label: 'Công đoạn 05', href: '/nghe-det-chieu' }),
+  ],
+  stats: { total: 3, verified: 0 },
+  categories: [{ key: 'all', label: 'Tất cả' }, { key: 'village', label: 'Làng quê' }, { key: 'weaving', label: 'Nghề dệt' }],
+  eras: [{ key: 'all', label: 'Mọi thời kỳ' }, { key: 'old', label: 'Xưa' }, { key: 'now', label: 'Nay' }],
+  hasOld: false,
+}
