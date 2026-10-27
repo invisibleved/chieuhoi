@@ -25,7 +25,7 @@ describe('HomeView', () => {
     expect(container.textContent!.toLowerCase()).not.toContain('cần xác minh')
   })
   it('dữ liệu kiểu public: không chuỗi xác minh, link bài chỉ tới bài có chi tiết', () => {
-    const step: CraftStepView = { n: 1, title: 'Chọn cói', subtitle: null, body: null, tools: null, image: null, shotNeeded: null, focus: [50, 50], flags: [] }
+    const step: CraftStepView = { n: 1, title: 'Chọn cói', shortTitle: null, subtitle: null, body: null, tools: null, toRecord: null, image: null, shotNeeded: null, focus: [50, 50], flags: [] }
     const person: PersonView = { slug: 'a', category: 'Nghệ nhân', role: null, name: 'Tên a', portrait: null, quote: null, consentPending: false, flags: [] }
     const story = (slug: string, hasDetail: boolean): StoryCardView => ({ slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail, flags: [] })
     const product: ProductCardView = { slug: 'p', code: null, name: 'Chiếu', category: null, image: null, flags: [] } as unknown as ProductCardView

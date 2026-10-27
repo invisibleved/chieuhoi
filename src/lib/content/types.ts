@@ -1,5 +1,8 @@
 import type { ArchiveAsset } from '@/payload-types'
 
+import type { CraftCopyView } from './copy/craft'
+import type { VillageCopyView } from './copy/village'
+
 export type Mode = 'public' | 'preview'
 export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified' | 'idea'
 
@@ -35,21 +38,31 @@ export interface SourceView {
   date: string | null
 }
 
+export type Confidence = 'press' | 'oral' | 'pending'
+
 export interface TimelineEventView {
   label: string | null
   title: string | null
   body: string | null
-  confidence: 'press' | 'oral' | 'pending' | null
+  /** Thiếu mức tin cậy thì coi là 'pending'. */
+  confidence: Confidence
   sourceIds: string[]
+  /** "Nhà xuất bản (dd/mm/yyyy); …" ghép từ các nguồn nhìn thấy được; null khi không còn nguồn nào. */
+  sourceLine: string | null
+  /** Liên kết nội bộ của dòng nguồn (chỉ mốc tĩnh "Mốc của bạn" có). */
+  sourceHref: string | null
   flags: Flag[]
 }
 
 export interface CraftStepView {
   n: number
   title: string | null
+  shortTitle: string | null
   subtitle: string | null
   body: string | null
   tools: string | null
+  /** Việc biên tập cần ghi lại thêm: luôn null ở public. */
+  toRecord: string | null
   image: ImageView | null
   shotNeeded: string | null
   focus: [number, number]
@@ -144,3 +157,36 @@ export interface PageIntroView {
   lead: string | null
   heroTitle: string | null
 }
+
+export type MediaView = { image: ImageView; caption: string | null }
+export type Variant = { desktop: string | null; mobile: string | null }
+
+export interface CraftPageView {
+  /** title giữ nguyên '\n' */
+  intro: PageIntroView
+  hero: MediaView | null
+  steps: CraftStepView[]
+  tools: { n: number; name: string; note: Variant; image: ImageView | null }[]
+  compare: {
+    hand: { title: string; image: ImageView | null; text: Variant; note: Variant }
+    machine: { title: string; image: ImageView | null; text: Variant; note: Variant }
+    /** Ô bị ẩn để null; hàng cả hai ô null đã bị bỏ. */
+    rows: { aspect: string; hand: string | null; machine: string | null }[]
+  }
+  readNext: { href: string; eyebrow: string; title: string; cta: string; image: ImageView | null }[]
+  copy: CraftCopyView
+}
+
+export interface VillagePageView {
+  intro: PageIntroView
+  hero: MediaView | null
+  facts: { term: string; detail: string; note: string | null; cite: string[] }[]
+  /** Mốc từ CMS, mốc tĩnh '+' ở cuối. */
+  timeline: TimelineEventView[]
+  life: MediaView[]
+  /** Nguồn mà trang trích, theo thứ tự đánh số [1][2][3], đã lọc theo mode. */
+  sources: SourceView[]
+  copy: VillageCopyView
+}
+
+export type { CraftCopyView, VillageCopyView }

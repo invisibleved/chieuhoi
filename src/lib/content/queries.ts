@@ -32,6 +32,21 @@ function toSourceView(s: Source, mode: Mode = 'public'): SourceView | null {
 }
 const viewable = (v: SourceView | null): v is SourceView => v !== null
 
+/** 2024-06-13 -> 13/06/2024; chuỗi không đúng dạng thì giữ nguyên. */
+export function formatDate(d: string | null): string | null {
+  const m = d?.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : d
+}
+
+/** "Nhà xuất bản (dd/mm/yyyy); …" (R8); null khi không có nguồn nào. */
+function sourceLine(sources: SourceView[]): string | null {
+  const parts = sources.map((s) => {
+    const date = formatDate(s.date)
+    return `${s.publisher ?? s.title}${date ? ` (${date})` : ''}`
+  })
+  return parts.length ? parts.join('; ') : null
+}
+
 type Doc = { _status?: string | null }
 
 /** Cờ chung: chưa đăng, và (preview) có trường trống/cần xác minh. */
@@ -42,6 +57,16 @@ function flagsOf(doc: Doc, mode: Mode, texts: (string | null | undefined)[] = []
     if (texts.some((t) => isUnverified(t))) flags.push('unverified')
   }
   return flags
+}
+
+/** Đọc một global; bản công khai của global chưa từng đăng coi như trống. */
+export async function readGlobalDoc(
+  payload: Payload, slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0,
+) {
+  const g = ((await payload.findGlobal({
+    slug, draft: mode === 'preview', overrideAccess: true, depth,
+  })) as unknown) as Record<string, unknown> & Doc
+  return mode === 'public' && g._status !== 'published' ? {} : g
 }
 
 export function createContent(payload: Payload) {
@@ -79,14 +104,20 @@ export function createContent(payload: Payload) {
 
   async function getTimeline(mode: Mode): Promise<TimelineEventView[]> {
     const docs = (await findAll('timeline-events', mode, { sort: 'order' })) as import('@/payload-types').TimelineEvent[]
-    return docs.map((d) => ({
-      label: showText(d.label, mode),
-      title: showText(d.title, mode),
-      body: showText(d.body, mode),
-      confidence: d.confidence ?? null,
-      sourceIds: sourcesOf(d.sources).map((s) => s.sourceId),
-      flags: flagsOf(d, mode, [d.label, d.title, d.body]),
-    }))
+    return docs.map((d) => {
+      // Chỉ những nguồn nhìn thấy được ở mode hiện tại mới được trích.
+      const visible = sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable)
+      return {
+        label: showText(d.label, mode),
+        title: showText(d.title, mode),
+        body: showText(d.body, mode),
+        confidence: d.confidence ?? 'pending',
+        sourceIds: visible.map((s) => s.id),
+        sourceLine: sourceLine(visible),
+        sourceHref: null,
+        flags: flagsOf(d, mode, [d.label, d.title, d.body]),
+      }
+    })
   }
 
   async function getCraftSteps(mode: Mode): Promise<CraftStepView[]> {
@@ -94,9 +125,12 @@ export function createContent(payload: Payload) {
     return docs.map((d) => ({
       n: d.n,
       title: showText(d.title, mode),
+      shortTitle: showText(d.shortTitle, mode),
       subtitle: showText(d.subtitle, mode),
       body: showText(d.body, mode),
       tools: showText(d.tools, mode),
+      // Việc biên tập cần làm, không phải nội dung: chỉ hiện ở preview.
+      toRecord: mode === 'preview' ? showText(d.toRecord, mode) : null,
       image: toImageView(d.image, mode),
       // Hiện công khai dưới nhãn "ẢNH CẦN CHỤP" theo thiết kế (R15).
       shotNeeded: showText(d.shotNeeded, mode),
@@ -241,13 +275,8 @@ export function createContent(payload: Payload) {
     return items
   }
 
-  async function readGlobal(slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0) {
-    const g = ((await payload.findGlobal({
-      slug, draft: mode === 'preview', overrideAccess: true, depth,
-    })) as unknown) as Record<string, unknown> & Doc
-    // Chưa từng đăng thì bản công khai coi như trống.
-    return mode === 'public' && g._status !== 'published' ? {} : g
-  }
+  const readGlobal = (slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0) =>
+    readGlobalDoc(payload, slug, mode, depth)
 
   async function getSiteSettings(mode: Mode): Promise<SiteSettingsView> {
     const g = (await readGlobal('site-settings', mode)) as Record<string, string | null | undefined>
