@@ -18,6 +18,19 @@ export function FootnoteRef({ n, href }: { n: number; href?: string }) {
   )
 }
 
+// Chú thích cuối câu: các số nguồn theo thứ tự tăng dần; id không có số (nguồn bị ẩn) thì bỏ.
+export function Cite({ ids, numbers }: { ids: string[]; numbers: Map<string, number> }) {
+  const ns = ids.flatMap((id) => numbers.get(id) ?? []).sort((a, b) => a - b)
+  if (ns.length === 0) return null
+  return (
+    <>
+      {ns.map((n) => (
+        <FootnoteRef key={n} n={n} />
+      ))}
+    </>
+  )
+}
+
 // Danh sách nguồn; mục null bỏ cả dấu " · " đi kèm.
 export function SourceList({
   sources,

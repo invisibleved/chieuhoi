@@ -1,11 +1,16 @@
-import { Breadcrumb } from '@/components/layout/Breadcrumb'
+import type { Metadata } from 'next'
 
-// Trang giữ chỗ cho khung layout (Task 11); Phase 4 sẽ thay bằng trang Làng Hới thật.
-export default function LangHoiPage() {
-  return (
-    <div className="px-5 py-8 lg:px-20">
-      <Breadcrumb items={[{ label: 'Trang chủ', href: '/' }, { label: 'Làng Hới' }]} />
-      <h1 className="mt-6 font-display text-h1">Làng Hới</h1>
-    </div>
-  )
+import { VillageView } from '@/components/village/VillageView'
+import { getMode, getVillagePage } from '@/lib/content'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { intro, copy } = await getVillagePage(await getMode())
+  const title = (intro.title ?? copy.breadcrumb.current ?? '').replace(/\n/g, ' ')
+  return intro.lead ? { title, description: intro.lead } : { title }
+}
+
+export default async function LangHoiPage() {
+  const mode = await getMode()
+  const page = await getVillagePage(mode)
+  return <VillageView page={page} />
 }
