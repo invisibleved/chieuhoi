@@ -73,6 +73,8 @@ describe('view model Con người', () => {
       expect(p.quote).toBeNull()
       expect(p.storyParts).toEqual([null, null])
       expect(p.gallery).toEqual([])
+      expect(p.heading).toBe('Chờ đồng ý')
+      expect(p.storyTitle).toBe('Câu chuyện')
       expect(p.consent).toEqual({ state: 'none', missing: ['tên', 'ảnh', 'lời trích'], reviewedBySubject: false })
       expect(v!.copy.detail.preview).toBeNull()
     })
@@ -162,8 +164,13 @@ describe('view model Con người', () => {
       })
       try {
         const v = (await people.getPersonPage('thu-trich', 'public'))!.person
-        expect(v.quote).toEqual({ text: 'Nghề là hồn làng.', sourceLine: 'Vietnam+ (14/08/2026)' })
+        expect(v.quote).toEqual({ text: 'Nghề là hồn làng.', sourceLine: 'Vietnam+ (14/08/2026)', note: 'Nguồn: Vietnam+ (14/08/2026)' })
         expect(v.consent).toEqual({ state: 'full', missing: [], reviewedBySubject: true })
+        expect(v.heading).toBe('Ông Thử')
+        expect(v.storyTitle).toBe('Câu chuyện của Ông Thử')
+        expect(v.recorded).toBeNull()
+        const w = (await people.getPersonPage('thu-trich', 'preview'))!.person
+        expect(w.quote?.note).toBe('Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc · Nguồn: Vietnam+ (14/08/2026)')
       } finally {
         await payload.delete({ collection: 'people', id: p.id, overrideAccess: true })
       }
@@ -235,8 +242,13 @@ describe('view model Con người', () => {
       expect(p.gallery).toHaveLength(2)
       expect(p.gallery[0].caption).toBe('Hai người cùng làm trên một khung. [Chú thích cần người trong ảnh duyệt]')
       expect(p.gallery[1].caption).toBe('Đôi tay trên khung dệt.')
-      expect(p.portraitCaption?.consentLine).toBe(peopleCopy.detail.preview.consentLine)
-      expect(p.portraitCaption?.label).toMatch(/^CHÂN DUNG/)
+      expect(p.portraitCaption?.line.mobile).toBe(peopleCopy.detail.preview.consentLine)
+      expect(p.portraitCaption?.line.desktop).toContain(peopleCopy.detail.preview.consentLine)
+      expect(p.portraitCaption?.label).toBe('CHÂN DUNG')
+      // Preview: tên trống là [cần xác minh]; dòng "Ghi lại bởi" trống giữ dấu như các dòng dữ kiện khác.
+      expect(p.heading).toBe('[cần xác minh]')
+      expect(p.storyTitle).toBe('Câu chuyện của [cần xác minh]')
+      expect(p.recorded).toBe('[cần xác minh]')
       // Trường trống là null để component dùng gợi ý phỏng vấn trong copy (R14).
       expect(p.intro).toBeNull()
       expect(p.storyParts).toEqual([null, null])

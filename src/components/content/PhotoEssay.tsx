@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react'
 import type { ImageView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
 
 type PhotoEssayProps = {
   title: string
-  note?: string | null
+  /** Ghi chú cạnh tiêu đề (có thể là VariantText hai bản). */
+  note?: ReactNode
   items: { image: ImageView; caption: string | null }[]
 }
 

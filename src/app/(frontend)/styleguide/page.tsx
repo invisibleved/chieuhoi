@@ -9,7 +9,7 @@ import { CraftStage } from '@/components/content/CraftStage'
 import { FigureCard } from '@/components/content/FigureCard'
 import { PageHeader } from '@/components/content/PageHeader'
 import { PhotoEssay } from '@/components/content/PhotoEssay'
-import { RichText } from '@/components/content/RichText'
+import { RichText, StoryPlaceholder } from '@/components/content/RichText'
 import { ReadNext } from '@/components/content/ReadNext'
 import { Timeline } from '@/components/content/Timeline'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
@@ -250,6 +250,10 @@ export default function StyleguidePage() {
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
           </div>
+          <div className="flex flex-col gap-3">
+            <Lab>DANH SÁCH THÔNG TIN · HAI CỘT</Lab>
+            <FactList layout="inline" items={[{ term: 'Vai trò', detail: '[cần xác minh]' }, { term: 'Năm làm nghề', detail: '[cần xác minh]' }, { term: 'Ghi lại bởi', detail: '[người phỏng vấn] · [ngày]' }]} />
+          </div>
           <div className="flex flex-col gap-4 bg-bg-inverse p-4 md:col-span-2">
             <Lab tone="dark">MỨC TIN CẬY · NỀN TỐI</Lab>
             <ConfidenceLegend label={villageCopy.timeline.legendLabel.desktop} labels={villageCopy.timeline.confidence} />
@@ -367,6 +371,8 @@ export default function StyleguidePage() {
           <div className="flex min-w-0 flex-col gap-3">
             <Lab>RICH TEXT · LỜI KỂ CHÂN DUNG</Lab>
             <RichText variant="story" value={fx.richStory} />
+            <Lab>GỢI Ý PHỎNG VẤN · XEM TRƯỚC</Lab>
+            <StoryPlaceholder title={peopleCopy.detail.preview.sections[0].title} body={peopleCopy.detail.preview.sections[0].body} />
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <Lab>TRÍCH DẪN · BÀI ĐỌC</Lab>
@@ -376,7 +382,7 @@ export default function StyleguidePage() {
           </div>
           <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
             <Lab>PHÓNG SỰ ẢNH</Lab>
-            <PhotoEssay title="Phóng sự ảnh" note="Ảnh cùng buổi chụp · cần xác minh tác giả và quyền dùng" items={fx.gallery} />
+            <PhotoEssay title="Phóng sự ảnh" note={<VariantText value={peopleCopy.detail.preview.galleryNote} />} items={fx.gallery} />
           </div>
           {(['none', 'partial', 'full'] as const).map((k) => (
             <div key={k} className="flex min-w-0 flex-col gap-3">

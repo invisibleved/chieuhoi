@@ -15,7 +15,7 @@ import type {
   ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView,
 } from './types'
-import { isUnverified, showText, toImageView, toPersonView } from './visibility'
+import { isUnverified, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
 
 const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v as Source) : null)
 const sourcesOf = (v: unknown): Source[] =>
@@ -332,13 +332,18 @@ export function createContent(payload: Payload) {
     // Lời trích: nguồn phải còn nhìn thấy được ở mode này (public), như cite trong bài (R4, R15).
     const qSource = sourceOf(d.quoteSource)
     const qSourceView = qSource ? toSourceView(qSource, mode) : null
+    const qLine = qSourceView ? sourceLine([qSourceView]) : null
+    const qNote = [
+      preview ? peopleCopy.detail.preview.quoteNotePrefix.replace(/\s*·\s*$/, '') : null,
+      qLine ? `${peopleCopy.detail.quoteSource}${qLine}` : null,
+    ].filter(Boolean).join(' · ') || null
     const quote: PersonDetailView['quote'] = cardQuote && (preview || qSourceView)
-      ? { text: cardQuote.text, sourceLine: qSourceView ? sourceLine([qSourceView]) : null }
+      ? { text: cardQuote.text, sourceLine: qLine, note: qNote }
       : null
 
-    const recorded = identifying
-      ? [filled(d.recordedBy), formatDate(filled(d.recordedAt))].filter((s): s is string => !!s).join(' · ') || null
-      : null
+    const recordedParts = [filled(d.recordedBy), formatDate(filled(d.recordedAt))].filter((s): s is string => !!s)
+    // Như yearsInCraft/hamlet: preview giữ dấu [cần xác minh] cho dòng dữ kiện trống.
+    const recorded = identifying ? recordedParts.join(' · ') || (preview ? UNVERIFIED : null) : null
 
     // Phóng sự ảnh: public cần đồng ý ảnh; chưa đồng ý tên thì bỏ alt và chú thích (có thể chứa tên).
     const gallery: PersonDetailView['gallery'] = []
@@ -357,9 +362,14 @@ export function createContent(payload: Payload) {
       .map((k) => ({ name: 'tên', photo: 'ảnh', quote: 'lời trích' } as const)[k])
     const copy = applyMode(peopleCopy, mode)
 
+    const photographer = v.portrait?.photographer ? `${peopleCopy.detail.photoPrefix}${v.portrait.photographer}` : null
+    const consentLine = consent.photo ? null : (copy.detail.preview?.consentLine ?? null)
+
     return {
       ...v,
       flags: [...flagsOf(d, mode), ...v.flags],
+      heading: v.name ?? peopleCopy.detail.pendingName,
+      storyTitle: v.name ? peopleCopy.detail.story.title.replace('{name}', v.name) : peopleCopy.detail.story.titleNoName,
       // intro trống là null để preview hiện gợi ý phỏng vấn (R14); yearsInCraft/hamlet là dòng dữ kiện nên
       // giữ dấu [cần xác minh] của showText ở preview, như các bảng dữ kiện khác.
       intro: identifying ? filled(d.intro) : null,
@@ -377,9 +387,9 @@ export function createContent(payload: Payload) {
       },
       portraitCaption: v.portrait
         ? {
-            label: [peopleCopy.detail.portraitLabel, v.portrait.docNumber].filter(Boolean).join(' · '),
-            photographer: v.portrait.photographer,
-            consentLine: consent.photo ? null : (copy.detail.preview?.consentLine ?? null),
+            label: peopleCopy.detail.portraitLabel,
+            code: v.portrait.docNumber,
+            line: { desktop: [photographer, consentLine].filter(Boolean).join(' · ') || null, mobile: consentLine },
           }
         : null,
     }

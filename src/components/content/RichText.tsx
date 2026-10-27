@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from 'react'
-import type { ImageView, Rich, RichNode } from '@/lib/content'
+import type { ImageView, Rich, RichNode, Variant } from '@/lib/content'
 import { PullQuote } from '@/components/ui/PullQuote'
+import { VariantText } from '@/components/ui/VariantText'
 import { ContentImage } from './ContentImage'
 import { FootnoteRef } from './Sources'
 
@@ -131,4 +132,19 @@ export function RichText({ value, variant, dropCap = false }: RichTextProps) {
   })
 
   return <div className={s.wrap}>{out}</div>
+}
+
+/**
+ * Mục gợi ý phỏng vấn ở bản xem trước (R14): tiêu đề như h3 của lời kể, đoạn chữ mờ (.ph của artboard).
+ * Thân là Variant: desktop có câu hỏi gợi ý, mobile rút gọn.
+ */
+export function StoryPlaceholder({ title, body }: { title: string; body: Variant }) {
+  return (
+    <div className="flex flex-col gap-2 md:gap-2.5">
+      <h3 className={styles.story.h3}>{title}</h3>
+      <p className="m-0 font-serif text-[17px] leading-[1.75] text-text-muted md:text-[19px]">
+        <VariantText value={body} />
+      </p>
+    </div>
+  )
 }

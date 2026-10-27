@@ -107,3 +107,61 @@ for (const vp of VIEWPORTS) {
     await shootFullPage(page, open, 'people', vp)
   })
 }
+
+// /con-nguoi/[slug] ở chế độ xem trước: mẫu seed chưa có đồng ý, preview hiện ảnh tham khảo kèm ghi chú quy trình.
+const PERSON = '/con-nguoi/mau-nghe-nhan'
+
+async function openPerson(page: Page) {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const res = await page.goto(PERSON)
+  expect(res?.status()).toBe(200)
+  await page.waitForLoadState('networkidle')
+}
+
+for (const vp of VIEWPORTS) {
+  test.describe(`chân dung (xem trước) ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+    const desktop = vp.width >= 768
+
+    test('một h1, băng mẫu trang, ba mục gợi ý, không cuộn ngang, axe sạch', async ({ page }) => {
+      await loginReviewer(page)
+      await openPerson(page)
+      await expect(page.locator('main h1')).toHaveCount(1)
+      await expect(page.getByRole('note').filter({ visible: true })).toContainText(desktop ? 'Mẫu trang chân dung.' : 'Mẫu trang.')
+      await expect(page.getByRole('navigation', { name: 'Đường dẫn' }))[desktop ? 'toBeVisible' : 'toBeHidden']()
+      await expect(page.locator('main h3')).toHaveText(['Tuổi thơ bên khung dệt', 'Một ngày làm chiếu', 'Điều muốn giữ lại'])
+      await expect(page.locator('main dl').filter({ visible: true }).locator('dt')).toHaveCount(desktop ? 4 : 2)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      const bad = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')
+      expect(bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([])
+    })
+
+    test('phóng sự ảnh 2 ảnh, thẻ liên quan "05 · …" (công đoạn nháp chỉ có ở preview, P2)', async ({ page }) => {
+      await loginReviewer(page)
+      await openPerson(page)
+      await expect(page.getByRole('heading', { level: 2, name: 'Phóng sự ảnh' })).toBeVisible()
+      await expect(page.locator('main section:has(h2:text-is("Phóng sự ảnh")) figure img')).toHaveCount(2)
+      const related = page.locator('main section[aria-labelledby="read-next-h"] a').filter({ visible: true })
+      await expect(related.first()).toContainText(/05 · /)
+      await expect(related).toHaveCount(desktop ? 2 : 1)
+      await expect(page.getByRole('region', { name: 'TRẠNG THÁI ĐỒNG Ý' })).toContainText('Chưa có')
+    })
+
+    test('ảnh tải xong, vùng chạm ≥ 44px', async ({ page }) => {
+      await loginReviewer(page)
+      await openPerson(page)
+      await scrollThrough(page)
+      await expectVisibleImagesLoaded(page)
+      if (!desktop) expect(await smallTargets(page)).toEqual([])
+    })
+  })
+}
+
+for (const vp of VIEWPORTS) {
+  test(`chụp toàn trang chân dung ${vp.name}`, async ({ page }) => {
+    test.skip(!SHOTS, 'đặt SHOTS_DIR để lưu ảnh chụp')
+    test.setTimeout(120_000)
+    await shootFullPage(page, openPerson, 'person', vp)
+  })
+}

@@ -51,6 +51,8 @@ export const peopleCopy = {
     photoPrefix: 'Ảnh: ',
     story: { eyebrow: 'ĐỜI VÀ NGHỀ', title: 'Câu chuyện của {name}', titleNoName: 'Câu chuyện' },
     quoteSource: 'Nguồn: ',
+    // Danh sách nguồn mà câu chuyện trích (T2c); artboard chưa có nên dùng nhãn của bài đọc (StoryDetail).
+    notesTitle: 'Ghi chú nguồn',
     gallery: { title: 'Phóng sự ảnh' },
     consent: {
       title: 'TRẠNG THÁI ĐỒNG Ý',

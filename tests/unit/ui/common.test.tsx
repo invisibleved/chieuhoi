@@ -157,6 +157,15 @@ describe('FactList', () => {
     expect(divs[0].className).toContain('border-border-strong')
     expect(divs[1].className).toContain('border-border-soft')
   })
+  it('inline: hai cột, nhãn chữ thường màu phụ (không phải eyebrow)', () => {
+    const { container } = render(<FactList layout="inline" items={[{ term: 'Vai trò', detail: 'Thợ dệt' }, { term: 'Năm làm nghề', detail: '40' }]} />)
+    const divs = container.querySelectorAll('dl > div')
+    expect(divs[0].className).toContain('grid-cols-[120px_1fr]')
+    expect(divs[1].className).toContain('border-b')
+    const dt = container.querySelector('dt')!
+    expect(dt.className).toContain('text-text-muted')
+    expect(dt.className).not.toContain('tracking-label')
+  })
 })
 
 describe('PullQuote', () => {
@@ -259,6 +268,12 @@ describe('ReadNext', () => {
     expect(lis[0].className).not.toContain('max-md:hidden')
     expect(lis[1].querySelector('a')!.className).toContain('max-md:border-b')
     expect(lis[2].querySelector('a')!.className).not.toContain('max-md:border-b')
+  })
+  it('mọi mục đều mobile:false thì cả khối ẩn dưới md (không để dải "LIÊN QUAN" trống)', () => {
+    const { container, rerender } = render(<ReadNext items={[items[2]]} eyebrow="LIÊN QUAN" title="Liên quan" />)
+    expect(container.querySelector('section')!.className).toContain('max-md:hidden')
+    rerender(<ReadNext items={items} eyebrow="LIÊN QUAN" title="Liên quan" />)
+    expect(container.querySelector('section')!.className).not.toContain('max-md:hidden')
   })
   it('imageClassName đổi chiều cao ảnh', () => {
     const img = { url: '/x.webp', alt: 'a', width: 10, height: 10, sizes: {}, photographer: null, code: null, docNumber: null, flags: [] as [] }

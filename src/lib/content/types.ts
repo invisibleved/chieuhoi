@@ -181,26 +181,35 @@ export type ConsentKind = 'tên' | 'ảnh' | 'lời trích'
  * `quote` thay kiểu của PersonView (P1): có thêm dòng nguồn.
  */
 export type PersonDetailView = Omit<PersonView, 'quote'> & {
+  /** h1, mục cuối breadcrumb, tiêu đề trang: tên, hoặc "Chờ đồng ý" khi không có tên (R16). */
+  heading: string
+  /** h2 câu chuyện: "Câu chuyện của {tên}", hoặc "Câu chuyện" khi không có tên (R16). */
+  storyTitle: string
   /** Null khi trống (preview dùng gợi ý trong copy, R14). */
   intro: string | null
   yearsInCraft: string | null
   hamlet: string | null
-  /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống. */
+  /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống ở public, "[cần xác minh]" ở preview. */
   recorded: string | null
   /** Câu chuyện tách tại heading thứ hai; lời trích đặt giữa hai phần (R15). Cây rỗng là null. */
   storyParts: [Rich | null, Rich | null]
   /** Nguồn mà câu chuyện trích, đánh số theo lần trích đầu tiên (R4, T2c); [] khi câu chuyện không hiện. */
   sources: SourceView[]
-  /** `sourceLine`: "Nhà xuất bản (dd/mm/yyyy)", chưa có tiền tố "Nguồn: " (copy.detail.quoteSource). */
-  quote: { text: string; sourceLine: string | null } | null
+  /**
+   * `sourceLine`: "Nhà xuất bản (dd/mm/yyyy)". `note`: dòng dưới lời trích đã dựng, "Nguồn: …" (R15);
+   * preview thêm tiền tố "Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc · ".
+   */
+  quote: { text: string; sourceLine: string | null; note: string | null } | null
   gallery: { image: ImageView; caption: string | null }[]
   /** Hiện ở cả public (R18). */
   consent: { state: ConsentState; missing: ConsentKind[]; reviewedBySubject: boolean }
   /**
    * Chú thích ảnh chân dung; null khi không có ảnh chân dung ở mode này.
-   * `label`: "CHÂN DUNG · 001" (số từ mã TL-…). `consentLine` chỉ ở preview, khi chưa đồng ý ảnh.
+   * `label` "CHÂN DUNG", `code` số từ mã TL-… (DocumentLabel ghép "CHÂN DUNG · 001").
+   * `line.desktop`: "Ảnh: {tác giả} · {dòng đồng ý}"; `line.mobile`: chỉ dòng đồng ý (PersonMobile).
+   * Dòng đồng ý chỉ có ở preview, khi chưa đồng ý ảnh.
    */
-  portraitCaption: { label: string; photographer: string | null; consentLine: string | null } | null
+  portraitCaption: { label: string; code: string | null; line: Variant } | null
 }
 
 export interface PeoplePageView {

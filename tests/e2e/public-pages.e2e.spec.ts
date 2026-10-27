@@ -177,3 +177,65 @@ for (const vp of [
     })
   })
 }
+
+// /con-nguoi/[slug] ở public: mẫu seed đã đăng nhưng chưa có đồng ý nào (Review Focus 1, P4).
+// Không tên, không ảnh chân dung hay phóng sự ảnh, không alt/chú thích, không câu chuyện; khung đồng ý vẫn hiện.
+const seedPersonLeaks = [
+  'nkc10', 'nkc5', 'nkc14', 'images/reference',
+  // alt ảnh tham khảo của seed (src/seed/data/archive.ts) và chú thích phóng sự ảnh (src/seed/data/extras.ts)
+  'Người phụ nữ lớn tuổi ngồi dệt chiếu', 'Hai người cùng làm trên một khung', 'Đôi tay người phụ nữ ấn go',
+  'Đôi tay trên khung dệt', 'Dệt chiếu tay', 'Đồng ý của người trong ảnh', 'Mẫu trang', 'Phóng sự ảnh',
+]
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`chân dung public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openPerson(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/con-nguoi/mau-nghe-nhan')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+
+    test('h1 "Chờ đồng ý", không lộ ảnh, alt, chú thích hay chữ quy trình; khung đồng ý "Chưa có"', async ({ page }) => {
+      await openPerson(page)
+      const main = page.locator('main')
+      await expect(main.locator('h1')).toHaveCount(1)
+      await expect(main.locator('h1')).toHaveText('Chờ đồng ý')
+      // Toàn bộ HTML (kể cả payload RSC và metadata) không chứa dấu vết nhận ra người.
+      const html = await page.content()
+      for (const leak of seedPersonLeaks) expect(html, leak).not.toContain(leak)
+      await expect(page).toHaveTitle(/Chờ đồng ý/)
+      expect(await page.locator('meta[property="og:image"]').count()).toBe(0)
+      await expect(main.locator('header img, figure img, blockquote')).toHaveCount(0)
+      await expect(main.getByRole('heading', { level: 2, name: /Câu chuyện/ })).toHaveCount(0)
+      const text = await main.evaluate((el) => el.textContent ?? '')
+      expect(text).not.toMatch(/\[[^\]]*\]/)
+      await expect(page.getByText('TRẠNG THÁI ĐỒNG Ý').filter({ visible: true })).toBeVisible()
+      await expect(page.getByRole('region', { name: 'TRẠNG THÁI ĐỒNG Ý' })).toContainText('Chưa có')
+      // Liên quan chỉ còn thẻ "Những chân dung khác" (desktop-only) nên mobile không có dải trống.
+      await expect(page.locator('section[aria-labelledby="read-next-h"]'))[vp.width >= 768 ? 'toBeVisible' : 'toBeHidden']()
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
+    })
+
+    test('axe: không có vi phạm serious/critical', async ({ page }) => {
+      await openPerson(page)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+
+    test('chụp toàn trang chân dung public', async ({ page }) => {
+      test.skip(!process.env.SHOTS_DIR, 'đặt SHOTS_DIR để lưu ảnh chụp')
+      await openPerson(page)
+      await page.screenshot({ path: `${process.env.SHOTS_DIR}/person-public-${vp.name}.png`, fullPage: true })
+    })
+  })
+}
+
+test('/con-nguoi/khong-co trả 404', async ({ page }) => {
+  const res = await page.goto('/con-nguoi/khong-co')
+  expect(res?.status()).toBe(404)
+})

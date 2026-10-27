@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { PhotoEssay } from '@/components/content/PhotoEssay'
-import { RichText } from '@/components/content/RichText'
+import { RichText, StoryPlaceholder } from '@/components/content/RichText'
 import type { ImageView, Rich } from '@/lib/content'
 
 const image: ImageView = {
@@ -111,8 +111,24 @@ describe('PhotoEssay', () => {
     expect(figs[1].className).toContain('md:col-span-4')
     expect(screen.queryByText('Ảnh cùng buổi chụp')).toBeNull()
   })
+  it('ghi chú hai bản (ReactNode): bản desktop ẩn dưới md, bản mobile ẩn từ md', () => {
+    render(<PhotoEssay title="Phóng sự ảnh" note={<><span className="max-md:hidden">Bản dài</span><span className="md:hidden">Bản ngắn</span></>} items={items} />)
+    expect(screen.getByText('Bản dài').className).toBe('max-md:hidden')
+    expect(screen.getByText('Bản ngắn').className).toBe('md:hidden')
+  })
   it('không có ảnh thì không render gì (cả tiêu đề)', () => {
     const { container } = render(<PhotoEssay title="Phóng sự ảnh" items={[]} />)
     expect(container.innerHTML).toBe('')
+  })
+})
+
+describe('StoryPlaceholder', () => {
+  it('h3 tiêu đề, đoạn chữ mờ hai bản desktop/mobile', () => {
+    const { container } = render(<StoryPlaceholder title="Một ngày làm chiếu" body={{ desktop: '[Gợi ý dài]', mobile: '[Ngắn]' }} />)
+    expect(screen.getByRole('heading', { level: 3, name: 'Một ngày làm chiếu' })).toBeTruthy()
+    const p = container.querySelector('p')!
+    expect(p.className).toContain('text-text-muted')
+    expect(screen.getByText('[Gợi ý dài]').className).toBe('max-md:hidden')
+    expect(screen.getByText('[Ngắn]').className).toBe('md:hidden')
   })
 })
