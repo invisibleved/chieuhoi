@@ -19,6 +19,16 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] Timeline: mục "+ Mốc của bạn" là phần tử tĩnh, không phải dữ liệu (Phase 1 R18).
 - [ ] Rich text chưa có khối ảnh; nếu cần thì thêm khối ảnh đã kiểm soát quyền (Phase 1 R16).
 
+## B2. Vi phạm kiến trúc / component chung (quy tắc trong `CLAUDE.md`) — sửa đầu Phase 4
+
+- [ ] `SiteHeader.tsx:3`, `SiteFooter.tsx:3` gọi `getMode`/`getSiteSettings` trong component → chuyển việc lấy dữ liệu lên `app/(frontend)/layout.tsx`, truyền view model qua props.
+- [ ] `components/home/hasPattern.ts`, `components/home/tlCode.ts` là luật nghiệp vụ → chuyển vào `lib/content` (trả sẵn trong view model, ví dụ `ProductView.hasPattern`, `ArchiveItemView.docNumber`).
+- [ ] `ArchiveTeaser.tsx:24` tự chép nhãn option → dùng `categories.ts`.
+- [ ] Eyebrow `tracking-[.22em] text-accent md:tracking-[.24em]` viết lặp ở 6 file `home/*` (Hero, VillageIntro, PeopleTeaser, StoriesTeaser, ProductsTeaser, ArchiveTeaser) → token eyebrow + component `ui/Eyebrow` (hoặc dùng `SectionHeading`).
+- [ ] Dải cuộn ngang mobile viết lại ở `CraftTeaser.tsx:100` và `PeopleTeaser.tsx:33` → `ui/ScrollStrip`.
+- [ ] `CraftTeaser` `Progress` sẽ cần ở trang Nghề dệt chiếu → chuyển lên `ui` khi Phase 4 dùng lại.
+- [ ] `rgba(40,39,36,.2)` viết cứng (Phase 2) → token.
+
 ## C. Lỗi nhỏ còn mở
 
 ### Phase 3 (trang chủ)

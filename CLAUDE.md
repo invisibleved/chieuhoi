@@ -36,7 +36,26 @@ Thiết kế đã hoàn tất. Việc của bạn là **triển khai đúng thi�
 - Chuyển động bằng CSS và IntersectionObserver; tôn trọng `prefers-reduced-motion`. Không khoá cuộn, không parallax mạnh.
 - Mobile có bố cục riêng (xem ảnh chụp *Mobile.jpg), không chỉ thu nhỏ bản desktop.
 
+## Kiến trúc (clean architecture, bắt buộc)
+Phụ thuộc chỉ đi một chiều: `app` → `components` → `lib/content` (view model) → Payload (`collections`, `globals`, `access`). Không có chiều ngược lại.
+- `src/collections`, `src/globals`, `src/access`: schema, quyền truy cập và hook của Payload. Không import từ `components` hoặc `app`.
+- `src/lib/content`: lớp duy nhất được gọi Payload. Mỗi hàm `get*` nhận `mode` và trả **view model** (`*View`) đã lọc theo quyền đăng, consent và placeholder. Mọi luật nghiệp vụ nằm ở đây, kể cả các vị từ và hàm định dạng dữ liệu như `hasPattern`, `docNumber`, nhãn chuyên mục. Không đặt chúng trong `components`.
+- `src/app/**/page.tsx` và `layout.tsx` (server): gọi `getMode()` và `get*()`, rồi truyền view model xuống. Đây là nơi duy nhất lấy dữ liệu.
+- `src/components`: chỉ nhận props (kiểu `*View`, chỉ dùng `import type` từ `@/lib/content`). Không gọi `get*`/`getMode`, không import `payload`, `@payload-config` hay `@/collections`, không tự lọc theo consent hoặc rights.
+- Nhãn hiển thị của các giá trị option (category, group, era…) có một nguồn duy nhất là option trong collection. Map nhãn ở `lib/content/categories.ts`, không chép lại danh sách nhãn trong component.
+
+## Component dùng chung (bắt buộc)
+- `src/components/ui`: khối giao diện chung, không biết gì về nội dung di sản (Button, LinkArrow, SectionHeading, FilterChips, Tabs, Reveal…).
+- `src/components/content`: thẻ và khối hiển thị một loại view model, dùng được ở mọi trang (PortraitCard, StoryCard, ProductCard, ExhibitCard, ContentImage, Sources, Tag, PreviewNotes…).
+- `src/components/layout`: header, footer, breadcrumb, nav.
+- `src/components/<trang>` (ví dụ `home`): chỉ ghép các component chung thành section của trang đó. Không định nghĩa lại kiểu chữ, nút, dải cuộn ngang, nhãn hay thẻ ở đây.
+- Trước khi viết markup mới, tìm trong `ui` và `content` trước. Nếu một mẫu giao diện xuất hiện ở trang thứ hai (hoặc lặp hai lần trong một trang), chuyển nó lên `ui`/`content` rồi dùng lại, không copy class Tailwind.
+- Giá trị thiết kế lặp lại (eyebrow, line-height, màu rgba) phải thành token trong `@theme` hoặc prop của component chung, không viết cứng `tracking-[.22em]`, `rgba(...)` rải rác.
+- Component chung cần có test unit và có mặt trên `/styleguide`.
+- Review mỗi task phải kiểm tra hai mục trên. Vi phạm là lỗi cần sửa, không phải lỗi nhỏ để dành.
+
 ## Cách làm việc
 - Làm theo từng phase trong `docs/KICKOFF_PROMPT.md`. Hết mỗi phase thì dừng lại để người dùng xem.
 - Sau mỗi trang: chạy `npm run lint`, `npm run build`, rồi so sánh với ảnh chụp ở 1440 và 390px (dùng Playwright chụp màn hình nếu có).
 - Copy tiếng Việt lấy nguyên văn từ artboard, không tự diễn đạt lại.
+- Hết mỗi phase: chép mọi mục review còn mở vào `docs/superpowers/backlog.md` và commit, **trước** khi xoá `.superpowers/sdd/<plan>/`.
