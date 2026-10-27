@@ -5,27 +5,36 @@ export function sourceNumbers(sources: SourceView[]): Map<string, number> {
   return new Map(sources.map((s, i) => [s.id, i + 1]))
 }
 
+type FootnoteVariant = 'number' | 'bracket'
+
+const footnoteVariants = {
+  // Số trơn đậm 13px (bài viết, trang chủ).
+  number: 'ml-1 font-sans text-[13px] font-semibold',
+  // "[n]" 12px như .src của VillagePage (giãn chữ .06em từ md theo artboard desktop).
+  bracket: 'ml-0.5 font-sans text-[12px] md:tracking-cite',
+} as const
+
 // Số chú thích trên dòng; vùng chạm 44px mở rộng bằng pseudo-element.
-export function FootnoteRef({ n, href }: { n: number; href?: string }) {
+export function FootnoteRef({ n, href, variant = 'number' }: { n: number; href?: string; variant?: FootnoteVariant }) {
   return (
     <a
       href={href ?? `#nguon-${n}`}
-      className="fn relative ml-1 align-super font-sans text-[13px] font-semibold text-text-meta no-underline before:absolute before:left-1/2 before:top-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
+      className={`fn relative align-super text-text-meta no-underline before:absolute before:left-1/2 before:top-1/2 before:size-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] ${footnoteVariants[variant]}`}
       aria-label={`Nguồn ${n}`}
     >
-      <span className="relative z-[1]">{n}</span>
+      <span className="relative z-[1]">{variant === 'bracket' ? `[${n}]` : n}</span>
     </a>
   )
 }
 
 // Chú thích cuối câu: các số nguồn theo thứ tự tăng dần; id không có số (nguồn bị ẩn) thì bỏ.
-export function Cite({ ids, numbers }: { ids: string[]; numbers: Map<string, number> }) {
+export function Cite({ ids, numbers, variant }: { ids: string[]; numbers: Map<string, number>; variant?: FootnoteVariant }) {
   const ns = ids.flatMap((id) => numbers.get(id) ?? []).sort((a, b) => a - b)
   if (ns.length === 0) return null
   return (
     <>
       {ns.map((n) => (
-        <FootnoteRef key={n} n={n} />
+        <FootnoteRef key={n} n={n} variant={variant} />
       ))}
     </>
   )

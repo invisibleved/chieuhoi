@@ -57,9 +57,44 @@ describe('Timeline desktop', () => {
     expect(desktop(container).textContent).toContain('NGUỒN ·')
   })
 
-  it('sourceHref biến dòng nguồn thành liên kết', () => {
+  it('sourceHref biến dòng nguồn thành liên kết khối riêng ≥44px, không inline-flex trong đoạn văn', () => {
     const { container } = render(<Timeline events={events({ 0: { sourceHref: '/ket-noi' } })} copy={copy} />)
-    expect(within(desktop(container)).getByRole('link', { name: 'Nguồn số 1' }).getAttribute('href')).toBe('/ket-noi')
+    const link = within(desktop(container)).getByRole('link', { name: 'Nguồn số 1' })
+    expect(link.getAttribute('href')).toBe('/ket-noi')
+    expect(link.closest('p')).toBeNull()
+    expect(link.className).toContain('block')
+    expect(link.className).toContain('min-h-11')
+    expect(link.className).not.toContain('inline-flex')
+    const panel = mobile(container).querySelector('[id$="-p0"]')!
+    expect(within(panel as HTMLElement).getByRole('link', { name: 'Nguồn số 1' }).closest('p')).toBeNull()
+  })
+
+  it('"Mốc trước" aria-disabled ở mốc đầu', () => {
+    const { container } = render(<Timeline events={events()} copy={copy} />)
+    const prev = within(desktop(container)).getByRole('button', { name: 'Mốc trước' })
+    expect(prev.getAttribute('aria-disabled')).toBe('true')
+    fireEvent.click(within(desktop(container)).getByRole('button', { name: 'Mốc sau' }))
+    expect(prev.getAttribute('aria-disabled')).toBeNull()
+  })
+
+  it('đóng hết panel mobile (index -1): desktop vẫn chọn mốc đầu, Mốc trước vẫn aria-disabled, Mốc sau tới mốc 2', () => {
+    const { container } = render(<Timeline events={events()} copy={copy} />)
+    fireEvent.click(within(mobile(container)).getAllByRole('button')[0])
+    within(mobile(container)).getAllByRole('button').forEach((r) => expect(r.getAttribute('aria-expanded')).toBe('false'))
+    const d = within(desktop(container))
+    const current = desktop(container).querySelectorAll('ol [aria-current="true"]')
+    expect(current).toHaveLength(1)
+    expect(current[0].textContent).toContain('Mốc 1')
+    expect(d.getByRole('button', { name: 'Mốc trước' }).getAttribute('aria-disabled')).toBe('true')
+    fireEvent.click(d.getByRole('button', { name: 'Mốc sau' }))
+    expect(desktop(container).querySelector('ol [aria-current="true"]')!.textContent).toContain('Mốc 2')
+  })
+
+  it('5 mốc: trục có 5 cột', () => {
+    const { container } = render(<Timeline events={events().slice(0, 5)} copy={copy} />)
+    const ol = desktop(container).querySelector('ol')!
+    expect(ol.style.gridTemplateColumns).toBe('repeat(5, minmax(0, 1fr))')
+    expect(ol.querySelectorAll(':scope > li')).toHaveLength(5)
   })
 })
 

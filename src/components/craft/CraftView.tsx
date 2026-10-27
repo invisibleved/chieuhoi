@@ -49,21 +49,24 @@ export function CraftView({ page }: { page: CraftPageView }) {
 
       <CraftJourney steps={page.steps} copy={copy.journey} />
 
-      <section aria-labelledby="tools-h" className="flex flex-col gap-4 px-5 py-12 md:gap-10 md:px-20 md:py-28">
-        <SectionHeading
-          id="tools-h"
-          size="section"
-          eyebrow={copy.tools.eyebrow ?? undefined}
-          title={copy.tools.title}
-          note={copy.tools.preview?.note.desktop ?? undefined}
-          noteClassName="max-md:hidden"
-        />
-        <ScrollStrip focusable label={copy.tools.title ?? undefined} className="gap-3 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
-          {tools.map((t) => (
-            <FigureCard key={t.n} label={`${copy.tools.itemLabel} · ${pad(t.n)}`} title={t.name} caption={t.note} image={t.image} />
-          ))}
-        </ScrollStrip>
-      </section>
+      {/* Không dựng section chỉ còn tiêu đề: dụng cụ, hai cách dệt và đọc tiếp luôn có chữ cố định; hành trình tự ẩn khi không có công đoạn. */}
+      {tools.length > 0 ? (
+        <section aria-labelledby="tools-h" className="flex flex-col gap-4 px-5 py-12 md:gap-10 md:px-20 md:py-28">
+          <SectionHeading
+            id="tools-h"
+            size="section"
+            eyebrow={copy.tools.eyebrow ?? undefined}
+            title={copy.tools.title}
+            note={copy.tools.preview?.note.desktop ?? undefined}
+            noteClassName="max-md:hidden"
+          />
+          <ScrollStrip focusable label={copy.tools.title ?? undefined} className="gap-3 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
+            {tools.map((t) => (
+              <FigureCard key={t.n} label={`${copy.tools.itemLabel} · ${pad(t.n)}`} title={t.name} caption={t.note} image={t.image} />
+            ))}
+          </ScrollStrip>
+        </section>
+      ) : null}
 
       <ThreadsDivider className="mx-5 md:mx-20" />
 

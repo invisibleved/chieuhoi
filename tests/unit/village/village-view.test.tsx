@@ -75,4 +75,50 @@ describe('VillageView', () => {
     expect(container.querySelector('#heritage-h')!.closest('section')!.querySelectorAll('a[aria-label^="Nguồn"]')).toHaveLength(1)
     for (const p of container.querySelectorAll('p')) expect(p.textContent?.trim()).not.toBe('')
   })
+
+  it('public: Tổ nghề mất hết câu thì chỉ còn dòng "không có chân dung" (desktop): section ẩn dưới md; mất cả dòng đó thì bỏ section', () => {
+    const page = view('public')
+    const empty = { desktop: null, mobile: null }
+    page.copy.founder.paragraphs = page.copy.founder.paragraphs.map((p) => ({ parts: p.parts.map((x) => ({ ...x, text: empty, cite: [] })) }))
+    page.copy.founder.conflict.parts = page.copy.founder.conflict.parts.map((x) => ({ ...x, text: empty, cite: [] }))
+    const { container, rerender } = render(<VillageView page={page} />)
+    const section = container.querySelector('#founder-h')!.closest('section')!
+    expect(section.className).toContain('max-md:hidden')
+    expect(section.textContent).toContain('Không có chân dung lịch sử')
+    rerender(<VillageView page={{ ...page, copy: { ...page.copy, founder: { ...page.copy.founder, noPortrait: empty } } }} />)
+    expect(container.querySelector('#founder-h')).toBeNull()
+  })
+
+  it('Tổ nghề còn câu mobile thì section hiện ở mọi cỡ', () => {
+    const { container } = render(<VillageView page={view('public')} />)
+    expect(container.querySelector('#founder-h')!.closest('section')!.className).not.toContain('max-md:hidden')
+  })
+
+  it('public: Vị trí không có câu và không có bản đồ thì bỏ section', () => {
+    const page = view('public')
+    page.copy.location.body = { text: null, cite: [] }
+    const { container } = render(<VillageView page={page} />)
+    expect(container.querySelector('#location-h')).toBeNull()
+  })
+
+  it('Vị trí: không có bản đồ (public) thì chữ rộng 8 cột; có bản đồ (preview) thì 5 cột', () => {
+    const pub = render(<VillageView page={view('public')} />)
+    expect(pub.container.querySelector('#location-h')!.parentElement!.className).toContain('md:col-span-8')
+    cleanup()
+    const pre = render(<VillageView page={view('preview')} />)
+    expect(pre.container.querySelector('#location-h')!.parentElement!.className).toContain('md:col-span-5')
+  })
+
+  it('chú thích dạng [n] (F3); liên kết di sản không lặp mũi tên', () => {
+    render(<VillageView page={view('preview')} />)
+    expect(screen.getAllByRole('link', { name: 'Nguồn 1' })[0].textContent).toBe('[1]')
+    const link = screen.getByRole('link', { name: /Xem quy trình dệt chiếu/ })
+    expect(link.textContent!.match(/→/g)?.length ?? 0).toBeLessThanOrEqual(1)
+  })
+
+  it('ảnh đầu trang: nhãn tư liệu desktop và dòng TL mobile lấy từ copy', () => {
+    const { container } = render(<VillageView page={view('preview')} />)
+    expect(container.textContent).toContain('TƯ LIỆU · 021')
+    expect(container.querySelector('figcaption')!.textContent).toBe('TL · 021 · Chiếu phơi bên ao làng')
+  })
 })

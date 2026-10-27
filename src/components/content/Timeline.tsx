@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useId, useState } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 import type { TimelineEventView, VillagePageView } from '@/lib/content'
 import { PagerButton } from '@/components/ui/PagerButton'
 import { ConfidenceBadge, ConfidenceMark } from './Confidence'
@@ -10,12 +10,26 @@ type TimelineCopy = VillagePageView['copy']['timeline']
 
 type Props = { events: TimelineEventView[]; copy: TimelineCopy }
 
-const LINK = 'inline-flex min-h-11 items-center text-accent-on-dark underline underline-offset-4 hover:decoration-2'
-
-// Nội dung dòng nguồn: mốc có sourceHref thì là liên kết nội bộ.
-function SourceText({ event }: { event: TimelineEventView }) {
-  if (!event.sourceHref) return <>{event.sourceLine}</>
-  return <Link href={event.sourceHref} className={LINK}>{event.sourceLine}</Link>
+// Dòng nguồn: chữ thường nằm trong đoạn văn; mốc có sourceHref thì liên kết đứng một hàng riêng
+// (khối cao tối thiểu 44px, chữ vẫn xuống dòng tự nhiên), không phải inline-flex giữa đoạn.
+function SourceRow({ event, label, className }: { event: TimelineEventView; label: ReactNode; className: string }) {
+  if (!event.sourceLine) return null
+  if (!event.sourceHref) {
+    return (
+      <p className={`m-0 ${className}`}>
+        {label}
+        {event.sourceLine}
+      </p>
+    )
+  }
+  return (
+    <div className={className}>
+      {label}
+      <Link href={event.sourceHref} className="block min-h-11 py-3 text-accent-on-dark underline underline-offset-4 hover:decoration-2">
+        {event.sourceLine}
+      </Link>
+    </div>
+  )
 }
 
 // Dòng thời gian: trục ngang từ lg, accordion bên dưới; hai bố cục dùng chung `index`.
@@ -24,7 +38,9 @@ export function Timeline({ events, copy }: Props) {
   const uid = useId()
   if (events.length === 0) return null
   const last = events.length - 1
-  const cur = events[Math.min(Math.max(index, 0), last)]
+  // Accordion mobile dùng -1 khi đóng hết; trục desktop luôn có một mốc đang chọn.
+  const active = Math.min(Math.max(index, 0), last)
+  const cur = events[active]
   const labels = copy.confidence
 
   return (
@@ -39,7 +55,7 @@ export function Timeline({ events, copy }: Props) {
             style={{ gridTemplateColumns: `repeat(${events.length}, minmax(0, 1fr))` }}
           >
             {events.map((e, k) => {
-              const on = k === index
+              const on = k === active
               return (
                 <li key={k}>
                   <button
@@ -65,15 +81,14 @@ export function Timeline({ events, copy }: Props) {
           <div className="col-span-7 col-start-6 flex flex-col gap-4">
             <h3 className="m-0 font-display text-[36px] leading-[1.2] font-normal text-text-on-dark">{cur.title}</h3>
             <p className="m-0 text-lg leading-[1.7] text-text-on-dark">{cur.body}</p>
-            {cur.sourceLine ? (
-              <p className="m-0 text-small leading-[1.6] text-text-on-dark-muted">
-                <span className="text-eyebrow font-semibold tracking-label text-accent-on-dark">{copy.sourceLabel.desktop}</span>
-                <SourceText event={cur} />
-              </p>
-            ) : null}
+            <SourceRow
+              event={cur}
+              label={<span className="text-eyebrow font-semibold tracking-label text-accent-on-dark">{copy.sourceLabel.desktop}</span>}
+              className="text-small leading-[1.6] text-text-on-dark-muted"
+            />
             <div className="mt-2 flex gap-3">
-              <PagerButton tone="dark" direction="prev" label={copy.prev ?? ''} atEnd={index <= 0} onClick={() => setIndex(Math.max(0, index - 1))} />
-              <PagerButton tone="dark" variant="solid" direction="next" label={copy.next ?? ''} atEnd={index >= last} onClick={() => setIndex(Math.min(last, index + 1))} />
+              <PagerButton tone="dark" direction="prev" label={copy.prev ?? ''} atEnd={active === 0} onClick={() => setIndex(Math.max(0, active - 1))} />
+              <PagerButton tone="dark" variant="solid" direction="next" label={copy.next ?? ''} atEnd={active === last} onClick={() => setIndex(Math.min(last, active + 1))} />
             </div>
           </div>
         </div>
@@ -102,12 +117,7 @@ export function Timeline({ events, copy }: Props) {
               <div id={panelId} hidden={!on} className="flex-col gap-2.5 pb-[18px] pl-9 [&:not([hidden])]:flex">
                 <ConfidenceBadge level={e.confidence} labels={labels} />
                 <p className="m-0 text-[15px] leading-[1.65] text-text-on-dark">{e.body}</p>
-                {e.sourceLine ? (
-                  <p className="m-0 text-[13px] leading-[1.55] text-text-on-dark-muted">
-                    {copy.sourceLabel.mobile}
-                    <SourceText event={e} />
-                  </p>
-                ) : null}
+                <SourceRow event={e} label={copy.sourceLabel.mobile} className="text-[13px] leading-[1.55] text-text-on-dark-muted" />
               </div>
             </li>
           )

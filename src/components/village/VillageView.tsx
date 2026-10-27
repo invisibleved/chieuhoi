@@ -26,7 +26,7 @@ function Sentence({ text, cite, numbers }: { text: Variant; cite: string[]; numb
   return (
     <span className={desktopOnly(text)}>
       <VariantText value={text} />
-      <Cite ids={cite} numbers={numbers} />{' '}
+      <Cite ids={cite} numbers={numbers} variant="bracket" />{' '}
     </span>
   )
 }
@@ -53,7 +53,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
     detail: (
       <>
         <VariantText value={f.detail} />
-        <Cite ids={f.cite} numbers={numbers} />
+        <Cite ids={f.cite} numbers={numbers} variant="bracket" />
         {hasVariant(f.note) ? (
           <>
             <br />
@@ -70,6 +70,14 @@ export function VillageView({ page }: { page: VillagePageView }) {
   const { founder, timeline, location, heritage } = copy
   const lifeOn = life.length > 0 && hasVariant(copy.life.title)
   const heroDoc = hero ? hero.image.docNumber : null
+
+  // Không dựng section chỉ còn tiêu đề. Tổ nghề: dòng "không có chân dung" chỉ có ở desktop,
+  // nên trên mobile nó không tính là nội dung (section chỉ còn nó thì ẩn dưới md).
+  const paragraphs = founder.paragraphs.filter((para) => para.parts.some((p) => hasVariant(p.text)))
+  const conflictOn = founder.conflict.parts.some((p) => hasVariant(p.text))
+  const founderMobile = paragraphs.some((para) => para.parts.some((p) => p.text.mobile)) || founder.conflict.parts.some((p) => p.text.mobile)
+  const founderOn = paragraphs.length > 0 || conflictOn || hasVariant(founder.noPortrait)
+  const locationOn = Boolean(location.body.text) || location.preview !== null
 
   return (
     <>
@@ -103,36 +111,41 @@ export function VillageView({ page }: { page: VillagePageView }) {
 
       {factList ? <div data-testid="village-facts-mobile" className="mx-5 mt-6 md:hidden">{factList}</div> : null}
 
-      <section aria-labelledby="founder-h" className="flex flex-col gap-4 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:py-[120px]">
-        <div className="flex flex-col gap-4 md:col-span-4">
-          <Eyebrow as="p">{founder.eyebrow}</Eyebrow>
-          <h2 id="founder-h" className="font-display text-h2-section leading-[1.15] font-normal md:leading-[1.12]">
-            {founder.title}
-          </h2>
-        </div>
-        <div className="flex flex-col gap-4 md:col-span-6 md:col-start-6 md:gap-[22px]">
-          {founder.paragraphs.filter((para) => para.parts.some((p) => hasVariant(p.text))).map((para, i) => (
-            <p key={i} className="m-0 font-serif text-[17px] leading-[1.75] md:text-[20px]">
-              <Parts parts={para.parts} numbers={numbers} />
-            </p>
-          ))}
-          {founder.conflict.parts.some((p) => hasVariant(p.text)) ? (
-            <Callout title={founder.conflict.label ?? ''}>
-              <Parts parts={founder.conflict.parts} numbers={numbers} />
-              {founder.conflict.preview?.closing && hasVariant(founder.conflict.preview.closing) ? (
-                <span className={desktopOnly(founder.conflict.preview.closing)}>
-                  <VariantText value={founder.conflict.preview.closing} />
-                </span>
-              ) : null}
-            </Callout>
-          ) : null}
-          {hasVariant(founder.noPortrait) ? (
-            <p className="m-0 text-small text-text-muted max-md:hidden">
-              <VariantText value={founder.noPortrait} />
-            </p>
-          ) : null}
-        </div>
-      </section>
+      {founderOn ? (
+        <section
+          aria-labelledby="founder-h"
+          className={`flex flex-col gap-4 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:py-[120px] ${founderMobile ? '' : 'max-md:hidden'}`}
+        >
+          <div className="flex flex-col gap-4 md:col-span-4">
+            <Eyebrow as="p">{founder.eyebrow}</Eyebrow>
+            <h2 id="founder-h" className="font-display text-h2-section leading-[1.15] font-normal md:leading-[1.12]">
+              {founder.title}
+            </h2>
+          </div>
+          <div className="flex flex-col gap-4 md:col-span-6 md:col-start-6 md:gap-[22px]">
+            {paragraphs.map((para, i) => (
+              <p key={i} className={`m-0 font-serif text-[17px] leading-[1.75] md:text-[20px] ${para.parts.some((p) => p.text.mobile) ? '' : 'max-md:hidden'}`}>
+                <Parts parts={para.parts} numbers={numbers} />
+              </p>
+            ))}
+            {conflictOn ? (
+              <Callout title={founder.conflict.label ?? ''}>
+                <Parts parts={founder.conflict.parts} numbers={numbers} />
+                {founder.conflict.preview?.closing && hasVariant(founder.conflict.preview.closing) ? (
+                  <span className={desktopOnly(founder.conflict.preview.closing)}>
+                    <VariantText value={founder.conflict.preview.closing} />
+                  </span>
+                ) : null}
+              </Callout>
+            ) : null}
+            {hasVariant(founder.noPortrait) ? (
+              <p className="m-0 text-small text-text-muted max-md:hidden">
+                <VariantText value={founder.noPortrait} />
+              </p>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {page.timeline.length > 0 ? (
         <section aria-labelledby="timeline-h" className="flex flex-col gap-4 bg-bg-inverse px-5 py-12 text-text-on-dark md:gap-12 md:px-20 md:pt-[104px] md:pb-24">
@@ -149,34 +162,37 @@ export function VillageView({ page }: { page: VillagePageView }) {
         </section>
       ) : null}
 
-      <section aria-labelledby="location-h" className="flex flex-col gap-4 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-8 md:px-20 md:py-[120px]">
-        <div className="flex flex-col gap-4 md:col-span-5">
-          <Eyebrow as="p">{location.eyebrow}</Eyebrow>
-          <h2 id="location-h" className="font-display text-h2-section leading-[1.15] font-normal md:leading-[1.12]">
-            {location.title}
-          </h2>
-          {location.body.text ? (
-            <p className="m-0 text-[16px] leading-[1.7] md:text-[17px]">
-              {location.body.text}
-              <Cite ids={location.body.cite} numbers={numbers} />
-            </p>
+      {locationOn ? (
+        <section aria-labelledby="location-h" className="flex flex-col gap-4 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-8 md:px-20 md:py-[120px]">
+          {/* Không có bản đồ (public) thì chữ rộng ra 8 cột (R4). */}
+          <div className={`flex flex-col gap-4 ${location.preview ? 'md:col-span-5' : 'md:col-span-8'}`}>
+            <Eyebrow as="p">{location.eyebrow}</Eyebrow>
+            <h2 id="location-h" className="font-display text-h2-section leading-[1.15] font-normal md:leading-[1.12]">
+              {location.title}
+            </h2>
+            {location.body.text ? (
+              <p className="m-0 text-[16px] leading-[1.7] md:text-[17px]">
+                {location.body.text}
+                <Cite ids={location.body.cite} numbers={numbers} variant="bracket" />
+              </p>
+            ) : null}
+            {location.preview && hasVariant(location.preview.note) ? (
+              <p className={`m-0 text-[15px] leading-[1.65] text-text-secondary ${desktopOnly(location.preview.note)}`}>
+                <VariantText value={location.preview.note} />
+              </p>
+            ) : null}
+          </div>
+          {location.preview ? (
+            <PlaceholderFrame
+              label={location.preview.map.label ?? ''}
+              title={location.preview.map.title ?? undefined}
+              description={location.preview.map.body.desktop ?? undefined}
+              descriptionClassName="max-md:hidden"
+              className="h-[200px] md:col-span-6 md:col-start-7 md:h-[380px]"
+            />
           ) : null}
-          {location.preview && hasVariant(location.preview.note) ? (
-            <p className={`m-0 text-[15px] leading-[1.65] text-text-secondary ${desktopOnly(location.preview.note)}`}>
-              <VariantText value={location.preview.note} />
-            </p>
-          ) : null}
-        </div>
-        {location.preview ? (
-          <PlaceholderFrame
-            label={location.preview.map.label ?? ''}
-            title={location.preview.map.title ?? undefined}
-            description={location.preview.map.body.desktop ?? undefined}
-            descriptionClassName="max-md:hidden"
-            className="h-[200px] md:col-span-6 md:col-start-7 md:h-[380px]"
-          />
-        ) : null}
-      </section>
+        </section>
+      ) : null}
 
       {lifeOn ? <LifeSection life={life} copy={copy.life} /> : null}
 
@@ -193,7 +209,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
           {heritage.paragraphs.filter((para) => hasVariant(para.text)).map((para, i) => (
             <p key={i} className={`m-0 text-[16px] leading-[1.7] md:text-[18px] md:leading-[1.75] ${desktopOnly(para.text)}`}>
               <VariantText value={para.text} />
-              <Cite ids={para.cite} numbers={numbers} />
+              <Cite ids={para.cite} numbers={numbers} variant="bracket" />
             </p>
           ))}
           {heritage.preview && hasVariant(heritage.preview.note) ? (

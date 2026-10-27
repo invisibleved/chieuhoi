@@ -39,6 +39,12 @@ function view(mode: 'public' | 'preview'): CraftPageView {
 afterEach(cleanup)
 
 describe('CraftView', () => {
+  it('không có dụng cụ thì không dựng section chỉ còn tiêu đề', () => {
+    const page = { ...view('public'), tools: [] }
+    const { container } = render(<CraftView page={page} />)
+    expect(container.querySelector('#tools-h')).toBeNull()
+    expect(container.querySelector('#compare-h')).not.toBeNull()
+  })
   it('public tối thiểu: không có hành trình, không có "cần xác minh", h1 có <br>', () => {
     const { container } = render(<CraftView page={view('public')} />)
     expect(container.textContent).not.toContain('HÀNH TRÌNH MỘT TẤM CHIẾU')
