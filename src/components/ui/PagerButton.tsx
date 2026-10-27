@@ -8,6 +8,8 @@ type PagerButtonProps = {
   atEnd: boolean
   variant?: 'outline' | 'solid'
   iconOnly?: boolean
+  /** Tên đọc cho trình đọc màn hình khi nhãn hiển thị ngắn hơn (phải chứa nhãn hiển thị). */
+  ariaLabel?: string
   tone?: 'dark'
 }
 
@@ -23,7 +25,7 @@ const variants = {
 } as const
 
 // Nút Trước / Tiếp. Dùng aria-disabled thay vì disabled để focus không mất khi chạm đầu cuối.
-export function PagerButton({ direction, label, onClick, atEnd, variant = 'outline', iconOnly = false, tone }: PagerButtonProps) {
+export function PagerButton({ direction, label, onClick, atEnd, variant = 'outline', iconOnly = false, ariaLabel, tone }: PagerButtonProps) {
   const prev = direction === 'prev'
   const icon = (
     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -41,7 +43,7 @@ export function PagerButton({ direction, label, onClick, atEnd, variant = 'outli
   return (
     <button
       type="button"
-      aria-label={iconOnly ? label : undefined}
+      aria-label={iconOnly ? label : ariaLabel}
       aria-disabled={atEnd ? 'true' : undefined}
       onClick={() => {
         if (!atEnd) onClick()
