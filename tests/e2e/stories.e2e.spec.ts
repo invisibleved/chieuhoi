@@ -79,7 +79,8 @@ test.describe('câu chuyện (xem trước) 1440: bài nổi bật', () => {
     await loginReviewer(page)
     await open(page)
     const featured = page.getByRole('region', { name: 'BÀI NỔI BẬT' })
-    await expect(featured).toContainText('BÀI NỔI BẬT · LỊCH SỬ')
+    // Chủ đề in hoa bằng CSS: innerText phản ánh text-transform.
+    await expect(featured).toContainText('BÀI NỔI BẬT · LỊCH SỬ', { useInnerText: true })
     await expect(featured.getByRole('link')).toHaveAttribute(
       'href',
       '/cau-chuyen/chuyen-ve-trang-chieu',
@@ -141,6 +142,8 @@ for (const vp of VIEWPORTS) {
       await expect(page.getByRole('navigation', { name: 'Mục lục' }))[desktop ? 'toBeVisible' : 'toBeHidden']()
       await expect(page.getByRole('navigation', { name: 'Đường dẫn' }))[desktop ? 'toBeVisible' : 'toBeHidden']()
       await expect(page.getByText('CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG')).toBeVisible()
+      // Dòng dưới trích dẫn trong bài: StoryDetail có, StoryMobile không (M1).
+      await expect(page.locator('main blockquote').getByText('Trích từ bài viết'))[desktop ? 'toBeVisible' : 'toBeHidden']()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
       const { violations } = await new AxeBuilder({ page }).analyze()
       const bad = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')

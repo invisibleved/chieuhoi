@@ -18,6 +18,7 @@ const card = (slug: string, title: string, over: Partial<StoryCardView> = {}): S
   hasDetail: false,
   cta: 'Xem đề cương →',
   status: 'Chủ đề đề xuất',
+  isDraft: false,
   sourceCount: 0,
   flags: [],
   ...over,
@@ -26,6 +27,7 @@ const draft = card('chuyen-ve-trang-chieu', 'Chuyện về Trạng Chiếu', {
   hasDetail: true,
   cta: 'Đọc bài →',
   status: 'Bản nháp',
+  isDraft: true,
   sourceCount: 3,
   readingMinutes: 4,
 })
@@ -58,7 +60,7 @@ function view(stories: StoryCardView[], mode: 'public' | 'preview' = 'preview'):
       return s
         ? {
             story: s,
-            eyebrow: `BÀI NỔI BẬT · ${(s.category ?? '').toLocaleUpperCase('vi')}`,
+            eyebrow: `BÀI NỔI BẬT · ${s.category ?? ''}`,
             meta:
               s.sourceCount > 0 && s.readingMinutes !== null
                 ? `${s.sourceCount} nguồn báo chí · khoảng ${s.readingMinutes} phút đọc`
@@ -71,6 +73,12 @@ function view(stories: StoryCardView[], mode: 'public' | 'preview' = 'preview'):
 }
 
 describe('StoriesView', () => {
+  it('đếm bản nháp theo isDraft, không theo chữ nhãn trạng thái', () => {
+    const relabelled = { ...draft, status: null }
+    render(<StoriesView page={view([relabelled, ...ideas])} />)
+    expect(screen.getByRole('status').textContent).toContain('3 bài · 1 bản nháp')
+  })
+
   it('có đúng một h1', () => {
     render(<StoriesView page={view([draft, ...ideas])} />)
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
@@ -79,7 +87,7 @@ describe('StoriesView', () => {
   it('preview: bài nổi bật là bài hasDetail đầu tiên, có meta nguồn và phút đọc', () => {
     render(<StoriesView page={view([...ideas, draft])} />)
     const featured = screen.getByRole('region', { name: 'BÀI NỔI BẬT' })
-    expect(within(featured).getByText('BÀI NỔI BẬT · LỊCH SỬ')).toBeTruthy()
+    expect(within(featured).getByText('BÀI NỔI BẬT · Lịch sử').className).toContain('uppercase')
     expect(within(featured).getByText('Chuyện về Trạng Chiếu')).toBeTruthy()
     expect(within(featured).getByText('3 nguồn báo chí · khoảng 4 phút đọc')).toBeTruthy()
     expect(within(featured).getByRole('link').getAttribute('href')).toBe(
@@ -144,7 +152,7 @@ describe('StoriesView', () => {
   it('không có bài nào thì hiện EmptyState', () => {
     render(<StoriesView page={view([], 'public')} />)
     expect(screen.getByText('Chưa có bài trong chủ đề này')).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Góp một câu chuyện →' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: 'Góp một câu chuyện' }).getAttribute('href')).toBe(
       '/ket-noi',
     )
     expect(screen.getByRole('status').textContent).toContain('0 bài')

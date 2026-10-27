@@ -41,8 +41,8 @@ export function StoryView({ page }: { page: StoryPageView }) {
           <BackLink href={LIST_HREF} label={d.back ?? ''} />
           <div className="flex flex-col gap-3.5 md:col-span-8 md:col-start-3 md:items-center md:gap-[22px] md:pt-8 md:text-center">
             <div className="flex flex-wrap items-center gap-2.5 md:gap-3">
-              {story.category ? <Eyebrow tracking="label">{story.category.toLocaleUpperCase('vi')}</Eyebrow> : null}
-              {story.status === 'Bản nháp' && d.draftTag ? <Tag variant="dashed">{d.draftTag}</Tag> : null}
+              {story.category ? <Eyebrow tracking="label" uppercase>{story.category}</Eyebrow> : null}
+              {story.isDraft && d.draftTag ? <Tag variant="dashed">{d.draftTag}</Tag> : null}
             </div>
             <DetailTitle size="story">{story.title}</DetailTitle>
             {story.sapo ? <Lede size="story">{story.sapo}</Lede> : null}
@@ -77,7 +77,7 @@ export function StoryView({ page }: { page: StoryPageView }) {
             <TableOfContents label={d.toc.label ?? ''} title={d.toc.title ?? ''} items={story.toc} />
           </aside>
           <div className="flex flex-col gap-8 md:col-span-6 md:col-start-4 md:gap-11">
-            {story.body ? <RichText value={story.body} variant="article" dropCap /> : null}
+            {story.body ? <RichText value={story.body} variant="article" dropCap quoteNote={d.quoteNote} /> : null}
             {story.reviewChecklist && story.reviewChecklist.length > 0 ? (
               <VerifyNote title={d.preview?.checklistTitle ?? ''}>
                 <ul className="m-0 list-disc pl-5">

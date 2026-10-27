@@ -130,6 +130,12 @@ for (const vp of VIEWPORTS) {
       await expect(page.getByRole('note').filter({ visible: true })).toContainText(desktop ? 'Mẫu trang chân dung.' : 'Mẫu trang.')
       await expect(page.getByRole('navigation', { name: 'Đường dẫn' }))[desktop ? 'toBeVisible' : 'toBeHidden']()
       await expect(page.locator('main h3')).toHaveText(['Tuổi thơ bên khung dệt', 'Một ngày làm chiếu', 'Điều muốn giữ lại'])
+      // Lời trích sau mục 1 ở mobile (PersonMobile), sau mục 2 từ md (PersonDetail) (F1).
+      const order = await page.locator('main h3, main blockquote').evaluateAll((els) =>
+        els.filter((e) => e.getClientRects().length > 0).map((e) => (e.tagName === 'H3' ? e.textContent : 'QUOTE')))
+      expect(order).toEqual(desktop
+        ? ['Tuổi thơ bên khung dệt', 'Một ngày làm chiếu', 'QUOTE', 'Điều muốn giữ lại']
+        : ['Tuổi thơ bên khung dệt', 'QUOTE', 'Một ngày làm chiếu', 'Điều muốn giữ lại'])
       await expect(page.locator('main dl').filter({ visible: true }).locator('dt')).toHaveCount(desktop ? 4 : 2)
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
       const { violations } = await new AxeBuilder({ page }).analyze()

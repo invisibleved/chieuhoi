@@ -36,7 +36,8 @@ export const peopleCopy = {
       desktop: 'Nếu bạn là người trẻ đang làm nghề chiếu, hoặc biết một người như vậy, chúng tôi muốn được nghe kể.',
       mobile: null,
     },
-    action: { href: '/ket-noi', label: 'Giới thiệu một người →' },
+    // LinkArrow tự thêm mũi tên nên nhãn không kèm "→".
+    action: { href: '/ket-noi', label: 'Giới thiệu một người' },
   },
   invite: {
     title: 'Bạn biết một người giữ nghề?',
@@ -58,6 +59,8 @@ export const peopleCopy = {
       title: 'TRẠNG THÁI ĐỒNG Ý',
       states: { none: 'Chưa có', partial: 'Một phần', full: 'Đã có' },
       need: 'Cần: đồng ý đăng {list}',
+      // Tên các mức đồng ý trong dòng "Cần: …", theo thứ tự tên, ảnh, lời trích.
+      kinds: { name: 'tên', photo: 'ảnh', quote: 'lời trích' },
       reviewed: {
         title: 'NGƯỜI ĐƯỢC KỂ ĐÃ DUYỆT BÀI',
         yes: 'Đã duyệt',

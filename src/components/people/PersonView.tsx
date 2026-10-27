@@ -43,13 +43,19 @@ export function PersonView({ page }: { page: PersonPageView }) {
   const mobileFacts = factsOf(['role', 'years'])
   const intro = p.intro ?? pv?.intro ?? null
 
-  const [before, after] = p.storyParts
+  const [part1, part2, part3] = p.storyParts
   const quote = p.quote
     ? <PullQuote variant="testimony" note={p.quote.note}>{p.quote.text}</PullQuote>
     : pv ? <PullQuote variant="testimony" note={<VariantText value={pv.quoteNote} />}>{pv.quote}</PullQuote> : null
-  // Preview không có câu chuyện: ba mục gợi ý, lời trích sau mục đầu (R15). Public trống thì bỏ cả section.
-  const placeholders = !before && !after && pv ? pv.sections : null
-  const hasStory = Boolean(before || after || p.quote || placeholders)
+  // Preview không có câu chuyện: ba mục gợi ý (R15). Public trống thì bỏ cả section.
+  const placeholders = !part1 && !part2 && !part3 && pv ? pv.sections : null
+  const hasStory = Boolean(part1 || part2 || part3 || p.quote || placeholders)
+  // Lời trích sau mục 1 ở mobile (PersonMobile), sau mục 2 từ md (PersonDetail) (F1). Không có mục 2 thì
+  // hai chỗ trùng nhau: chỉ render một lần.
+  const blocks = placeholders
+    ? placeholders.map((s, i) => <StoryPlaceholder key={i} title={s.title} body={s.body} />)
+    : [part1, part2, part3].map((r, i) => (r ? <RichText key={i} value={r} variant="story" /> : null))
+  const split = Boolean(quote && blocks[1])
   const cap = p.portraitCaption
 
   return (
@@ -95,7 +101,7 @@ export function PersonView({ page }: { page: PersonPageView }) {
             p.portrait ? 'md:col-span-4 md:col-start-9' : 'md:col-span-8'
           }`}
         >
-          {p.category ? <Eyebrow as="p">{p.category.toLocaleUpperCase('vi')}</Eyebrow> : null}
+          {p.category ? <Eyebrow as="p" uppercase>{p.category}</Eyebrow> : null}
           <DetailTitle size="person">{p.heading}</DetailTitle>
           {facts.length > 0 ? <FactList layout="inline" items={facts} className="max-md:hidden" /> : null}
           {mobileFacts.length > 0 ? <FactList layout="inline" items={mobileFacts} className="mt-1 md:hidden" /> : null}
@@ -112,19 +118,11 @@ export function PersonView({ page }: { page: PersonPageView }) {
             </h2>
           </div>
           <div className="flex flex-col gap-6 md:col-span-6 md:col-start-5 md:gap-8">
-            {placeholders ? (
-              <>
-                {placeholders[0] ? <StoryPlaceholder title={placeholders[0].title} body={placeholders[0].body} /> : null}
-                {quote}
-                {placeholders.slice(1).map((s, i) => <StoryPlaceholder key={i} title={s.title} body={s.body} />)}
-              </>
-            ) : (
-              <>
-                {before ? <RichText value={before} variant="story" /> : null}
-                {quote}
-                {after ? <RichText value={after} variant="story" /> : null}
-              </>
-            )}
+            {blocks[0]}
+            {split ? <div className="md:hidden">{quote}</div> : quote}
+            {blocks[1]}
+            {split ? <div className="max-md:hidden">{quote}</div> : null}
+            {blocks.slice(2)}
           </div>
         </section>
       ) : null}

@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
 
-import { nonEmptyRich, sanitizeRich, splitAtHeading, type RichContext } from '@/lib/content/rich'
+import { nonEmptyRich, sanitizeRich, splitAtHeadings, splitStoryParts, type RichContext } from '@/lib/content/rich'
 import type { ImageView, Mode } from '@/lib/content/types'
 
 const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, mode: 'normal', style: '', detail: 0 })
@@ -193,25 +193,44 @@ describe('sanitizeRich: khung rỗng', () => {
   })
 })
 
-describe('splitAtHeading (R15)', () => {
-  const tree = doc(para(txt('mở')), h('h3', 'A'), para(txt('a')), h('h3', 'B'), para(txt('b')), h('h3', 'C'), para(txt('c')))
+describe('splitAtHeadings / splitStoryParts (R15, F1)', () => {
+  const tree = doc(para(txt('mở')), h('h3', 'A'), para(txt('a')), h('h3', 'B'), para(txt('b')), h('h3', 'C'), para(txt('c')), h('h3', 'D'), para(txt('d')))
   const texts = (r: unknown) => ((r as { root: N } | null)?.root.children ?? []).map((c) => (c.children?.[0] as N | undefined)?.text)
 
-  it('ba heading: phần trước heading thứ hai và phần từ heading thứ hai trở đi', () => {
-    const [a, b] = splitAtHeading(tree as never, 2)
+  it('ba phần: trước heading 2, heading 2 tới trước heading 3, từ heading 3 trở đi', () => {
+    const [a, b, c] = splitStoryParts(tree as never)
     expect(texts(a)).toEqual(['mở', 'A', 'a'])
-    expect(texts(b)).toEqual(['B', 'b', 'C', 'c'])
-    expect((a as { root: N }).root.type).toBe('root')
-    expect((b as { root: N }).root.type).toBe('root')
+    expect(texts(b)).toEqual(['B', 'b'])
+    expect(texts(c)).toEqual(['C', 'c', 'D', 'd'])
+    for (const r of [a, b, c]) expect((r as { root: N }).root.type).toBe('root')
   })
-  it('không có heading thứ hai: [rich, null]', () => {
+  it('hai heading: [trước heading 2, từ heading 2, null]', () => {
+    const two = doc(h('h3', 'A'), para(txt('a')), h('h3', 'B'), para(txt('b')))
+    const [a, b, c] = splitStoryParts(two as never)
+    expect(texts(a)).toEqual(['A', 'a'])
+    expect(texts(b)).toEqual(['B', 'b'])
+    expect(c).toBeNull()
+  })
+  it('không có heading thứ hai: [rich, null, null]', () => {
     const one = doc(h('h3', 'A'), para(txt('a')))
-    const [a, b] = splitAtHeading(one as never, 2)
+    const [a, b, c] = splitStoryParts(one as never)
     expect(a).toBe(one)
     expect(b).toBeNull()
+    expect(c).toBeNull()
   })
-  it('null: [null, null]', () => {
-    expect(splitAtHeading(null, 2)).toEqual([null, null])
+  it('null: mọi phần null', () => {
+    expect(splitStoryParts(null)).toEqual([null, null, null])
+    expect(splitAtHeadings(null, [2])).toEqual([null, null])
+  })
+  it('tách sau khi lọc: số cite liên tục 1..n qua các phần', () => {
+    const body = doc(
+      para(txt('mở'), cite(2)), h('h3', 'A'), para(txt('a'), cite(9), cite(1)),
+      h('h3', 'B'), para(txt('b'), cite(2), cite(3)), h('h3', 'C'), para(txt('c'), cite(1)),
+    )
+    const r = sanitizeRich(body, { ...ctx('public'), anchors: false })
+    const parts = splitStoryParts(r.rich)
+    expect(parts.map((p) => cites(p!.root as N).map((c) => c.n))).toEqual([[1, 2], [1, 3], [2]])
+    expect(r.citedOrder).toEqual(['b', 'a', 'c'])
   })
 })
 

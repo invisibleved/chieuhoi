@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { StoriesPageView, StoryCardView, Variant } from '@/lib/content'
+import { fillTemplate } from '@/lib/template'
 import { PageHeader } from '@/components/content/PageHeader'
 import { StoryCard } from '@/components/content/StoryCard'
 import { EmptyState } from '@/components/ui/Feedback'
@@ -11,10 +12,6 @@ import { VariantText } from '@/components/ui/VariantText'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 
 const PAGE_SIZE = 9
-const DRAFT = 'Bản nháp'
-
-const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? ''))
 
 const detailHref = (s: StoryCardView) => (s.hasDetail ? `/cau-chuyen/${s.slug}` : undefined)
 const searchText = (s: StoryCardView) => [s.title, s.sapo, s.category].filter(Boolean).join(' ')
@@ -30,9 +27,9 @@ export function StoriesView({ page }: { page: StoriesPageView }) {
   const search = { id: 'mq', label: copy.search.label ?? '', placeholder: copy.search.placeholder }
 
   const status = (matches: StoryCardView[]): Variant => {
-    const drafts = matches.filter((s) => s.status === DRAFT).length
-    const n = fill(copy.count.stories ?? '', { n: matches.length })
-    return { desktop: drafts > 0 ? n + fill(copy.count.drafts ?? '', { d: drafts }) : n, mobile: n }
+    const drafts = matches.filter((s) => s.isDraft).length
+    const n = fillTemplate(copy.count.stories ?? '', { n: matches.length })
+    return { desktop: drafts > 0 ? n + fillTemplate(copy.count.drafts ?? '', { d: drafts }) : n, mobile: n }
   }
 
   return (

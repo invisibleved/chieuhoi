@@ -124,6 +124,8 @@ export interface StoryCardView {
   cta: string
   /** "Chủ đề đề xuất" cho bài idea ở mọi mode; "Bản nháp" chỉ ở preview (R2). */
   status: 'Bản nháp' | 'Chủ đề đề xuất' | null
+  /** Bài chưa đăng (chỉ có ở preview). Component dùng cờ này, `status` chỉ để hiển thị. */
+  isDraft: boolean
   /** Số nguồn nhìn thấy được ở mode hiện tại. */
   sourceCount: number
   flags: Flag[]
@@ -173,7 +175,6 @@ export interface StoryPageView {
 }
 
 export type ConsentState = 'none' | 'partial' | 'full'
-export type ConsentKind = 'tên' | 'ảnh' | 'lời trích'
 
 /**
  * Trang chân dung. Ở public, mọi phần có thể nhận ra người (intro, xóm thôn, ghi lại bởi, câu chuyện,
@@ -191,8 +192,12 @@ export type PersonDetailView = Omit<PersonView, 'quote'> & {
   hamlet: string | null
   /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống ở public, "[cần xác minh]" ở preview. */
   recorded: string | null
-  /** Câu chuyện tách tại heading thứ hai; lời trích đặt giữa hai phần (R15). Cây rỗng là null. */
-  storyParts: [Rich | null, Rich | null]
+  /**
+   * Câu chuyện tách tại heading thứ hai và thứ ba: [trước heading 2, heading 2 tới trước heading 3, phần còn lại].
+   * Lời trích đứng sau phần 1 ở mobile (PersonMobile), sau phần 2 từ md (PersonDetail) (R15, F1).
+   * Lọc và đánh số cite một lần trên cả cây rồi mới tách. Phần trống là null.
+   */
+  storyParts: [Rich | null, Rich | null, Rich | null]
   /** Nguồn mà câu chuyện trích, đánh số theo lần trích đầu tiên (R4, T2c); [] khi câu chuyện không hiện. */
   sources: SourceView[]
   /**
@@ -202,7 +207,8 @@ export type PersonDetailView = Omit<PersonView, 'quote'> & {
   quote: { text: string; sourceLine: string | null; note: string | null } | null
   gallery: { image: ImageView; caption: string | null }[]
   /** Hiện ở cả public (R18). */
-  consent: { state: ConsentState; missing: ConsentKind[]; reviewedBySubject: boolean }
+  /** `missing`: nhãn các mức chưa đồng ý (tên, ảnh, lời trích), lấy từ peopleCopy.detail.consent.kinds. */
+  consent: { state: ConsentState; missing: string[]; reviewedBySubject: boolean }
   /**
    * Chú thích ảnh chân dung; null khi không có ảnh chân dung ở mode này.
    * `label` "CHÂN DUNG", `code` số từ mã TL-… (DocumentLabel ghép "CHÂN DUNG · 001").

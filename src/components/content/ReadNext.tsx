@@ -9,7 +9,7 @@ type ReadNextProps = {
   eyebrow: string | null
   /** Có title: desktop hiện h2 40px (và `action` bên phải), mobile chỉ hiện eyebrow. */
   title?: string
-  /** Nhãn có thể kèm mũi tên cuối (copy artboard); LinkArrow tự thêm mũi tên nên bị cắt. */
+  /** Nhãn không kèm mũi tên: LinkArrow tự thêm. */
   action?: { href: string; label: string }
   /** Chiều cao ảnh thẻ (mặc định h-[260px]). */
   imageClassName?: string
@@ -39,7 +39,7 @@ export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[2
           </h2>
           {action ? (
             <LinkArrow href={action.href} className="max-md:hidden">
-              {action.label.replace(/\s*→$/, '')}
+              {action.label}
             </LinkArrow>
           ) : null}
         </div>
@@ -60,7 +60,7 @@ export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[2
               {it.image ? (
                 <ContentImage image={{ ...it.image, alt: '' }} size="card" sizes="(min-width: 768px) 30vw, 0px" className={`block ${imageClassName} max-md:hidden`} wrapperClassName="max-md:hidden" />
               ) : null}
-              <span className="font-sans text-[12px] font-semibold tracking-meta text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
+              <span className="font-sans text-[12px] font-semibold uppercase tracking-meta text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
               <span className="group-hover:text-accent">{it.title}</span>
               <span className="font-sans text-[15px] font-medium text-accent max-md:hidden">{it.cta}</span>
               <span aria-hidden="true" className="font-sans text-accent md:hidden">→</span>

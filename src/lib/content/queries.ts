@@ -4,12 +4,13 @@ import type { CollectionSlug, Payload, Where } from 'payload'
 import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
 import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payload-types'
+import { fillTemplate } from '@/lib/template'
 
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { applyMode } from './copy/applyMode'
 import { peopleCopy } from './copy/people'
 import { storiesCopy } from './copy/stories'
-import { nonEmptyRich, sanitizeRich, splitAtHeading } from './rich'
+import { nonEmptyRich, sanitizeRich, splitStoryParts } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
   ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
@@ -210,6 +211,7 @@ export function createContent(payload: Payload) {
       cta: idea ? storiesCopy.cta.outline : storiesCopy.cta.read,
       // R2: "Chủ đề đề xuất" ở mọi mode; "Bản nháp" chỉ có ở preview (public không có bài chưa đăng).
       status: idea ? 'Chủ đề đề xuất' : d._status !== 'published' ? 'Bản nháp' : null,
+      isDraft: !idea && d._status !== 'published',
       sourceCount: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable).length,
       flags: flagsOf(d, mode, [d.title, d.sapo]),
     }
@@ -359,7 +361,7 @@ export function createContent(payload: Payload) {
 
     const missing = (['name', 'photo', 'quote'] as const)
       .filter((k) => !consent[k])
-      .map((k) => ({ name: 'tên', photo: 'ảnh', quote: 'lời trích' } as const)[k])
+      .map((k) => peopleCopy.detail.consent.kinds[k])
     const copy = applyMode(peopleCopy, mode)
 
     const photographer = v.portrait?.photographer ? `${peopleCopy.detail.photoPrefix}${v.portrait.photographer}` : null
@@ -369,14 +371,14 @@ export function createContent(payload: Payload) {
       ...v,
       flags: [...flagsOf(d, mode), ...v.flags],
       heading: v.name ?? peopleCopy.detail.pendingName,
-      storyTitle: v.name ? peopleCopy.detail.story.title.replace('{name}', v.name) : peopleCopy.detail.story.titleNoName,
+      storyTitle: v.name ? fillTemplate(peopleCopy.detail.story.title, { name: v.name }) : peopleCopy.detail.story.titleNoName,
       // intro trống là null để preview hiện gợi ý phỏng vấn (R14); yearsInCraft/hamlet là dòng dữ kiện nên
       // giữ dấu [cần xác minh] của showText ở preview, như các bảng dữ kiện khác.
       intro: identifying ? filled(d.intro) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
       hamlet: identifying ? showText(d.hamlet, mode) : null,
       recorded,
-      storyParts: splitAtHeading(story, 2),
+      storyParts: splitStoryParts(story),
       sources,
       quote,
       gallery,

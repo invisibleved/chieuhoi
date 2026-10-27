@@ -59,6 +59,14 @@ describe('RichText', () => {
     expect(s.container.querySelector('blockquote')?.className).toContain('border-l-[3px]')
     expect(screen.getByText('Một nghề theo làng.')).toBeTruthy()
   })
+  it('quoteNote: dòng ghi chú dưới trích dẫn, chỉ hiện từ md; không truyền thì không có', () => {
+    const q = doc({ type: 'quote', children: [text('Một nghề theo làng.')] })
+    const a = render(<RichText variant="article" value={q} quoteNote="Trích từ bài viết" />)
+    expect(screen.getByText('Trích từ bài viết').className).toContain('max-md:hidden')
+    a.unmount()
+    const { container } = render(<RichText variant="article" value={q} />)
+    expect(container.querySelector('blockquote span')).toBeNull()
+  })
   it('chữ đậm/nghiêng, liên kết ngoài, danh sách và xuống dòng', () => {
     const { container } = render(
       <RichText

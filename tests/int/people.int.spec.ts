@@ -71,7 +71,7 @@ describe('view model Con người', () => {
       expect(p.note).toBeNull()
       expect(p.yearsInCraft).toBeNull()
       expect(p.quote).toBeNull()
-      expect(p.storyParts).toEqual([null, null])
+      expect(p.storyParts).toEqual([null, null, null])
       expect(p.gallery).toEqual([])
       expect(p.heading).toBe('Chờ đồng ý')
       expect(p.storyTitle).toBe('Câu chuyện')
@@ -199,9 +199,12 @@ describe('view model Con người', () => {
       }
     })
 
-    it('câu chuyện trích một nguồn ở cả hai phần: sources có 1 nguồn, mọi cite là n=1 (T2c)', async () => {
+    it('câu chuyện trích một nguồn ở cả ba phần: sources có 1 nguồn, mọi cite là n=1 (T2c)', async () => {
       const src = await sourceDoc('vietnamplus-2026')
-      const story = doc(h3('Phần một'), para(txt('Đoạn một'), cite(src.id)), h3('Phần hai'), para(txt('Đoạn hai'), cite(src.id)))
+      const story = doc(
+        h3('Phần một'), para(txt('Đoạn một'), cite(src.id)), h3('Phần hai'), para(txt('Đoạn hai'), cite(src.id)),
+        h3('Phần ba'), para(txt('Đoạn ba'), cite(src.id)),
+      )
       const ok = await createPerson({ slug: 'thu-nguon', name: 'Bà Nguồn', consent: { name: true }, story })
       const no = await createPerson({ slug: 'thu-nguon-an', consent: { name: false }, story })
       try {
@@ -210,28 +213,68 @@ describe('view model Con người', () => {
         expect(v.sources[0].date).toBe('14/08/2026')
         expect(v.storyParts.every((r) => r !== null)).toBe(true)
         const cites = v.storyParts.flatMap((r) => nodes(r?.root as N)).filter((n) => n.type === 'cite')
-        expect(cites).toEqual([{ type: 'cite', n: 1 }, { type: 'cite', n: 1 }])
+        expect(cites).toEqual([{ type: 'cite', n: 1 }, { type: 'cite', n: 1 }, { type: 'cite', n: 1 }])
 
         const w = (await people.getPersonPage('thu-nguon-an', 'public'))!.person
         expect(w.sources).toEqual([])
-        expect(w.storyParts).toEqual([null, null])
+        expect(w.storyParts).toEqual([null, null, null])
       } finally {
         await payload.delete({ collection: 'people', id: ok.id, overrideAccess: true })
         await payload.delete({ collection: 'people', id: no.id, overrideAccess: true })
       }
     })
 
-    it('câu chuyện chỉ có đoạn rỗng: storyParts [null, null] ở cả hai mode', async () => {
+    it('ba phần tách tại heading 2 và 3; số cite liên tục 1..n qua các phần, nguồn ẩn không chiếm số (F1, R4)', async () => {
+      const a = await sourceDoc('vietnamplus-2026')
+      const other = await sourceDoc('danviet-2024')
+      const story = doc(
+        h3('Một'), para(txt('Đoạn một'), cite(other.id)), h3('Hai'), para(txt('Đoạn hai'), cite(a.id), cite(other.id)),
+        h3('Ba'), para(txt('Đoạn ba'), cite(a.id)), h3('Bốn'), para(txt('Đoạn bốn')),
+      )
+      const p = await createPerson({ slug: 'thu-ba-phan', name: 'Bà Ba', consent: { name: true }, story })
+      try {
+        const v = (await people.getPersonPage('thu-ba-phan', 'public'))!.person
+        const texts = v.storyParts.map((r) => nodes(r?.root as N).filter((n) => n.type === 'text').map((n) => n.text))
+        expect(texts).toEqual([['Một', 'Đoạn một'], ['Hai', 'Đoạn hai'], ['Ba', 'Đoạn ba', 'Bốn', 'Đoạn bốn']])
+        const ns = v.storyParts.map((r) => nodes(r?.root as N).filter((n) => n.type === 'cite').map((n) => n.n))
+        expect(ns).toEqual([[1], [2, 1], [2]])
+        expect(v.sources.map((s) => s.id)).toEqual(['danviet-2024', 'vietnamplus-2026'])
+      } finally {
+        await payload.delete({ collection: 'people', id: p.id, overrideAccess: true })
+      }
+    })
+
+    it('câu chuyện chỉ có đoạn rỗng: storyParts [null, null, null] ở cả hai mode', async () => {
       const p = await createPerson({ slug: 'thu-rong', name: 'Ông Rỗng', consent: { name: true }, story: doc(para(), para(txt('   '))) })
       try {
         for (const mode of ['public', 'preview'] as const) {
           const v = (await people.getPersonPage('thu-rong', mode))!.person
-          expect(v.storyParts).toEqual([null, null])
+          expect(v.storyParts).toEqual([null, null, null])
           expect(v.sources).toEqual([])
         }
       } finally {
         await payload.delete({ collection: 'people', id: p.id, overrideAccess: true })
       }
+    })
+  })
+
+  describe('trình soạn câu chuyện (People.story)', () => {
+    it('có inline block cite (quan hệ bắt buộc tới sources) như Stories.body; không có khối figure (I3)', () => {
+      type BlocksProps = { blocks?: { slug: string }[]; inlineBlocks?: { slug: string; fields: Record<string, unknown>[] }[] }
+      const blocksOf = (slug: 'people' | 'stories', field: string) => {
+        const f = payload.collections[slug].config.fields.find((x) => 'name' in x && x.name === field) as unknown as {
+          editor: { editorConfig: { resolvedFeatureMap: Map<string, { sanitizedServerFeatureProps?: BlocksProps }> } }
+        }
+        return f.editor.editorConfig.resolvedFeatureMap.get('blocks')?.sanitizedServerFeatureProps
+      }
+      const people = blocksOf('people', 'story')
+      const stories = blocksOf('stories', 'body')
+      const cite = people?.inlineBlocks?.find((b) => b.slug === 'cite')
+      expect(people?.inlineBlocks?.map((b) => b.slug)).toEqual(['cite'])
+      expect(cite?.fields.find((f) => f.name === 'source')).toMatchObject({ type: 'relationship', relationTo: 'sources', required: true })
+      // Cùng định nghĩa với cite của bài viết (so phần dữ liệu, bỏ qua hàm validate).
+      expect(JSON.stringify(cite)).toBe(JSON.stringify(stories?.inlineBlocks?.find((b) => b.slug === 'cite')))
+      expect(people?.blocks ?? []).toEqual([])
     })
   })
 
@@ -251,7 +294,7 @@ describe('view model Con người', () => {
       expect(p.recorded).toBe('[cần xác minh]')
       // Trường trống là null để component dùng gợi ý phỏng vấn trong copy (R14).
       expect(p.intro).toBeNull()
-      expect(p.storyParts).toEqual([null, null])
+      expect(p.storyParts).toEqual([null, null, null])
       expect(p.consent.state).toBe('none')
       expect(v!.copy.detail.preview?.consentLine).toBe(peopleCopy.detail.preview.consentLine)
 

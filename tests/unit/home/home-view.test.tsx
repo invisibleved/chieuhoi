@@ -28,7 +28,7 @@ describe('HomeView', () => {
   it('dữ liệu kiểu public: không chuỗi xác minh, link bài chỉ tới bài có chi tiết', () => {
     const step: CraftStepView = { n: 1, title: 'Chọn cói', shortTitle: null, subtitle: null, body: null, tools: null, toRecord: null, image: null, shotNeeded: null, focus: [50, 50], flags: [] }
     const person: PersonView = { slug: 'a', category: 'Nghệ nhân', categoryKey: 'artisan', role: null, name: 'Tên a', note: null, portrait: null, quote: null, consentPending: false, flags: [] }
-    const story = (slug: string, hasDetail: boolean): StoryCardView => ({ slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail, cta: hasDetail ? 'Đọc bài →' : 'Xem đề cương →', status: null, sourceCount: 0, flags: [] })
+    const story = (slug: string, hasDetail: boolean): StoryCardView => ({ slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail, cta: hasDetail ? 'Đọc bài →' : 'Xem đề cương →', status: null, isDraft: false, sourceCount: 0, flags: [] })
     const product: ProductCardView = { slug: 'p', code: null, name: 'Chiếu', category: null, image: null, flags: [] } as unknown as ProductCardView
     const archive: ArchiveItemView = {
       image: { url: '/images/reference/a.webp', alt: 'Ảnh', width: 800, height: 600, sizes: {}, photographer: null, code: 'TL-001', docNumber: '001', flags: [] },

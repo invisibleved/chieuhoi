@@ -44,6 +44,7 @@ export const storyFeatured: StoryCardView = {
   hasDetail: true,
   cta: 'Đọc bài →',
   status: null,
+  isDraft: false,
   sourceCount: 3,
   flags: [],
 }
@@ -64,6 +65,7 @@ export const storyCompact: StoryCardView = {
   hasDetail: true,
   cta: 'Đọc bài →',
   status: null,
+  isDraft: false,
   sourceCount: 0,
   flags: [],
 }

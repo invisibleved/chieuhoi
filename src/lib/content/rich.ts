@@ -154,19 +154,29 @@ export function sanitizeRich(node: unknown, ctx: RichContext): RichResult {
 }
 
 /**
- * Tách cây đã lọc tại heading cấp ngoài cùng thứ `n` (mọi tag): phần trước và phần từ heading đó trở đi (R15).
- * Không có heading thứ `n` thì `[rich, null]`.
+ * Tách cây đã lọc tại các heading cấp ngoài cùng thứ `ns` (mọi tag, tăng dần): `ns.length + 1` phần (R15).
+ * Heading không có (hoặc là nút đầu tiên) thì không cắt; các phần thiếu ở cuối là null. Cây không bị cắt trả
+ * lại chính nó ở phần đầu. Chỉ tách cây đã lọc: số cite đã đánh trên cả cây nên giữ liên tục giữa các phần.
  */
-export function splitAtHeading(rich: Rich | null, n: number): [Rich | null, Rich | null] {
-  if (!rich) return [null, null]
+export function splitAtHeadings(rich: Rich | null, ns: number[]): (Rich | null)[] {
+  const tail = (k: number) => Array.from({ length: k }, () => null)
+  if (!rich) return [null, ...tail(ns.length)]
   const children = Array.isArray(rich.root.children) ? (rich.root.children as Node[]) : []
-  let seen = 0
-  const at = children.findIndex((c) => c?.type === 'heading' && ++seen === n)
-  if (at <= 0) return [rich, null]
-  return [
-    { root: { ...rich.root, children: children.slice(0, at) } },
-    { root: { ...rich.root, children: children.slice(at) } },
-  ]
+  const headings = children.flatMap((c, i) => (c?.type === 'heading' ? [i] : []))
+  const cuts = ns.map((n) => headings[n - 1]).filter((i): i is number => i !== undefined && i > 0)
+  if (cuts.length === 0) return [rich, ...tail(ns.length)]
+  const bounds = [0, ...cuts, children.length]
+  const parts = bounds.slice(0, -1).map((b, i): Rich => ({ root: { ...rich.root, children: children.slice(b, bounds[i + 1]) } }))
+  return [...parts, ...tail(ns.length - cuts.length)]
+}
+
+/**
+ * Câu chuyện chân dung: [trước heading 2, heading 2 tới trước heading 3, từ heading 3] (R15, F1).
+ * Lời trích đứng sau phần 1 ở mobile, sau phần 2 ở desktop.
+ */
+export function splitStoryParts(rich: Rich | null): [Rich | null, Rich | null, Rich | null] {
+  const [a = null, b = null, c = null] = splitAtHeadings(rich, [2, 3])
+  return [a, b, c]
 }
 
 const hasFigure = (n: unknown): boolean =>

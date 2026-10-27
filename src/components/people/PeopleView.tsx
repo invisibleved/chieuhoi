@@ -1,6 +1,7 @@
 'use client'
 
 import type { PeoplePageView, PersonView, Variant } from '@/lib/content'
+import { fillTemplate } from '@/lib/template'
 import { PageHeader } from '@/components/content/PageHeader'
 import { PortraitCard } from '@/components/content/PortraitCard'
 import { Button } from '@/components/ui/Button'
@@ -9,9 +10,6 @@ import { EmptyState } from '@/components/ui/Feedback'
 import { FilterableList } from '@/components/ui/FilterableList'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-
-const fill = (template: string, values: Record<string, string | number>) =>
-  template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? ''))
 
 // Thẻ thứ 2 và thứ 4 của mỗi hàng desktop (4 cột) lùi xuống, theo artboard.
 const offset = (index: number) => (index % 4 === 1 || index % 4 === 3 ? 'md:mt-12' : undefined)
@@ -26,7 +24,7 @@ export function PeopleView({ page }: { page: PeoplePageView }) {
   const { principles, invite } = copy
 
   const status = (matches: PersonView[]): Variant => {
-    const n = fill(copy.count.people ?? '', { n: matches.length })
+    const n = fillTemplate(copy.count.people ?? '', { n: matches.length })
     const allPending = matches.length > 0 && matches.every((p) => p.consentPending)
     return allPending
       ? {
@@ -95,6 +93,7 @@ export function PeopleView({ page }: { page: PeoplePageView }) {
               size="fluid"
               detail="note"
               cta={copy.card.cta ?? undefined}
+              pendingLabel={copy.card.pending ?? ''}
               className={offset(i)}
             />
           )}

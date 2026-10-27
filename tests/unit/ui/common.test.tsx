@@ -29,6 +29,12 @@ describe('Eyebrow', () => {
     expect(screen.getByText('LÀNG HỚI').className).toContain('text-accent-on-dark')
     expect(container.querySelector('span[aria-hidden="true"]')).not.toBeNull()
   })
+  it('uppercase: in hoa bằng CSS, giữ nguyên chữ trong DOM; mặc định không in hoa', () => {
+    const { rerender } = render(<Eyebrow>Lịch sử</Eyebrow>)
+    expect(screen.getByText('Lịch sử').className).not.toContain('uppercase')
+    rerender(<Eyebrow uppercase>Lịch sử</Eyebrow>)
+    expect(screen.getByText('Lịch sử').className).toContain('uppercase')
+  })
   it('as="p" render thẻ p và nhận id', () => {
     render(<Eyebrow as="p" id="e">X</Eyebrow>)
     const el = screen.getByText('X')
@@ -206,6 +212,12 @@ describe('PullQuote', () => {
     expect(container.querySelector('p')?.className).toContain('text-accent')
     expect(screen.getByText('Trích từ bài viết')).toBeTruthy()
   })
+  it('noteClassName thêm vào dòng ghi chú', () => {
+    render(<PullQuote variant="article" note="Trích từ bài viết" noteClassName="max-md:hidden">Một nghề theo làng.</PullQuote>)
+    const note = screen.getByText('Trích từ bài viết')
+    expect(note.className).toContain('max-md:hidden')
+    expect(note.className).toContain('text-text-muted')
+  })
   it('testimony: viền trái rơm, chữ muted, không ghi chú thì không có', () => {
     const { container } = render(<PullQuote variant="testimony">“Lời kể”</PullQuote>)
     const bq = container.querySelector('blockquote')!
@@ -284,8 +296,12 @@ describe('ReadNext', () => {
     expect(screen.getByText('ĐỌC TIẾP')).toBeTruthy()
     expect(screen.queryByRole('heading', { level: 2 })).toBeNull()
   })
+  it('eyebrow của thẻ in hoa bằng CSS (nhãn dữ liệu như chủ đề giữ chữ thường trong view model)', () => {
+    render(<ReadNext items={[{ ...items[0], eyebrow: 'Lịch sử · Bản nháp' }]} eyebrow="ĐỌC TIẾP" />)
+    expect(screen.getByText('Lịch sử · Bản nháp').className).toContain('uppercase')
+  })
   it('có title: h2 và action; eyebrow còn cho mobile', () => {
-    render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '/cau-chuyen', label: 'Tất cả câu chuyện →' }} />)
+    render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '/cau-chuyen', label: 'Tất cả câu chuyện' }} />)
     expect(screen.getByRole('heading', { level: 2, name: 'Đọc tiếp' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Tất cả câu chuyện' }).getAttribute('href')).toBe('/cau-chuyen')
     expect(screen.getByText('ĐỌC TIẾP').className).toContain('md:hidden')

@@ -19,7 +19,8 @@ export const storiesCopy = {
       desktop: 'Câu chuyện về người làng chỉ được viết khi chính họ đồng ý kể. Nếu bạn muốn kể về một người thân làm nghề chiếu, hãy liên hệ với chúng tôi.',
       mobile: 'Câu chuyện về người làng chỉ được viết khi chính họ đồng ý kể.',
     },
-    action: { href: '/ket-noi', label: 'Góp một câu chuyện →' },
+    // LinkArrow tự thêm mũi tên nên nhãn không kèm "→".
+    action: { href: '/ket-noi', label: 'Góp một câu chuyện' },
   },
   more: { label: 'Xem thêm câu chuyện', done: 'Đã hiện hết các bài hiện có' },
   detail: {
@@ -39,7 +40,8 @@ export const storiesCopy = {
     progress: 'Tiến độ đọc',
     quoteNote: 'Trích từ bài viết',
     notesTitle: 'Ghi chú nguồn',
-    readNext: { title: 'Đọc tiếp', eyebrow: 'ĐỌC TIẾP', all: 'Tất cả câu chuyện →' },
+    // `all` đi qua LinkArrow (tự thêm mũi tên).
+    readNext: { title: 'Đọc tiếp', eyebrow: 'ĐỌC TIẾP', all: 'Tất cả câu chuyện' },
     preview: { checklistTitle: 'CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG' },
   },
 }

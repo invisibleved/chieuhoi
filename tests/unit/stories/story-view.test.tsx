@@ -36,7 +36,7 @@ function view(over: Partial<StoryPageView['story']> = {}, mode: 'public' | 'prev
     story: {
       slug: 'chuyen-ve-trang-chieu', title: 'Chuyện về Trạng Chiếu', sapo: 'Phạm Đôn Lễ và khung dệt.',
       category: 'Lịch sử', categoryKey: 'history', cover: image, readingMinutes: 4, hasDetail: true, cta: 'Đọc bài →',
-      status: mode === 'preview' ? 'Bản nháp' : null, sourceCount: 2, flags: [],
+      status: mode === 'preview' ? 'Bản nháp' : null, isDraft: mode === 'preview', sourceCount: 2, flags: [],
       body,
       toc: [
         { id: 'mot', title: 'Mục một' }, { id: 'hai', title: 'Mục hai' },
@@ -88,6 +88,23 @@ describe('StoryView', () => {
     expect(container.textContent).not.toContain('Bản nháp')
   })
 
+  it('chủ đề in hoa bằng CSS (Eyebrow uppercase), giữ chữ nhãn option', () => {
+    render(<StoryView page={view()} />)
+    expect(screen.getByText('Lịch sử').className).toContain('uppercase')
+  })
+
+  it('tag bản nháp theo isDraft', () => {
+    const { container } = render(<StoryView page={view({ isDraft: false })} />)
+    expect(container.textContent).not.toContain('Bản nháp — cần thẩm định')
+  })
+
+  it('trích dẫn trong bài: dòng "Trích từ bài viết" chỉ hiện từ md', () => {
+    const quoted: Rich = { root: { type: 'root', children: [{ type: 'quote', children: [text('Một nghề theo làng.')] }] } }
+    const { container } = render(<StoryView page={view({ body: quoted })} />)
+    const note = within(container.querySelector('blockquote')!).getByText('Trích từ bài viết')
+    expect(note.className).toContain('max-md:hidden')
+  })
+
   it('preview: tag bản nháp và khung thẩm định dạng danh sách', () => {
     render(<StoryView page={view()} />)
     expect(screen.getByText('Bản nháp — cần thẩm định')).toBeTruthy()
@@ -108,6 +125,7 @@ describe('StoryView', () => {
     expect(li('Dòng thời gian').className).not.toContain('max-md:hidden')
     const all = screen.getByRole('link', { name: 'Tất cả câu chuyện' })
     expect(all.getAttribute('href')).toBe('/cau-chuyen')
+    // Copy không kèm mũi tên; LinkArrow thêm một mũi tên duy nhất.
     expect(all.textContent).toBe('Tất cả câu chuyện →')
   })
 

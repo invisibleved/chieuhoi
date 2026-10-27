@@ -60,6 +60,12 @@ describe('PeopleView', () => {
     expect(screen.getByRole('status').textContent).toBe('2 chân dung')
   })
 
+  it('nhãn chờ đồng ý trên thẻ lấy từ copy.card.pending', () => {
+    const page = view([person(0)])
+    render(<PeopleView page={{ ...page, copy: { ...page.copy, card: { ...page.copy.card, pending: 'Nhãn từ copy' } } }} />)
+    expect(screen.getByText('Nhãn từ copy')).toBeTruthy()
+  })
+
   it('nhãn Chờ đồng ý có chấm đứt (StatusDot) ở bản desktop, ẩn ở mobile', () => {
     const { container } = render(<PeopleView page={view([person(0)])} />)
     const label = screen.getByText('Chờ đồng ý')
@@ -125,17 +131,17 @@ describe('PeopleView', () => {
 describe('PortraitCard detail', () => {
   const p = person(0, { role: 'Vai trò X', note: 'Ghi chú Y' })
   it('mặc định hiện role', () => {
-    render(<PortraitCard person={p} href="#" />)
+    render(<PortraitCard person={p} href="#" pendingLabel="Chờ đồng ý" />)
     expect(screen.getByText('Vai trò X')).toBeTruthy()
     expect(screen.queryByText('Ghi chú Y')).toBeNull()
   })
   it('detail="note" hiện note thay role', () => {
-    render(<PortraitCard person={p} href="#" detail="note" />)
+    render(<PortraitCard person={p} href="#" detail="note" pendingLabel="Chờ đồng ý" />)
     expect(screen.getByText('Ghi chú Y')).toBeTruthy()
     expect(screen.queryByText('Vai trò X')).toBeNull()
   })
   it('size="fluid" và className được áp lên link', () => {
-    render(<PortraitCard person={p} href="#" size="fluid" className="md:mt-12" />)
+    render(<PortraitCard person={p} href="#" size="fluid" className="md:mt-12" pendingLabel="Chờ đồng ý" />)
     expect(screen.getByRole('link').className).toContain('md:mt-12')
   })
 })

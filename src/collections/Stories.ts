@@ -1,7 +1,7 @@
 import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
-import { restrictedEditor } from './restrictedEditor'
+import { citeInlineBlock, restrictedEditor } from './restrictedEditor'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 /** Nguồn duy nhất của nhãn chuyên mục; lớp content map value -> label từ đây. */
@@ -49,14 +49,7 @@ export const Stories: CollectionConfig = {
               ],
             },
           ],
-          inlineBlocks: [
-            {
-              slug: 'cite',
-              fields: [
-                { name: 'source', type: 'relationship', relationTo: 'sources', required: true },
-              ],
-            },
-          ],
+          inlineBlocks: [citeInlineBlock()],
         }),
       ]),
     },

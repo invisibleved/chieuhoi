@@ -1,6 +1,8 @@
 // View model của /cau-chuyen và /cau-chuyen/[slug]. Dùng lại createContent và ảnh theo ô của createPages.
 import type { Payload } from 'payload'
 
+import { fillTemplate } from '@/lib/template'
+
 import { storyCategoryOptions } from './categories'
 import { applyMode } from './copy/applyMode'
 import { storiesCopy, storiesReadNext } from './copy/stories'
@@ -10,12 +12,12 @@ import type { Mode, ReadNextItem, StoriesPageView, StoryCardView, StoryPageView,
 
 type Content = ReturnType<typeof createContent>
 
-/** Thẻ "Đọc tiếp" thứ ba: bài khác đầu tiên (R8). Eyebrow "CHỦ ĐỀ · NHÃN TRẠNG THÁI". */
+/** Thẻ "Đọc tiếp" thứ ba: bài khác đầu tiên (R8). Eyebrow "Chủ đề · Nhãn trạng thái" (ReadNext in hoa bằng CSS). */
 function otherStory(s: StoryCardView): ReadNextItem | null {
   if (!s.title) return null
   return {
     href: s.hasDetail ? `/cau-chuyen/${s.slug}` : '/cau-chuyen',
-    eyebrow: [s.category, s.status].filter((t): t is string => !!t).join(' · ').toLocaleUpperCase('vi'),
+    eyebrow: [s.category, s.status].filter((t): t is string => !!t).join(' · '),
     title: s.title,
     cta: s.cta,
     image: s.cover,
@@ -29,8 +31,8 @@ function storyMeta(s: StoryView): string[] {
   return [
     s.editor ? m.editor + s.editor : null,
     s.publishedAt ? m.published + s.publishedAt : null,
-    s.readingMinutes !== null ? m.minutes.replace('{m}', String(s.readingMinutes)) : null,
-    s.sourceCount > 0 ? m.sources.replace('{s}', String(s.sourceCount)) : null,
+    s.readingMinutes !== null ? fillTemplate(m.minutes, { m: s.readingMinutes }) : null,
+    s.sourceCount > 0 ? fillTemplate(m.sources, { s: s.sourceCount }) : null,
   ].filter((p): p is string => p !== null)
 }
 
@@ -40,12 +42,14 @@ export function createStories(payload: Payload, content: Content) {
   async function getStoriesPage(mode: Mode): Promise<StoriesPageView> {
     const [intro, stories] = await Promise.all([content.getPageIntro('cau-chuyen', mode), content.getStories(mode)])
     const story = stories.find((s) => s.hasDetail)
-    const fill = (t: string) => t.replace('{s}', String(story?.sourceCount ?? '')).replace('{m}', String(story?.readingMinutes ?? ''))
     const featured = story
       ? {
           story,
-          eyebrow: [storiesCopy.featured.eyebrow, story.category?.toLocaleUpperCase('vi')].filter(Boolean).join(' · '),
-          meta: story.sourceCount > 0 && story.readingMinutes !== null ? fill(storiesCopy.featured.meta) : null,
+          // Chủ đề giữ chữ thường như nhãn option; StoryCard in hoa bằng CSS.
+          eyebrow: [storiesCopy.featured.eyebrow, story.category].filter(Boolean).join(' · '),
+          meta: story.sourceCount > 0 && story.readingMinutes !== null
+            ? fillTemplate(storiesCopy.featured.meta, { s: story.sourceCount, m: story.readingMinutes })
+            : null,
         }
       : null
     return {

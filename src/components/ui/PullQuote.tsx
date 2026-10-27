@@ -5,6 +5,8 @@ type PullQuoteProps = {
   variant: 'article' | 'testimony'
   /** Dòng nhỏ dưới câu trích (nguồn, ghi chú). */
   note?: ReactNode
+  /** Thêm vào dòng ghi chú (ví dụ `max-md:hidden` khi artboard mobile không có dòng này). */
+  noteClassName?: string
   children: ReactNode
 }
 
@@ -18,11 +20,11 @@ const texts = {
   testimony: 'text-[26px] leading-[1.35] text-text-muted md:text-[32px]',
 } as const
 
-export function PullQuote({ variant, note, children }: PullQuoteProps) {
+export function PullQuote({ variant, note, noteClassName, children }: PullQuoteProps) {
   return (
     <blockquote className={shells[variant]}>
       <p className={`m-0 font-display italic ${texts[variant]}`}>{children}</p>
-      {note ? <span className="text-[13px] text-text-muted">{note}</span> : null}
+      {note ? <span className={['text-[13px] text-text-muted', noteClassName].filter(Boolean).join(' ')}>{note}</span> : null}
     </blockquote>
   )
 }

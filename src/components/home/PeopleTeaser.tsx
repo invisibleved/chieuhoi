@@ -5,7 +5,7 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 
-type PeopleTeaserProps = { people: PersonView[] }
+type PeopleTeaserProps = { people: PersonView[]; pendingLabel: string }
 
 const CTA = 'Đọc câu chuyện →'
 
@@ -16,7 +16,7 @@ const SLOTS = [
   { cell: 'md:col-span-3 md:mt-16', image: 'h-[360px] md:h-[400px]', name: 'text-[22px] leading-[1.2] md:text-[24px]' },
 ] as const
 
-export function PeopleTeaser({ people }: PeopleTeaserProps) {
+export function PeopleTeaser({ people, pendingLabel }: PeopleTeaserProps) {
   const shown = people.slice(0, 3)
   if (shown.length === 0) return null
   return (
@@ -40,6 +40,7 @@ export function PeopleTeaser({ people }: PeopleTeaserProps) {
                 person={person}
                 href={`/con-nguoi/${person.slug}`}
                 cta={CTA}
+                pendingLabel={pendingLabel}
                 imageClassName={SLOTS[i].image}
                 nameClassName={SLOTS[i].name}
               />

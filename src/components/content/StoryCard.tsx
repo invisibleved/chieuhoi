@@ -38,7 +38,7 @@ export function StoryCard({
   const eyebrowText =
     eyebrow ??
     [
-      story.category ? story.category.toLocaleUpperCase('vi') : null,
+      story.category,
       story.readingMinutes !== null ? `${story.readingMinutes} PHÚT ĐỌC` : null,
     ]
       .filter(Boolean)
@@ -97,11 +97,11 @@ export function StoryCard({
       {(eyebrowText || status) && (
         <span className="flex flex-wrap items-center gap-2">
           {eyebrowText && (
-            <span className="text-[12px] font-semibold tracking-meta text-text-meta">
+            <span className="text-[12px] font-semibold uppercase tracking-meta text-text-meta">
               {eyebrowText}
             </span>
           )}
-          {status && <Tag variant={status === 'Bản nháp' ? 'dashed' : 'filled'}>{status}</Tag>}
+          {status && <Tag variant={story.isDraft ? 'dashed' : 'filled'}>{status}</Tag>}
         </span>
       )}
       {story.title && (

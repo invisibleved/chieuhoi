@@ -70,7 +70,7 @@ type ArchiveChipProps = {
   className?: string
 }
 
-// Chip lưu trữ: TL · mã · CHỦ ĐỀ (in hoa).
+// Chip lưu trữ: TL · mã · CHỦ ĐỀ (in hoa bằng CSS).
 export function ArchiveChip({ label, code, category, overlay = false, className }: ArchiveChipProps) {
   const cls = [
     'inline-block text-[12px] text-text-on-dark',
@@ -82,7 +82,7 @@ export function ArchiveChip({ label, code, category, overlay = false, className 
   return (
     <span className={cls}>
       {docCode(label, code)}
-      {category ? <span className={overlay ? 'max-md:hidden' : undefined}>{` · ${category.toLocaleUpperCase('vi')}`}</span> : null}
+      {category ? <span className={overlay ? 'max-md:hidden' : undefined}>{' · '}<span className="uppercase">{category}</span></span> : null}
     </span>
   )
 }

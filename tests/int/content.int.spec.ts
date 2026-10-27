@@ -258,7 +258,7 @@ describe('lib/content', () => {
     expect(p?.name).toBeNull()
     expect(p?.note).toBeNull()
     expect(p?.yearsInCraft).toBeNull()
-    expect(p?.storyParts).toEqual([null, null])
+    expect(p?.storyParts).toEqual([null, null, null])
   })
 
   it('craft step: shotNeeded hiện công khai', async () => {

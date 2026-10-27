@@ -59,6 +59,7 @@ describe('view model Câu chuyện', () => {
       expect(v.stories).toHaveLength(5)
       expect(v.stories.every((s) => s.status === 'Chủ đề đề xuất' && s.hasDetail === false)).toBe(true)
       expect(v.stories.some((s) => s.status === 'Bản nháp')).toBe(false)
+      expect(v.stories.some((s) => s.isDraft)).toBe(false)
       expect(v.intro.lead).toBe('Ký ức, lịch sử và đời sống hôm nay của làng Hới.')
       expect(v.filters).toEqual([
         { key: 'all', label: 'Tất cả' },
@@ -86,6 +87,8 @@ describe('view model Câu chuyện', () => {
       expect(draft?.status).toBe('Bản nháp')
       expect(draft?.sourceCount).toBe(3)
       expect(v.stories.filter((s) => s.status === 'Bản nháp')).toHaveLength(1)
+      expect(draft?.isDraft).toBe(true)
+      expect(v.stories.filter((s) => s.isDraft).map((s) => s.slug)).toEqual([SLUG])
       expect(v.copy.detail.preview?.checklistTitle).toBe('CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG')
     })
     it('thứ tự theo createdAt tăng dần: bài Trạng Chiếu (seed đầu tiên) đứng đầu', async () => {
@@ -95,7 +98,8 @@ describe('view model Câu chuyện', () => {
     it('featured: preview là Trạng Chiếu với eyebrow và meta dựng ở lib; public là null', async () => {
       const pv = await stories.getStoriesPage('preview')
       expect(pv.featured?.story.slug).toBe(SLUG)
-      expect(pv.featured?.eyebrow).toBe('BÀI NỔI BẬT · LỊCH SỬ')
+      // Chủ đề giữ chữ nhãn option; StoryCard in hoa bằng CSS.
+      expect(pv.featured?.eyebrow).toBe('BÀI NỔI BẬT · Lịch sử')
       expect(pv.featured?.meta).toBe('3 nguồn báo chí · khoảng 4 phút đọc')
       expect((await stories.getStoriesPage('public')).featured).toBeNull()
     })
@@ -146,7 +150,7 @@ describe('view model Câu chuyện', () => {
       expect(third.href).toBe('/cau-chuyen')
       expect(third.title).not.toBe('Chuyện về Trạng Chiếu')
       expect(third.title).toBe('Những ký ức bên khung dệt')
-      expect(third.eyebrow).toMatch(/ · CHỦ ĐỀ ĐỀ XUẤT$/)
+      expect(third.eyebrow).toMatch(/ · Chủ đề đề xuất$/)
       expect(third.cta).toBe('Xem đề cương →')
     })
     it('bài đã đăng: cite tới nguồn có tiêu đề chưa xác minh bị bỏ cùng đoạn chỉ trích nguồn đó (public)', async () => {

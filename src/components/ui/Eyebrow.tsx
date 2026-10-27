@@ -8,6 +8,8 @@ type EyebrowProps = {
   rule?: boolean
   /** eyebrow: .22em mobile, .24em từ md (đầu section). label: .2em cố định (nhãn trong khối). */
   tracking?: 'eyebrow' | 'label'
+  /** In hoa bằng CSS (text-transform, theo lang="vi"): dùng cho nhãn dữ liệu chữ thường như tên chủ đề, nhóm. */
+  uppercase?: boolean
   as?: 'p' | 'span' | 'dt'
   id?: string
   className?: string
@@ -23,11 +25,12 @@ const tones = {
 const trackings = { eyebrow: 'tracking-eyebrow-sm md:tracking-eyebrow', label: 'tracking-label' } as const
 
 // Nhãn nhỏ viết hoa: 12px, đậm, giãn chữ. Dùng cho eyebrow đầu section và nhãn trong khối.
-export function Eyebrow({ children, tone = 'light', rule = false, tracking = 'eyebrow', as: Tag = 'span', id, className }: EyebrowProps) {
+export function Eyebrow({ children, tone = 'light', rule = false, tracking = 'eyebrow', uppercase = false, as: Tag = 'span', id, className }: EyebrowProps) {
   const cls = [
     'text-eyebrow font-semibold',
     trackings[tracking],
     tones[tone],
+    uppercase ? 'uppercase' : null,
     rule ? 'flex items-center gap-3 md:gap-4' : null,
     className,
   ]

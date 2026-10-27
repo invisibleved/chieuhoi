@@ -11,6 +11,8 @@ type RichTextProps = {
   variant: 'article' | 'story'
   /** Chữ cái đầu của đoạn đầu tiên phóng to (chỉ bài đọc). */
   dropCap?: boolean
+  /** Dòng nhỏ dưới câu trích trong bài (copy "Trích từ bài viết"); chỉ hiện từ md, như StoryDetail (StoryMobile không có). */
+  quoteNote?: string | null
 }
 
 // Đoạn lời kể chân dung (không màu): RichText dùng màu chữ chính, StoryPlaceholder dùng màu mờ.
@@ -76,7 +78,7 @@ function inline(nodes: RichNode[]): ReactNode[] {
   })
 }
 
-export function RichText({ value, variant, dropCap = false }: RichTextProps) {
+export function RichText({ value, variant, dropCap = false, quoteNote = null }: RichTextProps) {
   const s = styles[variant]
   const blocks = kids(value.root)
 
@@ -110,7 +112,7 @@ export function RichText({ value, variant, dropCap = false }: RichTextProps) {
       }
       case 'quote':
         return (
-          <PullQuote key={i} variant={variant === 'article' ? 'article' : 'testimony'}>
+          <PullQuote key={i} variant={variant === 'article' ? 'article' : 'testimony'} note={quoteNote} noteClassName="max-md:hidden">
             {inline(kids(n))}
           </PullQuote>
         )

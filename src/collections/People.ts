@@ -1,10 +1,11 @@
+import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
 import { reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 import { slugify } from '@/lib/slugify'
 
-import { restrictedEditor } from './restrictedEditor'
+import { citeInlineBlock, restrictedEditor } from './restrictedEditor'
 
 /** Nguồn duy nhất của nhãn nhóm; lớp content map value -> label từ đây. */
 export const PERSON_CATEGORY_OPTIONS = [
@@ -60,7 +61,14 @@ export const People: CollectionConfig = {
         !value || /^\d{4}-\d{2}-\d{2}$/.test(value) ? true : 'Ngày ghi lại phải có dạng YYYY-MM-DD.',
     },
     { name: 'portrait', type: 'relationship', relationTo: 'archive-assets', label: 'Ảnh chân dung' },
-    { name: 'story', type: 'richText', label: 'Câu chuyện', localized: true, editor: restrictedEditor() },
+    {
+      name: 'story',
+      type: 'richText',
+      label: 'Câu chuyện',
+      localized: true,
+      // Chỉ cho chú thích nguồn (cite); không có khối ảnh trong câu chuyện chân dung.
+      editor: restrictedEditor([BlocksFeature({ inlineBlocks: [citeInlineBlock()] })]),
+    },
     {
       name: 'gallery',
       type: 'array',

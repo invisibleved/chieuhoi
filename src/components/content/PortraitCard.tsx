@@ -13,6 +13,8 @@ type PortraitCardProps = {
   detail?: 'role' | 'note'
   /** Thêm vào thẻ (ví dụ lùi xuống `md:mt-12` theo vị trí trong lưới). */
   className?: string
+  /** Nhãn phủ trên ảnh khi chưa có đồng ý (copy: peopleCopy.card.pending). */
+  pendingLabel: string
   /** Chữ nút cuối thẻ (mặc định "Xem chân dung →"). */
   cta?: string
   /** Ghi đè chiều cao ảnh (và ô giữ chỗ). */
@@ -49,8 +51,8 @@ const looks = {
   },
 } as const
 
-// Thẻ chân dung. Chưa có đồng ý thì không có tên: nhãn "Chờ đồng ý" thay thế, không in placeholder.
-export function PortraitCard({ person, href, size = 'lg', detail = 'role', className, cta = 'Xem chân dung →', imageClassName, nameClassName }: PortraitCardProps) {
+// Thẻ chân dung. Chưa có đồng ý thì không có tên: nhãn `pendingLabel` thay thế, không in placeholder.
+export function PortraitCard({ person, href, size = 'lg', detail = 'role', className, pendingLabel, cta = 'Xem chân dung →', imageClassName, nameClassName }: PortraitCardProps) {
   const look = looks[size]
   const h = imageClassName ?? look.image
   const cardFlags = person.flags.filter((f) => !person.portrait?.flags.includes(f))
@@ -65,14 +67,12 @@ export function PortraitCard({ person, href, size = 'lg', detail = 'role', class
         )}
         {person.consentPending && (
           <span className={`absolute ${look.tagPos}`}>
-            <Tag variant="overlay" size={size === 'lg' ? 'md' : size}>Chờ đồng ý</Tag>
+            <Tag variant="overlay" size={size === 'lg' ? 'md' : size}>{pendingLabel}</Tag>
           </span>
         )}
       </span>
       {person.category && (
-        <span className={`text-[12px] font-semibold text-text-meta ${look.category}`}>
-          {person.category.toLocaleUpperCase('vi')}
-        </span>
+        <span className={`text-[12px] font-semibold uppercase text-text-meta ${look.category}`}>{person.category}</span>
       )}
       {person.name && (
         <span className={`font-display ${nameClassName ?? look.name}`}>{person.name}</span>

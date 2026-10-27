@@ -18,13 +18,14 @@ describe('labels', () => {
       '[cần xác minh]',
     ])
   })
-  it('ArchiveChip in hoa chủ đề, nhãn lấy từ props', () => {
+  it('ArchiveChip in hoa chủ đề bằng CSS, nhãn lấy từ props', () => {
     const { container } = render(<ArchiveChip label="TL" code="021" category="Làng quê" />)
-    expect(container.textContent).toBe('TL · 021 · LÀNG QUÊ')
+    expect(container.textContent).toBe('TL · 021 · Làng quê')
+    expect(screen.getByText('Làng quê').className).toContain('uppercase')
   })
   it('ArchiveChip overlay: chủ đề chỉ hiện từ md', () => {
     render(<ArchiveChip overlay label="TL" code="021" category="Làng quê" />)
-    expect(screen.getByText('· LÀNG QUÊ', { exact: false }).className).toContain('max-md:hidden')
+    expect(screen.getByText('Làng quê').parentElement!.className).toContain('max-md:hidden')
   })
   it('DocumentLabel hiện mã, tiêu đề, meta; nhãn mã lấy từ props', () => {
     const { rerender } = render(<DocumentLabel label="TƯ LIỆU" code="001" title="Chiếu cói" meta="Hải Triều" />)

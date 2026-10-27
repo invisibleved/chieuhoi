@@ -20,6 +20,7 @@ import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { peopleCopy } from '@/lib/content/copy/people'
+import { storiesCopy } from '@/lib/content/copy/stories'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
 import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
@@ -138,7 +139,7 @@ export default function StyleguidePage() {
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PORTRAIT CARD</Lab>
-            <PortraitCard person={fx.person} href="#" />
+            <PortraitCard person={fx.person} href="#" pendingLabel={peopleCopy.card.pending} />
           </div>
           <div className="flex flex-col gap-3 md:col-span-5">
             <Lab>STORY CARD · NỔI BẬT</Lab>
@@ -166,11 +167,11 @@ export default function StyleguidePage() {
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PORTRAIT · CHỜ ĐỒNG Ý</Lab>
-            <PortraitCard person={fx.personPending} href="#" />
+            <PortraitCard person={fx.personPending} href="#" pendingLabel={peopleCopy.card.pending} />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PORTRAIT · FLUID + GHI CHÚ (TRANG CON NGƯỜI)</Lab>
-            <PortraitCard person={{ ...fx.personPending, note: 'Dệt chiếu tay · [cần xác minh]' }} href="#" size="fluid" detail="note" />
+            <PortraitCard person={{ ...fx.personPending, note: 'Dệt chiếu tay · [cần xác minh]' }} href="#" size="fluid" detail="note" pendingLabel={peopleCopy.card.pending} />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>STORY · CHỦ ĐỀ ĐỀ XUẤT</Lab>
@@ -242,6 +243,7 @@ export default function StyleguidePage() {
           <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · NỀN TỐI</Lab><Eyebrow tone="dark">NGHỀ DỆT CHIẾU</Eyebrow></div>
           <div className={state}><Lab>EYEBROW · CÓ VẠCH</Lab><Eyebrow rule>LÀNG HỚI</Eyebrow></div>
           <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · CÓ VẠCH · NỀN TỐI</Lab><Eyebrow tone="dark" rule>LÀNG HỚI</Eyebrow></div>
+          <div className={state}><Lab>EYEBROW · IN HOA BẰNG CSS (uppercase)</Lab><Eyebrow uppercase>{fx.storyFeatured.category}</Eyebrow></div>
           <StepperDemos />
           <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
@@ -374,8 +376,8 @@ export default function StyleguidePage() {
         <h2 id="sg-doc" className={h2}>Bài đọc &amp; chân dung</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
-            <Lab>RICH TEXT · BÀI ĐỌC · CHỮ CÁI ĐẦU</Lab>
-            <div className="max-w-[720px]"><RichText variant="article" dropCap value={fx.richArticle} /></div>
+            <Lab>RICH TEXT · BÀI ĐỌC · CHỮ CÁI ĐẦU · GHI CHÚ TRÍCH (TỪ MD)</Lab>
+            <div className="max-w-[720px]"><RichText variant="article" dropCap value={fx.richArticle} quoteNote={storiesCopy.detail.quoteNote} /></div>
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <Lab>RICH TEXT · LỜI KỂ CHÂN DUNG</Lab>
@@ -385,7 +387,9 @@ export default function StyleguidePage() {
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <Lab>TRÍCH DẪN · BÀI ĐỌC</Lab>
-            <PullQuote variant="article" note="Trích từ bài viết">Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
+            <PullQuote variant="article" note={storiesCopy.detail.quoteNote}>Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
+            <Lab>TRÍCH DẪN · GHI CHÚ CHỈ TỪ MD (noteClassName)</Lab>
+            <PullQuote variant="article" note={storiesCopy.detail.quoteNote} noteClassName="max-md:hidden">Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
             <Lab>TRÍCH DẪN · LỜI KỂ</Lab>
             <PullQuote variant="testimony" note="Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc">“[Trích nguyên văn lời kể]”</PullQuote>
           </div>
@@ -415,7 +419,7 @@ export default function StyleguidePage() {
           </div>
           <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
             <Lab>ĐỌC TIẾP · CÓ TIÊU ĐỀ VÀ LIÊN KẾT · MỤC THỨ BA ẨN Ở MOBILE</Lab>
-            <ReadNext eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '#', label: 'Tất cả câu chuyện →' }} imageClassName="h-[240px]" items={fx.readNextItems} />
+            <ReadNext eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '#', label: 'Tất cả câu chuyện' }} imageClassName="h-[240px]" items={fx.readNextItems} />
           </div>
         </div>
         <Tok>content/rich-text · ui/pull-quote · content/photo-essay · content/consent-panel · content/status-dot · ui/note-banner · ui/back-link · content/read-next (title, action, mobile) — khung đồng ý luôn có chữ đi kèm chấm; băng ghi chú dùng role=note</Tok>
