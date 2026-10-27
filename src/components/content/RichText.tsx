@@ -17,6 +17,7 @@ const styles = {
     wrap: 'flex flex-col gap-[22px] md:gap-7',
     p: 'm-0 font-serif text-[18px] leading-[1.8] text-text-primary md:text-[20px]',
     h: 'm-0 mt-4 scroll-mt-24 font-display text-[26px] font-normal leading-[1.25] md:mt-6 md:text-[34px] md:leading-[1.2]',
+    h3: 'm-0 font-display text-[22px] font-normal leading-[1.25] md:text-[26px]',
     figcaption: 'font-sans text-[13px] leading-[1.55] text-text-secondary md:text-[14px]',
     img: 'block h-[260px] md:h-[420px]',
   },
@@ -24,6 +25,7 @@ const styles = {
     wrap: 'flex flex-col gap-5 md:gap-6',
     p: 'm-0 font-serif text-[17px] leading-[1.75] text-text-primary md:text-[19px]',
     h: 'm-0 font-display text-[22px] font-normal leading-[1.2] md:text-[26px]',
+    h3: 'm-0 font-display text-[22px] font-normal leading-[1.2] md:text-[26px]',
     figcaption: 'font-serif text-[14px] italic leading-[1.5] text-text-secondary',
     img: 'block h-[260px] md:h-[400px]',
   },
@@ -100,7 +102,7 @@ export function RichText({ value, variant, dropCap = false }: RichTextProps) {
         if (variant === 'article' && n.tag === 'h2') {
           return <h2 key={i} id={typeof n.anchor === 'string' ? n.anchor : undefined} className={s.h}>{text}</h2>
         }
-        return <h3 key={i} className={variant === 'article' ? 'm-0 font-display text-[22px] font-normal leading-[1.25] md:text-[26px]' : s.h}>{text}</h3>
+        return <h3 key={i} className={s.h3}>{text}</h3>
       }
       case 'quote':
         return (

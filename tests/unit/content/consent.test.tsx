@@ -1,26 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ConsentPanel } from '@/components/content/ConsentPanel'
-import { StatusDot } from '@/components/content/StatusDot'
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { peopleCopy } from '@/lib/content/copy/people'
 
 const copy = applyMode(peopleCopy, 'public').detail.consent
-
-describe('StatusDot', () => {
-  it('ba trạng thái khác nhau bằng hình, aria-hidden', () => {
-    const { container, rerender } = render(<StatusDot state="none" />)
-    const dot = () => container.firstElementChild as HTMLElement
-    expect(dot().getAttribute('aria-hidden')).toBe('true')
-    expect(dot().className).toContain('border-dashed')
-    rerender(<StatusDot state="partial" />)
-    expect(dot().className).toContain('border-solid')
-    expect(dot().className).not.toContain('bg-text-secondary')
-    rerender(<StatusDot state="full" size={8} />)
-    expect(dot().className).toContain('bg-text-secondary')
-    expect(dot().style.width).toBe('8px')
-  })
-})
 
 describe('ConsentPanel', () => {
   it.each([
@@ -50,6 +34,9 @@ describe('ConsentPanel', () => {
   })
   it('bản mobile gọn: một dòng tóm tắt', () => {
     render(<ConsentPanel copy={copy} consent={{ state: 'none', missing: ['tên'], reviewedBySubject: false }} />)
-    expect(screen.getByText('Chưa có · Người được kể chưa')).toBeTruthy()
+    expect(screen.getByText('Chưa có · Người được kể chưa duyệt bài')).toBeTruthy()
+    cleanup()
+    render(<ConsentPanel copy={copy} consent={{ state: 'full', missing: [], reviewedBySubject: true }} />)
+    expect(screen.getByText('Đã có · Người được kể đã duyệt bài')).toBeTruthy()
   })
 })

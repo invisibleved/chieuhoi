@@ -68,7 +68,7 @@ export const peopleCopy = {
         action: { desktop: 'Gửi yêu cầu →', mobile: 'Yêu cầu sửa hoặc gỡ bài →' },
         href: '/ket-noi',
       },
-      mobileSummary: '{state} · Người được kể {reviewed}',
+      mobileSummary: { yes: '{state} · Người được kể đã duyệt bài', no: '{state} · Người được kể chưa duyệt bài' },
     },
     related: { title: 'Liên quan', eyebrow: 'LIÊN QUAN' },
     preview: {

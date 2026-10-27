@@ -1,4 +1,4 @@
-import { StatusDot } from '@/components/content/StatusDot'
+import { StatusDot } from './StatusDot'
 
 // Băng ghi chú đầu trang: nền cói đậm, chấm nét đứt, chữ đậm rồi chữ thường.
 export function NoteBanner({ strong, text }: { strong: string; text: string }) {

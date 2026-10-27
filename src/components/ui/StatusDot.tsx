@@ -1,6 +1,4 @@
-import type { ConsentState } from '@/lib/content'
-
-type StatusDotProps = { state: ConsentState; size?: 8 | 10 | 12 }
+type StatusDotProps = { state: 'none' | 'partial' | 'full'; size?: 8 | 10 | 12 }
 
 // Trạng thái bằng hình, không chỉ bằng màu: nét đứt (chưa có), vòng liền (một phần), chấm đặc (đã có).
 // Điểm đánh dấu tròn duy nhất ngoài hoa văn được phép bo góc.

@@ -6,6 +6,7 @@ import { Callout } from '@/components/ui/Callout'
 import { BackLink } from '@/components/ui/BackLink'
 import { EmptyState } from '@/components/ui/Feedback'
 import { NoteBanner } from '@/components/ui/NoteBanner'
+import { StatusDot } from '@/components/ui/StatusDot'
 import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
@@ -255,3 +256,19 @@ describe('ReadNext', () => {
     expect(container.querySelector('img')!.className).not.toContain('h-[260px]')
   })
 })
+
+describe('StatusDot', () => {
+  it('ba trạng thái khác nhau bằng hình, aria-hidden', () => {
+    const { container, rerender } = render(<StatusDot state="none" />)
+    const dot = () => container.firstElementChild as HTMLElement
+    expect(dot().getAttribute('aria-hidden')).toBe('true')
+    expect(dot().className).toContain('border-dashed')
+    rerender(<StatusDot state="partial" />)
+    expect(dot().className).toContain('border-solid')
+    expect(dot().className).not.toContain('bg-text-secondary')
+    rerender(<StatusDot state="full" size={8} />)
+    expect(dot().className).toContain('bg-text-secondary')
+    expect(dot().style.width).toBe('8px')
+  })
+})
+

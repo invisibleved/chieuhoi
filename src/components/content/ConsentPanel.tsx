@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import type { PeopleCopyView, PersonDetailView } from '@/lib/content'
 import { Eyebrow } from '@/components/ui/Eyebrow'
-import { StatusDot } from './StatusDot'
+import { StatusDot } from '@/components/ui/StatusDot'
+
 
 type ConsentPanelProps = {
   consent: PersonDetailView['consent']
@@ -19,7 +20,7 @@ export function ConsentPanel({ consent, copy }: ConsentPanelProps) {
   const stateLabel = copy.states[consent.state]
   const reviewed = (consent.reviewedBySubject ? copy.reviewed.yes : copy.reviewed.no) ?? ''
   const need = consent.missing.length > 0 ? copy.need?.replace('{list}', consent.missing.join(', ')) : null
-  const summary = copy.mobileSummary?.replace('{state}', stateLabel ?? '').replace('{reviewed}', reviewed.toLowerCase())
+  const summary = copy.mobileSummary[consent.reviewedBySubject ? 'yes' : 'no']?.replace('{state}', stateLabel ?? '')
   const href = copy.request.href ?? '/ket-noi'
 
   return (
