@@ -30,7 +30,7 @@ export function PlaceholderFrame({ label, title, description, descriptionClassNa
           {description ? (
             <>
               <br />
-              {description}
+              <span className={descriptionClassName}>{description}</span>
             </>
           ) : null}
         </span>

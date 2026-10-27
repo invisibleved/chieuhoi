@@ -77,7 +77,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
         crumbs={crumbs}
         intro={intro}
         titleClassName="text-[40px] md:text-[76px]"
-        aside={factList ?? undefined}
+        aside={factList ? <div data-testid="village-facts-desktop">{factList}</div> : undefined}
         asideSpan="narrow"
         asideClassName="max-md:hidden md:self-end md:pb-14"
       />
@@ -96,7 +96,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
         </figure>
       ) : null}
 
-      {factList ? <div className="mx-5 mt-6 md:hidden">{factList}</div> : null}
+      {factList ? <div data-testid="village-facts-mobile" className="mx-5 mt-6 md:hidden">{factList}</div> : null}
 
       <section aria-labelledby="founder-h" className="flex flex-col gap-4 px-5 py-14 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:py-[120px]">
         <div className="flex flex-col gap-4 md:col-span-4">

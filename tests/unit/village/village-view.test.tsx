@@ -39,8 +39,10 @@ afterEach(cleanup)
 describe('VillageView', () => {
   it('preview: bảng thông tin 3 mục, chú thích trỏ tới nguồn, 3 nguồn', () => {
     const { container } = render(<VillageView page={view('preview')} />)
-    const dts = screen.getAllByText(/^(TÊN GỌI|ĐỊA GIỚI HIỆN NAY|TỔ NGHỀ)$/)
-    expect(dts.slice(0, 3).map((d) => d.textContent)).toEqual(['TÊN GỌI', 'ĐỊA GIỚI HIỆN NAY', 'TỔ NGHỀ'])
+    for (const id of ['village-facts-desktop', 'village-facts-mobile']) {
+      const dts = within(screen.getByTestId(id)).getAllByText(/./, { selector: 'dt' })
+      expect(dts.map((d) => d.textContent)).toEqual(['TÊN GỌI', 'ĐỊA GIỚI HIỆN NAY', 'TỔ NGHỀ'])
+    }
     expect(screen.getAllByRole('link', { name: 'Nguồn 1' })[0].getAttribute('href')).toBe('#nguon-1')
     const list = screen.getByRole('heading', { name: 'Nguồn tham khảo' }).closest('section')!
     expect(within(list).getAllByRole('listitem')).toHaveLength(3)
