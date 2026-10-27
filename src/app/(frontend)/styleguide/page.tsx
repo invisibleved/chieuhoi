@@ -40,7 +40,7 @@ import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-import { FilterDemos, StepperDemos, TabDemo } from './Demos'
+import { FilterDemos, InteractiveDemos, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -384,12 +384,9 @@ export default function StyleguidePage() {
               <VariantText value={{ desktop: 'Dệt thủ công (từ 768px)', mobile: 'Thủ công (dưới 768px)' }} />
             </p>
           </div>
-          <div className="flex flex-col gap-3">
-            <Lab>XEM THÊM / PHÂN TRANG</Lab>
-            <VerifyNote size="sm">Phân trang và Xem thêm làm ở Phase 5.</VerifyNote>
-          </div>
+          <InteractiveDemos />
         </div>
-        <Tok>filter/chip · tabs · pagination · load-more — bộ lọc dùng button aria-pressed, tab dùng role tablist</Tok>
+        <Tok>filter/chip · tabs · search · load-more · share · reading-progress · toc — bộ lọc dùng button aria-pressed, tab dùng role tablist</Tok>
       </section>
 
       {rowThreads}
