@@ -1,5 +1,5 @@
 import type {
-  CraftPageView, CraftStepView, ImageView, PersonView, ProductCardView, SourceView, StoryCardView, TimelineEventView,
+  CraftPageView, CraftStepView, ImageView, PersonDetailView, PersonView, ProductCardView, ReadNextItem, Rich, SourceView, StoryCardView, TimelineEventView,
 } from '@/lib/content'
 
 // Dữ liệu mẫu cho /styleguide, lấy nguyên văn từ artboard Components.
@@ -15,6 +15,8 @@ export const imgCompact = img('hc9.webp', 'Chiếu phơi bờ ao', 1800, 841)
 export const person: PersonView = {
   slug: 'mau',
   category: 'Nghệ nhân',
+  categoryKey: 'artisan',
+  note: null,
   role: 'Vai trò: [cần xác minh]',
   name: '[Tên nghệ nhân]',
   portrait: imgPortrait,
@@ -36,10 +38,20 @@ export const storyFeatured: StoryCardView = {
   title: 'Chuyện về Trạng Chiếu',
   sapo: 'Mô tả ngắn 1–2 dòng. [Cần nguồn]',
   category: 'Lịch sử',
+  categoryKey: 'history',
   cover: imgStory,
   readingMinutes: null,
   hasDetail: true,
+  cta: 'Đọc bài →',
+  status: null,
+  isDraft: false,
+  sourceCount: 3,
   flags: [],
+}
+
+export const storyHeroFeatured = {
+  eyebrow: 'BÀI NỔI BẬT · LỊCH SỬ',
+  meta: '3 nguồn báo chí · khoảng 4 phút đọc',
 }
 
 export const storyCompact: StoryCardView = {
@@ -47,9 +59,14 @@ export const storyCompact: StoryCardView = {
   title: 'Một ngày ở làng Hới',
   sapo: null,
   category: 'Đời sống hôm nay',
+  categoryKey: 'life-today',
   cover: imgCompact,
   readingMinutes: null,
   hasDetail: true,
+  cta: 'Đọc bài →',
+  status: null,
+  isDraft: false,
+  sourceCount: 0,
   flags: [],
 }
 
@@ -58,7 +75,10 @@ export const storyIdea: StoryCardView = {
   cover: null,
   sapo: null,
   hasDetail: false,
-  flags: ['idea'],
+  cta: 'Xem đề cương →',
+  status: 'Chủ đề đề xuất',
+  sourceCount: 0,
+  flags: [],
 }
 
 export const productNoImage: ProductCardView = {
@@ -138,4 +158,49 @@ export const compareRows: CraftPageView['compare']['rows'] = [
     mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
     muted: { hand: true, machine: true, mobile: [true] },
   },
+]
+
+// Bài đọc và chân dung: rich text đã lọc (dạng sanitizeRich trả về), thư viện ảnh, copy đồng ý.
+export const imgHands = img('nkc14.webp', 'Đôi tay ấn go trên khung dệt chiếu, nhìn từ trên xuống', 840, 560)
+
+const t = (text: string, format = 0) => ({ type: 'text', text, format })
+export const richArticle: Rich = {
+  root: {
+    type: 'root',
+    children: [
+      { type: 'paragraph', children: [t('Ở làng Hới, người ta ít khi gọi Phạm Đôn Lễ bằng học vị. Người ta gọi ông là "Trạng Chiếu".'), { type: 'cite', n: 1 }, { type: 'cite', n: 2 }] },
+      { type: 'heading', tag: 'h2', anchor: 'mot-tam-nguyen-cua-lang-hai-trieu', children: [t('Một Tam nguyên của làng Hải Triều')] },
+      { type: 'paragraph', children: [t('Theo các bài báo, Phạm Đôn Lễ sinh năm 1457 tại làng Hải Triều. '), t('Điều báo chí ghi lại', 1), t(' và '), t('điều làng kể', 2), t(' được giữ song song.'), { type: 'cite', n: 2 }] },
+      { type: 'quote', children: [t('Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.')] },
+      { type: 'figure', image: imgHands, caption: 'Đôi tay trên khung dệt.' },
+    ],
+  },
+}
+
+export const richStory: Rich = {
+  root: {
+    type: 'root',
+    children: [
+      { type: 'heading', tag: 'h2', anchor: 'tuoi-tho', children: [t('Tuổi thơ bên khung dệt')] },
+      { type: 'paragraph', children: [t('[Đoạn kể dựa trên phỏng vấn.]')] },
+      { type: 'list', listType: 'bullet', children: [{ type: 'listitem', children: [t('Mục danh sách')] }] },
+    ],
+  },
+}
+
+export const gallery = [
+  { image: imgStory, caption: 'Mép chiếu với sợi cói buông.' },
+  { image: imgHands, caption: 'Đôi tay trên khung dệt.' },
+]
+
+export const consentStates: Record<'none' | 'partial' | 'full', PersonDetailView['consent']> = {
+  none: { state: 'none', missing: ['tên', 'ảnh', 'lời trích'], reviewedBySubject: false },
+  partial: { state: 'partial', missing: ['lời trích'], reviewedBySubject: false },
+  full: { state: 'full', missing: [], reviewedBySubject: true },
+}
+
+export const readNextItems: ReadNextItem[] = [
+  { href: '/lang-hoi', eyebrow: 'LÀNG HỚI', title: 'Dòng thời gian làng Hới', cta: 'Xem các mốc →', image: imgCompact },
+  { href: '/nghe-det-chieu', eyebrow: 'NGHỀ DỆT CHIẾU', title: 'Một tấm chiếu, muôn công đoạn', cta: 'Đi theo hành trình →', image: imgHand },
+  { href: '/cau-chuyen', eyebrow: 'CHỦ ĐỀ · LỊCH SỬ', title: 'Chuyện về Trạng Chiếu', cta: 'Đọc bài →', image: imgStory, mobile: false },
 ]

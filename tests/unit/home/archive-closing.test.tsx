@@ -26,7 +26,7 @@ describe('ArchiveTeaser', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Làng quê' }))
     const tiles = screen.getAllByRole('link', { name: /TL · / })
     expect(tiles).toHaveLength(2)
-    expect(tiles.every((t) => t.textContent!.includes('LÀNG QUÊ'))).toBe(true)
+    expect(tiles.every((t) => t.textContent!.includes('Làng quê'))).toBe(true)
     expect(screen.getByText('Ảnh xưa của làng')).toBeTruthy()
   })
   it('ô ảnh trỏ /thu-vien?anh=TL-xxx, tối đa 5 ô', () => {

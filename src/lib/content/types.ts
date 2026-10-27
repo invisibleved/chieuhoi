@@ -1,10 +1,12 @@
 import type { ArchiveAsset } from '@/payload-types'
 
 import type { CraftCopyView } from './copy/craft'
+import type { PeopleCopyView } from './copy/people'
+import type { StoriesCopyView } from './copy/stories'
 import type { VillageCopyView } from './copy/village'
 
 export type Mode = 'public' | 'preview'
-export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified' | 'idea'
+export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified'
 
 export interface ImageView {
   url: string
@@ -24,7 +26,11 @@ export interface PersonView {
   category: string | null
   role: string | null
   name: string | null
+  /** Giá trị option của nhóm (khoá bộ lọc); nhãn ở `category`. */
+  categoryKey: string | null
   portrait: ImageView | null
+  /** Ghi chú ngắn trên thẻ; ở public chỉ khi có đồng ý tên. */
+  note: string | null
   quote: { text: string; sourceId: string } | null
   consentPending: boolean
   flags: Flag[]
@@ -95,28 +101,136 @@ export interface ProductView extends ProductCardView {
   maker: { name: string | null; verified: boolean } | null
 }
 
+/**
+ * Cây Lexical đã lọc (xem rich.ts). Nút đặc biệt:
+ * - heading h2 có thêm `anchor: string` (R5);
+ * - `{ type: 'cite', n: number }`: số chú thích, trỏ tới `sources[n - 1]` (R4);
+ * - `{ type: 'figure', image: ImageView, caption: string | null }` (R3).
+ */
+export type RichNode = Record<string, unknown>
+export type Rich = { root: RichNode }
+
 export interface StoryCardView {
   slug: string
   title: string | null
   sapo: string | null
   category: string | null
+  /** Giá trị option của chủ đề (khoá bộ lọc, khớp `StoriesPageView.filters[].key`); nhãn ở `category`. */
+  categoryKey: string | null
   cover: ImageView | null
   readingMinutes: number | null
   hasDetail: boolean
+  /** Chữ nút cuối thẻ: "Đọc bài →" khi có trang chi tiết, "Xem đề cương →" khi không (nguồn: copy/stories.ts). */
+  cta: string
+  /** "Chủ đề đề xuất" cho bài idea ở mọi mode; "Bản nháp" chỉ ở preview (R2). */
+  status: 'Bản nháp' | 'Chủ đề đề xuất' | null
+  /** Bài chưa đăng (chỉ có ở preview). Component dùng cờ này, `status` chỉ để hiển thị. */
+  isDraft: boolean
+  /** Số nguồn nhìn thấy được ở mode hiện tại. */
+  sourceCount: number
   flags: Flag[]
 }
 
 export interface StoryView extends StoryCardView {
-  /** Lexical JSON; khối cite chỉ còn sourceId. Hiển thị ở Phase 5. */
-  body: unknown | null
-  editor: string | null
+  body: Rich | null
+  /** Các h2 của bài, theo thứ tự (R5). */
+  toc: { id: string; title: string }[]
+  /** Đánh số theo lần trích đầu tiên, nguồn không được trích xếp sau (R4); date dạng dd/mm/yyyy. */
   sources: SourceView[]
+  editor: string | null
+  /** dd/mm/yyyy */
+  publishedAt: string | null
+  coverCaption: string | null
+  /** Việc cần thẩm định trước khi đăng: luôn null ở public. */
+  reviewChecklist: string[] | null
 }
 
-export interface PersonDetailView extends PersonView {
-  note: string | null
+export type ReadNextItem = {
+  href: string
+  eyebrow: string
+  title: string
+  cta: string
+  image: ImageView | null
+  /** false: không hiện ở mobile (R8). */
+  mobile?: boolean
+}
+
+export interface StoriesPageView {
+  intro: PageIntroView
+  stories: StoryCardView[]
+  /** Chip "Tất cả" (key all) rồi các chủ đề theo thứ tự option. */
+  filters: { key: string; label: string }[]
+  /** Bài nổi bật (desktop): bài `hasDetail` đầu tiên; null khi không có bài nào có trang chi tiết. */
+  featured: { story: StoryCardView; eyebrow: string; meta: string | null } | null
+  copy: StoriesCopyView
+}
+
+export interface StoryPageView {
+  story: StoryView
+  /** Dòng meta đã dựng ở lib: "Biên tập: …", "Ngày đăng: …", "Khoảng N phút đọc", "N nguồn"; phần trống bị bỏ. */
+  meta: string[]
+  /** Hai thẻ cố định và một bài khác (R8). */
+  readNext: ReadNextItem[]
+  copy: StoriesCopyView
+}
+
+export type ConsentState = 'none' | 'partial' | 'full'
+
+/**
+ * Trang chân dung. Ở public, mọi phần có thể nhận ra người (intro, xóm thôn, ghi lại bởi, câu chuyện,
+ * năm làm nghề, ghi chú) chỉ có khi đã đồng ý tên; phóng sự ảnh chỉ khi đã đồng ý ảnh (R13).
+ * `quote` thay kiểu của PersonView (P1): có thêm dòng nguồn.
+ */
+export type PersonDetailView = Omit<PersonView, 'quote'> & {
+  /** h1, mục cuối breadcrumb, tiêu đề trang: tên, hoặc "Chờ đồng ý" khi không có tên (R16). */
+  heading: string
+  /** h2 câu chuyện: "Câu chuyện của {tên}", hoặc "Câu chuyện" khi không có tên (R16). */
+  storyTitle: string
+  /** Null khi trống (preview dùng gợi ý trong copy, R14). */
+  intro: string | null
   yearsInCraft: string | null
-  story: unknown | null
+  hamlet: string | null
+  /** "recordedBy · dd/mm/yyyy"; null khi cả hai trống ở public, "[cần xác minh]" ở preview. */
+  recorded: string | null
+  /**
+   * Câu chuyện tách tại heading thứ hai và thứ ba: [trước heading 2, heading 2 tới trước heading 3, phần còn lại].
+   * Lời trích đứng sau phần 1 ở mobile (PersonMobile), sau phần 2 từ md (PersonDetail) (R15, F1).
+   * Lọc và đánh số cite một lần trên cả cây rồi mới tách. Phần trống là null.
+   */
+  storyParts: [Rich | null, Rich | null, Rich | null]
+  /** Nguồn mà câu chuyện trích, đánh số theo lần trích đầu tiên (R4, T2c); [] khi câu chuyện không hiện. */
+  sources: SourceView[]
+  /**
+   * `sourceLine`: "Nhà xuất bản (dd/mm/yyyy)". `note`: dòng dưới lời trích đã dựng, "Nguồn: …" (R15);
+   * preview thêm tiền tố "Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc · ".
+   */
+  quote: { text: string; sourceLine: string | null; note: string | null } | null
+  gallery: { image: ImageView; caption: string | null }[]
+  /** Hiện ở cả public (R18). */
+  /** `missing`: nhãn các mức chưa đồng ý (tên, ảnh, lời trích), lấy từ peopleCopy.detail.consent.kinds. */
+  consent: { state: ConsentState; missing: string[]; reviewedBySubject: boolean }
+  /**
+   * Chú thích ảnh chân dung; null khi không có ảnh chân dung ở mode này.
+   * `label` "CHÂN DUNG", `code` số từ mã TL-… (DocumentLabel ghép "CHÂN DUNG · 001").
+   * `line.desktop`: "Ảnh: {tác giả} · {dòng đồng ý}"; `line.mobile`: chỉ dòng đồng ý (PersonMobile).
+   * Dòng đồng ý chỉ có ở preview, khi chưa đồng ý ảnh.
+   */
+  portraitCaption: { label: string; code: string | null; line: Variant } | null
+}
+
+export interface PeoplePageView {
+  intro: PageIntroView
+  people: PersonView[]
+  /** Chip "Tất cả" (key all) rồi các nhóm theo thứ tự option. */
+  filters: { key: string; label: string }[]
+  copy: PeopleCopyView
+}
+
+export interface PersonPageView {
+  person: PersonDetailView
+  /** Công đoạn (nếu có và nhìn thấy được), hiện vật (nếu có), thẻ cố định "Những chân dung khác". */
+  related: ReadNextItem[]
+  copy: PeopleCopyView
 }
 
 /** Giá trị chủ đề ảnh tư liệu, lấy từ kiểu Payload (nguồn là ARCHIVE_CATEGORY_OPTIONS). */
@@ -180,7 +294,7 @@ export interface CraftPageView {
       muted: { hand: boolean; machine: boolean; mobile: boolean[] }
     }[]
   }
-  readNext: { href: string; eyebrow: string; title: string; cta: string; image: ImageView | null }[]
+  readNext: ReadNextItem[]
   copy: CraftCopyView
 }
 
@@ -197,4 +311,4 @@ export interface VillagePageView {
   copy: VillageCopyView
 }
 
-export type { CraftCopyView, VillageCopyView }
+export type { CraftCopyView, PeopleCopyView, StoriesCopyView, VillageCopyView }

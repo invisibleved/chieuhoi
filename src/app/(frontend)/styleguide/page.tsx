@@ -2,11 +2,14 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArchiveChip, DocumentLabel } from '@/components/content/DocumentLabel'
 import { ComparisonTabs } from '@/components/content/ComparisonTabs'
+import { ConsentPanel } from '@/components/content/ConsentPanel'
 import { ConfidenceBadge, ConfidenceLegend, ConfidenceMark } from '@/components/content/Confidence'
 import { CraftJourney } from '@/components/content/CraftJourney'
 import { CraftStage } from '@/components/content/CraftStage'
 import { FigureCard } from '@/components/content/FigureCard'
 import { PageHeader } from '@/components/content/PageHeader'
+import { PhotoEssay } from '@/components/content/PhotoEssay'
+import { RichText, StoryPlaceholder } from '@/components/content/RichText'
 import { ReadNext } from '@/components/content/ReadNext'
 import { Timeline } from '@/components/content/Timeline'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
@@ -15,6 +18,9 @@ import { ProductCard } from '@/components/content/ProductCard'
 import { FootnoteRef, SourceList } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
+import { applyMode } from '@/lib/content/copy/applyMode'
+import { peopleCopy } from '@/lib/content/copy/people'
+import { storiesCopy } from '@/lib/content/copy/stories'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
 import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
@@ -24,14 +30,19 @@ import * as fx from '@/components/styleguide/fixtures'
 import { Lab, Tok } from '@/components/styleguide/Lab'
 import { Button } from '@/components/ui/Button'
 import { EmptyState, ErrorState, Skeleton, SuccessState } from '@/components/ui/Feedback'
+import { BackLink } from '@/components/ui/BackLink'
 import { Callout } from '@/components/ui/Callout'
+import { NoteBanner } from '@/components/ui/NoteBanner'
+import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
+import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { LinkArrow } from '@/components/ui/LinkArrow'
+import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-import { FilterDemos, StepperDemos, TabDemo } from './Demos'
+import { FilterDemos, InteractiveDemos, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -45,6 +56,8 @@ const h2 = 'font-display text-h3 font-normal'
 const state = 'flex min-w-0 flex-col items-start gap-2.5'
 const focusLight = 'outline outline-2 outline-offset-4 outline-focus-light'
 const rowThreads = <ThreadsDivider />
+
+const consentCopy = applyMode(peopleCopy, 'public').detail.consent
 
 const NAV_LINK = 'flex min-h-11 items-baseline gap-2 py-2.5 text-text-primary no-underline md:min-h-0 md:py-0'
 
@@ -60,8 +73,14 @@ export default function StyleguidePage() {
         <p className="max-w-[760px] text-body-lg leading-[1.65] text-text-secondary">
           Mỗi component vẽ đủ các trạng thái: mặc định, hover, focus, đang chọn, vô hiệu và lỗi khi có. Tên token ghi dưới mỗi mẫu để bàn giao cho dev.
         </p>
-        <div className="max-w-[760px]">
+        <div className="flex max-w-[760px] flex-col gap-4">
           <VerifyNote size="sm">Ảnh mẫu chỉ có ở máy dev.</VerifyNote>
+          <VerifyNote title="CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG">
+            <ul className="m-0 list-disc pl-5">
+              <li>Đối chiếu năm sinh, năm mất, năm đỗ với sử liệu khoa bảng.</li>
+              <li>Xác nhận ngày lễ tế tổ nghề với người làng.</li>
+            </ul>
+          </VerifyNote>
         </div>
       </div>
 
@@ -120,7 +139,7 @@ export default function StyleguidePage() {
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PORTRAIT CARD</Lab>
-            <PortraitCard person={fx.person} href="#" />
+            <PortraitCard person={fx.person} href="#" pendingLabel={peopleCopy.card.pending} />
           </div>
           <div className="flex flex-col gap-3 md:col-span-5">
             <Lab>STORY CARD · NỔI BẬT</Lab>
@@ -138,17 +157,29 @@ export default function StyleguidePage() {
             </div>
           </div>
         </div>
-        <Tok>card/portrait · card/story-featured · card/story-compact · card/object — cả thẻ là một link; hover: ảnh mờ 12%, CTA gạch chân</Tok>
+        <div className="hidden flex-col gap-3 md:flex">
+          <Lab>STORY CARD · HERO (BÀI NỔI BẬT ĐẦU TRANG, TỪ MD)</Lab>
+          <StoryCard story={fx.storyFeatured} href="#" variant="hero" eyebrow={fx.storyHeroFeatured.eyebrow} meta={fx.storyHeroFeatured.meta} />
+        </div>
+        <Tok>card/portrait · card/story-hero · card/story-featured · card/story-compact · card/object — cả thẻ là một link; hover: ảnh mờ 12%, CTA gạch chân</Tok>
 
         <h3 className="mt-6 font-display text-[28px] font-normal">Thẻ khi thiếu dữ liệu</h3>
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PORTRAIT · CHỜ ĐỒNG Ý</Lab>
-            <PortraitCard person={fx.personPending} href="#" />
+            <PortraitCard person={fx.personPending} href="#" pendingLabel={peopleCopy.card.pending} />
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-3">
+            <Lab>PORTRAIT · FLUID + GHI CHÚ (TRANG CON NGƯỜI)</Lab>
+            <PortraitCard person={{ ...fx.personPending, note: 'Dệt chiếu tay · [cần xác minh]' }} href="#" size="fluid" detail="note" pendingLabel={peopleCopy.card.pending} />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>STORY · CHỦ ĐỀ ĐỀ XUẤT</Lab>
             <StoryCard story={fx.storyIdea} href="#" variant="grid" />
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-3">
+            <Lab>STORY · KHÔNG LINK (ARTICLE, KHÔNG CTA)</Lab>
+            <StoryCard story={fx.storyIdea} variant="grid" />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PRODUCT · KHÔNG ẢNH</Lab>
@@ -197,6 +228,9 @@ export default function StyleguidePage() {
         <div className="-mx-5 -my-8 md:-mx-20 md:-my-16">
           <SourceList sources={fx.sources} headingId="sg-nguon" title="Nguồn" />
         </div>
+        <div className="-mx-5 -my-8 md:-mx-20 md:-my-16">
+          <SourceList sources={fx.sources} headingId="sg-ghi-chu" title="Ghi chú nguồn" variant="notes" idPrefix="sg-ghi-chu" />
+        </div>
       </section>
 
       {rowThreads}
@@ -209,13 +243,27 @@ export default function StyleguidePage() {
           <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · NỀN TỐI</Lab><Eyebrow tone="dark">NGHỀ DỆT CHIẾU</Eyebrow></div>
           <div className={state}><Lab>EYEBROW · CÓ VẠCH</Lab><Eyebrow rule>LÀNG HỚI</Eyebrow></div>
           <div className={`${state} bg-bg-inverse p-4`}><Lab tone="dark">EYEBROW · CÓ VẠCH · NỀN TỐI</Lab><Eyebrow tone="dark" rule>LÀNG HỚI</Eyebrow></div>
+          <div className={state}><Lab>EYEBROW · IN HOA BẰNG CSS (uppercase)</Lab><Eyebrow uppercase>{fx.storyFeatured.category}</Eyebrow></div>
           <StepperDemos />
           <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3"><Lab>CALLOUT</Lab><Callout title="LƯU Ý">Nội dung này cần được xác minh với nghệ nhân trước khi đăng.</Callout></div>
+          <div className="flex flex-col gap-3"><Lab>CALLOUT · NỀN TỐI</Lab><Callout tone="dark" title="NGUYÊN TẮC CHÂN DUNG" label="Nguyên tắc chân dung"><ul className="m-0 flex flex-col gap-1.5 pl-[18px]"><li>Tên, tuổi, vai trò chỉ đăng khi người được kể đồng ý.</li><li>Lời trích chỉ đăng khi có ghi âm hoặc ghi chép gốc.</li></ul></Callout></div>
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>TIÊU ĐỀ TRANG CHI TIẾT · BÀI ĐỌC</Lab>
+            <DetailTitle size="story" as="p">Chuyện về Trạng Chiếu</DetailTitle>
+            <Lede size="story">Ông Trạng, khung dệt và nghề chiếu theo làng qua nhiều thế kỷ.</Lede>
+            <Lab>TIÊU ĐỀ TRANG CHI TIẾT · CHÂN DUNG</Lab>
+            <DetailTitle size="person" as="p">Chờ đồng ý</DetailTitle>
+            <Lede size="person">[Một câu giới thiệu ngắn, do chính người được kể duyệt.]</Lede>
+          </div>
+          <div className="flex flex-col gap-3">
+            <Lab>DANH SÁCH THÔNG TIN · HAI CỘT</Lab>
+            <FactList layout="inline" items={[{ term: 'Vai trò', detail: '[cần xác minh]' }, { term: 'Năm làm nghề', detail: '[cần xác minh]' }, { term: 'Ghi lại bởi', detail: '[người phỏng vấn] · [ngày]' }]} />
           </div>
           <div className="flex flex-col gap-4 bg-bg-inverse p-4 md:col-span-2">
             <Lab tone="dark">MỨC TIN CẬY · NỀN TỐI</Lab>
@@ -252,6 +300,21 @@ export default function StyleguidePage() {
                 heroTitle: null,
               }}
               note={<VerifyNote size="sm">{craftCopy.intro.preview.verifyNote.desktop}</VerifyNote>}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐẦU TRANG · LEAD CHỈ MOBILE (leadClassName) · CỘT CHỮ RỘNG (wideIntro) · Ô TÌM Ở CỘT PHẢI</Lab>
+          <div className="-mx-5 border border-dashed border-border-dashed md:-mx-0">
+            <PageHeader
+              crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Câu chuyện' }]}
+              intro={{ eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.', lead: 'Lead chỉ hiện ở mobile.', heroTitle: null }}
+              titleClassName="text-[38px] md:text-[76px]"
+              leadClassName="md:hidden"
+              wideIntro
+              aside={<p className="m-0 text-small text-text-muted">Cột phải (ô tìm)</p>}
+              asideSpan="narrow"
+              asideClassName="max-md:hidden md:max-w-[360px] md:justify-self-end md:self-end"
             />
           </div>
         </div>
@@ -308,6 +371,62 @@ export default function StyleguidePage() {
 
       {rowThreads}
 
+      {/* Bài đọc và chân dung */}
+      <section aria-labelledby="sg-doc" className="flex flex-col gap-8">
+        <h2 id="sg-doc" className={h2}>Bài đọc &amp; chân dung</h2>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>RICH TEXT · BÀI ĐỌC · CHỮ CÁI ĐẦU · GHI CHÚ TRÍCH (TỪ MD)</Lab>
+            <div className="max-w-[720px]"><RichText variant="article" dropCap value={fx.richArticle} quoteNote={storiesCopy.detail.quoteNote} /></div>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>RICH TEXT · LỜI KỂ CHÂN DUNG</Lab>
+            <RichText variant="story" value={fx.richStory} />
+            <Lab>GỢI Ý PHỎNG VẤN · XEM TRƯỚC</Lab>
+            <StoryPlaceholder title={peopleCopy.detail.preview.sections[0].title} body={peopleCopy.detail.preview.sections[0].body} />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>TRÍCH DẪN · BÀI ĐỌC</Lab>
+            <PullQuote variant="article" note={storiesCopy.detail.quoteNote}>Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
+            <Lab>TRÍCH DẪN · GHI CHÚ CHỈ TỪ MD (noteClassName)</Lab>
+            <PullQuote variant="article" note={storiesCopy.detail.quoteNote} noteClassName="max-md:hidden">Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.</PullQuote>
+            <Lab>TRÍCH DẪN · LỜI KỂ</Lab>
+            <PullQuote variant="testimony" note="Chỉ hiển thị khi có ghi âm hoặc ghi chép gốc">“[Trích nguyên văn lời kể]”</PullQuote>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>PHÓNG SỰ ẢNH</Lab>
+            <PhotoEssay title="Phóng sự ảnh" note={<VariantText value={peopleCopy.detail.preview.galleryNote} />} items={fx.gallery} />
+          </div>
+          {(['none', 'partial', 'full'] as const).map((k) => (
+            <div key={k} className="flex min-w-0 flex-col gap-3">
+              <Lab>KHUNG ĐỒNG Ý · {k === 'none' ? 'CHƯA CÓ' : k === 'partial' ? 'MỘT PHẦN' : 'ĐÃ CÓ'}</Lab>
+              <ConsentPanel consent={fx.consentStates[k]} copy={consentCopy} />
+            </div>
+          ))}
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>CHẤM TRẠNG THÁI · 8 · 10 · 12</Lab>
+            <div className="flex flex-wrap items-center gap-4">
+              {([8, 10, 12] as const).flatMap((size) => (['none', 'partial', 'full'] as const).map((st) => <StatusDot key={`${size}-${st}`} state={st} size={size} />))}
+            </div>
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>BĂNG GHI CHÚ</Lab>
+            <NoteBanner strong="Mẫu trang chân dung." text="Người trong ảnh chưa được hỏi ý. Tên, tiểu sử và lời kể để trống cho đến khi có sự đồng ý bằng văn bản." />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3">
+            <Lab>LINK QUAY LẠI · CHỈ DƯỚI 768PX</Lab>
+            <BackLink href="#" label="Câu chuyện" />
+          </div>
+          <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
+            <Lab>ĐỌC TIẾP · CÓ TIÊU ĐỀ VÀ LIÊN KẾT · MỤC THỨ BA ẨN Ở MOBILE</Lab>
+            <ReadNext eyebrow="ĐỌC TIẾP" title="Đọc tiếp" action={{ href: '#', label: 'Tất cả câu chuyện' }} imageClassName="h-[240px]" items={fx.readNextItems} />
+          </div>
+        </div>
+        <Tok>content/rich-text · ui/pull-quote · content/photo-essay · content/consent-panel · content/status-dot · ui/note-banner · ui/back-link · content/read-next (title, action, mobile) — khung đồng ý luôn có chữ đi kèm chấm; băng ghi chú dùng role=note</Tok>
+      </section>
+
+      {rowThreads}
+
       {/* Bộ lọc, tab & phân trang */}
       <section aria-labelledby="sg-loc" className="flex flex-col gap-8">
         <h2 id="sg-loc" className={h2}>Bộ lọc, tab &amp; phân trang</h2>
@@ -320,12 +439,9 @@ export default function StyleguidePage() {
               <VariantText value={{ desktop: 'Dệt thủ công (từ 768px)', mobile: 'Thủ công (dưới 768px)' }} />
             </p>
           </div>
-          <div className="flex flex-col gap-3">
-            <Lab>XEM THÊM / PHÂN TRANG</Lab>
-            <VerifyNote size="sm">Phân trang và Xem thêm làm ở Phase 5.</VerifyNote>
-          </div>
+          <InteractiveDemos />
         </div>
-        <Tok>filter/chip · tabs · pagination · load-more — bộ lọc dùng button aria-pressed, tab dùng role tablist</Tok>
+        <Tok>filter/chip · tabs · search · load-more · share · reading-progress · toc — bộ lọc dùng button aria-pressed, tab dùng role tablist</Tok>
       </section>
 
       {rowThreads}
@@ -346,6 +462,10 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3">
             <Lab>TRỐNG</Lab>
             <EmptyState title="Chưa có tư liệu trong nhóm này" body="Nếu gia đình bạn còn giữ ảnh cũ của làng, hãy góp cùng chúng tôi." action={{ href: '#', label: 'Góp một ký ức' }} />
+          </div>
+          <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-4">
+            <Lab>TRỐNG · KHUNG RỘNG (lg)</Lab>
+            <EmptyState size="lg" title="Chưa có bài trong chủ đề này" body="Câu chuyện về người làng chỉ được viết khi chính họ đồng ý kể. Nếu bạn muốn kể về một người thân làm nghề chiếu, hãy liên hệ với chúng tôi." action={{ href: '#', label: 'Góp một câu chuyện' }} />
           </div>
           <div className="flex flex-col gap-3">
             <Lab>LỖI</Lab>

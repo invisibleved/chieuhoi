@@ -1,11 +1,28 @@
 // Trường seed JSON còn thiếu, lấy nguyên văn từ artboard.
 
-/** StoriesIndex.dc.html (`data`); riêng sapo bài Trạng Chiếu lấy từ StoryDetail.dc.html. */
-export const storyExtras: Record<string, { sapo: string; cover: string; readingMinutes?: number }> = {
+type StoryExtra = {
+  sapo: string
+  cover: string
+  readingMinutes?: number
+  coverCaption?: string
+  reviewChecklist?: string[]
+}
+
+/**
+ * StoriesIndex.dc.html (`data`); riêng bài Trạng Chiếu lấy sapo, chú thích ảnh bìa và danh sách
+ * "CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG" từ StoryDetail.dc.html. Ngày đăng để trống (chờ thẩm định).
+ */
+export const storyExtras: Record<string, StoryExtra> = {
   'chuyen-ve-trang-chieu': {
     sapo: 'Phạm Đôn Lễ và khung dệt mang về làng Hới — những gì báo chí ghi lại, và những gì làng vẫn kể.',
     cover: 'nkc13.webp',
     readingMinutes: 4,
+    coverCaption: 'Khung dệt thủ công ngày nay. Ảnh minh hoạ cho bài, không phải khung dệt thời Lê.',
+    reviewChecklist: [
+      'Đối chiếu năm sinh, năm mất, năm đỗ với sử liệu khoa bảng.',
+      'Xác nhận ngày lễ tế tổ nghề với người làng.',
+      'Xin phép và ghi công tác giả ảnh.',
+    ],
   },
   'nhung-ky-uc-ben-khung-det': { sapo: 'Chờ ghi chép từ các gia đình làm nghề.', cover: 'kn1.webp' },
   'mot-ngay-o-lang-hoi': { sapo: 'Phóng sự ảnh một ngày làm chiếu, chờ chụp tại làng.', cover: 'hc8.webp' },
@@ -22,9 +39,29 @@ export const storyCategory: Record<string, string> = {
   'Đời sống hôm nay': 'life-today',
 }
 
-/** PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng slug `mau-nghe-nhan` của seed JSON; note theo artboard (R17). */
-export const peopleSamples: { slug: string; category: string; note: string; portrait: string }[] = [
-  { slug: 'mau-nghe-nhan', category: 'artisan', note: 'Dệt chiếu tay · vai trò cần xác minh', portrait: 'nkc10.webp' },
+type PersonSample = {
+  slug: string
+  category: string
+  note: string
+  portrait: string
+  gallery?: { file: string; caption: string }[]
+  /** Số công đoạn liên quan (`n`). */
+  relatedStep?: number
+}
+
+/**
+ * PeopleIndex.dc.html: tên là placeholder nên để null. Mẫu đầu tiên trùng slug `mau-nghe-nhan` của seed JSON; note theo artboard.
+ * Phóng sự ảnh và công đoạn liên quan của mẫu đầu lấy từ PersonDetail.dc.html (R17); không seed hiện vật liên quan.
+ */
+export const peopleSamples: PersonSample[] = [
+  {
+    slug: 'mau-nghe-nhan', category: 'artisan', note: 'Dệt chiếu tay · vai trò cần xác minh', portrait: 'nkc10.webp',
+    gallery: [
+      { file: 'nkc5.webp', caption: 'Hai người cùng làm trên một khung. [Chú thích cần người trong ảnh duyệt]' },
+      { file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt.' },
+    ],
+    relatedStep: 5,
+  },
   { slug: 'mau-nguoi-2', category: 'craft-family', note: 'Đôi tay trên khung dệt · cần xác minh', portrait: 'nkc14.webp' },
   { slug: 'mau-nguoi-3', category: 'craft-keeper', note: 'In hoa văn bằng khuôn · cần xác minh', portrait: 'kn14.webp' },
   { slug: 'mau-nguoi-4', category: 'craft-family', note: 'Nạp cói cho máy dệt · cần xác minh', portrait: 'nkc2.webp' },

@@ -3,9 +3,11 @@ import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { createPages } from './pages'
+import { createPeople } from './people'
 import { createContent } from './queries'
+import { createStories } from './stories'
 
-export { createContent, createPages }
+export { createContent, createPages, createPeople, createStories }
 export * from './types'
 export { getMode } from './mode'
 export { archiveCategoryOptions } from './categories'
@@ -15,6 +17,14 @@ const bound = async () => createContent(await getPayload({ config }))
 const boundPages = async () => {
   const payload = await getPayload({ config })
   return createPages(payload, createContent(payload))
+}
+const boundPeople = async () => {
+  const payload = await getPayload({ config })
+  return createPeople(payload, createContent(payload))
+}
+const boundStories = async () => {
+  const payload = await getPayload({ config })
+  return createStories(payload, createContent(payload))
 }
 
 export const getSources = async (...a: Parameters<ReturnType<typeof createContent>['getSources']>) => (await bound()).getSources(...a)
@@ -35,3 +45,11 @@ export const getPageMedia = async (...a: Parameters<ReturnType<typeof createPage
 // cache(): generateMetadata và trang dùng chung một lần đọc trong cùng request.
 export const getCraftPage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getCraftPage']>) => (await boundPages()).getCraftPage(...a))
 export const getVillagePage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getVillagePage']>) => (await boundPages()).getVillagePage(...a))
+
+export const getStoriesPage = cache(async (...a: Parameters<ReturnType<typeof createStories>['getStoriesPage']>) => (await boundStories()).getStoriesPage(...a))
+export const getStoryPage = cache(async (...a: Parameters<ReturnType<typeof createStories>['getStoryPage']>) => (await boundStories()).getStoryPage(...a))
+export const getStorySlugs = async () => (await boundStories()).getStorySlugs()
+
+export const getPeoplePage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPeoplePage']>) => (await boundPeople()).getPeoplePage(...a))
+export const getPersonPage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPersonPage']>) => (await boundPeople()).getPersonPage(...a))
+export const getPersonSlugs = async () => (await boundPeople()).getPersonSlugs()

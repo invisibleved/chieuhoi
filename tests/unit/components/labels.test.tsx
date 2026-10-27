@@ -1,17 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { previewNotes, productTag, storyStatus } from '@/components/content/labels'
+import { previewNotes, productTag } from '@/components/content/labels'
 import { ArchiveChip, DocumentLabel, DocumentLine } from '@/components/content/DocumentLabel'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { Tag } from '@/components/content/Tag'
 import { VerifyNote } from '@/components/content/VerifyNote'
 
 describe('labels', () => {
-  it('storyStatus', () => {
-    expect(storyStatus(['unpublished', 'idea'])).toBe('Chủ đề đề xuất')
-    expect(storyStatus(['unpublished'])).toBe('Bản nháp')
-    expect(storyStatus([])).toBeNull()
-  })
   it('productTag', () => {
     expect(productTag({ image: null, typeConfirmed: false })).toEqual({ text: 'Chưa có ảnh', style: 'dashed' })
     expect(productTag({ image: {}, typeConfirmed: false })).toEqual({ text: 'Ảnh cần xác nhận loại', style: 'filled' })
@@ -23,13 +18,14 @@ describe('labels', () => {
       '[cần xác minh]',
     ])
   })
-  it('ArchiveChip in hoa chủ đề, nhãn lấy từ props', () => {
+  it('ArchiveChip in hoa chủ đề bằng CSS, nhãn lấy từ props', () => {
     const { container } = render(<ArchiveChip label="TL" code="021" category="Làng quê" />)
-    expect(container.textContent).toBe('TL · 021 · LÀNG QUÊ')
+    expect(container.textContent).toBe('TL · 021 · Làng quê')
+    expect(screen.getByText('Làng quê').className).toContain('uppercase')
   })
   it('ArchiveChip overlay: chủ đề chỉ hiện từ md', () => {
     render(<ArchiveChip overlay label="TL" code="021" category="Làng quê" />)
-    expect(screen.getByText('· LÀNG QUÊ', { exact: false }).className).toContain('max-md:hidden')
+    expect(screen.getByText('Làng quê').parentElement!.className).toContain('max-md:hidden')
   })
   it('DocumentLabel hiện mã, tiêu đề, meta; nhãn mã lấy từ props', () => {
     const { rerender } = render(<DocumentLabel label="TƯ LIỆU" code="001" title="Chiếu cói" meta="Hải Triều" />)
@@ -53,10 +49,28 @@ describe('labels', () => {
     rerender(<DocumentLine label="TL" code={null} caption={null} />)
     expect(container.innerHTML).toBe('')
   })
+  it('Tag overlay: size md có chấm 8px nét đứt 1.5px, sm không chấm, fluid ẩn chấm ở mobile', () => {
+    const dot = (c: HTMLElement) => c.querySelector('[aria-hidden="true"]') as HTMLElement | null
+    const md = render(<Tag variant="overlay">A</Tag>).container
+    expect(dot(md)?.style.width).toBe('8px')
+    expect(dot(md)?.style.borderWidth).toBe('1.5px')
+    expect(dot(md)?.className).toContain('border-dashed')
+    const sm = render(<Tag variant="overlay" size="sm">B</Tag>).container
+    expect(dot(sm)).toBeNull()
+    expect(sm.firstElementChild!.className).toContain('px-[7px]')
+    const fluid = render(<Tag variant="overlay" size="fluid">C</Tag>).container
+    expect(dot(fluid)!.parentElement!.className).toContain('max-md:hidden')
+  })
   it('Tag overlay có chấm aria-hidden', () => {
     const { container } = render(<Tag variant="overlay">Chờ đồng ý</Tag>)
     expect(screen.getByText('Chờ đồng ý')).toBeTruthy()
     expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull()
+  })
+  it('VerifyNote có title: khung aside với tiêu đề và nội dung dạng danh sách', () => {
+    const { container } = render(<VerifyNote title="CẦN THẨM ĐỊNH"><ul><li>Việc một</li></ul></VerifyNote>)
+    expect(container.querySelector('aside')?.textContent).toContain('CẦN THẨM ĐỊNH')
+    expect(container.querySelector('li')?.textContent).toBe('Việc một')
+    expect(container.querySelector('p.border-dashed')).toBeNull()
   })
   it('VerifyNote render p', () => {
     const { container } = render(<VerifyNote size="sm">[CẦN XÁC MINH] x</VerifyNote>)

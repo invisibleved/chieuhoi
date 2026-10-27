@@ -77,6 +77,8 @@ describe('lib/content', () => {
     await create('people', pub({ slug: 'nn', category: 'artisan', workflow: 'published' }))
     expect((await content.getStories('public')).find((c) => c.slug === 'h')?.category).toBe('Ký ức làng quê')
     expect((await content.getPeople('public')).find((p) => p.slug === 'nn')?.category).toBe('Nghệ nhân')
+    expect((await content.getStories('public')).find((c) => c.slug === 'h')?.categoryKey).toBe('village-memory')
+    expect((await content.getPeople('public')).find((p) => p.slug === 'nn')?.categoryKey).toBe('artisan')
   })
 
   it('idea có thẻ, không có trang', async () => {
@@ -86,7 +88,7 @@ describe('lib/content', () => {
     expect(await content.getStory('y', 'public')).toBeNull()
   })
 
-  it('khối cite chỉ còn sourceId', async () => {
+  it('khối cite chỉ còn số chú thích, nguồn vào danh sách của bài', async () => {
     const src = await create('sources', { sourceId: 'vnp-1', title: 'Báo' })
     const body = {
       root: {
@@ -99,8 +101,9 @@ describe('lib/content', () => {
     }
     await create('stories', pub({ slug: 'c', title: 'C', workflow: 'published', body }))
     const s = await content.getStory('c', 'public')
-    expect(JSON.stringify(s?.body)).toContain('"sourceId":"vnp-1"')
+    expect(JSON.stringify(s?.body)).toContain('{"type":"cite","n":1}')
     expect(JSON.stringify(s?.body)).not.toContain('Báo')
+    expect(s?.sources.map((x) => x.id)).toEqual(['vnp-1'])
   })
 
   it('maker chưa đồng ý bị ẩn', async () => {
@@ -231,7 +234,7 @@ describe('lib/content', () => {
     await rawSet('stories', st.id, 'body', await leakyBody())
     const json = JSON.stringify((await content.getStory('leak', 'public'))?.body)
     for (const l of leaks) expect(json).not.toContain(l)
-    expect(json).toContain('"sourceId":"leak-src"')
+    expect(json).toContain('{"type":"cite","n":1}')
     expect(json).toContain('Chữ giữ lại')
     expect(json).toContain('liên kết nội bộ')
   })
@@ -241,7 +244,7 @@ describe('lib/content', () => {
       slug: 'pl', name: 'Bà A', workflow: 'published', consent: { name: true },
     }))
     await rawSet('people', pp.id, 'story', await leakyBody())
-    const json = JSON.stringify((await content.getPerson('pl', 'public'))?.story)
+    const json = JSON.stringify((await content.getPerson('pl', 'public'))?.storyParts)
     for (const l of leaks) expect(json).not.toContain(l)
     expect(json).toContain('Chữ giữ lại')
   })
@@ -255,7 +258,7 @@ describe('lib/content', () => {
     expect(p?.name).toBeNull()
     expect(p?.note).toBeNull()
     expect(p?.yearsInCraft).toBeNull()
-    expect(p?.story).toBeNull()
+    expect(p?.storyParts).toEqual([null, null, null])
   })
 
   it('craft step: shotNeeded hiện công khai', async () => {

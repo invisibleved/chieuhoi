@@ -20,6 +20,8 @@ Không phải chi tiết nào cũng thống nhất. Vietnam+ đặt câu chuyệ
 
 Vì vậy, bài viết này giữ hai lớp kể song song: điều báo chí ghi lại, và điều làng vẫn kể cho nhau nghe.
 
+[[figure:nkc14.webp|Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh] · Quyền dùng: [cần xác minh]]]
+
 ## Ông Trạng trong đời sống làng
 
 Sau khi ông mất, dân làng tôn ông làm Phúc thần. Lễ tế tổ nghề được ghi vào mùng 6 tháng Giêng âm lịch.[[cite:daidoanket-2021]] Ở Hải Dương, nơi có lăng mộ ông, các chi họ Phạm làm giỗ vào ngày 9 tháng 7 âm lịch, có đại diện làng Hải Triều về dự.[[cite:danviet-2024]]

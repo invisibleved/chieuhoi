@@ -5,37 +5,41 @@ import { StoriesTeaser } from '@/components/home/StoriesTeaser'
 import type { PersonView, StoryCardView } from '@/lib/content'
 
 const p = (slug: string, over: Partial<PersonView> = {}): PersonView => ({
-  slug, category: 'Nghệ nhân', role: null, name: `Tên ${slug}`, portrait: null, quote: null, consentPending: false, flags: [], ...over,
+  slug, category: 'Nghệ nhân', categoryKey: 'artisan', role: null, name: `Tên ${slug}`, note: null, portrait: null, quote: null, consentPending: false, flags: [], ...over,
 })
 const s = (slug: string, over: Partial<StoryCardView> = {}): StoryCardView => ({
-  slug, title: `Bài ${slug}`, sapo: null, category: null, cover: null, readingMinutes: null, hasDetail: true, flags: [], ...over,
+  slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail: true, cta: over.hasDetail === false ? 'Xem đề cương →' : 'Đọc bài →', status: null, isDraft: false, sourceCount: 0, flags: [], ...over,
 })
 const hrefs = () => screen.getAllByRole('link').map((a) => a.getAttribute('href'))
 
 describe('PeopleTeaser', () => {
   it('tối đa 3 người, CTA Đọc câu chuyện →, link Gặp những người làng Hới', () => {
-    render(<PeopleTeaser people={[p('a'), p('b'), p('c'), p('d')]} />)
+    render(<PeopleTeaser people={[p('a'), p('b'), p('c'), p('d')]} pendingLabel="Chờ đồng ý" />)
     expect(screen.getAllByText('Đọc câu chuyện →')).toHaveLength(3)
     expect(screen.queryByText('Tên d')).toBeNull()
     expect(hrefs()).toContain('/con-nguoi/a')
     expect(screen.getByRole('link', { name: /Gặp những người làng Hới/ }).getAttribute('href')).toBe('/con-nguoi')
   })
   it('gợi ý vuốt chỉ khi từ 2 người, không có bộ đếm', () => {
-    const { unmount } = render(<PeopleTeaser people={[p('a')]} />)
+    const { unmount } = render(<PeopleTeaser people={[p('a')]} pendingLabel="Chờ đồng ý" />)
     expect(screen.queryByText('Vuốt ngang để xem thêm')).toBeNull()
     unmount()
-    render(<PeopleTeaser people={[p('a'), p('b')]} />)
+    render(<PeopleTeaser people={[p('a'), p('b')]} pendingLabel="Chờ đồng ý" />)
     expect(screen.getByText('Vuốt ngang để xem thêm')).toBeTruthy()
   })
+  it('nhãn chờ đồng ý trên thẻ lấy từ prop pendingLabel', () => {
+    render(<PeopleTeaser people={[p('a', { name: null, consentPending: true })]} pendingLabel="Chờ đồng ý" />)
+    expect(screen.getByText('Chờ đồng ý')).toBeTruthy()
+  })
   it('rỗng thì không render', () => {
-    const { container } = render(<PeopleTeaser people={[]} />)
+    const { container } = render(<PeopleTeaser people={[]} pendingLabel="Chờ đồng ý" />)
     expect(container.innerHTML).toBe('')
   })
 })
 
 describe('StoriesTeaser', () => {
   it('bài nổi bật là bài có trang; idea trỏ /cau-chuyen; ghi chú đề xuất hiện', () => {
-    render(<StoriesTeaser stories={[s('y1', { hasDetail: false, flags: ['unpublished', 'idea'] }), s('d1', { flags: ['unpublished'] })]} />)
+    render(<StoriesTeaser stories={[s('y1', { hasDetail: false, status: 'Chủ đề đề xuất', flags: ['unpublished'] }), s('d1', { status: 'Bản nháp', flags: ['unpublished'] })]} />)
     const links = hrefs()
     expect(links).toContain('/cau-chuyen')
     expect(links).toContain('/cau-chuyen/d1')

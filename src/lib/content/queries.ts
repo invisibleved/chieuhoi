@@ -3,16 +3,20 @@ import type { CollectionSlug, Payload, Where } from 'payload'
 
 import { publicAssetQuery } from '@/access/assetRules'
 import type { RouteKey } from '@/globals/PageIntros'
-import type { ArchiveAsset, Maker, Product, Source, Story } from '@/payload-types'
+import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payload-types'
+import { fillTemplate } from '@/lib/template'
 
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
-import { sanitizeRich } from './rich'
+import { applyMode } from './copy/applyMode'
+import { peopleCopy } from './copy/people'
+import { storiesCopy } from './copy/stories'
+import { nonEmptyRich, sanitizeRich, splitStoryParts } from './rich'
 import type {
-  ArchiveItemView, CraftStepView, Flag, HomeMediaView, Mode, PageIntroView, PersonDetailView, PersonView,
-  ProductCardView, ProductView, SiteSettingsView, SourceView, StoryCardView, StoryView,
+  ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
+  ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView,
 } from './types'
-import { isUnverified, showText, toImageView, toPersonView } from './visibility'
+import { isUnverified, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
 
 const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v as Source) : null)
 const sourcesOf = (v: unknown): Source[] =>
@@ -194,39 +198,90 @@ export function createContent(payload: Payload) {
   }
 
   const storyCard = (d: Story, mode: Mode): StoryCardView => {
-    const flags = flagsOf(d, mode, [d.title, d.sapo])
-    if (d.workflow === 'idea' && mode === 'preview') flags.push('idea')
+    const idea = d.workflow === 'idea'
     return {
       slug: d.slug,
       title: showText(d.title, mode),
       sapo: showText(d.sapo, mode),
       category: storyCategoryLabel(d.category),
+      categoryKey: storyCategoryLabel(d.category) ? (d.category ?? null) : null,
       cover: toImageView(d.cover, mode),
       readingMinutes: d.readingMinutes ?? null,
-      hasDetail: d.workflow !== 'idea',
-      flags,
+      hasDetail: !idea,
+      cta: idea ? storiesCopy.cta.outline : storiesCopy.cta.read,
+      // R2: "Chủ đề đề xuất" ở mọi mode; "Bản nháp" chỉ có ở preview (public không có bài chưa đăng).
+      status: idea ? 'Chủ đề đề xuất' : d._status !== 'published' ? 'Bản nháp' : null,
+      isDraft: !idea && d._status !== 'published',
+      sourceCount: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable).length,
+      flags: flagsOf(d, mode, [d.title, d.sapo]),
     }
   }
 
   async function getStories(mode: Mode): Promise<StoryCardView[]> {
-    const docs = (await findAll('stories', mode, { sort: '-updatedAt' })) as Story[]
+    const docs = (await findAll('stories', mode, { sort: 'createdAt' })) as Story[]
     return docs.map((d) => storyCard(d, mode))
+  }
+
+  /** Ảnh của các khối figure trong bài, đã áp mode (null: không được dùng ở mode này). */
+  async function figureAssets(body: unknown, mode: Mode): Promise<Map<number, ImageView | null>> {
+    const ids = new Set<number>()
+    const visit = (n: unknown) => {
+      if (!n || typeof n !== 'object') return
+      const node = n as { type?: unknown; fields?: { blockType?: unknown; image?: unknown }; children?: unknown[] }
+      if (node.type === 'block' && node.fields?.blockType === 'figure') {
+        const img = node.fields.image
+        const id = typeof img === 'number' ? img : (img as { id?: unknown } | null)?.id
+        if (typeof id === 'number') ids.add(id)
+      }
+      if (Array.isArray(node.children)) node.children.forEach(visit)
+    }
+    visit((body as { root?: unknown } | null)?.root)
+    if (ids.size === 0) return new Map()
+    const res = await payload.find({
+      collection: 'archive-assets', overrideAccess: true, pagination: false, depth: 0,
+      where: { id: { in: [...ids] } },
+    })
+    return new Map(res.docs.map((a) => [a.id, toImageView(a, mode)]))
+  }
+
+  /** Ngữ cảnh lọc rich text: nguồn nhìn thấy được ở mode này và ảnh của khối figure. */
+  async function richContext(body: unknown, mode: Mode) {
+    const [visible, sources, assets] = await Promise.all([getSources(mode), sourceMap(), figureAssets(body, mode)])
+    return { visible, ctx: { sources, visibleSourceIds: visible.map((s) => s.id), assets, mode } }
   }
 
   async function getStory(slug: string, mode: Mode): Promise<StoryView | null> {
     const d = (await findBySlug('stories', slug, mode)) as Story | null
     if (!d || d.workflow === 'idea') return null
-    const published = d._status === 'published'
+    const { visible, ctx } = await richContext(d.body, mode)
+    const { rich, citedOrder, toc } = sanitizeRich(d.body, ctx)
+    // R4: nguồn được trích theo thứ tự trích đầu tiên, rồi các nguồn còn lại của bài.
+    const byId = new Map(visible.map((s) => [s.id, s]))
+    const order = [...citedOrder]
+    for (const s of sourcesOf(d.sources)) if (!order.includes(s.sourceId)) order.push(s.sourceId)
+    const sources = order
+      .map((id) => byId.get(id))
+      .filter((s): s is SourceView => s !== undefined)
+      .map((s) => ({ ...s, date: formatDate(s.date) }))
     return {
       ...storyCard(d, mode),
-      body: mode === 'public' && !published ? null : sanitizeRich(d.body, await sourceMap(), mode),
+      body: rich,
+      toc,
+      sources,
+      // Trang chi tiết đếm đúng danh sách "Ghi chú nguồn" (gồm cả nguồn được trích ngoài danh sách của bài).
+      sourceCount: sources.length,
       editor: showText(d.editor, mode),
-      sources: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable),
+      publishedAt: formatDate(showText(d.publishedAt, mode)),
+      coverCaption: showText(d.coverCaption, mode),
+      // Việc biên tập: chỉ hiện ở preview.
+      reviewChecklist: mode === 'preview'
+        ? (d.reviewChecklist ?? []).map((r) => r.item).filter((t): t is string => !!t && t.trim() !== '')
+        : null,
     }
   }
 
   async function getPeople(mode: Mode): Promise<PersonView[]> {
-    const docs = (await findAll('people', mode, { sort: 'createdAt' })) as import('@/payload-types').Person[]
+    const docs = (await findAll('people', mode, { sort: 'createdAt' })) as Person[]
     return docs.map((d) => {
       const v = toPersonView(d, mode)
       return { ...v, flags: [...flagsOf(d, mode), ...v.flags.filter((f) => f !== 'unpublished')] }
@@ -234,17 +289,111 @@ export function createContent(payload: Payload) {
   }
 
   async function getPerson(slug: string, mode: Mode): Promise<PersonDetailView | null> {
-    const d = (await findBySlug('people', slug, mode)) as import('@/payload-types').Person | null
+    return (await getPersonWithLinks(slug, mode))?.person ?? null
+  }
+
+  /**
+   * Trang chân dung kèm khoá của công đoạn/hiện vật liên quan (để dựng thẻ "Liên quan" ở people.ts).
+   * Khoá chưa qua lọc mode: nơi dùng phải tìm lại qua getCraftSteps/getProducts của cùng mode.
+   */
+  async function getPersonWithLinks(slug: string, mode: Mode): Promise<
+    { person: PersonDetailView; stepN: number | null; productSlug: string | null } | null
+  > {
+    const d = (await findBySlug('people', slug, mode)) as Person | null
     if (!d) return null
-    const v = toPersonView(d, mode)
-    // Phần mô tả có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên.
-    const identifying = mode === 'preview' || !!d.consent?.name
+    const step = d.relatedStep && typeof d.relatedStep === 'object' ? d.relatedStep : null
+    const product = d.relatedProduct && typeof d.relatedProduct === 'object' ? d.relatedProduct : null
+    return { person: await personDetail(d, mode), stepN: step?.n ?? null, productSlug: product?.slug ?? null }
+  }
+
+  async function personDetail(d: Person, mode: Mode): Promise<PersonDetailView> {
+    const { quote: cardQuote, ...v } = toPersonView(d, mode)
+    const preview = mode === 'preview'
+    const consent = { name: !!d.consent?.name, photo: !!d.consent?.photo, quote: !!d.consent?.quote }
+    // Phần mô tả có thể nhận ra người: ở public chỉ hiện khi đã được đồng ý dùng tên (R13).
+    const identifying = preview || consent.name
+    /** Trường trống là null ở cả hai mode (preview dùng gợi ý trong copy, R14); còn lại theo showText. */
+    const filled = (s: string | null | undefined) => (s && s.trim() !== '' ? showText(s, mode) : null)
+
+    // Lọc cả cây trước rồi mới tách (R15): số cite ở hai phần khớp một danh sách nguồn (T2c, R4).
+    let story: Rich | null = null
+    let sources: SourceView[] = []
+    if (identifying) {
+      const { visible, ctx } = await richContext(d.story, mode)
+      const r = sanitizeRich(d.story, { ...ctx, anchors: false })
+      story = nonEmptyRich(r.rich)
+      if (story) {
+        const byId = new Map(visible.map((s) => [s.id, s]))
+        sources = r.citedOrder
+          .map((id) => byId.get(id))
+          .filter((s): s is SourceView => s !== undefined)
+          .map((s) => ({ ...s, date: formatDate(s.date) }))
+      }
+    }
+
+    // Lời trích: nguồn phải còn nhìn thấy được ở mode này (public), như cite trong bài (R4, R15).
+    const qSource = sourceOf(d.quoteSource)
+    const qSourceView = qSource ? toSourceView(qSource, mode) : null
+    const qLine = qSourceView ? sourceLine([qSourceView]) : null
+    const qNote = [
+      preview ? peopleCopy.detail.preview.quoteNotePrefix : null,
+      qLine ? `${peopleCopy.detail.quoteSource}${qLine}` : null,
+    ].filter(Boolean).join(' · ') || null
+    const quote: PersonDetailView['quote'] = cardQuote && (preview || qSourceView)
+      ? { text: cardQuote.text, sourceLine: qLine, note: qNote }
+      : null
+
+    const recordedParts = [filled(d.recordedBy), formatDate(filled(d.recordedAt))].filter((s): s is string => !!s)
+    // Như yearsInCraft/hamlet: preview giữ dấu [cần xác minh] cho dòng dữ kiện trống.
+    const recorded = identifying ? recordedParts.join(' · ') || (preview ? UNVERIFIED : null) : null
+
+    // Phóng sự ảnh: public cần đồng ý ảnh; chưa đồng ý tên thì bỏ alt và chú thích (có thể chứa tên).
+    const gallery: PersonDetailView['gallery'] = []
+    if (preview || consent.photo) {
+      for (const row of d.gallery ?? []) {
+        const image = toImageView(row.image, mode)
+        if (!image) continue
+        gallery.push(identifying
+          ? { image, caption: showText(row.caption, mode) }
+          : { image: { ...image, alt: '' }, caption: null })
+      }
+    }
+
+    const missing = (['name', 'photo', 'quote'] as const)
+      .filter((k) => !consent[k])
+      .map((k) => peopleCopy.detail.consent.kinds[k])
+    const copy = applyMode(peopleCopy, mode)
+
+    const photographer = v.portrait?.photographer ? `${peopleCopy.detail.photoPrefix}${v.portrait.photographer}` : null
+    const consentLine = consent.photo ? null : (copy.detail.preview?.consentLine ?? null)
+
     return {
       ...v,
       flags: [...flagsOf(d, mode), ...v.flags],
-      note: identifying ? showText(d.note, mode) : null,
+      heading: v.name ?? peopleCopy.detail.pendingName,
+      storyTitle: v.name ? fillTemplate(peopleCopy.detail.story.title, { name: v.name }) : peopleCopy.detail.story.titleNoName,
+      // intro trống là null để preview hiện gợi ý phỏng vấn (R14); yearsInCraft/hamlet là dòng dữ kiện nên
+      // giữ dấu [cần xác minh] của showText ở preview, như các bảng dữ kiện khác.
+      intro: identifying ? filled(d.intro) : null,
       yearsInCraft: identifying ? showText(d.yearsInCraft, mode) : null,
-      story: identifying ? sanitizeRich(d.story, await sourceMap(), mode) : null,
+      hamlet: identifying ? showText(d.hamlet, mode) : null,
+      recorded,
+      storyParts: splitStoryParts(story),
+      sources,
+      quote,
+      gallery,
+      consent: {
+        state: missing.length === 0 ? 'full' : missing.length === 3 ? 'none' : 'partial',
+        missing,
+        reviewedBySubject: !!d.reviewedBySubject,
+      },
+      portraitCaption: v.portrait
+        ? {
+            label: peopleCopy.detail.portraitLabel,
+            code: v.portrait.docNumber,
+            line: { desktop: [photographer, consentLine].filter(Boolean).join(' · ') || null, mobile: consentLine },
+          }
+        : null,
     }
   }
 
@@ -326,6 +475,6 @@ export function createContent(payload: Payload) {
 
   return {
     getHomeMedia, getSources, getTimeline, getCraftSteps, getProducts, getProduct, getStories,
-    getStory, getPeople, getPerson, getArchive, getSiteSettings, getPageIntro,
+    getStory, getPeople, getPerson, getPersonWithLinks, getArchive, getSiteSettings, getPageIntro,
   }
 }

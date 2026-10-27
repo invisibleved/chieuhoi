@@ -40,63 +40,97 @@ export function Cite({ ids, numbers, variant }: { ids: string[]; numbers: Map<st
   )
 }
 
-// Danh sách nguồn; mục null bỏ cả dấu " · " đi kèm.
+type ListVariant = 'reference' | 'notes'
+
+// reference: mục "[n]" một cột phụ + một cột chữ, ngăn bằng " · " (trang Làng Hới, styleguide).
+// notes: "Ghi chú nguồn" cuối bài đọc, cột 4–9, số "n." và ngăn bằng ", " (StoryDetail).
+const listStyles = {
+  reference: {
+    section: 'px-5 py-10 md:grid md:grid-cols-12 md:gap-x-6 md:px-20 md:py-24',
+    inner: 'contents',
+    h: 'mb-3 font-display text-[24px] font-normal md:col-span-3 md:mb-0 md:text-h4',
+    ol: 'm-0 flex list-none flex-col p-0 text-[14px] leading-[1.55] md:col-span-8 md:col-start-5 md:text-[15px] md:leading-[1.6]',
+    li: 'border-t py-3 md:grid md:grid-cols-[40px_1fr] md:py-3.5',
+    first: 'border-border-strong',
+    rest: 'border-border-soft',
+    last: 'border-b border-b-border-soft',
+    num: 'mr-1.5 font-semibold text-text-meta md:mr-0',
+    sep: ' · ',
+    end: '',
+  },
+  notes: {
+    section: 'mx-5 mt-10 md:mx-0 md:mt-0 md:grid md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-[72px]',
+    inner: 'flex flex-col border-t border-border-strong pt-[18px] md:col-span-6 md:col-start-4 md:pt-6',
+    h: 'm-0 mb-2 font-display text-[22px] font-normal md:mb-3 md:text-h5',
+    ol: 'm-0 flex list-none flex-col p-0 text-[14px] leading-[1.55] md:text-[15px] md:leading-[1.6]',
+    li: 'border-b border-border-soft py-2.5 md:py-3',
+    first: '',
+    rest: '',
+    last: '',
+    num: 'font-semibold text-text-meta',
+    sep: ', ',
+    end: '.',
+  },
+} as const
+
+// Danh sách nguồn; mục null bỏ cả dấu ngăn đi kèm.
 export function SourceList({
   sources,
   headingId = 'nguon-tham-khao',
   title = 'Nguồn tham khảo',
+  variant = 'reference',
+  idPrefix = 'nguon',
 }: {
   sources: SourceView[]
   headingId?: string
   title?: string
+  variant?: ListVariant
+  /** Tiền tố id của từng mục (`<prefix>-n`), khớp href của FootnoteRef. */
+  idPrefix?: string
 }) {
   if (sources.length === 0) return null
+  const st = listStyles[variant]
   return (
-    <section
-      aria-labelledby={headingId}
-      className="px-5 py-10 md:grid md:grid-cols-12 md:gap-x-6 md:px-20 md:py-24"
-    >
-      <h2
-        id={headingId}
-        className="mb-3 font-display text-[24px] font-normal md:col-span-3 md:mb-0 md:text-h4"
-      >
-        {title}
-      </h2>
-      <ol className="m-0 flex list-none flex-col p-0 text-[14px] leading-[1.55] md:col-span-8 md:col-start-5 md:text-[15px] md:leading-[1.6]">
-        {sources.map((s, i) => {
-          const n = i + 1
-          const parts = [
-            s.publisher,
-            s.url ? (
-              <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2">
-                {s.title}
-              </a>
-            ) : (
-              s.title
-            ),
-            s.date,
-          ].filter((p) => p !== null)
-          return (
-            <li
-              key={s.id}
-              id={`nguon-${n}`}
-              className={`border-t py-3 md:grid md:grid-cols-[40px_1fr] md:py-3.5 ${
-                i === 0 ? 'border-border-strong' : 'border-border-soft'
-              } ${i === sources.length - 1 ? 'border-b border-b-border-soft' : ''}`}
-            >
-              <span className="mr-1.5 font-semibold text-text-meta md:mr-0">[{n}]</span>
-              <span>
-                {parts.map((p, j) => (
-                  <span key={j}>
-                    {j > 0 ? ' · ' : ''}
-                    {p}
-                  </span>
-                ))}
-              </span>
-            </li>
-          )
-        })}
-      </ol>
+    <section aria-labelledby={headingId} className={st.section}>
+      <div className={st.inner}>
+        <h2 id={headingId} className={st.h}>
+          {title}
+        </h2>
+        <ol className={st.ol}>
+          {sources.map((s, i) => {
+            const n = i + 1
+            const parts = [
+              s.publisher,
+              s.url ? (
+                <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2">
+                  {s.title}
+                </a>
+              ) : (
+                s.title
+              ),
+              s.date,
+            ].filter((p) => p !== null)
+            return (
+              <li
+                key={s.id}
+                id={`${idPrefix}-${n}`}
+                className={[st.li, i === 0 ? st.first : st.rest, i === sources.length - 1 ? st.last : ''].filter(Boolean).join(' ')}
+              >
+                <span className={st.num}>{variant === 'notes' ? `${n}. ` : `[${n}]`}</span>
+                <span>
+                  {parts.map((p, j) => (
+                    <span key={j}>
+                      {j > 0 ? st.sep : ''}
+                      {p}
+                    </span>
+                  ))}
+                  {st.end}
+                </span>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
     </section>
   )
 }

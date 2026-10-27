@@ -5,29 +5,67 @@ import { ProductCard } from '@/components/content/ProductCard'
 import { StoryCard } from '@/components/content/StoryCard'
 import type { ProductCardView, StoryCardView } from '@/lib/content'
 
-const story: StoryCardView = { slug: 'chuyen-ve-trang-chieu', title: 'Chuyện về Trạng Chiếu', sapo: 'Mô tả ngắn', category: 'Lịch sử', cover: null, readingMinutes: null, hasDetail: true, flags: ['unpublished'] }
+const story: StoryCardView = { slug: 'chuyen-ve-trang-chieu', title: 'Chuyện về Trạng Chiếu', sapo: 'Mô tả ngắn', category: 'Lịch sử', categoryKey: 'history', cover: null, readingMinutes: null, hasDetail: true, cta: 'Đọc bài →', status: 'Bản nháp', isDraft: true, sourceCount: 0, flags: ['unpublished'] }
 
 describe('StoryCard', () => {
   it('grid: nhãn Bản nháp, CTA Đọc bài →, không có ảnh thì không có img', () => {
     const { container } = render(<StoryCard story={story} href="/cau-chuyen/chuyen-ve-trang-chieu" variant="grid" />)
     expect(screen.getByText('Bản nháp')).toBeTruthy()
-    expect(screen.getByText('LỊCH SỬ')).toBeTruthy()
+    // Chủ đề giữ chữ của nhãn option; in hoa bằng CSS.
+    expect(screen.getByText('Lịch sử').className).toContain('uppercase')
     expect(screen.getByText('Đọc bài →')).toBeTruthy()
     expect(container.querySelector('img')).toBeNull()
   })
   it('chủ đề đề xuất: CTA Xem đề cương →', () => {
-    render(<StoryCard story={{ ...story, hasDetail: false, flags: ['unpublished', 'idea'] }} href="#" variant="grid" />)
+    render(<StoryCard story={{ ...story, hasDetail: false, cta: 'Xem đề cương →', status: 'Chủ đề đề xuất', isDraft: false }} href="#" variant="grid" />)
     expect(screen.getByText('Chủ đề đề xuất')).toBeTruthy()
     expect(screen.getByText('Xem đề cương →')).toBeTruthy()
   })
   it('featured có số phút đọc khi có', () => {
     render(<StoryCard story={{ ...story, readingMinutes: 6, flags: [] }} href="#" variant="featured" />)
-    expect(screen.getByText('LỊCH SỬ · 6 PHÚT ĐỌC')).toBeTruthy()
+    expect(screen.getByText('Lịch sử · 6 PHÚT ĐỌC').className).toContain('uppercase')
   })
   it('compact và trường null không in null', () => {
     const { container } = render(<StoryCard story={{ ...story, title: null, sapo: null, category: null, flags: [] }} href="#" variant="compact" />)
     expect(container.textContent).not.toContain('null')
     expect(screen.getByText('Đọc bài →')).toBeTruthy()
+  })
+})
+
+describe('StoryCard: nhãn trạng thái theo isDraft', () => {
+  it('isDraft: nhãn viền đứt; không phải nháp: nhãn nền, kể cả khi chữ nhãn giống nhau', () => {
+    const { rerender } = render(<StoryCard story={story} href="#" variant="grid" />)
+    const draft = screen.getByText('Bản nháp').className
+    rerender(<StoryCard story={{ ...story, isDraft: false }} href="#" variant="grid" />)
+    expect(screen.getByText('Bản nháp').className).not.toBe(draft)
+  })
+})
+
+describe('StoryCard: hero và thẻ không link', () => {
+  it('hero: eyebrow ghi đè, meta, link, CTA từ story.cta', () => {
+    const { container } = render(<StoryCard story={{ ...story, readingMinutes: 4, sourceCount: 3, flags: [] }} href="/cau-chuyen/x" variant="hero" eyebrow="BÀI NỔI BẬT · LỊCH SỬ" meta="3 nguồn báo chí · khoảng 4 phút đọc" />)
+    expect(screen.getByText('BÀI NỔI BẬT · LỊCH SỬ')).toBeTruthy()
+    expect(screen.queryByText('Lịch sử · 4 PHÚT ĐỌC')).toBeNull()
+    expect(screen.getByText('3 nguồn báo chí · khoảng 4 phút đọc')).toBeTruthy()
+    expect(screen.getByText('Đọc bài →')).toBeTruthy()
+    expect(container.querySelector('a')?.getAttribute('href')).toBe('/cau-chuyen/x')
+    expect(container.querySelector('a')?.className).toContain('md:grid-cols-12')
+  })
+  it('meta chỉ hiện ở hero', () => {
+    render(<StoryCard story={{ ...story, flags: [] }} href="#" variant="grid" meta="Dòng meta" />)
+    expect(screen.queryByText('Dòng meta')).toBeNull()
+  })
+  it('không có href: <article>, không <a>, không CTA', () => {
+    const { container } = render(<StoryCard story={{ ...story, hasDetail: false, cta: 'Xem đề cương →', status: 'Chủ đề đề xuất' }} variant="grid" />)
+    expect(container.querySelector('article')).toBeTruthy()
+    expect(container.querySelector('a')).toBeNull()
+    expect(screen.queryByText('Xem đề cương →')).toBeNull()
+    expect(screen.getByText('Chủ đề đề xuất')).toBeTruthy()
+  })
+  it('compact không href cũng là article', () => {
+    const { container } = render(<StoryCard story={{ ...story, flags: [] }} variant="compact" />)
+    expect(container.querySelector('article')).toBeTruthy()
+    expect(container.querySelector('a')).toBeNull()
   })
 })
 

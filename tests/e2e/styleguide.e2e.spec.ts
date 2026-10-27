@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 import { mkdirSync } from 'node:fs'
 
 const SHOTS = process.env.SHOTS_DIR
-const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Thành phần chung', 'Khối trang Nghề & Làng', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
+const H2 = ['Nút & link', 'Điều hướng', 'Thẻ nội dung', 'Thành phần di sản', 'Thành phần chung', 'Khối trang Nghề & Làng', 'Bài đọc & chân dung', 'Bộ lọc, tab & phân trang', 'Trạng thái phản hồi']
 
 for (const vp of [
   { name: '1440', width: 1440, height: 900 },
@@ -48,6 +48,17 @@ for (const vp of [
       await page.screenshot({ path: `${SHOTS}/styleguide-${vp.name}.png`, fullPage: true })
     })
 
+    test('bài đọc & chân dung: neo tiêu đề, băng ghi chú, khung đồng ý đủ ba mức', async ({ page }) => {
+      await page.goto('/styleguide')
+      const block = page.locator('section[aria-labelledby="sg-doc"]')
+      await expect(block.locator('h2#mot-tam-nguyen-cua-lang-hai-trieu')).toBeVisible()
+      await expect(block.getByRole('note')).toBeVisible()
+      await expect(block.getByRole('heading', { level: 2, name: 'Đọc tiếp' }).filter({ visible: true })).toHaveCount(vp.width >= 768 ? 1 : 0)
+      for (const label of ['Chưa có', 'Một phần', 'Đã có']) {
+        await expect(block.getByText(new RegExp(`^${label}`)).filter({ visible: true }).first()).toBeVisible()
+      }
+    })
+
     test('khối trang Nghề & Làng: hành trình, dòng thời gian, so sánh hoạt động', async ({ page }) => {
       await page.goto('/styleguide')
       const block = page.locator('section[aria-labelledby="sg-trang"]')
@@ -70,7 +81,7 @@ test.describe('styleguide 390 mobile', () => {
       [...document.querySelectorAll('main a, main button')]
         .filter((el) => {
           // Ngoại lệ WCAG 2.5.8 (link nằm trong dòng chữ): chú thích .fn, link trong <p>, link trích nguồn.
-          if (el.classList.contains('fn') || el.closest('p') || el.matches('[id^="nguon-"] a')) return false
+          if (el.classList.contains('fn') || el.closest('p') || el.matches('[id^="nguon-"] a, [id^="sg-ghi-chu-"] a')) return false
           const r = el.getBoundingClientRect()
           return r.width > 0 && r.height > 0 && r.height < 44
         })

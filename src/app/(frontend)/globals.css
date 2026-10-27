@@ -131,6 +131,7 @@
   --tracking-label: .2em; /* nhãn nhỏ viết hoa trong khối (callout, danh sách, khung giữ chỗ) */
   --tracking-eyebrow-sm: .22em; /* eyebrow trên mobile */
   --tracking-meta: .16em; /* dòng meta viết hoa trên thẻ (chuyên mục, eyebrow thẻ đọc tiếp) */
+  --tracking-meta-sm: .1em; /* dòng meta viết hoa trên thẻ gọn (mobile) */
   --tracking-cite: .06em; /* chú thích nguồn dạng [n] */
 
   --animate-weave-pulse: weave-pulse 1.6s ease-in-out infinite;

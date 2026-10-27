@@ -1,12 +1,5 @@
 import type { Flag } from '@/lib/content'
 
-// Nhãn trạng thái bài viết (chỉ có flag ở chế độ preview).
-export function storyStatus(flags: Flag[]): 'Bản nháp' | 'Chủ đề đề xuất' | null {
-  if (flags.includes('idea')) return 'Chủ đề đề xuất'
-  if (flags.includes('unpublished')) return 'Bản nháp'
-  return null
-}
-
 // Nhãn trên thẻ sản phẩm: chưa có ảnh, hoặc có ảnh mà chưa xác nhận loại.
 export function productTag(p: {
   image: unknown | null

@@ -8,7 +8,7 @@ import {
 } from '@payloadcms/richtext-lexical'
 import type { Payload, RichTextField, TypedUser } from 'payload'
 
-import { injectCitations } from './citations'
+import { injectCitations, injectFigures } from './citations'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples, productSummary, storyCategory, storyExtras } from './data/extras'
 import { timelineCopy } from './data/timeline'
@@ -17,7 +17,7 @@ import { homeMedia, pageIntros, pageMedia, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
 
 export { assertSeedAllowed } from './guard'
-export { injectCitations } from './citations'
+export { injectCitations, injectFigures } from './citations'
 
 const root = process.cwd()
 const readJson = <T>(p: string): T => JSON.parse(readFileSync(path.resolve(root, p), 'utf8')) as T
@@ -213,12 +213,20 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Con người (mẫu): tên null, mọi consent false
+  const stepIds = new Map(
+    (await payload.find({ collection: 'craft-steps', pagination: false, depth: 0, overrideAccess: true, draft: true })).docs
+      .map((s) => [s.n, s.id]),
+  )
   for (const p of peopleSamples) {
+    const relatedStep = p.relatedStep === undefined ? null : stepIds.get(p.relatedStep)
+    if (relatedStep === undefined) throw new Error(`Không có công đoạn ${p.relatedStep}`)
     await upsert(
       payload, user, 'people', { field: 'slug', value: p.slug },
       {
         slug: p.slug, name: null, category: p.category, note: p.note,
         portrait: asset(p.portrait),
+        gallery: (p.gallery ?? []).map((g) => ({ image: asset(g.file), caption: g.caption })),
+        relatedStep,
         consent: { name: false, photo: false, quote: false }, reviewedBySubject: false,
         workflow: 'published',
       },
@@ -232,9 +240,9 @@ export async function seed(payload: Payload): Promise<void> {
   ) as RichTextField
   const editorConfig = editorConfigFactory.fromField({ field: bodyField })
   const markdown = readFileSync(path.resolve(root, 'src/seed/data/chuyen-ve-trang-chieu.md'), 'utf8')
-  const trangChieuBody = injectCitations(
-    convertMarkdownToLexical({ editorConfig, markdown }) as never,
-    sourceIds,
+  const trangChieuBody = injectFigures(
+    injectCitations(convertMarkdownToLexical({ editorConfig, markdown }) as never, sourceIds),
+    assets,
   )
   type StoryJson = { slug: string; title: string; category: string; status?: Status; sources?: string[] }
   for (const s of readJson<StoryJson[]>('content/seed/stories.json')) {
@@ -245,7 +253,8 @@ export async function seed(payload: Payload): Promise<void> {
       payload, user, 'stories', { field: 'slug', value: s.slug },
       {
         slug: s.slug, title: s.title, sapo: extra.sapo, category: storyCategory[s.category],
-        cover: asset(extra.cover), readingMinutes: extra.readingMinutes,
+        cover: asset(extra.cover), readingMinutes: extra.readingMinutes, coverCaption: extra.coverCaption,
+        reviewChecklist: (extra.reviewChecklist ?? []).map((item) => ({ item })),
         sources: (s.sources ?? []).map((x) => sourceIds[x]),
         ...(s.slug === 'chuyen-ve-trang-chieu' ? { body: trangChieuBody } : {}),
         workflow: idea ? 'idea' : isDraft(s.status) ? 'draft' : 'published',
@@ -276,6 +285,8 @@ export async function seed(payload: Payload): Promise<void> {
       home: { ...pageIntros.home, ...homeMediaData },
       'nghe-det-chieu': { ...pageIntros['nghe-det-chieu'], ...mediaFor('nghe-det-chieu') },
       'lang-hoi': { ...pageIntros['lang-hoi'], ...mediaFor('lang-hoi') },
+      'cau-chuyen': { ...pageIntros['cau-chuyen'], ...mediaFor('cau-chuyen') },
+      'con-nguoi': { ...pageIntros['con-nguoi'], ...mediaFor('con-nguoi') },
     } as object],
   ]
   for (const [slug, data] of globals) {

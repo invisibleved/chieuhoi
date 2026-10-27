@@ -366,6 +366,7 @@ export interface Story {
   sapo?: string | null;
   category?: ('history' | 'village-memory' | 'traditional-craft' | 'people' | 'life-today') | null;
   cover?: (number | null) | ArchiveAsset;
+  coverCaption?: string | null;
   body?: {
     root: {
       type: string;
@@ -382,8 +383,15 @@ export interface Story {
     [k: string]: unknown;
   } | null;
   editor?: string | null;
+  publishedAt?: string | null;
   readingMinutes?: number | null;
   sources?: (number | Source)[] | null;
+  reviewChecklist?:
+    | {
+        item?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -400,7 +408,11 @@ export interface Person {
   category?: ('artisan' | 'craft-family' | 'craft-keeper' | 'young-generation' | 'village-bound') | null;
   role?: string | null;
   note?: string | null;
+  intro?: string | null;
   yearsInCraft?: string | null;
+  hamlet?: string | null;
+  recordedBy?: string | null;
+  recordedAt?: string | null;
   portrait?: (number | null) | ArchiveAsset;
   story?: {
     root: {
@@ -417,6 +429,15 @@ export interface Person {
     };
     [k: string]: unknown;
   } | null;
+  gallery?:
+    | {
+        image: number | ArchiveAsset;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  relatedStep?: (number | null) | CraftStep;
+  relatedProduct?: (number | null) | Product;
   quote?: string | null;
   quoteSource?: (number | null) | Source;
   consent?: {
@@ -728,10 +749,18 @@ export interface StoriesSelect<T extends boolean = true> {
   sapo?: T;
   category?: T;
   cover?: T;
+  coverCaption?: T;
   body?: T;
   editor?: T;
+  publishedAt?: T;
   readingMinutes?: T;
   sources?: T;
+  reviewChecklist?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -747,9 +776,22 @@ export interface PeopleSelect<T extends boolean = true> {
   category?: T;
   role?: T;
   note?: T;
+  intro?: T;
   yearsInCraft?: T;
+  hamlet?: T;
+  recordedBy?: T;
+  recordedAt?: T;
   portrait?: T;
   story?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  relatedStep?: T;
+  relatedProduct?: T;
   quote?: T;
   quoteSource?: T;
   consent?:
@@ -875,6 +917,14 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot: 'next-village' | 'next-craft';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'nghe-det-chieu'?: {
     eyebrow?: string | null;
@@ -902,6 +952,14 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot: 'related-people';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'san-pham'?: {
     eyebrow?: string | null;
@@ -984,6 +1042,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'nghe-det-chieu'?:
     | T
@@ -1006,6 +1072,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'san-pham'?:
     | T

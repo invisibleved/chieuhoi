@@ -1,13 +1,30 @@
 import type { ReactNode } from 'react'
+import { StatusDot } from '@/components/ui/StatusDot'
 
-type TagProps = { variant: 'dashed' | 'filled' | 'overlay'; children: ReactNode }
+type TagProps = {
+  variant: 'dashed' | 'filled' | 'overlay'
+  /** Chỉ cho overlay. md: đệm rộng, có chấm; sm: đệm gọn, không chấm (mobile); fluid: gọn ở mobile, rộng từ md. */
+  size?: 'md' | 'sm' | 'fluid'
+  children: ReactNode
+}
+
+const overlaySizes = {
+  md: { pad: 'px-2.5 py-[5px]', dot: true, dotClass: '' },
+  sm: { pad: 'px-[7px] py-[3px]', dot: false, dotClass: '' },
+  fluid: { pad: 'px-[7px] py-[3px] md:px-2.5 md:py-[5px]', dot: true, dotClass: 'max-md:hidden' },
+} as const
 
 // Nhãn nhỏ: viền đứt, nền đặc, hoặc phủ trên ảnh (kèm chấm đứt).
-export function Tag({ variant, children }: TagProps) {
+export function Tag({ variant, size = 'md', children }: TagProps) {
   if (variant === 'overlay') {
+    const o = overlaySizes[size]
     return (
-      <span className="inline-flex items-center gap-2 bg-surface-on-image px-2.5 py-[5px] text-[12px] font-semibold text-text-secondary">
-        <span aria-hidden="true" className="size-2 rounded-full border-[1.5px] border-dashed border-text-secondary" />
+      <span className={`inline-flex items-center gap-2 bg-surface-on-image text-[12px] font-semibold text-text-secondary ${o.pad}`}>
+        {o.dot ? (
+          <span className={`inline-flex ${o.dotClass}`}>
+            <StatusDot state="none" size={8} />
+          </span>
+        ) : null}
         {children}
       </span>
     )

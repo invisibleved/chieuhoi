@@ -21,6 +21,16 @@ describe('Sources', () => {
     expect(container.querySelector('section')?.getAttribute('aria-labelledby')).toBe('x-h')
     expect(container.querySelector('#x-h')?.textContent).toBe('Nguồn')
   })
+  it('SourceList variant notes: số "n.", ngăn bằng dấu phẩy, kết thúc bằng dấu chấm', () => {
+    const { container } = render(<SourceList sources={S} variant="notes" title="Ghi chú nguồn" />)
+    expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại, 14/08/2026.')
+    expect(container.querySelector('#nguon-2')?.textContent).toBe('2. Lời kể người làng.')
+  })
+  it('SourceList idPrefix đổi tiền tố id', () => {
+    const { container } = render(<SourceList sources={S} idPrefix="x" />)
+    expect(container.querySelector('#x-1')).toBeTruthy()
+    expect(container.querySelector('#nguon-1')).toBeNull()
+  })
   it('FootnoteRef trỏ tới nguồn', () => {
     render(<FootnoteRef n={2} />)
     const a = screen.getByRole('link', { name: 'Nguồn 2' })
