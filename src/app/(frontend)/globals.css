@@ -108,6 +108,7 @@
   --text-display: 70px;
   --text-h1: 60px;
   --text-h2: 60px;
+  --text-h2-section: 52px; /* h2 của section trong trang con (Nghề dệt chiếu) */
   --text-h3: 44px;
   --text-h4: 32px;
   --text-h5: 26px;
@@ -138,6 +139,7 @@
     --text-display: 38px;
     --text-h1: 36px;
     --text-h2: 36px;
+    --text-h2-section: 32px;
     --text-h3: 28px;
     --text-h4: 24px;
     --text-h5: 22px;

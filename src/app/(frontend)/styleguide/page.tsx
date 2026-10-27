@@ -19,6 +19,7 @@ import { FactList } from '@/components/ui/FactList'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
+import { VariantText } from '@/components/ui/VariantText'
 import { FilterDemos, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
@@ -218,6 +219,12 @@ export default function StyleguidePage() {
         <div className="flex min-w-0 flex-col gap-8">
           <FilterDemos />
           <TabDemo />
+          <div className="flex flex-col gap-3">
+            <Lab>CHỮ HAI BẢN (DESKTOP / MOBILE)</Lab>
+            <p className="text-[14px] text-text-secondary">
+              <VariantText value={{ desktop: 'Dệt thủ công (từ 768px)', mobile: 'Thủ công (dưới 768px)' }} />
+            </p>
+          </div>
           <div className="flex flex-col gap-3">
             <Lab>XEM THÊM / PHÂN TRANG</Lab>
             <VerifyNote size="sm">Phân trang và Xem thêm làm ở Phase 5.</VerifyNote>

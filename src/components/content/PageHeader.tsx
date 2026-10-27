@@ -13,6 +13,8 @@ type PageHeaderProps = {
   aside?: ReactNode
   /** wide: cột 8–12 (Nghề dệt chiếu); narrow: cột 9–12 (Làng Hới). */
   asideSpan?: 'wide' | 'narrow'
+  /** Thêm vào khung cột phải (ví dụ ẩn trên mobile để không chừa khoảng trống). */
+  asideClassName?: string
   /** Ghi đè cỡ chữ h1 (Làng Hới: 40/76). */
   titleClassName?: string
 }
@@ -20,7 +22,7 @@ type PageHeaderProps = {
 const asideSpans = { wide: 'md:col-span-5 md:col-start-8', narrow: 'md:col-span-4 md:col-start-9' } as const
 
 // Đầu trang con: đường dẫn, eyebrow, h1 nhiều dòng, lead, ghi chú; cột phải tuỳ chọn.
-export function PageHeader({ crumbs, intro, note, aside, asideSpan = 'wide', titleClassName = 'text-[38px] md:text-[70px]' }: PageHeaderProps) {
+export function PageHeader({ crumbs, intro, note, aside, asideSpan = 'wide', asideClassName, titleClassName = 'text-[38px] md:text-[70px]' }: PageHeaderProps) {
   const lines = (intro.title ?? '').split('\n')
   return (
     <section className="flex flex-col gap-4 px-5 pt-5 pb-10 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:pt-10 md:pb-24">
@@ -44,7 +46,7 @@ export function PageHeader({ crumbs, intro, note, aside, asideSpan = 'wide', tit
         {intro.lead ? <p className="max-w-[640px] font-serif text-[17px] leading-[1.7] md:text-[22px]">{intro.lead}</p> : null}
         {note}
       </div>
-      {aside ? <div className={asideSpans[asideSpan]}>{aside}</div> : null}
+      {aside ? <div className={[asideSpans[asideSpan], asideClassName].filter(Boolean).join(' ')}>{aside}</div> : null}
     </section>
   )
 }

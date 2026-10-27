@@ -53,6 +53,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.intro.title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
       expect(v.compare.hand.note.desktop).toBeNull()
       expect(v.compare.rows[0].mobile).toEqual(['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'])
+      expect(v.compare.rows[0].muted).toEqual({ hand: false, machine: false, mobile: [false, false] })
       expect(JSON.stringify(v.copy)).not.toContain('CẦN GHI LẠI')
     })
     it('preview: đủ 7 công đoạn, công đoạn thiếu ảnh có shotNeeded, toRecord hiện', async () => {
@@ -64,6 +65,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.steps[1].shortTitle).toBe('Xử lý')
       expect(v.compare.rows).toHaveLength(4)
       expect(v.compare.rows[1].mobile).toEqual(['Thủ công: [cần xác minh] · Máy: [cần xác minh]'])
+      expect(v.compare.rows[1].muted).toEqual({ hand: true, machine: true, mobile: [true] })
       expect(v.hero?.image.url).toBeTruthy()
       expect(v.copy.journey.preview?.toRecordLabel).toBe('CẦN GHI LẠI')
     })

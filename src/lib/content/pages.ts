@@ -10,7 +10,7 @@ import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft
 import { villageCopy, villageFacts, villageSourceOrder, villageTimelineAdd } from './copy/village'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
 import type { CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
-import { showText, toImageView } from './visibility'
+import { isUnverified, showText, toImageView } from './visibility'
 
 type Content = ReturnType<typeof createContent>
 type MediaRow = { slot?: string; image?: unknown; caption?: string | null }
@@ -40,8 +40,13 @@ export function createPages(payload: Payload, content: Content) {
     for (const r of craftCompare.rows) {
       const hand = showText(r.hand, mode)
       const machine = showText(r.machine, mode)
-      const mobile = r.mobile.map((l) => showText(l, mode)).filter((l): l is string => l !== null)
-      if (hand !== null || machine !== null) rows.push({ aspect: r.aspect, hand, machine, mobile })
+      const lines = r.mobile.map((l) => ({ text: showText(l, mode), muted: isUnverified(l) })).filter((l): l is { text: string; muted: boolean } => l.text !== null)
+      if (hand !== null || machine !== null) {
+        rows.push({
+          aspect: r.aspect, hand, machine, mobile: lines.map((l) => l.text),
+          muted: { hand: isUnverified(r.hand), machine: isUnverified(r.machine), mobile: lines.map((l) => l.muted) },
+        })
+      }
     }
     const card = (c: typeof craftCompare.hand, slot: 'hand' | 'machine') => ({
       title: c.title, image: media[slot]?.image ?? null,

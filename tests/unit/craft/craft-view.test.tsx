@@ -4,6 +4,8 @@ import type { CraftPageView, ImageView } from '@/lib/content'
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
 import { CraftView } from '@/components/craft/CraftView'
+import { FigureCard } from '@/components/content/FigureCard'
+import { ReadNext } from '@/components/content/ReadNext'
 import { Tabs } from '@/components/ui/Tabs'
 import { VariantText } from '@/components/ui/VariantText'
 
@@ -26,8 +28,8 @@ function view(mode: 'public' | 'preview'): CraftPageView {
     compare: {
       hand: way(craftCompare.hand), machine: way(craftCompare.machine),
       rows: pub
-        ? [{ aspect: 'Việc của đôi tay', hand: 'Đưa sợi', machine: 'Nạp cói', mobile: ['Thủ công: đưa sợi', 'Bằng máy: nạp cói'] }]
-        : craftCompare.rows.map((r) => ({ ...r, mobile: [...r.mobile] })),
+        ? [{ aspect: 'Việc của đôi tay', hand: 'Đưa sợi', machine: 'Nạp cói', mobile: ['Thủ công: đưa sợi', 'Bằng máy: nạp cói'], muted: { hand: false, machine: false, mobile: [false, false] } }]
+        : craftCompare.rows.map((r) => ({ ...r, mobile: [...r.mobile], muted: { hand: true, machine: true, mobile: r.mobile.map(() => true) } })),
     },
     readNext: craftReadNext.map((r) => ({ href: r.href, eyebrow: r.eyebrow, title: r.title, cta: r.cta, image: pub ? null : img(r.slot) })),
     copy,
@@ -83,5 +85,49 @@ describe('VariantText / Tabs', () => {
   it('Tabs nhận nhãn ReactNode', () => {
     render(<Tabs label="x" tabs={[{ key: 'a', label: <em>Nhãn</em>, panel: 'P' }]} value="a" onChange={() => {}} />)
     expect(screen.getByRole('tab', { name: 'Nhãn' })).toBeTruthy()
+  })
+})
+
+describe('FigureCard', () => {
+  it('không ảnh: khung "Ảnh cần chụp"; caption hai bản; caption rỗng thì bỏ figcaption', () => {
+    const { container, rerender } = render(<FigureCard label="DỤNG CỤ · 01" title="Khung dệt" caption={{ desktop: 'D', mobile: 'M' }} image={null} />)
+    expect(screen.getByRole('img', { name: 'Ảnh cần chụp' })).toBeTruthy()
+    expect(container.querySelectorAll('figcaption span')).toHaveLength(2)
+    rerender(<FigureCard label="x" title="Khung dệt" caption={{ desktop: 'D', mobile: null }} image={img('a')} />)
+    expect(container.querySelector('figcaption span')?.className).toContain('max-md:hidden')
+    expect(container.querySelector('figcaption span.md\\:hidden')).toBeNull()
+    rerender(<FigureCard label="x" title="Khung dệt" caption={{ desktop: null, mobile: null }} image={img('a')} />)
+    expect(container.querySelector('figcaption')).toBeNull()
+  })
+
+  it('public: chú thích dụng cụ chỉ có "[cần xác minh]" thì thành null và không có figcaption', () => {
+    const tools = view('public').tools
+    expect(tools.every((t) => t.note.desktop === null && t.note.mobile === null)).toBe(true)
+    const { container } = render(<FigureCard label="x" title={tools[0].name} caption={tools[0].note} image={null} />)
+    expect(container.querySelector('figcaption')).toBeNull()
+  })
+})
+
+describe('ReadNext', () => {
+  it('không ảnh: không có <img>; có ảnh: alt rỗng (trang trí)', () => {
+    const items = view('public').readNext
+    const { container, rerender } = render(<ReadNext items={items} eyebrow="ĐỌC TIẾP" />)
+    expect(container.querySelectorAll('img')).toHaveLength(0)
+    expect(container.querySelectorAll('a')).toHaveLength(3)
+    rerender(<ReadNext items={view('preview').readNext} eyebrow="ĐỌC TIẾP" />)
+    expect(container.querySelectorAll('img[alt=""]')).toHaveLength(3)
+  })
+})
+
+describe('So sánh: dòng mobile', () => {
+  it('public: dòng mobile nguyên văn, không muted; preview: dòng chờ xác minh muted', () => {
+    const pub = render(<CraftView page={view('public')} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    expect(screen.getByText('Thủ công: đưa sợi').className).not.toContain('text-text-muted')
+    pub.unmount()
+    render(<CraftView page={view('preview')} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    const muted = screen.getAllByText('Thủ công: [cần xác minh] · Máy: [cần xác minh]')
+    expect(muted.every((el) => el.className.includes('text-text-muted'))).toBe(true)
   })
 })

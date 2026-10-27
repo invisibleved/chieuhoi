@@ -37,7 +37,7 @@ export function CraftView({ page }: { page: CraftPageView }) {
 
   // Ảnh chính chỉ có ở artboard desktop.
   const aside = hero ? (
-    <figure className="m-0 flex flex-col gap-2.5 max-md:hidden">
+    <figure className="m-0 flex flex-col gap-2.5">
       <ContentImage image={hero.image} size="wide" sizes="40vw" priority className="block h-[460px]" />
       {hero.caption ? <figcaption className="font-serif text-[14px] text-text-secondary italic">{hero.caption}</figcaption> : null}
     </figure>
@@ -45,13 +45,14 @@ export function CraftView({ page }: { page: CraftPageView }) {
 
   return (
     <>
-      <PageHeader crumbs={crumbs} intro={intro} note={note} aside={aside} />
+      <PageHeader crumbs={crumbs} intro={intro} note={note} aside={aside} asideClassName="max-md:hidden" />
 
       <CraftJourney steps={page.steps} copy={copy.journey} />
 
       <section aria-labelledby="tools-h" className="flex flex-col gap-4 px-5 py-12 md:gap-10 md:px-20 md:py-28">
         <SectionHeading
           id="tools-h"
+          size="section"
           eyebrow={copy.tools.eyebrow ?? undefined}
           title={copy.tools.title}
           note={copy.tools.preview?.note.desktop ?? undefined}
@@ -69,7 +70,7 @@ export function CraftView({ page }: { page: CraftPageView }) {
       <section aria-labelledby="compare-h" className="flex flex-col gap-4 px-5 pt-12 pb-14 md:gap-10 md:px-20 md:py-28">
         <div className="flex max-w-[760px] flex-col gap-4">
           {copy.compare.eyebrow ? <Eyebrow>{copy.compare.eyebrow}</Eyebrow> : null}
-          <h2 id="compare-h" className="font-display text-h2 leading-[1.1] font-normal">
+          <h2 id="compare-h" className="font-display text-h2-section leading-[1.1] font-normal">
             {copy.compare.title}
           </h2>
           {hasVariant(copy.compare.lead) ? (

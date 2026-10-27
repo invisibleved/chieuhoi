@@ -23,7 +23,7 @@ type ComparisonTabsProps = {
 // Panel "một cách dệt": ảnh 7 cột + chữ 4 cột trên desktop; mobile xếp dọc, ảnh 230px.
 function WayPanel({ way }: { way: Way }) {
   return (
-    <div className="flex flex-col gap-3 pt-6 md:grid md:grid-cols-12 md:items-center md:gap-x-6 md:gap-y-0 md:pt-10">
+    <div className="flex flex-col gap-3 pt-4 md:grid md:grid-cols-12 md:items-center md:gap-x-6 md:gap-y-0 md:pt-10">
       <div className="md:col-span-7">
         {way.image ? (
           <ContentImage image={way.image} size="wide" sizes="(min-width: 768px) 58vw, 100vw" className="block h-[230px] md:h-[480px]" />
@@ -69,10 +69,10 @@ function CompareTable({ rows, note, labels }: { rows: ComparisonTabsProps['rows'
               <th scope="row" className="text-left text-[15px] font-semibold md:border-b md:border-border-subtle md:py-4 md:pr-8 md:font-medium">
                 {r.aspect}
               </th>
-              <td className={td}>{r.hand}</td>
-              <td className={td}>{r.machine}</td>
-              {r.mobile.map((line) => (
-                <td key={line} className="text-[14px] leading-[1.55] text-text-secondary md:hidden">
+              <td className={`${td} ${r.muted.hand ? 'text-text-muted' : ''}`}>{r.hand}</td>
+              <td className={`${td} ${r.muted.machine ? 'text-text-muted' : ''}`}>{r.machine}</td>
+              {r.mobile.map((line, i) => (
+                <td key={i} className={`text-[14px] leading-[1.55] md:hidden ${r.muted.mobile[i] ? 'text-text-muted' : ''}`}>
                   {line}
                 </td>
               ))}
@@ -99,5 +99,5 @@ export function ComparisonTabs({ hand, machine, rows, rowsNote, labels }: Compar
   if (rows.length > 0) {
     tabs.push({ key: 'compare', label: labels.tabs.compare, panel: <CompareTable rows={rows} note={rowsNote} labels={labels} /> })
   }
-  return <Tabs label={labels.tablistLabel ?? ''} tabs={tabs} value={tab} onChange={setTab} variant="responsive" />
+  return <Tabs label={labels.tablistLabel ?? undefined} tabs={tabs} value={tab} onChange={setTab} variant="responsive" />
 }
