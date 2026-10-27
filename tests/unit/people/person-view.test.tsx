@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import type { ImageView, PersonDetailView, PersonPageView, ReadNextItem, Rich } from '@/lib/content'
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { peopleCopy } from '@/lib/content/copy/people'
@@ -191,5 +191,14 @@ describe('PersonView preview', () => {
     expect(container.textContent).toContain('Ảnh cùng buổi chụp · cần xác minh tác giả và quyền dùng')
     expect(screen.getByAltText('Hai người cùng dệt')).toBeTruthy()
     expect(screen.getByAltText('Đôi tay trên khung')).toBeTruthy()
+  })
+
+  it('preview: nhãn "Ảnh chưa được phép đăng" ở góc trên phải, không cùng góc với figcaption', () => {
+    const p: PersonDetailView = { ...previewPerson, portraitCaption: { label: 'CHÂN DUNG', code: 'TL-001', line: { desktop: 'Dòng', mobile: 'Dòng' } } }
+    const { container } = render(<PersonView page={page(p, 'preview')} />)
+    const notes = within(container.querySelector('figure')!).getByText('Ảnh chưa được phép đăng').parentElement!
+    expect(notes.className).toContain('top-3')
+    expect(notes.className).toContain('right-3')
+    expect(container.querySelector('figcaption')!.className).toContain('bottom-3')
   })
 })

@@ -41,6 +41,20 @@ const img = (flags: ImageView['flags']): ImageView => ({
   sizes: {}, photographer: null, code: null, docNumber: null, flags,
 })
 
+describe('ContentImage biến thể (R20)', () => {
+  it('notesPosition=top-right đặt nhãn ở top-3 right-3', () => {
+    render(<ContentImage image={img(['rights-not-permitted'])} notesPosition="top-right" />)
+    const cls = screen.getByText('Ảnh chưa được phép đăng').parentElement!.className
+    expect(cls).toContain('top-3')
+    expect(cls).toContain('right-3')
+    expect(cls).not.toContain('bottom-3')
+  })
+  it('fit=contain cho object-contain', () => {
+    render(<ContentImage image={img([])} className="block" fit="contain" />)
+    expect(screen.getByRole('img').className).toContain('object-contain')
+  })
+})
+
 describe('ContentImage', () => {
   it('ảnh công khai đi qua bộ tối ưu của Next', () => {
     render(<ContentImage image={img([])} />)

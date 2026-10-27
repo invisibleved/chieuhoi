@@ -192,6 +192,16 @@ describe('FactList', () => {
     expect(divs[0].className).toContain('border-border-strong')
     expect(divs[1].className).toContain('border-border-soft')
   })
+  it('columns=2: dl lưới 2 cột từ md; hai hàng đầu viền đậm, các hàng sau viền mảnh', () => {
+    const items = ['A', 'B', 'C', 'D'].map((t) => ({ term: t, detail: t }))
+    const { container } = render(<FactList columns={2} items={items} />)
+    expect(container.querySelector('dl')!.className).toContain('md:grid-cols-2')
+    const divs = container.querySelectorAll('dl > div')
+    expect(divs[0].className).toContain('border-border-strong')
+    expect(divs[1].className).toContain('md:border-border-strong')
+    expect(divs[2].className).toContain('border-border-soft')
+    expect(divs[2].className).not.toContain('md:border-border-strong')
+  })
   it('inline: hai cột, nhãn chữ thường màu phụ (không phải eyebrow)', () => {
     const { container } = render(<FactList layout="inline" items={[{ term: 'Vai trò', detail: 'Thợ dệt' }, { term: 'Năm làm nghề', detail: '40' }]} />)
     const divs = container.querySelectorAll('dl > div')

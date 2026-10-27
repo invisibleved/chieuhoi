@@ -4,8 +4,8 @@ import type { PeoplePageView, PersonView, Variant } from '@/lib/content'
 import { fillTemplate } from '@/lib/template'
 import { PageHeader } from '@/components/content/PageHeader'
 import { PortraitCard } from '@/components/content/PortraitCard'
-import { Button } from '@/components/ui/Button'
 import { Callout } from '@/components/ui/Callout'
+import { CtaBand } from '@/components/ui/CtaBand'
 import { EmptyState } from '@/components/ui/Feedback'
 import { FilterableList } from '@/components/ui/FilterableList'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
@@ -100,15 +100,12 @@ export function PeopleView({ page }: { page: PeoplePageView }) {
         />
       </section>
 
-      <section className="grid grid-cols-12 items-center gap-x-6 bg-bg-secondary px-20 py-[88px] max-md:hidden">
-        <div className="col-span-7 flex flex-col gap-3.5">
-          <h2 className="m-0 font-display text-[44px] leading-[1.15] font-normal">{invite.title}</h2>
-          <p className="m-0 text-[17px] leading-[1.7] text-text-secondary">{invite.body}</p>
-        </div>
-        <div className="col-span-4 col-start-9 flex justify-end">
-          <Button href={invite.action.href ?? undefined}>{invite.action.label}</Button>
-        </div>
-      </section>
+      <CtaBand
+        tone="secondary"
+        title={invite.title ?? ''}
+        body={invite.body ?? ''}
+        action={{ href: invite.action.href ?? '', label: invite.action.label ?? '' }}
+      />
     </>
   )
 }

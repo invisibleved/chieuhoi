@@ -36,13 +36,14 @@ import { NoteBanner } from '@/components/ui/NoteBanner'
 import { PullQuote } from '@/components/ui/PullQuote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { FactList } from '@/components/ui/FactList'
+import { CtaBand } from '@/components/ui/CtaBand'
 import { DetailTitle, Lede } from '@/components/ui/DetailTitle'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 import { StatusDot } from '@/components/ui/StatusDot'
 import { PlaceholderFrame } from '@/components/ui/PlaceholderFrame'
 import { ThreadsDivider } from '@/components/ui/ThreadsDivider'
 import { VariantText } from '@/components/ui/VariantText'
-import { FilterDemos, InteractiveDemos, StepperDemos, TabDemo } from './Demos'
+import { FilterDemos, InteractiveDemos, SegmentedDemos, SuccessActionDemo, StepperDemos, TabDemo } from './Demos'
 
 // Đọc APP_ENV lúc request, không chốt lúc build.
 export const dynamic = 'force-dynamic'
@@ -183,11 +184,11 @@ export default function StyleguidePage() {
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PRODUCT · KHÔNG ẢNH</Lab>
-            <ProductCard product={fx.productNoImage} href="#" />
+            <ProductCard product={fx.productNoImage} href="#" shotNeeded={{ desktop: 'Chiếu cạp điều chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt', mobile: 'Chiếu cạp điều' }} showSummary />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>PRODUCT · CÓ ẢNH</Lab>
-            <ProductCard product={fx.productWithImage} href="#" />
+            <ProductCard product={fx.productWithImage} href="#" shotNeeded={{ desktop: 'Chiếu cạp điều', mobile: 'Chiếu cạp điều' }} />
           </div>
         </div>
         <Tok>card/portrait · card/story-grid · card/product — bản public lúc mới dựng</Tok>
@@ -253,6 +254,10 @@ export default function StyleguidePage() {
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
           </div>
+          <div className="flex flex-col gap-3 md:col-span-2">
+            <Lab>DANH SÁCH THÔNG TIN · 2 CỘT (columns=2, từ md)</Lab>
+            <FactList columns={2} items={[{ term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'KỸ THUẬT', detail: '[cần xác minh]' }, { term: 'HOA VĂN', detail: '[cần xác minh]' }, { term: 'KÍCH THƯỚC', detail: '[chỉ ghi khi đã đo]' }]} />
+          </div>
           <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
             <Lab>TIÊU ĐỀ TRANG CHI TIẾT · BÀI ĐỌC</Lab>
             <DetailTitle size="story" as="p">Chuyện về Trạng Chiếu</DetailTitle>
@@ -302,6 +307,26 @@ export default function StyleguidePage() {
               note={<VerifyNote size="sm">{craftCopy.intro.preview.verifyNote.desktop}</VerifyNote>}
             />
           </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>ĐẦU TRANG · DÒNG CUỐI NGHIÊNG MÀU NHẤN (accentLastLine)</Lab>
+          <div className="-mx-5 border border-dashed border-border-dashed md:-mx-0">
+            <PageHeader
+              crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Kết nối' }]}
+              intro={{ eyebrow: '06 — KẾT NỐI', title: 'Làng vẫn còn đó.\nChuyện nghề vẫn được kể tiếp.', lead: null, heroTitle: null }}
+              titleClassName="text-[38px] md:text-[76px]"
+              accentLastLine
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Lab>KHỐI KÊU GỌI · CtaBand (chỉ từ md): inverse · secondary · primary</Lab>
+          <div className="-mx-5 flex flex-col md:-mx-0">
+            <CtaBand tone="inverse" title="Muốn tìm đến người làm chiếu?" body="Trang này không bán hàng. Danh sách cơ sở dệt sẽ chỉ đăng khi đã xác minh và được cơ sở đồng ý công khai." action={{ href: '#', label: 'Kết nối với làng' }} />
+            <CtaBand tone="secondary" title="Bạn biết một người giữ nghề?" body="Chúng tôi sẽ hỏi ý người đó trước khi đăng." action={{ href: '#', label: 'Giới thiệu một người' }} />
+            <CtaBand tone="primary" title="Nhà bạn còn giữ ảnh cũ của làng?" body="Chúng tôi sẽ ghi công và hỏi ý bạn trước khi đăng." action={{ href: '#', label: 'Góp tư liệu' }} />
+          </div>
+          <p className="m-0 text-small text-text-muted md:hidden">Ở khổ mobile CtaBand ẩn, theo artboard.</p>
         </div>
         <div className="flex flex-col gap-3">
           <Lab>ĐẦU TRANG · LEAD CHỈ MOBILE (leadClassName) · CỘT CHỮ RỘNG (wideIntro) · Ô TÌM Ở CỘT PHẢI</Lab>
@@ -432,6 +457,7 @@ export default function StyleguidePage() {
         <h2 id="sg-loc" className={h2}>Bộ lọc, tab &amp; phân trang</h2>
         <div className="flex min-w-0 flex-col gap-8">
           <FilterDemos />
+          <SegmentedDemos />
           <TabDemo />
           <div className="flex flex-col gap-3">
             <Lab>CHỮ HAI BẢN (DESKTOP / MOBILE)</Lab>
@@ -475,6 +501,10 @@ export default function StyleguidePage() {
             <Lab>THÀNH CÔNG</Lab>
             <SuccessState title="Cảm ơn bạn" body="Chúng tôi sẽ liên hệ để xác minh trước khi đăng. (Màn hình minh hoạ — chưa có hệ thống nhận thật.)" />
           </div>
+        </div>
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+          <div className="flex flex-col gap-3 bg-bg-deep p-5"><Lab tone="dark">TRỐNG · NỀN TỐI (tone=dark)</Lab><EmptyState tone="dark" size="lg" title="Chưa có tư liệu được phép đăng" body="Tư liệu sẽ hiện ở đây khi được cho phép." action={{ href: '#', label: 'Góp một ký ức' }} /></div>
+          <SuccessActionDemo />
         </div>
         <Tok>feedback/skeleton · feedback/empty · feedback/error · feedback/success — skeleton tắt nhấp nháy khi người dùng bật giảm chuyển động</Tok>
       </section>

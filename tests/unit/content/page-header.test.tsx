@@ -39,4 +39,17 @@ describe('PageHeader', () => {
     expect(h1.className).toContain('md:text-[76px]')
     expect(h1.className).not.toContain('md:text-[70px]')
   })
+
+  it('accentLastLine: dòng cuối nằm trong <em>, các dòng trước thì không', () => {
+    render(<PageHeader crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Kết nối' }]} intro={{ ...intro, title: 'A\nB' }} accentLastLine />)
+    const h1 = screen.getByRole('heading', { level: 1 })
+    expect(h1.querySelectorAll('em')).toHaveLength(1)
+    expect(h1.querySelector('em')!.textContent).toBe('B')
+    expect(screen.getByText('A').closest('em')).toBeNull()
+  })
+
+  it('không accentLastLine thì không có <em>', () => {
+    render(<PageHeader crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'X' }]} intro={{ ...intro, title: 'A\nB' }} />)
+    expect(screen.getByRole('heading', { level: 1 }).querySelector('em')).toBeNull()
+  })
 })

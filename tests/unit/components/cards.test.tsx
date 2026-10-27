@@ -71,15 +71,38 @@ describe('StoryCard: hero và thẻ không link', () => {
 
 const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, tag: { text: 'Chưa có ảnh', style: 'dashed' }, flags: [] }
 
+const shot = { desktop: 'Chiếu trơn chụp phẳng', mobile: 'Chiếu trơn' }
+
 describe('ProductCard', () => {
+  it('showSummary hiện tóm tắt chỉ từ md; mặc định không hiện', () => {
+    const withSummary = { ...product, summary: 'Chiếu dệt trơn.' }
+    const { unmount } = render(<ProductCard product={withSummary} href="#" shotNeeded={shot} showSummary />)
+    expect(screen.getByText('Chiếu dệt trơn.').className).toContain('max-md:hidden')
+    unmount()
+    render(<ProductCard product={withSummary} href="#" shotNeeded={shot} />)
+    expect(screen.queryByText('Chiếu dệt trơn.')).toBeNull()
+  })
+  it('tag dashed render Tag dashed; filled thì nền đặc', () => {
+    const { unmount } = render(<ProductCard product={product} href="#" shotNeeded={shot} />)
+    expect(screen.getByText('Chưa có ảnh').className).toContain('border-dashed')
+    unmount()
+    render(<ProductCard product={{ ...product, tag: { text: 'Đã xác nhận', style: 'filled' } }} href="#" shotNeeded={shot} />)
+    expect(screen.getByText('Đã xác nhận').className).toContain('bg-bg-secondary')
+  })
+  it('khung ẢNH CẦN CHỤP lấy chữ theo Variant desktop/mobile', () => {
+    render(<ProductCard product={product} href="#" shotNeeded={shot} />)
+    expect(screen.getByRole('img', { name: 'Ảnh cần chụp: Chiếu trơn chụp phẳng' })).toBeTruthy()
+    expect(document.body.innerHTML).toContain('Ảnh cần chụp: Chiếu trơn')
+  })
   it('không ảnh: khung ẢNH CẦN CHỤP + nhãn Chưa có ảnh', () => {
-    render(<ProductCard product={product} href="/san-pham/chieu-tron" />)
-    expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()
+    render(<ProductCard product={product} href="/san-pham/chieu-tron" shotNeeded={shot} />)
+    // Hai khung (desktop, mobile), mỗi khung ẩn bằng CSS ở khổ còn lại.
+    expect(screen.getAllByText('ẢNH CẦN CHỤP')).toHaveLength(2)
     expect(screen.getByText('Chưa có ảnh')).toBeTruthy()
     expect(screen.getByRole('link').getAttribute('href')).toBe('/san-pham/chieu-tron')
   })
   it('tag null thì không có nhãn', () => {
-    render(<ProductCard product={{ ...product, tag: null }} href="/san-pham/chieu-tron" />)
+    render(<ProductCard product={{ ...product, tag: null }} href="/san-pham/chieu-tron" shotNeeded={shot} />)
     expect(screen.queryByText('Chưa có ảnh')).toBeNull()
   })
 })
@@ -98,7 +121,7 @@ describe('ExhibitCard', () => {
 
 describe('ProductCard không tên', () => {
   it('không bịa tên: chỉ ẢNH CẦN CHỤP, aria-label ngắn', () => {
-    const { container } = render(<ProductCard product={{ ...product, name: null }} href="#" />)
+    const { container } = render(<ProductCard product={{ ...product, name: null }} href="#" shotNeeded={shot} />)
     expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()
     expect(container.textContent).not.toContain('Sản phẩm')
     expect(screen.getByRole('img').getAttribute('aria-label')).toBe('Ảnh cần chụp')

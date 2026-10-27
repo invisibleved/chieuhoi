@@ -5,6 +5,8 @@ type FactListProps = {
   items: { term: string; detail: ReactNode }[]
   /** stacked: nhãn viết hoa trên, chi tiết dưới. inline: hai cột, nhãn chữ thường màu phụ (PersonDetail). */
   layout?: 'stacked' | 'inline'
+  /** 2: từ md chia hai cột, hai hàng đầu viền đậm (bảng thông số hiện vật). */
+  columns?: 1 | 2
   className?: string
 }
 
@@ -14,15 +16,16 @@ const rows = {
 } as const
 
 // Danh sách "thuật ngữ — chi tiết" kẻ ngang: viền trên mục đầu đậm, các mục sau mảnh, viền dưới mục cuối.
-export function FactList({ items, layout = 'stacked', className }: FactListProps) {
+export function FactList({ items, layout = 'stacked', columns = 1, className }: FactListProps) {
+  const two = columns === 2
   return (
-    <dl className={['m-0 flex flex-col', className].filter(Boolean).join(' ')}>
+    <dl className={['m-0 flex flex-col', two && 'md:grid md:grid-cols-2 md:gap-x-8', className].filter(Boolean).join(' ')}>
       {items.map((it, i) => (
         <div
           key={`${i}-${it.term}`}
           className={`border-t ${rows[layout]} ${i === 0 ? 'border-border-strong' : 'border-border-soft'} ${
-            i === items.length - 1 ? 'border-b border-b-border-soft' : ''
-          }`}
+            two ? `md:py-4 ${i === 1 ? 'md:border-border-strong' : ''}` : ''
+          } ${i === items.length - 1 ? 'border-b border-b-border-soft' : ''}`}
         >
           {layout === 'inline' ? (
             <dt className="text-text-muted">{it.term}</dt>

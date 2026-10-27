@@ -3,6 +3,8 @@ import type { ComponentProps } from 'react'
 type PillButtonProps = {
   active: boolean
   tone?: 'light' | 'dark'
+  /** Chiếm đều chiều ngang, cao 48 (nhóm Segmented trên mobile). */
+  stretch?: boolean
 } & Omit<ComponentProps<'button'>, 'type' | 'className'>
 
 const tones = {
@@ -12,12 +14,14 @@ const tones = {
 
 // Nút chọn dạng viên trong dải cuộn (chọn công đoạn). snap-center để khớp với việc cuộn nút đang chọn vào giữa dải.
 // ref và aria-current truyền qua props như nút thường.
-export function PillButton({ active, tone = 'light', children, ...rest }: PillButtonProps) {
+export function PillButton({ active, tone = 'light', stretch = false, children, ...rest }: PillButtonProps) {
   return (
     <button
       type="button"
       {...rest}
-      className={`inline-flex min-h-11 shrink-0 snap-center cursor-pointer items-center px-4 text-[14px] whitespace-nowrap ${
+      className={`inline-flex cursor-pointer items-center text-[14px] whitespace-nowrap ${
+        stretch ? 'min-h-12 flex-1 justify-center px-2 font-medium' : 'min-h-11 shrink-0 snap-center px-4'
+      } ${
         active ? tones[tone].on : tones[tone].off
       }`}
     >

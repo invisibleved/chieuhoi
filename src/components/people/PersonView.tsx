@@ -80,6 +80,7 @@ export function PersonView({ page }: { page: PersonPageView }) {
               image={p.portrait}
               size="full"
               priority
+              notesPosition="top-right"
               sizes="(min-width: 768px) 55vw, 100vw"
               objectPosition="22% 50%"
               className="block h-[440px] md:h-[760px]"

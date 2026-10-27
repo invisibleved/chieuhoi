@@ -45,4 +45,22 @@ describe('feedback', () => {
     expect(root.getAttribute('aria-hidden')).toBe('true')
     expect(root.innerHTML).toContain('motion-safe:animate-weave-pulse')
   })
+
+  it('EmptyState tone=dark dùng viền border-on-dark', () => {
+    const { container } = render(<EmptyState title="t" tone="dark" />)
+    expect(container.firstElementChild?.className).toContain('border-border-on-dark-dashed')
+  })
+
+  it('SuccessState action là button, bấm gọi onClick, vẫn role=status', () => {
+    const onClick = vi.fn()
+    render(<SuccessState title="Cảm ơn bạn" body="y" action={{ label: 'Góp thêm một ký ức', onClick }} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Góp thêm một ký ức' }))
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('status')).toBeTruthy()
+  })
+
+  it('SuccessState headingLevel=h3 render tiêu đề h3', () => {
+    render(<SuccessState title="Cảm ơn bạn" body="y" headingLevel="h3" size="lg" />)
+    expect(screen.getByRole('heading', { level: 3, name: 'Cảm ơn bạn' })).toBeTruthy()
+  })
 })

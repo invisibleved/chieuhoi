@@ -21,6 +21,8 @@ type PageHeaderProps = {
   leadClassName?: string
   /** Cột chữ rộng 8 thay vì 7 (tiêu đề dài giữ một dòng). */
   wideIntro?: boolean
+  /** Dòng cuối của tiêu đề in nghiêng, màu nhấn (Kết nối). */
+  accentLastLine?: boolean
 }
 
 const asideSpans = {
@@ -39,6 +41,7 @@ export function PageHeader({
   titleClassName = 'text-[38px] md:text-[70px]',
   leadClassName,
   wideIntro = false,
+  accentLastLine = false,
 }: PageHeaderProps) {
   const lines = (intro.title ?? '').split('\n')
   return (
@@ -60,7 +63,11 @@ export function PageHeader({
           {lines.map((line, i) => (
             <span key={i}>
               {i > 0 ? <br /> : null}
-              {line}
+              {accentLastLine && i === lines.length - 1 && lines.length > 1 ? (
+                <em className="font-normal italic text-accent">{line}</em>
+              ) : (
+                line
+              )}
             </span>
           ))}
         </h1>

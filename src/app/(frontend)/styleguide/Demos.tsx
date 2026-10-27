@@ -9,6 +9,8 @@ import { ShareButtons } from '@/components/ui/ShareButtons'
 import { TableOfContents } from '@/components/ui/TableOfContents'
 import { SearchField } from '@/components/ui/SearchField'
 import { PagerButton } from '@/components/ui/PagerButton'
+import { Segmented } from '@/components/ui/Segmented'
+import { SuccessState } from '@/components/ui/Feedback'
 import { PillButton } from '@/components/ui/PillButton'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
 import { StepProgress } from '@/components/ui/StepProgress'
@@ -43,6 +45,47 @@ export function FilterDemos() {
         </div>
       </div>
     </>
+  )
+}
+
+type EraKey = 'all' | 'old' | 'now'
+const ERAS: { key: EraKey; label: string }[] = [
+  { key: 'all', label: 'Mọi thời kỳ' },
+  { key: 'old', label: 'Xưa' },
+  { key: 'now', label: 'Nay' },
+]
+
+export function SegmentedDemos() {
+  const [a, setA] = useState<EraKey>('all')
+  const [b, setB] = useState<EraKey>('old')
+  const [c, setC] = useState<EraKey>('now')
+  return (
+    <>
+      <div className="flex min-w-0 flex-col gap-3">
+        <Lab>NHÓM CHỌN MỘT · NỀN SÁNG</Lab>
+        <Segmented label="Thời kỳ (nền sáng)" options={ERAS} value={a} onChange={setA} />
+      </div>
+      <div className="flex min-w-0 flex-col gap-3">
+        <Lab>NHÓM CHỌN MỘT · NỀN TỐI</Lab>
+        <div className="bg-bg-deep p-4">
+          <Segmented label="Thời kỳ (nền tối)" options={ERAS} value={b} onChange={setB} tone="dark" />
+        </div>
+      </div>
+      <div className="flex min-w-0 flex-col gap-3">
+        <Lab>NHÓM CHỌN MỘT · STRETCH (mobile, cao 48)</Lab>
+        <Segmented label="Thời kỳ (stretch)" options={ERAS} value={c} onChange={setC} stretch />
+      </div>
+    </>
+  )
+}
+
+export function SuccessActionDemo() {
+  const [n, setN] = useState(0)
+  return (
+    <div className="flex flex-col gap-3">
+      <Lab>THÀNH CÔNG · LỚN, TIÊU ĐỀ h3, CÓ NÚT (size=lg)</Lab>
+      <SuccessState size="lg" headingLevel="h3" title="Cảm ơn bạn." body="Chúng tôi sẽ liên hệ để xác minh trước khi đăng. (Màn hình minh hoạ: chưa có dữ liệu nào thực sự được gửi.)" action={{ label: n ? `Góp thêm một ký ức (${n})` : 'Góp thêm một ký ức', onClick: () => setN(n + 1) }} />
+    </div>
   )
 }
 
