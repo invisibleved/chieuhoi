@@ -59,7 +59,7 @@ export function SourceList({
           const parts = [
             s.publisher,
             s.url ? (
-              <a key="t" href={s.url}>
+              <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2">
                 {s.title}
               </a>
             ) : (

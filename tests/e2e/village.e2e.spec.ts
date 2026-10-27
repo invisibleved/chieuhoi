@@ -1,8 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { mkdirSync } from 'node:fs'
-
-const SHOTS = process.env.SHOTS_DIR
+import { expectVisibleImagesLoaded, loginReviewer, scrollThrough, shootFullPage, SHOTS, smallTargets, VIEWPORTS } from './helpers'
 
 async function open(page: Page) {
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -28,6 +26,14 @@ for (const vp of [
       await open(page)
       await expect(page.locator('main h1')).toHaveCount(1)
       await axe(page)
+    })
+
+    test('danh sách nguồn có 3 liên kết https', async ({ page }) => {
+      await open(page)
+      const links = page.getByRole('region', { name: 'Nguồn tham khảo' }).getByRole('link')
+      await expect(links).toHaveCount(3)
+      const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''))
+      for (const h of hrefs) expect(h).toMatch(/^https:\/\//)
     })
 
     test('chú thích "Nguồn 1" dẫn tới mục nguồn 1', async ({ page }) => {
@@ -87,44 +93,23 @@ test.describe('làng Hới mobile 390', () => {
   test('không cuộn ngang, nút và link ≥ 44px', async ({ page }) => {
     await open(page)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
-    const small = await page.evaluate(() => {
-      const out: string[] = []
-      document.querySelectorAll('main a, main button').forEach((el) => {
-        if (el.matches('.fn, [id^="nguon-"] a') || (el.closest('p') && el.tagName === 'A' && !el.closest('[hidden]'))) return
-        const r = el.getBoundingClientRect()
-        if (r.width === 0 || r.height === 0) return
-        if (r.height < 44 - 0.5) out.push(`${el.tagName} "${(el.textContent ?? '').trim().slice(0, 30)}" h=${r.height}`)
-      })
-      return out
-    })
+    const small = await smallTargets(page)
     expect(small).toEqual([])
   })
 })
 
-for (const vp of [
-  { name: '1440', width: 1440, height: 900 },
-  { name: '390', width: 390, height: 844 },
-]) {
+for (const vp of VIEWPORTS) {
+  test(`ảnh trong main tải xong (đã đăng nhập) ${vp.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: vp.width, height: vp.height })
+    await loginReviewer(page)
+    await open(page)
+    await scrollThrough(page)
+    await expectVisibleImagesLoaded(page)
+  })
+
   test(`chụp toàn trang làng Hới ${vp.name}`, async ({ page }) => {
     test.skip(!SHOTS, 'đặt SHOTS_DIR để lưu ảnh chụp')
     test.setTimeout(120_000)
-    await page.setViewportSize({ width: vp.width, height: vp.height })
-    mkdirSync(SHOTS!, { recursive: true })
-    const email = process.env.SEED_REVIEWER_EMAIL
-    const password = process.env.SEED_REVIEWER_PASSWORD
-    if (email && password) {
-      const res = await page.request.post('/api/users/login', { data: { email, password } })
-      expect(res.ok()).toBeTruthy()
-    }
-    await open(page)
-    await page.evaluate(async () => {
-      for (let y = 0; y < document.body.scrollHeight; y += 300) {
-        window.scrollTo(0, y)
-        await new Promise((r) => setTimeout(r, 200))
-      }
-      window.scrollTo(0, 0)
-    })
-    await page.waitForLoadState('networkidle')
-    await page.screenshot({ path: `${SHOTS}/village-${vp.name}.png`, fullPage: true })
+    await shootFullPage(page, open, 'village', vp)
   })
 }
