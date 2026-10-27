@@ -104,7 +104,7 @@ export function PeopleView({ page }: { page: PeoplePageView }) {
         tone="secondary"
         title={invite.title ?? ''}
         body={invite.body ?? ''}
-        action={{ href: invite.action.href ?? '', label: invite.action.label ?? '' }}
+        action={{ href: invite.action.href ?? undefined, label: invite.action.label ?? '' }}
       />
     </>
   )

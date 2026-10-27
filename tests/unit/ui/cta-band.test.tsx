@@ -30,4 +30,15 @@ describe('CtaBand', () => {
     expect(screen.getByText(props.body).className).toContain('text-text-on-dark-muted')
     expect(screen.getByRole('link').className).toContain('border-text-on-dark')
   })
+  it('không có href: không render link, nút không điều hướng', () => {
+    render(<CtaBand {...props} action={{ label: 'Giới thiệu một người' }} tone="secondary" />)
+    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Giới thiệu một người' })).toBeTruthy()
+  })
+  it('nút inverse 52/28 qua size, không có lớp min-h xung đột', () => {
+    render(<CtaBand {...props} tone="inverse" />)
+    const cls = screen.getByRole('link').className
+    expect(cls).toContain('min-h-[52px]')
+    expect(cls).not.toContain('min-h-12')
+  })
 })

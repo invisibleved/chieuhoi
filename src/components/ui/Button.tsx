@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'outline-dark'
   href?: string
+  /** Chỉ cho outline-dark: md 48/22 (màn hình thành công), lg 52/28 (khối kêu gọi). Nút chính luôn 52/28. */
+  size?: 'md' | 'lg'
   icon?: 'play'
   iconSize?: number
   disabled?: boolean
@@ -22,8 +24,10 @@ const variants = {
     'min-h-[52px] px-7 bg-accent text-on-accent text-[15px] font-medium hover:bg-accent-hover active:bg-accent-press disabled:bg-[#D9CDB8] disabled:text-[#3E3B35] disabled:cursor-not-allowed',
   secondary: 'min-h-11 gap-3 text-[15px] font-medium text-text-primary',
   'outline-dark':
-    'min-h-12 px-[22px] border border-text-on-dark text-text-on-dark text-[15px] hover:bg-text-on-dark/10',
+    'border border-text-on-dark text-text-on-dark text-[15px] hover:bg-text-on-dark/10',
 } as const
+
+const outlineSizes = { md: 'min-h-12 px-[22px]', lg: 'min-h-[52px] px-7 font-medium' } as const
 
 // Biểu tượng phát: vòng tròn 36px + tam giác, nét 1.2 (nguyên từ artboard).
 function PlayIcon({ size }: { size: number }) {
@@ -37,6 +41,7 @@ function PlayIcon({ size }: { size: number }) {
 
 export function Button({
   variant = 'primary',
+  size = 'md',
   href,
   icon,
   iconSize = 36,
@@ -46,7 +51,7 @@ export function Button({
   className,
   children,
 }: ButtonProps) {
-  const cls = [base, variants[variant], className].filter(Boolean).join(' ')
+  const cls = [base, variants[variant], variant === 'outline-dark' && outlineSizes[size], className].filter(Boolean).join(' ')
   const content = (
     <>
       {icon === 'play' ? <PlayIcon size={iconSize} /> : null}

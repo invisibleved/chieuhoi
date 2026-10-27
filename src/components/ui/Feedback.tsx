@@ -129,7 +129,7 @@ export function SuccessState({
         {lg ? null : check}
         {title}
       </Title>
-      <span className={`block leading-[1.6] text-text-on-dark-muted ${lg ? 'text-[17px] leading-[1.7]' : 'text-[14px]'}`}>{body}</span>
+      <span className={`block text-text-on-dark-muted ${lg ? 'text-[17px] leading-[1.7]' : 'text-[14px] leading-[1.6]'}`}>{body}</span>
       {action ? (
         <Button variant="outline-dark" onClick={action.onClick} className="self-start">
           {action.label}

@@ -3,7 +3,8 @@ import { Button } from './Button'
 type CtaBandProps = {
   title: string
   body: string
-  action: { href: string; label: string }
+  /** Không có href thì nút không điều hướng (như trước khi dùng chung). */
+  action: { href?: string; label: string }
   tone: 'inverse' | 'secondary' | 'primary'
   className?: string
 }
@@ -24,7 +25,7 @@ export function CtaBand({ title, body, action, tone, className }: CtaBandProps) 
         <p className={`m-0 text-[17px] leading-[1.7] ${t.body}`}>{body}</p>
       </div>
       <div className="col-span-4 col-start-9 flex justify-end">
-        <Button href={action.href} variant={t.button} className={t.button === 'outline-dark' ? 'min-h-[52px] px-7 font-medium' : undefined}>
+        <Button href={action.href} variant={t.button} size="lg">
           {action.label}
         </Button>
       </div>
