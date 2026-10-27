@@ -11,15 +11,16 @@ const img: ImageView = {
 }
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: img,
-  typeConfirmed: false, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null,
+  typeConfirmed: false, tag: null, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null,
+  context: null, pattern: null, typeNote: null, imageCaptions: [], sources: [],
   annotations: [
-    { n: 1, title: 'Viền chiếu', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null },
-    { n: 2, title: 'Hoa văn in', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026' },
-    { n: 3, title: 'Mặt cói dệt', x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null },
+    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null, sourceN: null, sourceLine: null },
+    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: null },
+    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null, sourceN: null, sourceLine: null },
   ],
 }
 const card = (i: number, over: Partial<ProductCardView> = {}): ProductCardView => ({
-  slug: `sp-${i}`, code: null, name: `Sản phẩm ${i}`, group: null, groupLabel: null, summary: `Tóm tắt ${i}`, image: null, typeConfirmed: false, flags: [], ...over,
+  slug: `sp-${i}`, code: null, name: `Sản phẩm ${i}`, group: null, groupLabel: null, summary: `Tóm tắt ${i}`, image: null, typeConfirmed: false, tag: null, flags: [], ...over,
 })
 const six = [1, 2, 3, 4, 5, 6].map((i) => card(i))
 
@@ -49,12 +50,18 @@ describe('PatternTeaser', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Chi tiết 2: hoa văn in' }))
     expect(screen.getByRole('link', { name: 'Nguồn 1' }).getAttribute('href')).toBe('/san-pham/chieu-cap-dieu#nguon-1')
   })
+  it('số chú thích nguồn lấy từ sourceN của lib, không tự đánh số', () => {
+    const annotations = product.annotations.map((a) => (a.n === 2 ? { ...a, sourceN: 3 } : a))
+    render(<PatternTeaser product={{ ...product, annotations }} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Chi tiết 2: hoa văn in' }))
+    expect(screen.getByRole('link', { name: 'Nguồn 3' }).getAttribute('href')).toBe('/san-pham/chieu-cap-dieu#nguon-3')
+  })
   it('vùng chú thích là aria-live polite', () => {
     const { container } = render(<PatternTeaser product={product} />)
     expect(container.querySelector('[aria-live="polite"]')).not.toBeNull()
   })
   it('mở mặc định là annotations[0] dù n khác 1; title null không vỡ', () => {
-    const p = { ...product, annotations: [{ n: 2, title: null, x: 10, y: 10, body: 'Nội dung hai', sourceId: null }] }
+    const p = { ...product, annotations: [{ n: 2, title: null, shortTitle: null, x: 10, y: 10, body: 'Nội dung hai', sourceId: null, sourceN: null, sourceLine: null }] }
     render(<PatternTeaser product={p} />)
     const b = screen.getByRole('button', { name: 'Chi tiết 2' })
     expect(b.getAttribute('aria-pressed')).toBe('true')

@@ -317,19 +317,29 @@ export interface Product {
   name?: string | null;
   group?: ('traditional' | 'contemporary') | null;
   summary?: string | null;
+  context?: string | null;
   images?: (number | ArchiveAsset)[] | null;
   material?: string | null;
   technique?: string | null;
+  pattern?: string | null;
   size?: string | null;
   care?: string | null;
   annotations?:
     | {
         n?: number | null;
         title?: string | null;
+        /**
+         * Nhãn nút trên mobile. Trống thì dùng tiêu đề.
+         */
+        shortTitle?: string | null;
         x?: number | null;
         y?: number | null;
         body?: string | null;
         source?: (number | null) | Source;
+        /**
+         * Ví dụ: Quan sát từ ảnh · chưa xác minh. Trống thì lấy từ nguồn đã chọn.
+         */
+        sourceNote?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -716,9 +726,11 @@ export interface ProductsSelect<T extends boolean = true> {
   name?: T;
   group?: T;
   summary?: T;
+  context?: T;
   images?: T;
   material?: T;
   technique?: T;
+  pattern?: T;
   size?: T;
   care?: T;
   annotations?:
@@ -726,10 +738,12 @@ export interface ProductsSelect<T extends boolean = true> {
     | {
         n?: T;
         title?: T;
+        shortTitle?: T;
         x?: T;
         y?: T;
         body?: T;
         source?: T;
+        sourceNote?: T;
         id?: T;
       };
   typeConfirmed?: T;
@@ -965,6 +979,14 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot: 'next-pattern';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'thu-vien'?: {
     eyebrow?: string | null;
@@ -1087,6 +1109,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'thu-vien'?:
     | T

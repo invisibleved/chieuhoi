@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import type { ProductCardView } from '@/lib/content'
 import { ContentImage } from './ContentImage'
-import { productTag } from './labels'
 import { ShotNeeded } from './ShotNeeded'
 import { PreviewNotes } from './PreviewNotes'
 import { Tag } from './Tag'
@@ -10,7 +9,7 @@ type ProductCardProps = { product: ProductCardView; href: string }
 
 // Thẻ sản phẩm. Chưa có ảnh: khung "ẢNH CẦN CHỤP" giữ nguyên chiều cao.
 export function ProductCard({ product, href }: ProductCardProps) {
-  const tag = productTag(product)
+  const { tag } = product
   return (
     <Link href={href} className="group flex flex-col gap-3 text-text-primary no-underline">
       {product.image ? (

@@ -4,6 +4,7 @@ export const PAGE_MEDIA_SLOTS = {
   'lang-hoi': ['hero', 'life-1', 'life-2', 'life-3'],
   'cau-chuyen': ['next-village', 'next-craft'],
   'con-nguoi': ['related-people'],
+  'san-pham': ['next-pattern'],
 } as const
 
 export type PageMediaRoute = keyof typeof PAGE_MEDIA_SLOTS
@@ -26,6 +27,7 @@ export const PAGE_MEDIA_SLOT_LABELS: Record<string, string> = {
   'next-village': 'Tiếp theo: Làng Hới',
   'next-craft': 'Tiếp theo: Nghề dệt chiếu',
   'related-people': 'Liên quan: Con người',
+  'next-pattern': 'Tiếp theo: Công đoạn tạo hoa văn',
 }
 
 export const isPageMediaRoute = (key: string): key is PageMediaRoute => key in PAGE_MEDIA_SLOTS

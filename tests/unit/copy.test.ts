@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { craftCopy } from '@/lib/content/copy/craft'
+import { productsCopy } from '@/lib/content/copy/products'
 import { storiesCopy } from '@/lib/content/copy/stories'
 import { villageCopy } from '@/lib/content/copy/village'
 
@@ -54,5 +55,13 @@ describe('applyMode', () => {
     expect(pub.detail.draftTag).toBe('Bản nháp — cần thẩm định')
     expect(pub.filter.label).toEqual({ desktop: 'Lọc theo chủ đề', mobile: 'Lọc' })
     expect(applyMode(storiesCopy, 'preview')).toEqual(storiesCopy)
+  })
+})
+
+describe('applyMode: copy sản phẩm', () => {
+  it('public: chỉ dẫn biên tập (preview) thành null, preview giữ nguyên', () => {
+    expect(applyMode(productsCopy, 'public').detail.preview).toBeNull()
+    expect(applyMode(productsCopy, 'preview').detail.preview?.placeholders.size).toBe('[chỉ ghi khi đã đo]')
+    expect(JSON.stringify(applyMode(productsCopy, 'public'))).not.toContain('cần xác minh')
   })
 })

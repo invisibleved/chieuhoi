@@ -1,17 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { previewNotes, productTag } from '@/components/content/labels'
+import { previewNotes } from '@/components/content/labels'
 import { ArchiveChip, DocumentLabel, DocumentLine } from '@/components/content/DocumentLabel'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
 import { Tag } from '@/components/content/Tag'
 import { VerifyNote } from '@/components/content/VerifyNote'
 
 describe('labels', () => {
-  it('productTag', () => {
-    expect(productTag({ image: null, typeConfirmed: false })).toEqual({ text: 'Chưa có ảnh', style: 'dashed' })
-    expect(productTag({ image: {}, typeConfirmed: false })).toEqual({ text: 'Ảnh cần xác nhận loại', style: 'filled' })
-    expect(productTag({ image: {}, typeConfirmed: true })).toBeNull()
-  })
   it('previewNotes', () => {
     expect(previewNotes(['rights-not-permitted', 'unverified', 'unpublished'])).toEqual([
       'Ảnh chưa được phép đăng',

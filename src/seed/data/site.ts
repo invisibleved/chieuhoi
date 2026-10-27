@@ -22,7 +22,7 @@ export const homeMedia = {
 type Slot = { slot: string; file: string; caption?: string }
 
 /** Ảnh theo ô của các trang Nghề dệt chiếu, Làng Hới, Câu chuyện và Con người. File và chú thích nguyên văn từ artboard. */
-export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'con-nguoi', Slot[]> = {
+export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'con-nguoi' | 'san-pham', Slot[]> = {
   'nghe-det-chieu': [
     { slot: 'hero', file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]' },
     { slot: 'tool-1', file: 'nkc13.webp' },
@@ -47,6 +47,8 @@ export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'c
   ],
   // Thẻ cố định "Những chân dung khác" ở mục Liên quan của trang chân dung (PersonDetail.dc.html).
   'con-nguoi': [{ slot: 'related-people', file: 'kn2.webp' }],
+  // Thẻ cố định "CÁCH LÀM · Công đoạn tạo hoa văn" ở cuối trang hiện vật (R8).
+  'san-pham': [{ slot: 'next-pattern', file: 'kn13.webp' }],
 }
 
 type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }

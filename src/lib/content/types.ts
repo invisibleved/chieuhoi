@@ -2,6 +2,7 @@ import type { ArchiveAsset } from '@/payload-types'
 
 import type { CraftCopyView } from './copy/craft'
 import type { PeopleCopyView } from './copy/people'
+import type { ProductsCopyView } from './copy/products'
 import type { StoriesCopyView } from './copy/stories'
 import type { VillageCopyView } from './copy/village'
 
@@ -84,6 +85,8 @@ export interface ProductCardView {
   summary: string | null
   image: ImageView | null
   typeConfirmed: boolean
+  /** Nhãn trên thẻ: chưa có ảnh, hoặc có ảnh mà chưa xác nhận loại (R1). */
+  tag: { text: string; style: 'filled' | 'dashed' } | null
   flags: Flag[]
 }
 
@@ -97,8 +100,46 @@ export interface ProductView extends ProductCardView {
   technique: string | null
   size: string | null
   care: string | null
-  annotations: { n: number; title: string | null; x: number; y: number; body: string; sourceId: string | null }[]
-  maker: { name: string | null; verified: boolean } | null
+  context: string | null
+  pattern: string | null
+  /** Câu riêng của trang chi tiết: có ảnh mà chưa xác nhận loại (R1). */
+  typeNote: string | null
+  /** Song song `images` (R6). */
+  imageCaptions: string[]
+  annotations: {
+    n: number
+    title: string | null
+    /** Nhãn nút trên mobile; trống thì dùng `title` (R3). */
+    shortTitle: string | null
+    x: number
+    y: number
+    body: string
+    sourceId: string | null
+    /** Số thứ tự trong `sources` (R2); null khi không có nguồn nhìn thấy được. */
+    sourceN: number | null
+    sourceLine: string | null
+  }[]
+  /** Nguồn theo lần xuất hiện đầu trong các chú thích còn hiện (R2); date dạng dd/mm/yyyy. */
+  sources: SourceView[]
+  /** `contact` chỉ có khi cơ sở đã đăng, được xác minh và đồng ý công khai (R5). */
+  maker: { name: string | null; verified: boolean; contact: string | null } | null
+}
+
+export interface ProductsPageView {
+  intro: PageIntroView
+  products: ProductCardView[]
+  /** Chip "Tất cả" (key all) rồi các nhóm theo thứ tự option. */
+  filters: { key: string; label: string }[]
+  /** URL nguồn Vietnam+ của khung "VỀ DANH MỤC"; null khi nguồn bị ẩn hoặc URL không phải http(s) (R9). */
+  catalogSourceUrl: string | null
+  copy: ProductsCopyView
+}
+
+export interface ProductPageView {
+  product: ProductView
+  /** Hai hiện vật kế tiếp rồi thẻ cố định (mobile: false) (R8). */
+  others: ReadNextItem[]
+  copy: ProductsCopyView
 }
 
 /**

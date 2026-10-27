@@ -9,6 +9,7 @@ import { fillTemplate } from '@/lib/template'
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { applyMode } from './copy/applyMode'
 import { peopleCopy } from './copy/people'
+import { productsCopy } from './copy/products'
 import { storiesCopy } from './copy/stories'
 import { nonEmptyRich, sanitizeRich, splitStoryParts } from './rich'
 import type {
@@ -146,17 +147,31 @@ export function createContent(payload: Payload) {
     }))
   }
 
-  const productCard = (d: Product, mode: Mode): ProductCardView => ({
-    slug: d.slug,
-    code: showText(d.code, mode),
-    name: showText(d.name, mode),
-    group: d.group ?? null,
-    groupLabel: productGroupLabel(d.group),
-    summary: showText(d.summary, mode),
-    image: toImageView(Array.isArray(d.images) ? d.images.find((i) => toImageView(i, mode)) : null, mode),
-    typeConfirmed: !!d.typeConfirmed,
-    flags: flagsOf(d, mode, [d.name, d.summary]),
-  })
+  const imageOf = (d: Product, mode: Mode) =>
+    toImageView(Array.isArray(d.images) ? d.images.find((i) => toImageView(i, mode)) : null, mode)
+
+  /** Nhãn thẻ (R1): chưa có ảnh, hoặc có ảnh mà chưa xác nhận loại. */
+  const productTag = (image: ImageView | null, typeConfirmed: boolean): ProductCardView['tag'] => {
+    if (!image) return { text: productsCopy.tag.noImage, style: 'dashed' }
+    if (!typeConfirmed) return { text: productsCopy.tag.unconfirmed, style: 'filled' }
+    return null
+  }
+
+  const productCard = (d: Product, mode: Mode): ProductCardView => {
+    const image = imageOf(d, mode)
+    return {
+      slug: d.slug,
+      code: showText(d.code, mode),
+      name: showText(d.name, mode),
+      group: d.group ?? null,
+      groupLabel: productGroupLabel(d.group),
+      summary: showText(d.summary, mode),
+      image,
+      typeConfirmed: !!d.typeConfirmed,
+      tag: productTag(image, !!d.typeConfirmed),
+      flags: flagsOf(d, mode, [d.name, d.summary]),
+    }
+  }
 
   async function getProducts(mode: Mode): Promise<ProductCardView[]> {
     const docs = (await findAll('products', mode, { sort: 'createdAt' })) as Product[]
@@ -171,29 +186,66 @@ export function createContent(payload: Payload) {
     const makerOk = m && (mode === 'preview' || (m.publicConsent && m._status === 'published'))
     const flags = [...card.flags]
     if (m && mode === 'preview' && !m.publicConsent) flags.push('consent-pending')
+    const filled = (v: string | null | undefined) => (v && v.trim() !== '' ? showText(v, mode) : null)
+
+    // R2: chỉ tính chú thích còn hiện và nguồn nhìn thấy được; nguồn đánh số theo lần xuất hiện đầu.
+    const sources: SourceView[] = []
     const annotations: ProductView['annotations'] = []
     for (const a of d.annotations ?? []) {
       const body = showText(a.body, mode)
       if (body === null) continue
+      const rel = sourceOf(a.source)
+      const view = rel ? toSourceView(rel, mode) : null
+      let sourceN: number | null = null
+      if (view) {
+        let i = sources.findIndex((s) => s.id === view.id)
+        if (i < 0) i = sources.push({ ...view, date: formatDate(view.date) }) - 1
+        sourceN = i + 1
+      }
+      // R3: dòng nguồn tự ghi; trống thì ghép từ nguồn. Nguồn đã chọn mà bị ẩn thì không để lại dòng nguồn ở public.
+      const note = filled(a.sourceNote)
+      const hiddenSource = mode === 'public' && rel !== null && view === null
+      const title = showText(a.title, mode)
       annotations.push({
-        n: a.n ?? annotations.length + 1, title: showText(a.title, mode), x: a.x ?? 0, y: a.y ?? 0,
-        body, sourceId: sourceOf(a.source)?.sourceId ?? null,
+        n: a.n ?? annotations.length + 1, title, shortTitle: filled(a.shortTitle) ?? title,
+        x: a.x ?? 0, y: a.y ?? 0, body, sourceId: view?.id ?? null, sourceN,
+        sourceLine: hiddenSource ? null : (note ?? (view ? sourceLine([view]) : null)),
       })
     }
+    const images = (Array.isArray(d.images) ? d.images : [])
+      .map((i) => toImageView(i, mode)).filter((i) => i !== null)
     const primaryImage = toImageView(Array.isArray(d.images) ? d.images[0] : null, mode)
+    // R6: "Ảnh i/n · Ảnh: …"; ảnh 1 chưa xác nhận loại thì ghi rõ tên loại (chữ thường).
+    const cap = productsCopy.detail.caption
+    const kind = !d.typeConfirmed && card.name && !isUnverified(card.name) ? card.name.toLocaleLowerCase('vi') : null
+    const imageCaptions = images.map((im, i) =>
+      fillTemplate(cap.position, { i: i + 1, n: images.length })
+      + (im.photographer ? fillTemplate(cap.photographer, { name: im.photographer }) : '')
+      + (i === 0 && kind ? fillTemplate(cap.unconfirmed, { name: kind }) : ''))
+    // R5: liên hệ chỉ khi cơ sở đã đăng, được xác minh và đồng ý công khai (preview: thấy hết, trống thì có dấu).
+    const contactOk = m && (mode === 'preview' || (m.publicConsent && m.verified && m._status === 'published'))
     return {
       ...card,
       flags,
       primaryImage,
       hasPattern: primaryImage !== null && annotations.length > 0,
-      images: (Array.isArray(d.images) ? d.images : [])
-        .map((i) => toImageView(i, mode)).filter((i) => i !== null),
+      images,
       material: showText(d.material, mode),
       technique: showText(d.technique, mode),
       size: showText(d.size, mode),
       care: showText(d.care, mode),
+      context: showText(d.context, mode),
+      pattern: showText(d.pattern, mode),
+      typeNote: images.length > 0 && !d.typeConfirmed ? productsCopy.detail.typeNote : null,
+      imageCaptions,
       annotations,
-      maker: makerOk ? { name: showText(m.name, mode), verified: !!m.verified } : null,
+      sources,
+      maker: makerOk
+        ? {
+            name: showText(m.name, mode), verified: !!m.verified,
+            contact: contactOk ? showText(m.contact, mode) : null,
+          }
+        : null,
     }
   }
 

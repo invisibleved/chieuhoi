@@ -11,6 +11,10 @@
       "/images/reference/nkc15.webp"
     ],
     "typeConfirmed": false,
+    "context": "Chiếu cạp điều có trong danh sách các loại chiếu làng làm theo Vietnam+. Vai trò của loại chiếu này trong đời sống (cưới hỏi, lễ Tết, dùng hằng ngày) cần được người làng kể lại.",
+    "material": "Cói, viền vải [cần xác minh]",
+    "technique": "Dệt tay hoặc dệt máy: [cần xác minh]",
+    "pattern": "In bằng khuôn [cần xác minh cho tấm này]",
     "annotations": [
       {
         "n": 1,
@@ -18,7 +22,9 @@
         "x": 30,
         "y": 72,
         "body": "Phần viền màu đỏ chạy dọc mép chiếu. Cách may và tên gọi: [cần xác minh].",
-        "source": null
+        "source": null,
+        "shortTitle": "Viền",
+        "sourceNote": "Quan sát từ ảnh · chưa xác minh"
       },
       {
         "n": 2,
@@ -26,7 +32,9 @@
         "x": 52,
         "y": 60,
         "body": "Hoạ tiết trên tấm này chưa được xác định. Không suy diễn ý nghĩa.",
-        "source": "vietnamplus-2026"
+        "source": "vietnamplus-2026",
+        "shortTitle": "Hoa văn",
+        "sourceNote": "Vietnam+ (14/08/2026) · danh sách hoạ tiết chung, không riêng tấm này"
       },
       {
         "n": 3,
@@ -34,7 +42,9 @@
         "x": 70,
         "y": 82,
         "body": "Kiểu dệt và mật độ sợi: [cần xác minh].",
-        "source": null
+        "source": null,
+        "shortTitle": "Mặt cói",
+        "sourceNote": "Quan sát từ ảnh · chưa xác minh"
       }
     ]
   },

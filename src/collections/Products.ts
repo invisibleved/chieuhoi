@@ -32,9 +32,11 @@ export const Products: CollectionConfig = {
       options: PRODUCT_GROUP_OPTIONS,
     },
     { name: 'summary', type: 'textarea', label: 'Tóm tắt', localized: true },
+    { name: 'context', type: 'textarea', label: 'Bối cảnh', localized: true },
     { name: 'images', type: 'relationship', relationTo: 'archive-assets', hasMany: true, label: 'Ảnh' },
     { name: 'material', type: 'text', label: 'Chất liệu', localized: true },
     { name: 'technique', type: 'text', label: 'Kỹ thuật', localized: true },
+    { name: 'pattern', type: 'text', label: 'Hoa văn', localized: true },
     { name: 'size', type: 'text', label: 'Kích thước', localized: true },
     { name: 'care', type: 'textarea', label: 'Bảo quản', localized: true },
     {
@@ -44,10 +46,18 @@ export const Products: CollectionConfig = {
       fields: [
         { name: 'n', type: 'number', label: 'Số' },
         { name: 'title', type: 'text', label: 'Tiêu đề', localized: true },
+        {
+          name: 'shortTitle', type: 'text', label: 'Tiêu đề ngắn', localized: true,
+          admin: { description: 'Nhãn nút trên mobile. Trống thì dùng tiêu đề.' },
+        },
         { name: 'x', type: 'number', label: 'X (%)', min: 0, max: 100 },
         { name: 'y', type: 'number', label: 'Y (%)', min: 0, max: 100 },
         { name: 'body', type: 'textarea', label: 'Nội dung', localized: true },
         { name: 'source', type: 'relationship', relationTo: 'sources', label: 'Nguồn' },
+        {
+          name: 'sourceNote', type: 'text', label: 'Dòng nguồn', localized: true,
+          admin: { description: 'Ví dụ: Quan sát từ ảnh · chưa xác minh. Trống thì lấy từ nguồn đã chọn.' },
+        },
       ],
     },
     {

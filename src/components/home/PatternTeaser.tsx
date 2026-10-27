@@ -12,9 +12,6 @@ export function PatternTeaser({ product }: { product: ProductView }) {
   const open = annotations.find((a) => a.n === openN) ?? annotations[0]
   if (!open || !product.hasPattern || !primaryImage) return null
 
-  // Số nguồn theo thứ tự xuất hiện của các sourceId khác nhau; trang hiện vật (Phase 5) phải đánh số giống vậy.
-  const sourceIds = [...new Set(annotations.map((a) => a.sourceId).filter((id): id is string => id !== null))]
-  const sourceN = open.sourceId ? sourceIds.indexOf(open.sourceId) + 1 : 0
   const label = (n: number, title: string | null) => (title ? `${n} · ${title}` : `${n}`)
 
   return (
@@ -53,7 +50,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
           <p className="m-0 font-display text-[24px] leading-[1.2] md:text-[30px]">{label(open.n, open.title)}</p>
           <p className="m-0 text-[15px] leading-[1.6] text-text-secondary md:text-[16px] md:leading-[1.65]">
             {open.body}
-            {sourceN > 0 ? <FootnoteRef n={sourceN} href={`/san-pham/${slug}#nguon-${sourceN}`} /> : null}
+            {open.sourceN !== null ? <FootnoteRef n={open.sourceN} href={`/san-pham/${slug}#nguon-${open.sourceN}`} /> : null}
           </p>
         </div>
         {annotations

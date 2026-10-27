@@ -69,7 +69,7 @@ describe('StoryCard: hero và thẻ không link', () => {
   })
 })
 
-const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, flags: [] }
+const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, tag: { text: 'Chưa có ảnh', style: 'dashed' }, flags: [] }
 
 describe('ProductCard', () => {
   it('không ảnh: khung ẢNH CẦN CHỤP + nhãn Chưa có ảnh', () => {
@@ -77,6 +77,10 @@ describe('ProductCard', () => {
     expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()
     expect(screen.getByText('Chưa có ảnh')).toBeTruthy()
     expect(screen.getByRole('link').getAttribute('href')).toBe('/san-pham/chieu-tron')
+  })
+  it('tag null thì không có nhãn', () => {
+    render(<ProductCard product={{ ...product, tag: null }} href="/san-pham/chieu-tron" />)
+    expect(screen.queryByText('Chưa có ảnh')).toBeNull()
   })
 })
 

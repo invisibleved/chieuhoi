@@ -194,7 +194,11 @@ export async function seed(payload: Payload): Promise<void> {
   type ProductJson = {
     slug: string; code: string; name: string; group: string; images: string[]; typeConfirmed: boolean
     status?: Status
-    annotations?: { n: number; title: string; x: number; y: number; body: string; source: string | null }[]
+    context?: string; material?: string; technique?: string; pattern?: string
+    annotations?: {
+      n: number; title: string; shortTitle?: string; x: number; y: number; body: string; source: string | null
+      sourceNote?: string
+    }[]
   }
   for (const p of readJson<ProductJson[]>('content/seed/products.json')) {
     await upsert(
@@ -203,8 +207,10 @@ export async function seed(payload: Payload): Promise<void> {
         slug: p.slug, code: p.code, name: p.name, group: p.group, summary: productSummary[p.slug],
         images: p.images.map((i) => asset(i)),
         typeConfirmed: p.typeConfirmed,
+        context: p.context, material: p.material, technique: p.technique, pattern: p.pattern,
         annotations: (p.annotations ?? []).map((a) => ({
-          n: a.n, title: a.title, x: a.x, y: a.y, body: a.body, source: a.source ? sourceIds[a.source] : null,
+          n: a.n, title: a.title, shortTitle: a.shortTitle, x: a.x, y: a.y, body: a.body,
+          source: a.source ? sourceIds[a.source] : null, sourceNote: a.sourceNote,
         })),
         workflow: 'published',
       },
@@ -287,6 +293,7 @@ export async function seed(payload: Payload): Promise<void> {
       'lang-hoi': { ...pageIntros['lang-hoi'], ...mediaFor('lang-hoi') },
       'cau-chuyen': { ...pageIntros['cau-chuyen'], ...mediaFor('cau-chuyen') },
       'con-nguoi': { ...pageIntros['con-nguoi'], ...mediaFor('con-nguoi') },
+      'san-pham': { ...pageIntros['san-pham'], ...mediaFor('san-pham') },
     } as object],
   ]
   for (const [slug, data] of globals) {

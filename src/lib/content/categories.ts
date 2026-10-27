@@ -38,3 +38,9 @@ export const storyCategoryOptions: { key: string; label: string }[] = STORY_CATE
   key: o.value,
   label: o.label,
 }))
+
+/** Nhóm hiện vật theo thứ tự option, cho bộ lọc (không gồm chip "Tất cả"). */
+export const productGroupOptions: { key: string; label: string }[] = PRODUCT_GROUP_OPTIONS.map((o) => ({
+  key: o.value,
+  label: o.label,
+}))

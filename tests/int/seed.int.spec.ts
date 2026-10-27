@@ -140,4 +140,22 @@ describe('seed', () => {
     expect(res.docs[0]?.body).toBe('Dân làng tôn ông làm Phúc thần và gọi là "Trạng Chiếu".')
     expect(res.docs[0]?.confidence).toBe('press')
   })
+
+  it('Sản phẩm: ô ảnh san-pham, bối cảnh/hoa văn/chú thích của chieu-cap-dieu', async () => {
+    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
+      'san-pham': { media: { slot: string; image: number | null }[] }
+    }
+    expect(g['san-pham'].media).toHaveLength(1)
+    expect(g['san-pham'].media[0]).toMatchObject({ slot: 'next-pattern' })
+    expect(g['san-pham'].media[0].image).toBeTruthy()
+    const [p] = (await payload.find({
+      collection: 'products', where: { slug: { equals: 'chieu-cap-dieu' } }, depth: 0, draft: true, overrideAccess: true,
+    })).docs
+    expect(p.context).toMatch(/^Chiếu cạp điều có trong danh sách/)
+    expect(p.pattern).toBe('In bằng khuôn [cần xác minh cho tấm này]')
+    expect(p.size).toBeFalsy()
+    expect(p.care).toBeFalsy()
+    expect(p.maker).toBeFalsy()
+    expect(p.annotations?.map((a) => a.shortTitle)).toEqual(['Viền', 'Hoa văn', 'Mặt cói'])
+  })
 })

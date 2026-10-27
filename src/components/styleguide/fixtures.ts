@@ -90,6 +90,7 @@ export const productNoImage: ProductCardView = {
   summary: null,
   image: null,
   typeConfirmed: false,
+  tag: { text: 'Chưa có ảnh', style: 'dashed' },
   flags: [],
 }
 
@@ -99,6 +100,7 @@ export const productWithImage: ProductCardView = {
   name: 'Chiếu cạp điều',
   image: imgStory,
   typeConfirmed: false,
+  tag: { text: 'Ảnh cần xác nhận loại', style: 'filled' },
 }
 
 // Hai nguồn thật trích từ content/seed/sources.json.

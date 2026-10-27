@@ -4,13 +4,14 @@ import { cache } from 'react'
 
 import { createPages } from './pages'
 import { createPeople } from './people'
+import { createProducts } from './products'
 import { createContent } from './queries'
 import { createStories } from './stories'
 
-export { createContent, createPages, createPeople, createStories }
+export { createContent, createPages, createPeople, createProducts, createStories }
 export * from './types'
 export { getMode } from './mode'
-export { archiveCategoryOptions } from './categories'
+export { archiveCategoryOptions, productGroupOptions } from './categories'
 export { homeCopy, type HomeCopyView } from './copy/home'
 
 const bound = async () => createContent(await getPayload({ config }))
@@ -25,6 +26,10 @@ const boundPeople = async () => {
 const boundStories = async () => {
   const payload = await getPayload({ config })
   return createStories(payload, createContent(payload))
+}
+const boundProducts = async () => {
+  const payload = await getPayload({ config })
+  return createProducts(payload, createContent(payload))
 }
 
 export const getSources = async (...a: Parameters<ReturnType<typeof createContent>['getSources']>) => (await bound()).getSources(...a)
@@ -53,3 +58,7 @@ export const getStorySlugs = async () => (await boundStories()).getStorySlugs()
 export const getPeoplePage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPeoplePage']>) => (await boundPeople()).getPeoplePage(...a))
 export const getPersonPage = cache(async (...a: Parameters<ReturnType<typeof createPeople>['getPersonPage']>) => (await boundPeople()).getPersonPage(...a))
 export const getPersonSlugs = async () => (await boundPeople()).getPersonSlugs()
+
+export const getProductsPage = cache(async (...a: Parameters<ReturnType<typeof createProducts>['getProductsPage']>) => (await boundProducts()).getProductsPage(...a))
+export const getProductPage = cache(async (...a: Parameters<ReturnType<typeof createProducts>['getProductPage']>) => (await boundProducts()).getProductPage(...a))
+export const getProductSlugs = async () => (await boundProducts()).getProductSlugs()
