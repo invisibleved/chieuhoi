@@ -97,12 +97,34 @@ describe('CraftJourney', () => {
   })
 
   it('nhãn tư liệu lấy từ CMS; rỗng thì không render', () => {
-    const { container } = render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    render(<CraftJourney steps={steps} copy={journeyPreview} />)
     expect(screen.getByText('TƯ LIỆU · 01')).toBeTruthy()
     expect(screen.getAllByText(/Công đoạn 1 · Ảnh: Tác giả/).length).toBeGreaterThan(0)
     cleanup()
     const empty = render(<CraftJourney steps={[]} copy={journeyPreview} />)
     expect(empty.container.innerHTML).toBe('')
-    void container
+  })
+
+  it('giảm chuyển động: scrollIntoView dùng behavior auto', () => {
+    const mm = vi.fn().mockReturnValue({ matches: true })
+    vi.stubGlobal('matchMedia', mm)
+    window.matchMedia = mm as unknown as typeof window.matchMedia
+    render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    fireEvent.click(strip().getByRole('button', { name: '02 Ngắn 2' }))
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
+    vi.unstubAllGlobals()
+  })
+
+  it('nút phóng mobile: aria-label "Thu nhỏ ảnh" khi đang phóng', () => {
+    render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    fireEvent.click(screen.getAllByRole('button', { name: 'Xem cận cảnh' })[0])
+    expect(screen.getByRole('button', { name: 'Thu nhỏ ảnh' }).getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('bớt công đoạn thì không lỗi', () => {
+    const { rerender } = render(<CraftJourney steps={steps} copy={journeyPreview} />)
+    fireEvent.click(rail().getByRole('button', { name: /^07/ }))
+    rerender(<CraftJourney steps={steps.slice(0, 4)} copy={journeyPreview} />)
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('4')
   })
 })

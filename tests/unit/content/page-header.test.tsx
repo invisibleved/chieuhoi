@@ -17,4 +17,11 @@ describe('PageHeader', () => {
     expect(screen.getByText('Ghi chú')).toBeTruthy()
     expect(screen.getByText('Cột phải')).toBeTruthy()
   })
+
+  it('titleClassName ghi đè cỡ chữ mặc định', () => {
+    render(<PageHeader crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Làng Hới' }]} intro={intro} titleClassName="text-[40px] md:text-[76px]" />)
+    const h1 = screen.getByRole('heading', { level: 1 })
+    expect(h1.className).toContain('md:text-[76px]')
+    expect(h1.className).not.toContain('md:text-[70px]')
+  })
 })

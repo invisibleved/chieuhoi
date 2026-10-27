@@ -51,7 +51,8 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
   const headingId = useId()
   if (steps.length === 0) return null
   const total = steps.length
-  const step = steps[index]
+  const current = Math.min(index, total - 1)
+  const step = steps[current]
   const noImage = !step.image
 
   // Đổi công đoạn: thu ảnh về cỡ thường; cuộn nút được chọn vào giữa dải (chỉ trong handler).
@@ -77,14 +78,14 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
             {copy.title}
           </h2>
         </div>
-        <StepProgress index={index} total={total} unit={copy.stepLabel ?? ''} label={copy.progressLabel ?? ''} className="md:w-80" />
+        <StepProgress index={current} total={total} unit={copy.stepLabel ?? ''} label={copy.progressLabel ?? ''} className="md:w-80" />
       </div>
 
       <div className="flex flex-col gap-[18px] md:grid md:grid-cols-12 md:items-start md:gap-x-6 md:gap-y-0">
         {/* Desktop: danh sách công đoạn */}
         <ol aria-label={copy.listLabel ?? undefined} className="flex-col border-t border-border-on-dark max-md:hidden md:col-span-3 md:row-span-2 md:row-start-1 md:flex">
           {steps.map((s, i) => {
-            const on = i === index
+            const on = i === current
             return (
               <li key={s.n} className="border-b border-border-on-dark">
                 <button
@@ -108,7 +109,7 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
         {/* Mobile: dải nút chọn công đoạn */}
         <ScrollStrip label={copy.railLabel ?? undefined} className="snap-mandatory gap-2 md:hidden">
           {steps.map((s, i) => {
-            const on = i === index
+            const on = i === current
             return (
               <PillButton
                 key={s.n}
@@ -126,7 +127,7 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
           })}
         </ScrollStrip>
 
-        <CraftStage step={step} zoomed={zoomed} docLabel={copy.docLabel} className="max-md:-mx-5 md:col-span-6 md:col-start-4 md:row-start-1">
+        <CraftStage step={step} zoomed={zoomed} docLabel={copy.docLabel} photoPrefix={copy.photoPrefix} className="md:col-span-6 md:col-start-4 md:row-start-1">
           <ZoomButton
             iconOnly
             zoomed={zoomed}
@@ -166,15 +167,15 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
 
         {/* Trước / Tiếp (và phóng ảnh trên desktop) */}
         <div className="mt-1.5 grid grid-cols-2 gap-2 md:col-span-6 md:col-start-4 md:row-start-2 md:mt-4 md:flex md:items-center md:gap-3">
-          <PagerButton direction="prev" label={copy.prev ?? ''} ariaLabel={copy.prevAria ?? undefined} tone="dark" atEnd={index === 0} onClick={() => select(index - 1)} />
+          <PagerButton direction="prev" label={copy.prev ?? ''} ariaLabel={copy.prevAria ?? undefined} tone="dark" atEnd={current === 0} onClick={() => select(current - 1)} />
           <PagerButton
             direction="next"
             label={copy.next ?? ''}
             ariaLabel={copy.nextAria ?? undefined}
             tone="dark"
             variant="solid"
-            atEnd={index === total - 1}
-            onClick={() => select(index + 1)}
+            atEnd={current === total - 1}
+            onClick={() => select(current + 1)}
           />
           <ZoomButton
             zoomed={zoomed}

@@ -21,6 +21,7 @@ export const craftCopy = {
     railLabel: 'Chọn công đoạn',
     noImage: 'ẢNH CẦN CHỤP',
     docLabel: { desktop: 'TƯ LIỆU', mobile: 'TL' },
+    photoPrefix: 'Ảnh: ',
     prev: 'Trước',
     next: 'Tiếp',
     prevAria: 'Công đoạn trước',
