@@ -131,3 +131,49 @@ test.describe('bài đọc public', () => {
     })
   }
 })
+
+// /con-nguoi ở public: seed chưa có đồng ý nào nên 8 thẻ đều "Chờ đồng ý", không tên, không alt ảnh, không ghi chú.
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`con người public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openPeople(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/con-nguoi')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+
+    test('8 thẻ chờ đồng ý, không lộ tên, vai trò, ghi chú, alt hay ảnh tham khảo', async ({ page }) => {
+      await openPeople(page)
+      const main = page.locator('main')
+      await expect(main.locator('h1')).toHaveCount(1)
+      const cards = main.locator('a[href^="/con-nguoi/"]')
+      await expect(cards).toHaveCount(8)
+      await expect(page.getByRole('status').locator('span').filter({ visible: true })).toHaveText(
+        vp.width >= 768 ? '8 chân dung · tất cả đang chờ đồng ý' : '8 chân dung · đang chờ đồng ý',
+      )
+      const text = await main.evaluate((el) => el.textContent ?? '')
+      expect(text).not.toMatch(/\[[^\]]*(cần|chờ)\s/i)
+      expect(text).not.toMatch(/cần xác minh|chờ xác minh|cần xin phép/i)
+      expect(text).not.toContain('bộ ảnh tham khảo')
+      expect(text).not.toContain('Dệt chiếu tay')
+      // Ảnh người chưa được đồng ý: không img nào trong lưới có alt khác rỗng.
+      const alts = await cards.locator('img').evaluateAll((els) => els.map((e) => e.getAttribute('alt')))
+      expect(alts.filter((a) => a !== '')).toEqual([])
+      const srcs = await main.locator('img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
+      expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
+    })
+
+    test('lọc nhóm trống và axe', async ({ page }) => {
+      await openPeople(page)
+      await page.getByRole('button', { name: 'Thế hệ trẻ' }).click()
+      await expect(page.getByText('Chưa có chân dung trong nhóm này')).toBeVisible()
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+  })
+}

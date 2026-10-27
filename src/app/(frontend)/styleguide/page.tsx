@@ -168,6 +168,10 @@ export default function StyleguidePage() {
             <PortraitCard person={fx.personPending} href="#" />
           </div>
           <div className="flex flex-col gap-3 md:col-span-3">
+            <Lab>PORTRAIT · FLUID + GHI CHÚ (TRANG CON NGƯỜI)</Lab>
+            <PortraitCard person={{ ...fx.personPending, note: 'Dệt chiếu tay · [cần xác minh]' }} href="#" size="fluid" detail="note" />
+          </div>
+          <div className="flex flex-col gap-3 md:col-span-3">
             <Lab>STORY · CHỦ ĐỀ ĐỀ XUẤT</Lab>
             <StoryCard story={fx.storyIdea} href="#" variant="grid" />
           </div>
