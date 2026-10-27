@@ -73,6 +73,24 @@ describe('seed', () => {
     expect(forced.tagline).not.toBe('Sửa tay')
   }, 240_000)
 
+  it('page-intros: đủ ô ảnh, tiêu đề nhiều dòng; công đoạn có shortTitle/toRecord', async () => {
+    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as {
+      'nghe-det-chieu': { title: string; media: { slot: string; image: number | null }[] }
+      'lang-hoi': { media: { slot: string }[] }
+    }
+    expect(g['nghe-det-chieu'].media.map((m) => m.slot)).toEqual(
+      ['hero', 'tool-1', 'tool-2', 'tool-3', 'hand', 'machine', 'next-people', 'next-stories', 'next-products'],
+    )
+    expect(g['nghe-det-chieu'].media.every((m) => m.image)).toBe(true)
+    expect(g['lang-hoi'].media.map((m) => m.slot)).toEqual(['hero', 'life-1', 'life-2', 'life-3'])
+    expect(g['nghe-det-chieu'].title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
+    const step = (await payload.find({
+      collection: 'craft-steps', where: { n: { equals: 2 } }, draft: true, overrideAccess: true,
+    })).docs[0] as { shortTitle?: string; toRecord?: string }
+    expect(step.shortTitle).toBe('Xử lý')
+    expect(step.toRecord).toBe('Các bước xử lý sợi và tên gọi địa phương.')
+  })
+
   it('ảnh tham khảo: rights unknown, consent pending', async () => {
     const bad = await count('archive-assets', {
       or: [{ rights: { not_equals: 'unknown' } }, { subjectConsent: { not_equals: 'pending' } }],

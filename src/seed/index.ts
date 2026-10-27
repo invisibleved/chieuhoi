@@ -12,7 +12,8 @@ import { injectCitations } from './citations'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples, productSummary, storyCategory, storyExtras } from './data/extras'
 import { timelineCopy } from './data/timeline'
-import { homeMedia, pageIntros, siteSettings } from './data/site'
+import { craftCopy } from './data/craft'
+import { homeMedia, pageIntros, pageMedia, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
 
 export { assertSeedAllowed } from './guard'
@@ -181,7 +182,7 @@ export async function seed(payload: Payload): Promise<void> {
     await upsert(
       payload, user, 'craft-steps', { field: 'n', value: s.n },
       {
-        n: s.n, title: s.title, subtitle: s.subtitle, body: s.body ?? undefined, tools: s.tools ?? undefined,
+        n: s.n, title: s.title, subtitle: s.subtitle, ...craftCopy[s.n], body: s.body ?? undefined, tools: s.tools ?? undefined,
         image: asset(s.image), shotNeeded: s.shotNeeded, focusX: s.focus[0], focusY: s.focus[1],
         workflow: 'draft',
       },
@@ -264,10 +265,18 @@ export async function seed(payload: Payload): Promise<void> {
     heroCaption: homeMedia.heroCaption,
     villageImages: homeMedia.villageImages.map((v) => ({ image: byFile(v.file), caption: v.caption })),
   }
+  const mediaFor = (route: keyof typeof pageMedia) => ({
+    media: pageMedia[route].map((m) => ({ slot: m.slot, image: byFile(m.file), caption: m.caption })),
+  })
   const force = process.env.SEED_FORCE_GLOBALS === 'true'
   const globals: [slug: 'site-settings' | 'page-intros', data: object][] = [
     ['site-settings', siteSettings],
-    ['page-intros', { ...pageIntros, home: { ...pageIntros.home, ...homeMediaData } } as object],
+    ['page-intros', {
+      ...pageIntros,
+      home: { ...pageIntros.home, ...homeMediaData },
+      'nghe-det-chieu': { ...pageIntros['nghe-det-chieu'], ...mediaFor('nghe-det-chieu') },
+      'lang-hoi': { ...pageIntros['lang-hoi'], ...mediaFor('lang-hoi') },
+    } as object],
   ]
   for (const [slug, data] of globals) {
     if (!force) {

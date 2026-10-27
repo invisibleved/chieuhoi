@@ -2,6 +2,7 @@ import type { Field, GlobalConfig } from 'payload'
 
 import { guardPublish, recordDraftArg } from '@/access/publishing'
 import { isLoggedIn } from '@/access/roles'
+import { PAGE_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS, isPageMediaRoute } from './pageMedia'
 
 export const ROUTE_KEYS = [
   'home',
@@ -27,13 +28,35 @@ const ROUTE_LABELS: Record<RouteKey, string> = {
   'ket-noi': 'Kết nối',
 }
 
+const pageMediaField = (key: keyof typeof PAGE_MEDIA_SLOTS): Field => ({
+  name: 'media',
+  type: 'array',
+  label: 'Ảnh của trang',
+  maxRows: PAGE_MEDIA_SLOTS[key].length,
+  validate: (rows: unknown) => {
+    const slots = ((rows as { slot?: string }[] | null | undefined) ?? []).map((r) => r?.slot)
+    return new Set(slots).size === slots.length ? true : 'Mỗi ô ảnh chỉ được dùng một lần.'
+  },
+  fields: [
+    {
+      name: 'slot',
+      type: 'select',
+      label: 'Ô ảnh',
+      required: true,
+      options: PAGE_MEDIA_SLOTS[key].map((v) => ({ value: v, label: PAGE_MEDIA_SLOT_LABELS[v] })),
+    },
+    { name: 'image', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh' },
+    { name: 'caption', type: 'text', label: 'Chú thích', localized: true },
+  ],
+})
+
 const routeGroup = (key: RouteKey): Field => ({
   name: key,
   type: 'group',
   label: ROUTE_LABELS[key],
   fields: [
     { name: 'eyebrow', type: 'text', label: 'Dòng nhỏ phía trên', localized: true },
-    { name: 'title', type: 'text', label: 'Tiêu đề', localized: true },
+    { name: 'title', type: 'textarea', label: 'Tiêu đề (giữ ngắt dòng)', localized: true },
     { name: 'lead', type: 'textarea', label: 'Đoạn dẫn', localized: true },
     ...(key === 'home'
       ? ([
@@ -50,6 +73,7 @@ const routeGroup = (key: RouteKey): Field => ({
           },
         ] as Field[])
       : []),
+    ...(isPageMediaRoute(key) ? [pageMediaField(key)] : []),
   ],
 })
 

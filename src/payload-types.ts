@@ -288,9 +288,11 @@ export interface CraftStep {
   workflow: 'draft' | 'in_review' | 'published';
   n: number;
   title?: string | null;
+  shortTitle?: string | null;
   subtitle?: string | null;
   body?: string | null;
   tools?: string | null;
+  toRecord?: string | null;
   image?: (number | null) | ArchiveAsset;
   shotNeeded?: string | null;
   focusX?: number | null;
@@ -668,9 +670,11 @@ export interface CraftStepsSelect<T extends boolean = true> {
   workflow?: T;
   n?: T;
   title?: T;
+  shortTitle?: T;
   subtitle?: T;
   body?: T;
   tools?: T;
+  toRecord?: T;
   image?: T;
   shotNeeded?: T;
   focusX?: T;
@@ -858,6 +862,14 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot: 'hero' | 'life-1' | 'life-2' | 'life-3';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'cau-chuyen'?: {
     eyebrow?: string | null;
@@ -868,6 +880,23 @@ export interface PageIntro {
     eyebrow?: string | null;
     title?: string | null;
     lead?: string | null;
+    media?:
+      | {
+          slot:
+            | 'hero'
+            | 'tool-1'
+            | 'tool-2'
+            | 'tool-3'
+            | 'hand'
+            | 'machine'
+            | 'next-people'
+            | 'next-stories'
+            | 'next-products';
+          image?: (number | null) | ArchiveAsset;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   'con-nguoi'?: {
     eyebrow?: string | null;
@@ -940,6 +969,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'cau-chuyen'?:
     | T
@@ -954,6 +991,14 @@ export interface PageIntrosSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         lead?: T;
+        media?:
+          | T
+          | {
+              slot?: T;
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
       };
   'con-nguoi'?:
     | T

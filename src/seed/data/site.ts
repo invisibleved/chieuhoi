@@ -19,9 +19,32 @@ export const homeMedia = {
   ],
 }
 
+type Slot = { slot: string; file: string; caption?: string }
+
+/** Ảnh theo ô của hai trang Nghề dệt chiếu và Làng Hới. File và chú thích nguyên văn từ artboard. */
+export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi', Slot[]> = {
+  'nghe-det-chieu': [
+    { slot: 'hero', file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]' },
+    { slot: 'tool-1', file: 'nkc13.webp' },
+    { slot: 'tool-2', file: 'kn1.webp' },
+    { slot: 'tool-3', file: 'kn4.webp' },
+    { slot: 'hand', file: 'nkc5.webp' },
+    { slot: 'machine', file: 'nkc2.webp' },
+    { slot: 'next-people', file: 'nkc10.webp' },
+    { slot: 'next-stories', file: 'nkc2.webp' },
+    { slot: 'next-products', file: 'kn8.webp' },
+  ],
+  'lang-hoi': [
+    { slot: 'hero', file: 'hc9.webp', caption: 'Chiếu phơi bên ao làng · Địa điểm, tác giả: [cần xác minh]' },
+    { slot: 'life-1', file: 'hc8.webp', caption: 'Chiếu phơi trên bãi đất trống. [Địa điểm, thời gian — cần xác minh]' },
+    { slot: 'life-2', file: 'hc2.webp', caption: 'Bày chiếu. [cần xác minh]' },
+    { slot: 'life-3', file: 'kn2.webp', caption: 'Xem chiếu. [cần xác minh]' },
+  ],
+}
+
 type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }
 
-// Tiêu đề nhiều dòng (<br>) được nối bằng khoảng trắng vì trường title là một dòng; riêng heroTitle giữ ngắt dòng.
+// title là textarea nên giữ được ngắt dòng (\n).
 export const pageIntros: Record<string, Intro> = {
   home: {
     eyebrow: 'DI SẢN LÀNG NGHỀ VIỆT NAM',
@@ -37,7 +60,7 @@ export const pageIntros: Record<string, Intro> = {
   'cau-chuyen': { eyebrow: '02 — CÂU CHUYỆN', title: 'Chuyện làng, kể chậm.' },
   'nghe-det-chieu': {
     eyebrow: '03 — NGHỀ DỆT CHIẾU',
-    title: 'Một tấm chiếu, muôn công đoạn.',
+    title: 'Một tấm chiếu,\nmuôn công đoạn.',
     lead: 'Từ bó cói ngoài đồng đến tấm chiếu trải giữa nhà là một hành trình của đôi tay, thời tiết và sự kiên nhẫn. Đi theo từng công đoạn bên dưới.',
   },
   'con-nguoi': {
