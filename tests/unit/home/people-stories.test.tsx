@@ -8,7 +8,7 @@ const p = (slug: string, over: Partial<PersonView> = {}): PersonView => ({
   slug, category: 'Nghệ nhân', categoryKey: 'artisan', role: null, name: `Tên ${slug}`, note: null, portrait: null, quote: null, consentPending: false, flags: [], ...over,
 })
 const s = (slug: string, over: Partial<StoryCardView> = {}): StoryCardView => ({
-  slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail: true, status: null, sourceCount: 0, flags: [], ...over,
+  slug, title: `Bài ${slug}`, sapo: null, category: null, categoryKey: null, cover: null, readingMinutes: null, hasDetail: true, cta: over.hasDetail === false ? 'Xem đề cương →' : 'Đọc bài →', status: null, sourceCount: 0, flags: [], ...over,
 })
 const hrefs = () => screen.getAllByRole('link').map((a) => a.getAttribute('href'))
 

@@ -17,7 +17,7 @@ function otherStory(s: StoryCardView): ReadNextItem | null {
     href: s.hasDetail ? `/cau-chuyen/${s.slug}` : '/cau-chuyen',
     eyebrow: [s.category, s.status].filter((t): t is string => !!t).join(' · ').toLocaleUpperCase('vi'),
     title: s.title,
-    cta: s.hasDetail ? storiesCopy.cta.read : storiesCopy.cta.outline,
+    cta: s.cta,
     image: s.cover,
     mobile: false,
   }

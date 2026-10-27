@@ -79,3 +79,46 @@ for (const route of ['/nghe-det-chieu', '/lang-hoi']) {
     })
   }
 }
+
+// /cau-chuyen ở public: chỉ 5 bài chủ đề đề xuất (bài Trạng Chiếu còn là bản nháp), không bài nào có trang chi tiết.
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`câu chuyện public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openStories(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/cau-chuyen')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+
+    test('5 bài, không khối nổi bật, thẻ chủ đề đề xuất không phải link, không lộ bản nháp', async ({ page }) => {
+      await openStories(page)
+      const main = page.locator('main')
+      await expect(main.locator('h1')).toHaveCount(1)
+      await expect(page.getByRole('status').filter({ visible: true })).toHaveText('5 bài')
+      await expect(main.locator('article')).toHaveCount(5)
+      await expect(main.getByText('Chủ đề đề xuất')).toHaveCount(5)
+      await expect(page.getByRole('region', { name: 'BÀI NỔI BẬT' })).toHaveCount(0)
+      const text = await main.evaluate((el) => el.textContent ?? '')
+      expect(text).not.toContain('Bản nháp')
+      expect(text).not.toContain('Chuyện về Trạng Chiếu')
+      expect(text).not.toContain('Xem đề cương')
+      const hrefs = await main.locator('a').evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''))
+      expect(hrefs.filter((h) => h.startsWith('/cau-chuyen'))).toEqual([])
+    })
+
+    test('lọc, tìm và axe', async ({ page }) => {
+      await openStories(page)
+      await page.getByRole('button', { name: 'Ký ức làng quê' }).click()
+      await expect(page.getByRole('status').filter({ visible: true })).toHaveText('2 bài')
+      await page.getByLabel('Tìm trong câu chuyện').filter({ visible: true }).fill('zzz')
+      await expect(page.getByText('Chưa có bài trong chủ đề này')).toBeVisible()
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+  })
+}

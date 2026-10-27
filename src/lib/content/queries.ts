@@ -8,6 +8,7 @@ import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payl
 import { archiveCategoryLabel, archiveEraLabel, productGroupLabel, storyCategoryLabel } from './categories'
 import { applyMode } from './copy/applyMode'
 import { peopleCopy } from './copy/people'
+import { storiesCopy } from './copy/stories'
 import { nonEmptyRich, sanitizeRich, splitAtHeading } from './rich'
 import type {
   ArchiveItemView, CraftStepView, Flag, HomeMediaView, ImageView, Mode, PageIntroView, PersonDetailView, PersonView,
@@ -206,6 +207,7 @@ export function createContent(payload: Payload) {
       cover: toImageView(d.cover, mode),
       readingMinutes: d.readingMinutes ?? null,
       hasDetail: !idea,
+      cta: idea ? storiesCopy.cta.outline : storiesCopy.cta.read,
       // R2: "Chủ đề đề xuất" ở mọi mode; "Bản nháp" chỉ có ở preview (public không có bài chưa đăng).
       status: idea ? 'Chủ đề đề xuất' : d._status !== 'published' ? 'Bản nháp' : null,
       sourceCount: sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable).length,

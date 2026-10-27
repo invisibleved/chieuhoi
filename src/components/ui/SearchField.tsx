@@ -10,16 +10,18 @@ export function SearchField({
   placeholder,
   value,
   onChange,
+  className,
 }: {
   id: string
   label: string
   placeholder: Variant
   value: string
   onChange: (v: string) => void
+  className?: string
 }) {
   const ph = useVariantString(placeholder)
   return (
-    <div className="flex flex-col gap-2">
+    <div className={['flex flex-col gap-2', className].filter(Boolean).join(' ')}>
       <label htmlFor={id} className="text-[14px] font-medium">
         {label}
       </label>

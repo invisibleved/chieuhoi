@@ -120,6 +120,8 @@ export interface StoryCardView {
   cover: ImageView | null
   readingMinutes: number | null
   hasDetail: boolean
+  /** Chữ nút cuối thẻ: "Đọc bài →" khi có trang chi tiết, "Xem đề cương →" khi không (nguồn: copy/stories.ts). */
+  cta: string
   /** "Chủ đề đề xuất" cho bài idea ở mọi mode; "Bản nháp" chỉ ở preview (R2). */
   status: 'Bản nháp' | 'Chủ đề đề xuất' | null
   /** Số nguồn nhìn thấy được ở mode hiện tại. */

@@ -24,6 +24,10 @@ export function FilterableList<T>({
   empty,
   renderItem,
   listClassName,
+  className = 'flex flex-col gap-6',
+  toolbarClassName = 'contents',
+  query: controlledQuery,
+  onQueryChange,
 }: {
   items: T[]
   getKey: (t: T) => string
@@ -31,18 +35,34 @@ export function FilterableList<T>({
   getSearchText?: (t: T) => string
   filters: { key: string; label: string }[]
   filterLabel: Variant
-  search?: { id: string; label: string; placeholder: Variant }
+  /** Ô tìm trong danh sách; `className` để ẩn bớt ở một cỡ màn hình khi ô tìm thứ hai đặt nơi khác. */
+  search?: { id: string; label: string; placeholder: Variant; className?: string }
   pageSize?: number
   more?: { label: string; done: string }
   status: (matches: T[]) => Variant
   empty: ReactNode
   renderItem: (t: T, index: number) => ReactNode
   listClassName?: string
+  /** Khung ngoài (mặc định cột, khoảng cách 24). */
+  className?: string
+  /** Khung bọc chip + dòng đếm (mặc định `contents`: xếp thẳng trong khung ngoài). */
+  toolbarClassName?: string
+  /** Điều khiển ô tìm từ ngoài (khi ô tìm còn nằm ở nơi khác, ví dụ đầu trang). */
+  query?: string
+  onQueryChange?: (q: string) => void
 }) {
   const [category, setCategory] = useState(filters[0]?.key ?? 'all')
-  const [query, setQuery] = useState('')
+  const [innerQuery, setInnerQuery] = useState('')
+  const query = controlledQuery ?? innerQuery
+  const setQuery = onQueryChange ?? setInnerQuery
   const [pages, setPages] = useState(1)
   const chipsLabel = useVariantString(filterLabel)
+  // Đổi từ khoá (kể cả từ ô tìm bên ngoài) thì về trang đầu.
+  const [seenQuery, setSeenQuery] = useState(query)
+  if (seenQuery !== query) {
+    setSeenQuery(query)
+    setPages(1)
+  }
 
   const matches = useMemo(() => {
     const q = normalizeSearch(query)
@@ -58,31 +78,31 @@ export function FilterableList<T>({
   const exhausted = shown.length >= matches.length
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={className}>
       {search ? (
         <SearchField
           id={search.id}
           label={search.label}
           placeholder={search.placeholder}
+          className={search.className}
           value={query}
-          onChange={(v) => {
-            setQuery(v)
+          onChange={setQuery}
+        />
+      ) : null}
+      <div className={toolbarClassName}>
+        <FilterChips
+          label={chipsLabel}
+          options={filters}
+          value={category}
+          onChange={(k) => {
+            setCategory(k)
             setPages(1)
           }}
         />
-      ) : null}
-      <FilterChips
-        label={chipsLabel}
-        options={filters}
-        value={category}
-        onChange={(k) => {
-          setCategory(k)
-          setPages(1)
-        }}
-      />
-      <p role="status" className="m-0 text-[14px] text-text-muted">
-        <VariantText value={status(matches)} />
-      </p>
+        <p role="status" className="m-0 text-[14px] text-text-muted">
+          <VariantText value={status(matches)} />
+        </p>
+      </div>
       {shown.length === 0 ? (
         empty
       ) : (
@@ -95,7 +115,7 @@ export function FilterableList<T>({
         </div>
       )}
       {more && pageSize && matches.length > 0 ? (
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:gap-5 md:border-t md:border-border-subtle md:pt-4">
           <button
             type="button"
             aria-disabled={exhausted ? 'true' : undefined}
