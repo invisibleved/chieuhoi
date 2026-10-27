@@ -4,6 +4,8 @@ type PlaceholderFrameProps = {
   label: string
   title?: string
   description?: string
+  /** Thêm vào đoạn mô tả (ví dụ ẩn trên mobile). */
+  descriptionClassName?: string
   tone?: 'light' | 'dark'
   /** weave: nền sợi cói với nhãn nổi ở giữa (ô ảnh sản phẩm), thay cho khung nét đứt. */
   pattern?: 'dashed' | 'weave'
@@ -18,7 +20,7 @@ const tones = {
 } as const
 
 // Khung nét đứt giữ chỗ cho nội dung chưa có (ảnh cần chụp, tư liệu chờ). Các khối chữ căn giữa.
-export function PlaceholderFrame({ label, title, description, tone = 'light', pattern = 'dashed', className, role, 'aria-label': ariaLabel }: PlaceholderFrameProps) {
+export function PlaceholderFrame({ label, title, description, descriptionClassName, tone = 'light', pattern = 'dashed', className, role, 'aria-label': ariaLabel }: PlaceholderFrameProps) {
   const t = tones[tone]
   if (pattern === 'weave') {
     return (
@@ -49,7 +51,7 @@ export function PlaceholderFrame({ label, title, description, tone = 'light', pa
     >
       <Eyebrow as="p" tone={t.label} tracking="label">{label}</Eyebrow>
       {title ? <p className={`font-display text-[21px] leading-[1.3] md:text-[28px] ${t.title}`}>{title}</p> : null}
-      {description ? <p className={`max-w-[440px] text-[14px] leading-[1.55] ${t.desc}`}>{description}</p> : null}
+      {description ? <p className={`max-w-[440px] text-[14px] leading-[1.55] ${t.desc} ${descriptionClassName ?? ''}`}>{description}</p> : null}
     </div>
   )
 }

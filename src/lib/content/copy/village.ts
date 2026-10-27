@@ -8,6 +8,8 @@ export const villageSourceOrder = ['vietnamplus-2026', 'danviet-2024', 'daidoank
 
 export const villageCopy = {
   breadcrumb: { label: 'Đường dẫn', home: 'Trang chủ', current: 'Làng Hới' },
+  // Nhãn mã tư liệu dưới ảnh đầu trang: desktop trong khung ảnh, mobile là dòng chữ.
+  hero: { docLabel: { desktop: 'TƯ LIỆU', mobile: 'TL' } },
   founder: {
     eyebrow: 'TỔ NGHỀ',
     title: 'Phạm Đôn Lễ, ông Trạng Chiếu.',

@@ -39,8 +39,8 @@ afterEach(cleanup)
 describe('VillageView', () => {
   it('preview: bảng thông tin 3 mục, chú thích trỏ tới nguồn, 3 nguồn', () => {
     const { container } = render(<VillageView page={view('preview')} />)
-    const dts = container.querySelectorAll('dl')[0].querySelectorAll('dt')
-    expect([...dts].map((d) => d.textContent)).toEqual(['TÊN GỌI', 'ĐỊA GIỚI HIỆN NAY', 'TỔ NGHỀ'])
+    const dts = screen.getAllByText(/^(TÊN GỌI|ĐỊA GIỚI HIỆN NAY|TỔ NGHỀ)$/)
+    expect(dts.slice(0, 3).map((d) => d.textContent)).toEqual(['TÊN GỌI', 'ĐỊA GIỚI HIỆN NAY', 'TỔ NGHỀ'])
     expect(screen.getAllByRole('link', { name: 'Nguồn 1' })[0].getAttribute('href')).toBe('#nguon-1')
     const list = screen.getByRole('heading', { name: 'Nguồn tham khảo' }).closest('section')!
     expect(within(list).getAllByRole('listitem')).toHaveLength(3)
@@ -57,5 +57,20 @@ describe('VillageView', () => {
     const list = screen.getByRole('heading', { name: 'Nguồn tham khảo' }).closest('section')!
     expect(within(list).getAllByRole('listitem')).toHaveLength(2)
     expect(container.querySelector('#life-h')).toBeNull()
+  })
+
+  it('public: câu bị lọc hết chữ nhưng còn cite thì không để lại số chú thích mồ côi hay <p> rỗng', () => {
+    const founderRefs = (c: HTMLElement) => c.querySelector('#founder-h')!.closest('section')!.querySelectorAll('a[aria-label^="Nguồn"]').length
+    const base = render(<VillageView page={view('public')} />)
+    const baseCount = founderRefs(base.container)
+    cleanup()
+    const page = view('public')
+    page.copy.heritage.paragraphs[1] = { ...page.copy.heritage.paragraphs[1], text: { desktop: null, mobile: null }, cite: ['vietnamplus-2026'] }
+    page.copy.founder.paragraphs[1].parts[1] = { text: { desktop: null, mobile: null }, cite: ['daidoanket-2021'] }
+    const { container } = render(<VillageView page={page} />)
+    // Câu bị lọc không để lại số chú thích.
+    expect(founderRefs(container)).toBe(baseCount - 1)
+    expect(container.querySelector('#heritage-h')!.closest('section')!.querySelectorAll('a[aria-label^="Nguồn"]')).toHaveLength(1)
+    for (const p of container.querySelectorAll('p')) expect(p.textContent?.trim()).not.toBe('')
   })
 })

@@ -22,6 +22,7 @@ const desktopOnly = (v: Variant) => (v.mobile ? '' : 'max-md:hidden')
 
 // Một câu kèm chú thích; câu chỉ có ở desktop thì chú thích cũng ẩn theo.
 function Sentence({ text, cite, numbers }: { text: Variant; cite: string[]; numbers: Numbers }) {
+  if (!hasVariant(text)) return null
   return (
     <span className={desktopOnly(text)}>
       <VariantText value={text} />
@@ -47,7 +48,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
   const numbers = sourceNumbers(page.sources)
   const crumbs = [{ label: copy.breadcrumb.home ?? '', href: '/' }, { label: copy.breadcrumb.current ?? '' }]
 
-  const factItems = facts.map((f) => ({
+  const factItems = facts.filter((f) => hasVariant(f.detail)).map((f) => ({
     term: f.term,
     detail: (
       <>
@@ -68,7 +69,6 @@ export function VillageView({ page }: { page: VillagePageView }) {
 
   const { founder, timeline, location, heritage } = copy
   const lifeOn = life.length > 0 && hasVariant(copy.life.title)
-  const heroLabelTitle = hero?.caption ?? ''
   const heroDoc = hero ? hero.image.docNumber : null
 
   return (
@@ -87,9 +87,9 @@ export function VillageView({ page }: { page: VillagePageView }) {
           <ContentImage image={hero.image} size="full" sizes="100vw" priority className="block h-[260px] md:h-[640px]" />
           {heroDoc || hero.caption ? (
             <>
-              <DocumentLabel code={heroDoc} title={heroLabelTitle} className="absolute right-20 bottom-6 max-w-[340px] max-md:hidden" />
+              <DocumentLabel code={heroDoc} title={hero.caption ?? ''} size="sm" className="absolute right-20 bottom-6 max-w-[340px] max-md:hidden" />
               <figcaption className="px-5 text-[12px] tracking-[.1em] text-text-muted md:hidden">
-                {[heroDoc ? `TL · ${heroDoc}` : null, hero.caption].filter(Boolean).join(' · ')}
+                {[heroDoc && copy.hero.docLabel.mobile ? `${copy.hero.docLabel.mobile} · ${heroDoc}` : null, hero.caption].filter(Boolean).join(' · ')}
               </figcaption>
             </>
           ) : null}
@@ -106,12 +106,12 @@ export function VillageView({ page }: { page: VillagePageView }) {
           </h2>
         </div>
         <div className="flex flex-col gap-4 md:col-span-6 md:col-start-6 md:gap-[22px]">
-          {founder.paragraphs.map((para, i) => (
+          {founder.paragraphs.filter((para) => para.parts.some((p) => hasVariant(p.text))).map((para, i) => (
             <p key={i} className="m-0 font-serif text-[17px] leading-[1.75] md:text-[20px]">
               <Parts parts={para.parts} numbers={numbers} />
             </p>
           ))}
-          {founder.conflict.parts.length > 0 ? (
+          {founder.conflict.parts.some((p) => hasVariant(p.text)) ? (
             <Callout title={founder.conflict.label ?? ''}>
               <Parts parts={founder.conflict.parts} numbers={numbers} />
               {founder.conflict.preview?.closing && hasVariant(founder.conflict.preview.closing) ? (
@@ -150,10 +150,12 @@ export function VillageView({ page }: { page: VillagePageView }) {
           <h2 id="location-h" className="font-display text-h2-section leading-[1.15] font-normal md:leading-[1.12]">
             {location.title}
           </h2>
-          <p className="m-0 text-[16px] leading-[1.7] md:text-[17px]">
-            {location.body.text}
-            <Cite ids={location.body.cite} numbers={numbers} />
-          </p>
+          {location.body.text ? (
+            <p className="m-0 text-[16px] leading-[1.7] md:text-[17px]">
+              {location.body.text}
+              <Cite ids={location.body.cite} numbers={numbers} />
+            </p>
+          ) : null}
           {location.preview && hasVariant(location.preview.note) ? (
             <p className={`m-0 text-[15px] leading-[1.65] text-text-secondary ${desktopOnly(location.preview.note)}`}>
               <VariantText value={location.preview.note} />
@@ -165,6 +167,7 @@ export function VillageView({ page }: { page: VillagePageView }) {
             label={location.preview.map.label ?? ''}
             title={location.preview.map.title ?? undefined}
             description={location.preview.map.body.desktop ?? undefined}
+            descriptionClassName="max-md:hidden"
             className="h-[200px] md:col-span-6 md:col-start-7 md:h-[380px]"
           />
         ) : null}
@@ -182,9 +185,10 @@ export function VillageView({ page }: { page: VillagePageView }) {
           </h2>
         </div>
         <div className="flex flex-col gap-3.5 md:col-span-7 md:col-start-6 md:gap-5">
-          {heritage.paragraphs.map((para, i) => (
+          {heritage.paragraphs.filter((para) => hasVariant(para.text)).map((para, i) => (
             <p key={i} className={`m-0 text-[16px] leading-[1.7] md:text-[18px] md:leading-[1.75] ${desktopOnly(para.text)}`}>
-              <Sentence text={para.text} cite={para.cite} numbers={numbers} />
+              <VariantText value={para.text} />
+              <Cite ids={para.cite} numbers={numbers} />
             </p>
           ))}
           {heritage.preview && hasVariant(heritage.preview.note) ? (
