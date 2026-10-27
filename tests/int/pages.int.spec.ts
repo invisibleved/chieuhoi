@@ -73,6 +73,26 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       const steps = await createContent(payload).getCraftSteps('public')
       expect(steps.every((s) => s.toRecord === null)).toBe(true)
     })
+    it('công đoạn đã đăng gắn ảnh chưa được phép: public có image null và shotNeeded', async () => {
+      const step = (await payload.find({ collection: 'craft-steps', where: { n: { equals: 1 } }, overrideAccess: true, draft: true })).docs[0]
+      // Ảnh seed là ảnh tham khảo, chưa được phép dùng công khai.
+      const preview = await pages.getCraftPage('preview')
+      expect(preview.steps[0].image).not.toBeNull()
+      const user = await reviewer()
+      const update = (data: Record<string, unknown>) =>
+        payload.update({ collection: 'craft-steps', id: step.id, data, user, overrideAccess: true, draft: false } as never)
+      try {
+        await update({ _status: 'published', shotNeeded: 'Túm cói trên mặt chiếu' })
+        const v = await pages.getCraftPage('public')
+        expect(v.steps).toHaveLength(1)
+        expect(v.steps[0].n).toBe(1)
+        expect(v.steps[0].image).toBeNull()
+        expect(v.steps[0].shotNeeded).toBe('Túm cói trên mặt chiếu')
+      } finally {
+        await update({ _status: 'draft', workflow: step.workflow, shotNeeded: step.shotNeeded ?? null })
+      }
+      expect((await pages.getCraftPage('public')).steps).toHaveLength(0)
+    })
     it('asset permitted gắn vào hero: public có ảnh, chú thích có dấu chờ xác minh thì ẩn', async () => {
       const user = await reviewer()
       const asset = (await payload.create({
@@ -160,7 +180,12 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         await payload.update({ collection: 'sources', id: only.id, data: { title: '[cần xác minh]' }, overrideAccess: true })
         try {
           const w = await pages.getVillagePage('public')
-          expect(w.timeline.find((t) => t.title === 'Máy dệt về làng')?.sourceLine).toBeNull()
+          const machine = w.timeline.find((t) => t.title === 'Máy dệt về làng')
+          expect(machine?.sourceLine).toBeNull()
+          // F1: mốc báo chí mà mọi nguồn bị ẩn thì hiện là chờ xác minh ở public; preview giữ nguyên.
+          expect(machine?.confidence).toBe('pending')
+          const wp = await pages.getVillagePage('preview')
+          expect(wp.timeline.find((t) => t.title === 'Máy dệt về làng')?.confidence).toBe('press')
         } finally {
           await payload.update({ collection: 'sources', id: only.id, data: { title: only.title }, overrideAccess: true })
         }

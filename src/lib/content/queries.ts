@@ -106,12 +106,15 @@ export function createContent(payload: Payload) {
     const docs = (await findAll('timeline-events', mode, { sort: 'order' })) as import('@/payload-types').TimelineEvent[]
     return docs.map((d) => {
       // Chỉ những nguồn nhìn thấy được ở mode hiện tại mới được trích.
-      const visible = sourcesOf(d.sources).map((s) => toSourceView(s, mode)).filter(viewable)
+      const all = sourcesOf(d.sources)
+      const visible = all.map((s) => toSourceView(s, mode)).filter(viewable)
+      // F1: mốc báo chí/truyền khẩu có nguồn mà mọi nguồn bị ẩn thì ở public coi như chờ xác minh.
+      const orphaned = mode === 'public' && all.length > 0 && visible.length === 0
       return {
         label: showText(d.label, mode),
         title: showText(d.title, mode),
         body: showText(d.body, mode),
-        confidence: d.confidence ?? 'pending',
+        confidence: orphaned ? 'pending' : (d.confidence ?? 'pending'),
         sourceIds: visible.map((s) => s.id),
         sourceLine: sourceLine(visible),
         sourceHref: null,
