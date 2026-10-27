@@ -55,7 +55,7 @@ for (const vp of [
       await expect(block.getByRole('img', { name: /Ảnh cần chụp: Cói phơi trên sân/ }).first()).toBeVisible()
       await expect(block.getByRole('tablist')).toBeVisible()
       await expect(block.getByRole('link', { name: /Gặp những người dệt/ })).toBeVisible()
-      await expect(block.locator('[data-confidence]').first()).toBeVisible()
+      await expect(block.locator('[data-confidence]').filter({ visible: true }).first()).toBeVisible()
     })
   })
 }

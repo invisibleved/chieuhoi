@@ -164,8 +164,8 @@ export function CraftJourney({ steps, copy }: CraftJourneyProps) {
           ) : null}
         </div>
 
-        {/* Trước / Tiếp (và phóng ảnh trên desktop) */}
-        <div className="mt-1.5 grid grid-cols-2 gap-2 md:col-span-6 md:col-start-4 md:row-start-2 md:mt-4 md:flex md:items-center md:gap-3">
+        {/* Trước / Tiếp (và phóng ảnh trên desktop); cột hẹp ở 768 thì xuống dòng thay vì tràn cột (RF5) */}
+        <div className="mt-1.5 grid grid-cols-2 gap-2 md:col-span-6 md:col-start-4 md:row-start-2 md:mt-4 md:flex md:flex-wrap md:items-center md:gap-3">
           <PagerButton direction="prev" label={copy.prev ?? ''} ariaLabel={copy.prevAria ?? undefined} tone="dark" atEnd={current === 0} onClick={() => select(current - 1)} />
           <PagerButton
             direction="next"
