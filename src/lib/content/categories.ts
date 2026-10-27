@@ -5,6 +5,8 @@ import { STORY_CATEGORY_OPTIONS } from '@/collections/Stories'
 
 type Option = { label: string; value: string }
 
+import type { ArchiveCategory } from './types'
+
 const toMap = (options: readonly Option[]) => new Map(options.map((o) => [o.value, o.label]))
 const STORY = toMap(STORY_CATEGORY_OPTIONS)
 const PERSON = toMap(PERSON_CATEGORY_OPTIONS)
@@ -18,3 +20,9 @@ export const personCategoryLabel = (v: string | null | undefined) => (v ? (PERSO
 export const productGroupLabel = (v: string | null | undefined) => (v ? (GROUP.get(v) ?? null) : null)
 export const archiveCategoryLabel = (v: string | null | undefined) => (v ? (ARCHIVE_CATEGORY.get(v) ?? null) : null)
 export const archiveEraLabel = (v: string | null | undefined) => (v ? (ERA.get(v) ?? null) : null)
+
+/** Danh sách chủ đề ảnh tư liệu theo thứ tự option, cho bộ lọc (không gồm chip "Tất cả"). */
+export const archiveCategoryOptions: { key: ArchiveCategory; label: string }[] = ARCHIVE_CATEGORY_OPTIONS.map((o) => ({
+  key: o.value as ArchiveCategory,
+  label: o.label,
+}))

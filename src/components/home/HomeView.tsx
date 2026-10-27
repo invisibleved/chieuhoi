@@ -1,5 +1,5 @@
 import type {
-  ArchiveItemView, CraftStepView, HomeMediaView, Mode, PageIntroView, PersonView,
+  ArchiveCategory, ArchiveItemView, CraftStepView, HomeMediaView, Mode, PageIntroView, PersonView,
   ProductCardView, ProductView, StoryCardView,
 } from '@/lib/content'
 import { Reveal } from '@/components/ui/Reveal'
@@ -22,6 +22,7 @@ type HomeViewProps = {
   featured: ProductView | null
   products: ProductCardView[]
   archive: ArchiveItemView[]
+  archiveCategories: { key: ArchiveCategory; label: string }[]
   storyHref: string | null
 }
 
@@ -35,7 +36,7 @@ export function HomeView(p: HomeViewProps) {
       <Reveal><PeopleTeaser people={p.people} /></Reveal>
       <Reveal><StoriesTeaser stories={p.stories} /></Reveal>
       <Reveal><ProductsTeaser featured={p.featured} products={p.products} mode={p.mode} /></Reveal>
-      <Reveal><ArchiveTeaser items={p.archive} /></Reveal>
+      <Reveal><ArchiveTeaser items={p.archive} categories={p.archiveCategories} /></Reveal>
       <Reveal><Closing /></Reveal>
     </>
   )

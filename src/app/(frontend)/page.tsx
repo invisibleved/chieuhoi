@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { HomeView } from '@/components/home/HomeView'
 import {
-  getArchive, getCraftSteps, getHomeMedia, getMode, getPageIntro, getPeople,
+  archiveCategoryOptions, getArchive, getCraftSteps, getHomeMedia, getMode, getPageIntro, getPeople,
   getProduct, getProducts, getStories,
   type ProductView,
 } from '@/lib/content'
@@ -29,6 +29,6 @@ export default async function HomePage() {
   const storyHref = stories.some((s) => s.slug === STORY_SLUG && s.hasDetail) ? `/cau-chuyen/${STORY_SLUG}` : null
   return (
     <HomeView mode={mode} intro={intro} media={media} steps={steps} people={people} stories={stories}
-      featured={featured} products={products} archive={archive} storyHref={storyHref} />
+      featured={featured} products={products} archive={archive} archiveCategories={archiveCategoryOptions} storyHref={storyHref} />
   )
 }

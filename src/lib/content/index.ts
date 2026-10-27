@@ -6,6 +6,7 @@ import { createContent } from './queries'
 export { createContent }
 export * from './types'
 export { getMode } from './mode'
+export { archiveCategoryOptions } from './categories'
 
 const bound = async () => createContent(await getPayload({ config }))
 

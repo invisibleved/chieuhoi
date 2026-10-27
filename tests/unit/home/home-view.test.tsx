@@ -10,7 +10,7 @@ const intro: PageIntroView = {
   lead: 'Khám phá làng Hới.',
 }
 const media: HomeMediaView = { hero: null, heroInset: null, village: [] }
-const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], storyHref: null }
+const base = { intro, media, steps: [], people: [], stories: [], featured: null, products: [], archive: [], archiveCategories: [], storyHref: null }
 
 vi.stubGlobal('IntersectionObserver', undefined)
 

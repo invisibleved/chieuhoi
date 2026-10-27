@@ -2,24 +2,17 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import type { ArchiveItemView } from '@/lib/content'
+import type { ArchiveCategory, ArchiveItemView } from '@/lib/content'
 import { ContentImage } from '@/components/content/ContentImage'
 import { FilterChips } from '@/components/ui/FilterChips'
 import { LinkArrow } from '@/components/ui/LinkArrow'
 
-type ArchiveTeaserProps = { items: ArchiveItemView[] }
+type ArchiveTeaserProps = { items: ArchiveItemView[]; categories: { key: ArchiveCategory; label: string }[] }
 
-type FilterKey = 'all' | NonNullable<ArchiveItemView['category']>
+type FilterKey = 'all' | ArchiveCategory
 
-const OPTIONS: { key: FilterKey; label: string }[] = [
-  { key: 'all', label: 'Tất cả' },
-  { key: 'village', label: 'Làng quê' },
-  { key: 'weaving', label: 'Nghề dệt' },
-  { key: 'people', label: 'Con người' },
-  { key: 'products', label: 'Sản phẩm' },
-  { key: 'memory', label: 'Ký ức' },
-  { key: 'history', label: 'Tư liệu lịch sử' },
-]
+// Chip "Tất cả" là copy của artboard; các chip còn lại đến từ props (nguồn: option của collection).
+const ALL = { key: 'all', label: 'Tất cả' } as const
 
 // Vị trí ô trên lưới desktop 4 cột x 2 hàng; mobile: ô 1 rộng 2 cột cao 180, ô 2-3 cao 210, ô 4-5 chỉ hiện từ md.
 const SLOTS = [
@@ -30,7 +23,7 @@ const SLOTS = [
   'hidden md:block',
 ] as const
 
-export function ArchiveTeaser({ items }: ArchiveTeaserProps) {
+export function ArchiveTeaser({ items, categories }: ArchiveTeaserProps) {
   const [filter, setFilter] = useState<FilterKey>('all')
   if (items.length === 0) return null
   const hasHistory = items.some((i) => i.category === 'history')
@@ -52,7 +45,7 @@ export function ArchiveTeaser({ items }: ArchiveTeaserProps) {
           </p>
         )}
       </div>
-      <FilterChips tone="dark" label="Lọc theo nhóm ảnh" options={OPTIONS} value={filter} onChange={setFilter} />
+      <FilterChips tone="dark" label="Lọc theo nhóm ảnh" options={[ALL, ...categories]} value={filter} onChange={setFilter} />
       <div className="grid grid-cols-2 gap-2 md:auto-rows-[280px] md:grid-cols-4 md:gap-4">
         {tiles.map((item, i) => {
           const code = item.image.code as string

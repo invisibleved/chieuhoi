@@ -1,3 +1,5 @@
+import type { ArchiveAsset } from '@/payload-types'
+
 export type Mode = 'public' | 'preview'
 export type Flag = 'unpublished' | 'rights-not-permitted' | 'consent-pending' | 'unverified' | 'idea'
 
@@ -104,13 +106,16 @@ export interface PersonDetailView extends PersonView {
   story: unknown | null
 }
 
+/** Giá trị chủ đề ảnh tư liệu, lấy từ kiểu Payload (nguồn là ARCHIVE_CATEGORY_OPTIONS). */
+export type ArchiveCategory = NonNullable<ArchiveAsset['category']>
+
 export interface ArchiveItemView {
   image: ImageView
   title: string | null
   description: string | null
-  category: 'village' | 'weaving' | 'people' | 'products' | 'memory' | 'history' | null
+  category: ArchiveCategory | null
   categoryLabel: string | null
-  era: 'old' | 'now' | null
+  era: NonNullable<ArchiveAsset['era']> | null
   eraLabel: string | null
   related: { label: string; href: string } | null
   flags: Flag[]
