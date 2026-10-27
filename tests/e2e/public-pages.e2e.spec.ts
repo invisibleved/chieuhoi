@@ -38,6 +38,13 @@ for (const vp of [
 
       const hrefs = await main.locator('a').evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''))
       for (const slug of ideaSlugs) expect(hrefs).not.toContain(`/cau-chuyen/${slug}`)
+
+      // Thẻ idea ở trang chủ là chủ đề đề xuất (không phải link); mọi link tới Câu chuyện/Con người đều phải mở được.
+      await expect(main.getByText('Chủ đề đề xuất').first()).toBeVisible()
+      const internal = [...new Set(hrefs.filter((h) => /^\/(cau-chuyen|con-nguoi)(\/|$)/.test(h)))]
+      expect(internal).toContain('/cau-chuyen')
+      expect(internal).toContain('/con-nguoi')
+      for (const h of internal) expect((await page.request.get(h)).status(), h).toBe(200)
     })
 
     test('axe: không có vi phạm serious/critical', async ({ page }) => {
@@ -80,7 +87,7 @@ for (const route of ['/nghe-det-chieu', '/lang-hoi']) {
   }
 }
 
-// /cau-chuyen ở public: chỉ 5 bài chủ đề đề xuất (bài Trạng Chiếu còn là bản nháp), không bài nào có trang chi tiết.
+// /cau-chuyen ở public: chỉ 5 bài chủ đề đề xuất (bài Trạng Chiếu còn là bản nháp), không bài nào có trang chi tiết (chi tiết public là 404).
 for (const vp of [
   { name: '1440', width: 1440, height: 900 },
   { name: '390', width: 390, height: 844 },
@@ -120,6 +127,18 @@ for (const vp of [
       const { violations } = await new AxeBuilder({ page }).analyze()
       expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
     })
+  })
+}
+
+// Vòng kiểm ảnh: 4 route mới ở public không có ảnh tham khảo hay ảnh chưa được phép (bài chi tiết public là 404 nên dùng chân dung mẫu).
+for (const route of ['/cau-chuyen', '/con-nguoi', '/con-nguoi/mau-nghe-nhan']) {
+  test(`${route} public không có ảnh chưa được phép`, async ({ page }) => {
+    const res = await page.goto(route)
+    expect(res?.status()).toBe(200)
+    await page.locator('main h1').first().waitFor()
+    const srcs = await page.locator('img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
+    expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
+    expect(await page.content()).not.toMatch(/images\/reference|archive-assets/)
   })
 }
 

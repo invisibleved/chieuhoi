@@ -1,12 +1,12 @@
 # Việc tồn đọng (backlog)
 
-Gom các mục review để lại sau Phase 1–4. Cập nhật lần cuối khi kết thúc Phase 4 (nhánh phase-4-nghe-va-lang @ 1c0043e).
+Gom các mục review để lại sau Phase 1–5a. Cập nhật lần cuối khi kết thúc Phase 5a (nhánh phase-5a-cau-chuyen-con-nguoi).
 Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây **trước** khi xoá thư mục `.superpowers/sdd/<plan>/`.
 
 ## A. Phải xong trước khi deploy staging/production (Phase 6–7)
 
 - [ ] `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
-- [ ] Link 404 cho tới khi có trang (`/nghe-det-chieu` và `/lang-hoi` đã có từ Phase 4): `/con-nguoi`, `/cau-chuyen`, `/san-pham`, `/thu-vien`, `/ket-noi`, và chú thích nguồn hoa văn → trang hiện vật.
+- [ ] Link 404 cho tới khi có trang (`/nghe-det-chieu`, `/lang-hoi` có từ Phase 4; `/cau-chuyen`, `/con-nguoi` có từ Phase 5a): `/san-pham`, `/thu-vien`, `/ket-noi`, và chú thích nguồn hoa văn → trang hiện vật.
 - [ ] `Sources.url` không kiểm tra giao thức; `src/components/content/Sources.tsx:49` đặt thẳng `href={s.url}` → nên chỉ nhận `http(s):` (chỉ staff nhập, update cần reviewer — rủi ro thấp).
 - [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; 9 cảnh báo `npm audit` (Phase 1).
 
@@ -15,9 +15,9 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [x] Nhãn tiếng Việt cho `Products.group` và `ArchiveAssets.era` (`groupLabel`, `eraLabel` trong view model — Phase 4).
 - [x] `ArchiveTeaser` tự chép `LABELS` → nhãn chip lấy từ `categories.ts` qua props (Phase 4).
 - [ ] Trang hiện vật (Phase 5) đánh số nguồn theo đúng thứ tự trang chủ đang dùng cho chú thích hoa văn.
-- [ ] Renderer rich text bỏ `cite` trỏ tới nguồn đã xoá (Phase 1 final).
+- [x] Renderer rich text bỏ `cite` trỏ tới nguồn đã xoá (Phase 1 final).
 - [x] Timeline: mục "+ Mốc của bạn" là phần tử tĩnh, không phải dữ liệu (Phase 1 R18) — làm ở Phase 4 (R6).
-- [ ] Rich text chưa có khối ảnh; nếu cần thì thêm khối ảnh đã kiểm soát quyền (Phase 1 R16).
+- [x] Rich text chưa có khối ảnh; nếu cần thì thêm khối ảnh đã kiểm soát quyền (Phase 1 R16).
 
 ## B2. Vi phạm kiến trúc / component chung (quy tắc trong `CLAUDE.md`) — đã sửa ở Phase 4 (Task 1–2)
 
@@ -37,7 +37,7 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 ## C. Lỗi nhỏ còn mở
 
 ### Phase 4 (Nghề dệt chiếu, Làng Hới)
-- [ ] `src/components/content/labels.ts` (`productTag`, `storyStatus`, `previewNotes`) vẫn là luật nghiệp vụ trong component → chuyển vào `lib/content`.
+- [ ] `src/components/content/labels.ts` (`productTag`, `previewNotes`; `storyStatus` đã chuyển ở Phase 5a) vẫn là luật nghiệp vụ trong component → chuyển vào `lib/content`.
 - [ ] Rule lint kiến trúc chưa chặn import tương đối (`../../lib/content/visibility`) và `payload/*`; test "Ok" của `architecture.test.ts` nên thêm ca đường dẫn tương đối.
 - [ ] Không có `aria-live` khi đổi công đoạn/mốc (Tiếp, Mốc sau); cân nhắc vùng `polite` ở khối chi tiết.
 - [ ] Vòng quanh điểm mốc đang chọn dùng `track-on-dark` (.2) thay vì `rgba(227,205,156,.25)` của artboard.
