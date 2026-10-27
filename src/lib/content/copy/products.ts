@@ -38,6 +38,7 @@ export const productsCopy = {
         mobile: 'Chạm một điểm trên ảnh hoặc chọn bên trên để phóng to và đọc chú thích.',
       },
       markerLabel: 'Chi tiết {n}: {title}',
+      markerLabelUntitled: 'Chi tiết {n}',
       pickerLabel: 'Chọn chi tiết',
       regionLabel: 'Chú thích chi tiết',
       close: 'Đóng chi tiết',

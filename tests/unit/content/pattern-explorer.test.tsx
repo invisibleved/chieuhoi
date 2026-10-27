@@ -96,7 +96,25 @@ describe('PatternExplorer', () => {
     render(<PatternExplorer product={{ ...product, hasPattern: false }} copy={detail} />)
     expect(screen.queryByRole('button', { name: /^Chi tiết/ })).toBeNull()
     expect(screen.queryByText(detail.explore.title!)).toBeNull()
+    expect(screen.queryByText(detail.explore.hint!)).toBeNull()
+    expect(screen.queryByText(detail.explore.hintOther!)).toBeNull()
     expect(stageImg()).toBeTruthy()
+  })
+
+  it('điểm không có tiêu đề: nhãn lấy từ copy, danh sách không có span rỗng', () => {
+    const annotations = [{ ...product.annotations[0], title: null, shortTitle: null }]
+    render(<PatternExplorer product={{ ...product, annotations }} copy={detail} />)
+    expect(screen.getByRole('button', { name: 'Chi tiết 1' }).getAttribute('aria-pressed')).toBe('false')
+    const rows = screen.getAllByRole('button', { name: '1' }).filter((b) => b.querySelector('span'))
+    expect(rows).toHaveLength(1)
+    expect(rows[0].querySelectorAll('span')).toHaveLength(1)
+  })
+
+  it('một ảnh: không có lưới ảnh nhỏ nhưng vẫn có chú thích', () => {
+    render(<PatternExplorer product={{ ...product, images: [img(1)], imageCaptions: ['Ảnh 1/1'] }} copy={detail} />)
+    expect(screen.queryByRole('group', { name: detail.imagesLabel! })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Xem ảnh 1' })).toBeNull()
+    expect(screen.getByText('Ảnh 1/1')).toBeTruthy()
   })
 
   it('không có ảnh: hiện khung ảnh cần chụp', () => {

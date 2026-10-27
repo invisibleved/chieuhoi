@@ -47,7 +47,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
     setSel(sel === n ? null : n)
   }
   const markerLabel = (n: number, title: string | null) =>
-    title ? fillTemplate(explore.markerLabel ?? '', { n, title }) : `Chi tiết ${n}`
+    fillTemplate((title ? explore.markerLabel : explore.markerLabelUntitled) ?? '', { n, title })
   const stageStyle = zoomed
     ? { transform: `scale(${ZOOM})`, transformOrigin: `${current.x}% ${current.y}%` }
     : { transform: 'scale(1)', transformOrigin: '50% 50%' }
@@ -84,7 +84,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
                 />
               ))
             : null}
-          {image ? <StageHint>{imgIdx === 0 ? explore.hint : explore.hintOther}</StageHint> : null}
+          {image && hasPattern ? <StageHint>{imgIdx === 0 ? explore.hint : explore.hintOther}</StageHint> : null}
           {zoomed ? (
             <button
               type="button"
@@ -144,7 +144,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
                   className="flex w-full cursor-pointer items-baseline gap-3.5 border-t border-border-soft py-3.5 text-left"
                 >
                   <span className={`w-5 text-[14px] font-semibold ${on ? 'text-accent' : 'text-text-muted'}`}>{a.n}</span>
-                  <span className={on ? 'font-display text-[24px] text-accent' : 'text-[16px] text-text-primary'}>{a.title}</span>
+                  {a.title ? <span className={on ? 'font-display text-[24px] text-accent' : 'text-[16px] text-text-primary'}>{a.title}</span> : null}
                 </button>
               )
             })}
