@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArchiveChip, DocumentLabel } from '@/components/content/DocumentLabel'
+import { ConfidenceBadge, ConfidenceLegend, ConfidenceMark } from '@/components/content/Confidence'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
 import { PortraitCard } from '@/components/content/PortraitCard'
 import { ProductCard } from '@/components/content/ProductCard'
 import { FootnoteRef, SourceList } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
+import { villageCopy } from '@/lib/content/copy/village'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { isStyleguideEnabled } from '@/components/styleguide/enabled'
 import * as fx from '@/components/styleguide/fixtures'
@@ -205,6 +207,19 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN</Lab>
             <FactList items={[{ term: 'NƠI DỆT', detail: 'Làng Hới, Hải Triều' }, { term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'GHI CHÚ', detail: '[cần xác minh]' }]} />
+          </div>
+          <div className="flex flex-col gap-4 bg-bg-inverse p-4 md:col-span-2">
+            <Lab tone="dark">MỨC TIN CẬY · NỀN TỐI</Lab>
+            <ConfidenceLegend label={villageCopy.timeline.legendLabel.desktop} labels={villageCopy.timeline.confidence} />
+            <div className="flex flex-wrap items-center gap-6 p-2">
+              <ConfidenceMark level="press" /><ConfidenceMark level="oral" /><ConfidenceMark level="pending" />
+              <ConfidenceMark level="press" active /><ConfidenceMark level="oral" active /><ConfidenceMark level="pending" active />
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <ConfidenceBadge level="press" labels={villageCopy.timeline.confidence} />
+              <ConfidenceBadge level="oral" labels={villageCopy.timeline.confidence} />
+              <ConfidenceBadge level="pending" labels={villageCopy.timeline.confidence} />
+            </div>
           </div>
           <div className="flex flex-col gap-3 md:col-span-2"><Lab>VẠCH SỢI CÓI</Lab><ThreadsDivider /></div>
         </div>
