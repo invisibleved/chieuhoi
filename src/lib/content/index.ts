@@ -12,6 +12,7 @@ import { createStories } from './stories'
 export { createArchive, createContent, createPages, createPeople, createProducts, createStories }
 export * from './types'
 export { getMode } from './mode'
+export { findArchiveItem } from './archiveLookup'
 export { archiveCategoryOptions, productGroupOptions } from './categories'
 export { homeCopy, type HomeCopyView } from './copy/home'
 

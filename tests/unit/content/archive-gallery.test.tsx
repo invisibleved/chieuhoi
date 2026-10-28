@@ -94,8 +94,8 @@ describe('ArchiveGallery', () => {
     expect(screen.queryAllByRole('link', { name: /^Mở ảnh:/ })).toHaveLength(0)
     expect(screen.getByText('Chưa có tư liệu trong nhóm này')).toBeTruthy()
   })
-  it('initialCode không phân biệt hoa thường mở sẵn dialog ở render đầu', () => {
-    render(<ArchiveGallery page={page(three())} initialCode="tl-002" />)
+  it('initialCode (mã chuẩn) mở sẵn dialog ở render đầu', () => {
+    render(<ArchiveGallery page={page(three())} initialCode="TL-002" />)
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).getByRole('heading', { level: 2, name: 'Tiêu đề TL-002' })).toBeTruthy()
     expect(within(dialog).getByText('2 / 3', { exact: false })).toBeTruthy()

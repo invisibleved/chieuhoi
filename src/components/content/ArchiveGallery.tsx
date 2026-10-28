@@ -47,7 +47,7 @@ function syncUrl(code: string | null) {
 
 export type ArchiveGalleryProps = {
   page: ArchivePageView
-  /** Mã `?anh=` từ server; khớp (không phân biệt hoa thường) thì mở sẵn ở lần render đầu. */
+  /** Mã `?anh=` từ server; đã là mã chuẩn của một tư liệu đang hiện (server chuẩn hoá bằng `findArchiveItem`) thì mở sẵn ở lần render đầu. */
   initialCode: string | null
 }
 
@@ -56,11 +56,8 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
   const { copy, items } = page
   const [cat, setCat] = useState('all')
   const [era, setEra] = useState<EraKey>('all')
-  const [openCode, setOpenCode] = useState<string | null>(() => {
-    if (!initialCode) return null
-    const wanted = initialCode.toLowerCase()
-    return items.find((i) => i.code.toLowerCase() === wanted)?.code ?? null
-  })
+  // Server đã chuẩn hoá mã (findArchiveItem): ở đây chỉ cần khớp đúng.
+  const [openCode, setOpenCode] = useState<string | null>(() => items.find((i) => i.code === initialCode)?.code ?? null)
   const gridRef = useRef<HTMLDivElement>(null)
   const openerCode = useRef<string | null>(null)
   const returnRef = useRef<HTMLElement | null>(null)
