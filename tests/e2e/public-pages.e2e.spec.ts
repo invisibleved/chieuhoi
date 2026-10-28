@@ -363,3 +363,43 @@ test('/san-pham/khong-co trả 404', async ({ page }) => {
   const res = await page.goto('/san-pham/khong-co')
   expect(res?.status()).toBe(404)
 })
+
+// /thu-vien ở public: 14 tư liệu seed đều rights 'unknown' nên không có ô ảnh nào (Review Focus 1, P9).
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`thư viện public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    test('0 tư liệu, khung trống, không ô ảnh; axe sạch', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/thu-vien')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+      await expect(page.getByRole('status')).toHaveText('0 tư liệu')
+      await expect(page.getByText('Chưa có tư liệu trong nhóm này')).toBeVisible()
+      await expect(page.locator('main a[data-code]')).toHaveCount(0)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+
+    test('chụp toàn trang thư viện public', async ({ page }) => {
+      test.skip(!process.env.SHOTS_DIR, 'đặt SHOTS_DIR để lưu ảnh chụp')
+      await page.goto('/thu-vien')
+      await page.locator('main h1').waitFor()
+      await page.screenshot({ path: `${process.env.SHOTS_DIR}/thu-vien-public-${vp.name}.png`, fullPage: true })
+    })
+
+    test('?anh=TL-004 (người chưa đồng ý) không mở hộp và không lộ gì trong HTML', async ({ page }) => {
+      const res = await page.goto('/thu-vien?anh=TL-004')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+      await expect(page.getByRole('dialog')).toHaveCount(0)
+      // Địa chỉ yêu cầu (`?anh=TL-004`) do chính người gọi gõ, nằm trong payload định tuyến: bỏ ra, phần còn lại không được có mã.
+      const html = (await page.content()).replaceAll('anh=TL-004', '')
+      for (const leak of ['nkc10', 'TL-004', 'Bên khung dệt']) expect(html, leak).not.toContain(leak)
+      await expect(page.locator('meta[property="og:image"]')).toHaveCount(0)
+    })
+  })
+}

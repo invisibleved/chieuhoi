@@ -13,6 +13,7 @@ import { hasVariant, VariantText } from '@/components/ui/VariantText'
 import Link from 'next/link'
 import { ContentImage } from './ContentImage'
 import { ArchiveChip, docCode } from './DocumentLabel'
+import { previewNotes } from './labels'
 
 type EraKey = ArchivePageView['eras'][number]['key']
 
@@ -139,8 +140,8 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
               key={item.code}
               data-code={item.code}
               href={hrefFor(item.code)}
-              // Tên đọc chứa cả chữ hiển thị trên chip (mã · chủ đề) để đạt WCAG 2.5.3 / axe label-content-name-mismatch.
-              aria-label={[fillTemplate(t(copy.open), { title: item.title ?? item.code }), [docCode(t(copy.docLabel), item.image.docNumber ?? item.code), item.categoryLabel].filter(Boolean).join(' · ')].join(', ')}
+              // Tên đọc chứa mọi chữ đang hiển thị trong ô, theo thứ tự DOM: nhãn preview (nếu có), rồi chip (mã · chủ đề). WCAG 2.5.3 / axe label-content-name-mismatch.
+              aria-label={[fillTemplate(t(copy.open), { title: item.title ?? item.code }), ...previewNotes(item.image.flags), [docCode(t(copy.docLabel), item.image.docNumber ?? item.code), item.categoryLabel].filter(Boolean).join(' · ')].join(', ')}
               onClick={(e) => {
                 if (!isPlainClick(e)) return
                 e.preventDefault()
@@ -156,6 +157,7 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
                 wrapperClassName="h-full"
                 notesPosition="top-right"
               />
+              {/* Khoảng trắng giữa nhãn preview và chip: tên đọc nối chữ hai phần này bằng dấu cách. */}{' '}
               <ArchiveChip overlay label={t(copy.docLabel)} code={item.image.docNumber ?? item.code} category={item.categoryLabel} className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5" />
             </a>
           ))}

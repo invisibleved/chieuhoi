@@ -326,6 +326,18 @@ export default function StyleguidePage() {
           </div>
         </div>
         <div className="flex flex-col gap-3">
+          <Lab>ĐẦU TRANG NỀN TỐI (tone=&quot;dark&quot;) · đường dẫn, eyebrow vàng, lead sáng, Eyebrow muted-dark</Lab>
+          <div className="-mx-5 bg-bg-deep text-text-on-dark md:-mx-0">
+            <PageHeader
+              tone="dark"
+              crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Thư viện' }]}
+              intro={{ eyebrow: '06 — THƯ VIỆN', title: 'Ký ức qua\ntừng khung hình.', lead: 'Kho ảnh và tư liệu của làng Hới.', heroTitle: null }}
+              titleClassName="text-[38px] md:text-[76px]"
+              aside={<Eyebrow tone="muted-dark" tracking="label">TƯ LIỆU</Eyebrow>}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
           <Lab>KHỐI KÊU GỌI · CtaBand (chỉ từ md): inverse · secondary · primary</Lab>
           <div className="-mx-5 flex flex-col md:-mx-0">
             <CtaBand tone="inverse" title="Muốn tìm đến người làm chiếu?" body="Trang này không bán hàng. Danh sách cơ sở dệt sẽ chỉ đăng khi đã xác minh và được cơ sở đồng ý công khai." action={{ href: '#', label: 'Kết nối với làng' }} />

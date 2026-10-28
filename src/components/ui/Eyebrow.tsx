@@ -2,8 +2,8 @@ import type { ReactNode } from 'react'
 
 type EyebrowProps = {
   children: ReactNode
-  /** light/dark: nhấn đỏ điều / vàng; muted, muted-alt: chữ phụ trên nền sáng / nền cói đậm. */
-  tone?: 'light' | 'dark' | 'muted' | 'muted-alt'
+  /** light/dark: nhấn đỏ điều / vàng; muted, muted-alt: chữ phụ trên nền sáng / nền cói đậm; muted-dark: chữ phụ trên nền tối (Thư viện). */
+  tone?: 'light' | 'dark' | 'muted' | 'muted-alt' | 'muted-dark'
   /** Thêm vạch ngang 48×1px (32px trên mobile) trước chữ. */
   rule?: boolean
   /** eyebrow: .22em mobile, .24em từ md (đầu section). label: .2em cố định (nhãn trong khối). */
@@ -20,6 +20,7 @@ const tones = {
   dark: 'text-accent-on-dark',
   muted: 'text-text-muted',
   'muted-alt': 'text-text-muted-alt',
+  'muted-dark': 'text-text-deep-muted',
 } as const
 
 const trackings = { eyebrow: 'tracking-eyebrow-sm md:tracking-eyebrow', label: 'tracking-label' } as const

@@ -61,3 +61,18 @@ describe('PageHeader', () => {
     expect(screen.getByRole('heading', { level: 1 }).querySelector('em')).toBeNull()
   })
 })
+
+describe('PageHeader tone', () => {
+  const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Thư viện' }]
+  it('tone dark: eyebrow vàng, lead và đường dẫn dùng màu trên nền tối', () => {
+    render(<PageHeader crumbs={crumbs} intro={intro} tone="dark" />)
+    expect(screen.getByText('03 — NGHỀ DỆT CHIẾU').className).toContain('text-accent-on-dark')
+    expect(screen.getByText('Lead').className).toContain('text-text-on-dark-muted')
+    expect(screen.getByRole('link', { name: 'Trang chủ' }).className).toContain('text-text-on-dark-muted')
+  })
+  it('mặc định là light', () => {
+    render(<PageHeader crumbs={crumbs} intro={intro} />)
+    expect(screen.getByText('03 — NGHỀ DỆT CHIẾU').className).toContain('text-accent')
+    expect(screen.getByText('03 — NGHỀ DỆT CHIẾU').className).not.toContain('text-accent-on-dark')
+  })
+})

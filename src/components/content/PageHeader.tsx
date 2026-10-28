@@ -25,6 +25,8 @@ type PageHeaderProps = {
   accentLastLine?: boolean
   /** Ẩn đường dẫn trên mobile (artboard mobile không vẽ). */
   hideCrumbsOnMobile?: boolean
+  /** dark: trang nền tối (Thư viện): đường dẫn, eyebrow vàng, lead sáng. */
+  tone?: 'light' | 'dark'
 }
 
 const asideSpans = {
@@ -45,18 +47,19 @@ export function PageHeader({
   wideIntro = false,
   accentLastLine = false,
   hideCrumbsOnMobile = false,
+  tone = 'light',
 }: PageHeaderProps) {
   const lines = (intro.title ?? '').split('\n')
   return (
     <section className="flex flex-col gap-4 px-5 pt-5 pb-10 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:pt-10 md:pb-24">
       <div className={`-my-1 md:col-span-12 md:my-0${hideCrumbsOnMobile ? ' max-md:hidden' : ''}`}>
-        <Breadcrumb items={crumbs} />
+        <Breadcrumb items={crumbs} tone={tone} />
       </div>
       <div
         className={`flex flex-col gap-[18px] md:gap-6 md:pt-6 ${wideIntro ? 'md:col-span-8' : 'md:col-span-7'}`}
       >
         {intro.eyebrow ? (
-          <Eyebrow as="p" rule className="mt-2 md:mt-0">
+          <Eyebrow as="p" rule tone={tone} className="mt-2 md:mt-0">
             {intro.eyebrow}
           </Eyebrow>
         ) : null}
@@ -78,6 +81,7 @@ export function PageHeader({
           <p
             className={[
               'max-w-[640px] font-serif text-[17px] leading-[1.7] md:text-[22px]',
+              tone === 'dark' ? 'text-text-on-dark-muted' : null,
               leadClassName,
             ]
               .filter(Boolean)

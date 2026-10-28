@@ -31,6 +31,10 @@ describe('Eyebrow', () => {
     expect(screen.getByText('LÀNG HỚI').className).toContain('text-accent-on-dark')
     expect(container.querySelector('span[aria-hidden="true"]')).not.toBeNull()
   })
+  it('tone muted-dark: chữ phụ trên nền tối', () => {
+    render(<Eyebrow tone="muted-dark">TƯ LIỆU</Eyebrow>)
+    expect(screen.getByText('TƯ LIỆU').className).toContain('text-text-deep-muted')
+  })
   it('uppercase: in hoa bằng CSS, giữ nguyên chữ trong DOM; mặc định không in hoa', () => {
     const { rerender } = render(<Eyebrow>Lịch sử</Eyebrow>)
     expect(screen.getByText('Lịch sử').className).not.toContain('uppercase')

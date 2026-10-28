@@ -65,6 +65,13 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks())
 
 describe('ArchiveGallery', () => {
+  it('ô có nhãn preview: tên đọc chứa nhãn đó trước chip (axe label-content-name-mismatch)', () => {
+    const flagged = item(1, { cat: 'village' })
+    flagged.image = { ...flagged.image, flags: ['rights-not-permitted'] }
+    render(<ArchiveGallery page={page([flagged])} initialCode={null} />)
+    expect(screen.getByRole('link', { name: 'Mở ảnh: Tiêu đề TL-001, Ảnh chưa được phép đăng, TL · 001 · Làng quê' })).toBeTruthy()
+  })
+
   it('ô ảnh là liên kết thật tới ?anh=, ảnh có alt rỗng', () => {
     render(<ArchiveGallery page={page(three())} initialCode={null} />)
     expect(tiles()).toHaveLength(3)
