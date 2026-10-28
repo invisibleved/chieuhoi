@@ -70,6 +70,22 @@ const eslintConfig = [
     },
   },
   {
+    files: ['src/proxy.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?!next/server$|@/lib/env$|@/lib/basicAuth$)',
+              message: 'proxy chỉ được import next/server, @/lib/env và @/lib/basicAuth. Xem CLAUDE.md#Kiến trúc.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts', 'src/migrations/'],
   },
 ]

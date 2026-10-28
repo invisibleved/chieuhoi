@@ -32,4 +32,12 @@ describe('lint kiến trúc', () => {
   it('hooks không được import component', async () => {
     expect(await rulesFor('src/hooks/x.ts', "import { Button } from '@/components/ui/Button'\nexport default Button\n")).toContain(RULE)
   })
+  it('proxy không được import @/lib/content hay payload', async () => {
+    expect(await rulesFor('src/proxy.ts', "import { getMode } from '@/lib/content'\nexport const a = getMode\n")).toContain(RULE)
+    expect(await rulesFor('src/proxy.ts', "import { getPayload } from 'payload'\nexport const a = getPayload\n")).toContain(RULE)
+  })
+  it('proxy được import next/server, @/lib/env, @/lib/basicAuth', async () => {
+    const code = "import { NextResponse } from 'next/server'\nimport { isStaging } from '@/lib/env'\nimport { checkBasicAuth } from '@/lib/basicAuth'\nexport const a = [NextResponse, isStaging, checkBasicAuth]\n"
+    expect(await rulesFor('src/proxy.ts', code)).toEqual([])
+  })
 })
