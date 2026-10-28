@@ -20,6 +20,10 @@ async function open(page: Page, path: string) {
 }
 
 /** Reveal đánh dấu `data-reveal`; ở reduced-motion phải ở trạng thái idle: hiện đủ, không dịch chuyển. */
+function revealCount(page: Page) {
+  return page.evaluate(() => document.querySelectorAll('[data-reveal]').length)
+}
+
 function hiddenReveals(page: Page) {
   return page.evaluate(() =>
     [...document.querySelectorAll<HTMLElement>('[data-reveal]')]
@@ -43,13 +47,13 @@ function runningAnimations(page: Page) {
 /**
  * Phần tử hiển thị có transition/animation dài hơn 0.01s. Giá trị computed là danh sách ("0.2s, 0s"): xét từng phần tử.
  * Ngoại lệ có chủ đích: transition chỉ gồm thuộc tính màu (color, background-color, border-color, outline-color, fill, stroke,
- * text-decoration-color) hoặc opacity không chạy khi chưa hover/focus, nên không tạo chuyển động ở trạng thái tĩnh.
+ * text-decoration-color) không chạy khi chưa hover/focus (opacity KHÔNG nằm trong nhóm này: transition opacity ở trạng thái nghỉ vẫn là chuyển động), nên không tạo chuyển động ở trạng thái tĩnh.
  * Vẫn đo chính xác: bỏ qua chỉ khi MỌI thuộc tính có thời lượng > 0.01s đều thuộc nhóm này VÀ không có animation.
  */
 function slowMotion(page: Page) {
   return page.evaluate((max) => {
     const secs = (v: string) => v.split(',').map((s) => { const t = s.trim(); return t.endsWith('ms') ? parseFloat(t) / 1000 : parseFloat(t) })
-    const COLOR = /^(color|background-color|border-color|border-top-color|border-bottom-color|border-left-color|border-right-color|outline-color|text-decoration-color|fill|stroke|opacity)$/
+    const COLOR = /^(color|background-color|border-color|border-top-color|border-bottom-color|border-left-color|border-right-color|outline-color|text-decoration-color|fill|stroke)$/
     const out: string[] = []
     for (const el of document.body.querySelectorAll<HTMLElement>('*')) {
       if (!el.checkVisibility({ visibilityProperty: true })) continue
@@ -74,6 +78,8 @@ for (const [vpName, vp] of Object.entries(VIEWPORTS)) {
     test(`giảm chuyển động ${vpName}: ${route.name}`, async ({ page }) => {
       await page.setViewportSize(vp)
       await open(page, route.path)
+      // Chỉ HomeView dùng Reveal. Không có phần tử nào thì kiểm bên dưới thành vô nghĩa, nên bắt buộc phải thấy.
+      if (route.path === '/') expect(await revealCount(page), 'trang chủ phải có [data-reveal]').toBeGreaterThan(0)
       expect(await hiddenReveals(page), 'Reveal còn ẩn/dịch chuyển').toEqual([])
       await page.waitForTimeout(100)
       expect(await runningAnimations(page), 'animation đang chạy sau load').toEqual([])

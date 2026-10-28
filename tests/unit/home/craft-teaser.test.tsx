@@ -106,4 +106,10 @@ describe('CraftTeaser', () => {
     const { container } = render(<CraftTeaser steps={[]} mode="public" copy={homeCopy} />)
     expect(container.innerHTML).toBe('')
   })
+  it('ảnh thu nhỏ có transition opacity thì tắt khi giảm chuyển động', () => {
+    const { container } = render(<CraftTeaser steps={steps} mode="public" copy={homeCopy} />)
+    const withTransition = [...container.querySelectorAll('img')].filter((i) => i.className.includes('transition-opacity'))
+    expect(withTransition.length).toBeGreaterThan(0)
+    for (const i of withTransition) expect(i.className).toContain('motion-reduce:transition-none')
+  })
 })

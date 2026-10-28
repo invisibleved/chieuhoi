@@ -142,7 +142,7 @@ export function CraftTeaser({ steps, mode, copy }: CraftTeaserProps) {
                   height={s.image.height}
                   sizes="12vw"
                   unoptimized={s.image.flags.length > 0}
-                  className={`h-[150px] w-full object-cover transition-opacity group-hover:opacity-100 ${
+                  className={`h-[150px] w-full object-cover transition-opacity motion-reduce:transition-none group-hover:opacity-100 ${
                     on ? 'opacity-100 outline-2 outline-offset-4 outline-accent-on-dark' : 'opacity-70'
                   }`}
                 />
