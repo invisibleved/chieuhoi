@@ -27,6 +27,8 @@ import { archiveCopy } from '@/lib/content/copy/archive'
 import { docLabel } from '@/lib/content/copy/docLabel'
 import { villageCopy } from '@/lib/content/copy/village'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
+import { PreviewBar } from '@/components/layout/PreviewBar'
+import { previewCopy } from '@/lib/content/copy/preview'
 import { isStyleguideEnabled } from '@/components/styleguide/enabled'
 import * as fx from '@/components/styleguide/fixtures'
 import { Lab, Tok } from '@/components/styleguide/Lab'
@@ -133,7 +135,8 @@ export default function StyleguidePage() {
           <span>02 · hover: chữ đỏ điều</span><span>03 · trang hiện tại: gạch chân sợi rơm</span><span>04 · focus: viền xanh làng</span>
         </div>
         <Breadcrumb items={[{ label: 'Trang chủ', href: '/' }, { label: 'Câu chuyện', href: '/cau-chuyen' }, { label: 'Chuyện về Trạng Chiếu' }]} />
-        <Tok>nav/desktop · nav/mobile (xem artboard Menu mobile) · breadcrumb</Tok>
+        <PreviewBar view={{ label: previewCopy.label, exitLabel: previewCopy.exit, exitRoute: '/preview/exit' }} />
+        <Tok>nav/desktop · nav/mobile (xem artboard Menu mobile) · breadcrumb · preview-bar</Tok>
       </section>
 
       {rowThreads}

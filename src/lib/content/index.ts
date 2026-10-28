@@ -5,13 +5,15 @@ import { cache } from 'react'
 import { createArchive } from './archive'
 import { createPages } from './pages'
 import { createPeople } from './people'
+import { createPreview } from './preview'
 import { createProducts } from './products'
 import { createContent } from './queries'
 import { createStories } from './stories'
 
-export { createArchive, createContent, createPages, createPeople, createProducts, createStories }
+export { createArchive, createContent, createPages, createPeople, createPreview, createProducts, createStories }
 export * from './types'
 export { getMode } from './mode'
+export { getPreviewBar } from './preview'
 export { findArchiveItem } from './archiveLookup'
 export { archiveCategoryOptions, productGroupOptions } from './categories'
 export { homeCopy, type HomeCopyView } from './copy/home'
@@ -71,3 +73,5 @@ export const getProductSlugs = async () => (await boundProducts()).getProductSlu
 
 export const getArchivePage = cache(async (...a: Parameters<ReturnType<typeof createArchive>['getArchivePage']>) => (await boundArchive()).getArchivePage(...a))
 export const getConnectPage = cache(async (...a: Parameters<ReturnType<typeof createPages>['getConnectPage']>) => (await boundPages()).getConnectPage(...a))
+
+export const canPreview = async (headers: Headers) => createPreview(await getPayload({ config })).canPreview(headers)

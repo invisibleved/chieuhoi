@@ -417,3 +417,5 @@ export interface VillagePageView {
 }
 
 export type { ArchiveCopyView, ConnectCopyView, CraftCopyView, PeopleCopyView, StoriesCopyView, VillageCopyView }
+
+export type PreviewBarView = { label: string; exitLabel: string; exitRoute: string }
