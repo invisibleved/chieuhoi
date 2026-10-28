@@ -82,6 +82,10 @@ describe('archive-assets', () => {
       expect([403, 404]).toContain((await anonGetFile(doc.filename as string)).status)
       process.env.APP_ENV = 'staging'
       expect((await anonGetFile(doc.filename as string)).status).toBe(200)
+      // Quyền là điều kiện (không phải true) để Payload tra bản ghi và chuyển cho adapter S3.
+      const read = payload.collections['archive-assets'].config.access.read
+      const result = await read({ req: { user: null, payload } as never, isReadingStaticFile: true })
+      expect(typeof result).toBe('object')
       await expect(payload.find({ collection: 'archive-assets', overrideAccess: false })).rejects.toThrow()
       process.env.APP_ENV = 'production'
       expect([403, 404]).toContain((await anonGetFile(doc.filename as string)).status)
