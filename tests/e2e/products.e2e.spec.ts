@@ -251,7 +251,9 @@ test('PatternTeaser trang chủ: bấm điểm 2 rồi link nguồn tới đúng
   const target = page.locator('#nguon-1')
   await expect(target).toBeVisible()
   await expect(target).toContainText('Vietnam+')
-  expect(await target.evaluate((e) => e.getBoundingClientRect().top)).toBeLessThan(900)
+  // Trình duyệt cuộn tới neo sau khi trang mới dựng xong; dưới tải, URL và nội dung có trước lúc cuộn. Chờ đúng điều kiện.
+  await expect(target).toBeInViewport()
+  await expect.poll(() => target.evaluate((e) => e.getBoundingClientRect().top)).toBeLessThan(900)
 })
 
 for (const vp of VIEWPORTS) {
