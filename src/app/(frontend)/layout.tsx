@@ -4,11 +4,14 @@ import { FooterSlot } from '@/components/layout/FooterSlot'
 import { PreviewBar } from '@/components/layout/PreviewBar'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
+import { isIndexable, siteUrl } from '@/lib/env'
 import { getMode, getPreviewBar, getSiteSettings } from '@/lib/content'
 import { fontDisplay, fontSans, fontSerif } from './fonts'
 
 export const metadata = {
   description: 'Website di sản số nghề dệt chiếu làng Hới.',
+  metadataBase: siteUrl(process.env),
+  robots: isIndexable(process.env) ? undefined : { follow: false, index: false },
   title: 'Chiếu Hới',
 }
 
