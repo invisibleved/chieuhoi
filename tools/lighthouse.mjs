@@ -22,6 +22,7 @@ const args = Object.fromEntries(
 )
 const base = (args.base ?? 'http://localhost:3100').replace(/\/$/, '')
 const out = args.out
+const isPublic = args.public === 'true'
 const extraHeaders = args.auth ? { Authorization: `Basic ${Buffer.from(args.auth).toString('base64')}` } : undefined
 
 const chrome = await launch({
@@ -31,12 +32,17 @@ const chrome = await launch({
 
 const rows = []
 const skipped = []
+const failures = []
 try {
   for (const route of AUDIT_ROUTES) {
-    // Bản public (PREVIEW_ALL=false) không có nội dung chưa duyệt: trang chi tiết đó trả 404 đúng thiết kế, ghi lại là bỏ qua.
-    const status = (await fetch(`${base}${route.path}`, { headers: extraHeaders, redirect: 'manual' })).status
-    if (status === 404) {
-      skipped.push({ route: route.path, status })
+    const res = await fetch(`${base}${route.path}`, { headers: extraHeaders, redirect: 'manual', signal: AbortSignal.timeout(30_000) })
+    // Chỉ route nháp (draftOnPublic) mới được bỏ qua khi chạy với --public; mọi 404 khác là lỗi.
+    if (res.status === 404 && route.draftOnPublic && isPublic) {
+      skipped.push({ route: route.path, status: res.status })
+      continue
+    }
+    if (res.status !== 200) {
+      failures.push(`${route.path}: HTTP ${res.status}`)
       continue
     }
     for (const formFactor of ['mobile', 'desktop']) {
@@ -55,7 +61,8 @@ try {
         formFactor,
         accessibility: Math.round((lhr.categories.accessibility.score ?? 0) * 100),
         performance: Math.round((lhr.categories.performance.score ?? 0) * 100),
-        cls: Number((lhr.audits['cumulative-layout-shift'].numericValue ?? 0).toFixed(4)),
+        cls: lhr.audits['cumulative-layout-shift'].numericValue ?? null,
+        a11yRaw: lhr.categories.accessibility.score,
         lcp: Math.round(lhr.audits['largest-contentful-paint'].numericValue ?? 0),
       })
     }
@@ -64,14 +71,15 @@ try {
   await chrome.kill()
 }
 
-console.table(rows)
+console.table(rows.map(({ a11yRaw: _raw, ...r }) => ({ ...r, cls: r.cls === null ? null : Number(r.cls.toFixed(4)) })))
 for (const s of skipped) console.log(`SKIP ${s.route} (HTTP ${s.status})`)
 if (out) {
   mkdirSync(dirname(out), { recursive: true })
-  writeFileSync(out, `${JSON.stringify({ base, rows, skipped }, null, 2)}\n`)
+  writeFileSync(out, `${JSON.stringify({ base, rows: rows.map(({ a11yRaw: _raw, ...r }) => r), skipped, failures }, null, 2)}\n`)
 }
 
-const failed = rows.filter((r) => r.accessibility < A11Y_MIN || r.cls >= CLS_MAX)
-for (const r of failed) console.error(`FAIL ${r.route} (${r.formFactor}): a11y=${r.accessibility}, CLS=${r.cls}`)
-if (rows.length === 0) console.error('FAIL không route nào chạy được')
-process.exit(failed.length > 0 || rows.length === 0 ? 1 : 0)
+const failed = rows.filter((r) => r.a11yRaw === null || r.a11yRaw * 100 < A11Y_MIN || r.cls === null || r.cls >= CLS_MAX)
+for (const r of failed) console.error(`FAIL ${r.route} (${r.formFactor}): a11y=${r.a11yRaw === null ? 'null' : r.a11yRaw * 100}, CLS=${r.cls}`)
+for (const f of failures) console.error(`FAIL ${f}`)
+console.log(`${rows.length} lượt đo, ${skipped.length} route bỏ qua, ${failed.length + failures.length} lỗi`)
+process.exit(failed.length > 0 || failures.length > 0 || rows.length === 0 ? 1 : 0)

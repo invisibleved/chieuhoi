@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 /** Route cần kiểm ở Phase 7 (a11y, bàn phím, CLS, so ảnh). `screen` là tên ảnh trong `design/screens` (không có đuôi). */
-export type AuditRoute = { path: string; name: string; screen?: { desktop: string; mobile: string } }
+export type AuditRoute = { path: string; name: string; draftOnPublic?: true; screen?: { desktop: string; mobile: string } }
 
 export const VIEWPORTS = { desktop: { width: 1440, height: 900 }, mobile: { width: 390, height: 844 } }
 
@@ -33,7 +33,7 @@ export const AUDIT_ROUTES: AuditRoute[] = [
   { path: '/nghe-det-chieu', name: 'nghề dệt chiếu', screen: { desktop: 'CraftPage', mobile: 'CraftMobile' } },
   { path: '/lang-hoi', name: 'làng Hới', screen: { desktop: 'VillagePage', mobile: 'VillageMobile' } },
   { path: '/cau-chuyen', name: 'câu chuyện', screen: { desktop: 'StoriesIndex', mobile: 'StoriesMobile' } },
-  { path: `/cau-chuyen/${story.slug}`, name: 'bài câu chuyện', screen: { desktop: 'StoryDetail', mobile: 'StoryMobile' } },
+  { path: `/cau-chuyen/${story.slug}`, name: 'bài câu chuyện', draftOnPublic: true, screen: { desktop: 'StoryDetail', mobile: 'StoryMobile' } },
   { path: '/con-nguoi', name: 'con người', screen: { desktop: 'PeopleIndex', mobile: 'PeopleMobile' } },
   { path: `/con-nguoi/${person.slug}`, name: 'chân dung', screen: { desktop: 'PersonDetail', mobile: 'PersonMobile' } },
   { path: '/san-pham', name: 'sản phẩm', screen: { desktop: 'ProductsIndex', mobile: 'ProductsMobile' } },
