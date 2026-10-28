@@ -55,7 +55,10 @@ describe('view model Kết nối', () => {
     const v = await pages.getConnectPage('preview')
     expect(v.contact.email).toEqual({ text: '[Email liên hệ]', href: null })
     expect(v.contact.phone).toEqual({ text: '[Số điện thoại]', href: null })
-    expect(v.contact.mobileLine).toBe('[Email liên hệ] · [Số điện thoại]')
+    expect(v.contact.mobileLine).toEqual({
+      parts: [{ text: '[Email liên hệ]', href: null }, { text: '[Số điện thoại]', href: null }],
+      separator: ' · ',
+    })
     expect(v.copy.contact.preview?.email).toBe('[Email liên hệ]')
   })
 
@@ -64,7 +67,7 @@ describe('view model Kết nối', () => {
     const pub = await pages.getConnectPage('public')
     expect(pub.contact.email).toEqual({ text: 'a@b.vn', href: 'mailto:a@b.vn' })
     expect(pub.contact.phone).toBeNull()
-    expect(pub.contact.mobileLine).toBe('a@b.vn')
+    expect(pub.contact.mobileLine).toEqual({ parts: [{ text: 'a@b.vn', href: 'mailto:a@b.vn' }], separator: ' · ' })
     const pre = await pages.getConnectPage('preview')
     expect(pre.contact.phone).toEqual({ text: '[cần xác minh]', href: null })
     await setContact({ email: '', phone: '' })

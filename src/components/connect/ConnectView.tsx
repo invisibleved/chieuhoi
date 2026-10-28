@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import type { ConnectPageView } from "@/lib/content"
 import { PageHeader } from "@/components/content/PageHeader"
 import { VerifyNote } from "@/components/content/VerifyNote"
@@ -92,7 +93,16 @@ export function ConnectView({ page }: { page: ConnectPageView }) {
         </h2>
         <FactList items={facts} columns={2} className="max-md:hidden md:col-span-7 md:col-start-6" />
         <div className="md:hidden">
-          {contact.mobileLine ? <p className={`${rowBase} !border-border-strong`}>{contact.mobileLine}</p> : null}
+          {contact.mobileLine ? (
+            <p className={`${rowBase} !border-border-strong`}>
+              {contact.mobileLine.parts.map((part, i) => (
+                <Fragment key={i}>
+                  {i > 0 ? contact.mobileLine?.separator : null}
+                  {contactNode(part)}
+                </Fragment>
+              ))}
+            </p>
+          ) : null}
           {address ? <p className={rowBase}>{address}</p> : null}
           <p className={`${rowBase} border-b`}>
             <VariantText value={{ desktop: null, mobile: visit.mobile }} />

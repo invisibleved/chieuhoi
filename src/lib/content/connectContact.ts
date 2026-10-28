@@ -19,6 +19,7 @@ export function buildConnectContact(raw: Raw, copy: ConnectCopyView): Contact {
   const c = copy.contact
   const email = link(raw.email, c.preview?.email, mailHref)
   const phone = link(raw.phone, c.preview?.phone, telHref)
+  const parts = [email, phone].filter((p) => p !== null)
   const visit: Variant = raw.visitInfo
     ? { desktop: raw.visitInfo, mobile: `${c.visitPrefix.mobile ?? ""}${raw.visitInfo}` }
     : c.noVisit
@@ -28,6 +29,6 @@ export function buildConnectContact(raw: Raw, copy: ConnectCopyView): Contact {
     address: raw.address,
     addressNote: raw.addressNote,
     visit,
-    mobileLine: [email?.text, phone?.text].filter(Boolean).join(" · ") || null,
+    mobileLine: parts.length > 0 ? { parts, separator: " · " } : null,
   }
 }

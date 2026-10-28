@@ -70,6 +70,9 @@ describe("ConnectView", () => {
     render(<ConnectView page={view("public", { email: "a@b.vn", phone: "0123 456", visitInfo: "Sáng thứ Bảy" })} />)
     const text = mobileBlock().textContent
     expect(text).toContain("a@b.vn · 0123 456")
+    const links = Array.from(mobileBlock().querySelectorAll("a"))
+    expect(links.map((a) => a.getAttribute("href"))).toEqual(["mailto:a@b.vn", "tel:0123456"])
+    expect(links[0].parentElement?.textContent).toBe("a@b.vn · 0123 456")
     expect(text).toContain("Thăm làng: Sáng thứ Bảy")
   })
 

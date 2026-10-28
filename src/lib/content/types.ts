@@ -328,8 +328,8 @@ export interface ConnectPageView {
     addressNote: string | null
     /** visitInfo hoặc câu "chưa có thông tin", đã gồm tiền tố mobile. */
     visit: Variant
-    /** "{email} · {điện thoại}" cho mobile; null khi cả hai trống. */
-    mobileLine: string | null
+    /** Dòng "email · điện thoại" của mobile: các phần có mặt (giữ liên kết) và dấu nối; null khi cả hai trống. */
+    mobileLine: { parts: { text: string; href: string | null }[]; separator: string } | null
   }
   copy: ConnectCopyView
 }
