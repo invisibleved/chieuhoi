@@ -5,6 +5,7 @@ import { ValidationError, type Access, type CollectionConfig, type Where } from 
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
+import { isStaging } from '@/lib/env'
 import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, controlFieldAdmin, isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
@@ -34,6 +35,8 @@ export const ARCHIVE_ERA_OPTIONS = [
 // R19: khách chỉ được tải file (isReadingStaticFile), không liệt kê/đọc metadata qua REST.
 const readAccess: Access = ({ req, isReadingStaticFile }) => {
   if (req.user) return true
+  // R5: ở staging khách đã qua mật khẩu được tải mọi file ảnh (REST liệt kê vẫn đóng).
+  if (isReadingStaticFile && isStaging(process.env)) return true
   return isReadingStaticFile ? publicAssetQuery : false
 }
 

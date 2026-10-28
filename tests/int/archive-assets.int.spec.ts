@@ -73,6 +73,24 @@ describe('archive-assets', () => {
     expect(res.status).toBe(200)
   })
 
+  it('R5: staging cho khách tải file ảnh unknown, development vẫn chặn, find vẫn đóng', async () => {
+    const saved = process.env.APP_ENV
+    try {
+      const doc = await makeAsset({ subjectConsent: 'not_applicable' })
+      expect(doc.rights).toBe('unknown')
+      process.env.APP_ENV = 'development'
+      expect([403, 404]).toContain((await anonGetFile(doc.filename as string)).status)
+      process.env.APP_ENV = 'staging'
+      expect((await anonGetFile(doc.filename as string)).status).toBe(200)
+      await expect(payload.find({ collection: 'archive-assets', overrideAccess: false })).rejects.toThrow()
+      process.env.APP_ENV = 'production'
+      expect([403, 404]).toContain((await anonGetFile(doc.filename as string)).status)
+    } finally {
+      if (saved === undefined) delete process.env.APP_ENV
+      else process.env.APP_ENV = saved
+    }
+  })
+
   it('ảnh permitted nhưng subjectConsent pending vẫn bị chặn', async () => {
     const doc = await makeAsset({ rights: 'permitted' })
     expect(doc.subjectConsent).toBe('pending')

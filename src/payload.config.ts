@@ -15,6 +15,7 @@ import { Stories } from './collections/Stories'
 import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
+import { storagePlugins } from './storage'
 import { PageIntros } from './globals/PageIntros'
 import { SiteSettings } from './globals/SiteSettings'
 
@@ -48,5 +49,5 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: storagePlugins(process.env),
 })
