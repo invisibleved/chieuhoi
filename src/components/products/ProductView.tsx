@@ -44,7 +44,6 @@ export function ProductView({ page }: { page: ProductPageView }) {
     wide: true,
     action: <LinkArrow href={connectHref}>{d.connect.label.desktop}</LinkArrow>,
   }
-  const hasSection = facts.length > 0 || p.context !== null
 
   const heading = (
     <div className="flex flex-col gap-3 md:gap-[18px]">
@@ -67,22 +66,24 @@ export function ProductView({ page }: { page: ProductPageView }) {
         <PatternExplorer product={p} copy={d} aside={heading} />
       </div>
 
-      {hasSection ? (
-        <section aria-labelledby={CONTEXT_ID} className="flex flex-col px-5 pt-2 md:grid md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-28">
+      {/* R5: dòng liên hệ (câu "Chưa có cơ sở..." và link kết nối) luôn có ở desktop nên section luôn render;
+          cột tiêu đề + bối cảnh chỉ khi có `context`. */}
+      <section aria-labelledby={p.context ? CONTEXT_ID : undefined} className="flex flex-col px-5 pt-2 md:grid md:grid-cols-12 md:gap-x-6 md:px-20 md:pt-28">
+        {p.context ? (
           <div className="flex flex-col gap-4 md:col-span-4">
             <Eyebrow as="p" className="max-md:hidden">{d.context.eyebrow}</Eyebrow>
             <h2 id={CONTEXT_ID} className="m-0 font-display text-[40px] leading-[1.15] font-normal max-md:hidden">{d.context.title}</h2>
-            {p.context ? <p className="m-0 text-[16px] leading-[1.7] text-text-secondary">{p.context}</p> : null}
+            <p className="m-0 text-[16px] leading-[1.7] text-text-secondary">{p.context}</p>
           </div>
-          <div className="mt-7 md:col-span-7 md:col-start-6 md:mt-0">
-            <FactList columns={2} items={[...facts, contact]} className="max-md:hidden" />
-            {facts.length > 0 ? <FactList layout="inline" items={facts} className="md:hidden" /> : null}
-            <Button variant="outline" href={connectHref} className="mt-5 flex w-full md:hidden">
-              {d.connect.label.mobile}
-            </Button>
-          </div>
-        </section>
-      ) : null}
+        ) : null}
+        <div className="mt-7 md:col-span-7 md:col-start-6 md:mt-0">
+          <FactList columns={2} items={[...facts, contact]} className="max-md:hidden" />
+          {facts.length > 0 ? <FactList layout="inline" items={facts} className="md:hidden" /> : null}
+          <Button variant="outline" href={connectHref} className="mt-5 flex w-full md:hidden">
+            {d.connect.label.mobile}
+          </Button>
+        </div>
+      </section>
 
       <SourceList sources={p.sources} title={d.sourcesTitle ?? undefined} />
 

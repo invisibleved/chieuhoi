@@ -67,11 +67,13 @@ describe('ProductView (public)', () => {
     expect(screen.queryByText('Chưa có cơ sở được xác minh và đồng ý công khai')).toBeNull()
   })
 
-  it('không còn dòng nào và không có context thì bỏ cả section Bối cảnh', () => {
+  it('R5: không có dòng nào và không có context vẫn hiện câu chưa có cơ sở, link Kết nối với làng và nút mobile; không có cột Bối cảnh', () => {
     render(<ProductView page={page('public')} />)
+    expect(screen.getByText('Chưa có cơ sở được xác minh và đồng ý công khai')).toBeTruthy()
+    expect(screen.getByRole('link', { name: /^Kết nối với làng/ }).getAttribute('href')).toBe('/ket-noi')
+    expect(screen.getByRole('link', { name: 'Kết nối với người làm chiếu' })).toBeTruthy()
     expect(screen.queryByText('BỐI CẢNH')).toBeNull()
     expect(screen.queryByText('Một tấm chiếu trong đời sống làng')).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Kết nối với người làm chiếu' })).toBeNull()
   })
 
   it('liên hệ: LinkArrow desktop và nút viền mobile cùng trỏ /ket-noi', () => {

@@ -266,6 +266,8 @@ export default function StyleguidePage() {
             <Lab>TIÊU ĐỀ TRANG CHI TIẾT · BÀI ĐỌC</Lab>
             <DetailTitle size="story" as="p">Chuyện về Trạng Chiếu</DetailTitle>
             <Lede size="story">Ông Trạng, khung dệt và nghề chiếu theo làng qua nhiều thế kỷ.</Lede>
+            <Lab>TIÊU ĐỀ TRANG CHI TIẾT · HIỆN VẬT (38/52)</Lab>
+            <DetailTitle size="product" as="p">Chiếu cạp điều</DetailTitle>
             <Lab>TIÊU ĐỀ TRANG CHI TIẾT · CHÂN DUNG</Lab>
             <DetailTitle size="person" as="p">Chờ đồng ý</DetailTitle>
             <Lede size="person">[Một câu giới thiệu ngắn, do chính người được kể duyệt.]</Lede>

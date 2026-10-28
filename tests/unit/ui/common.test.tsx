@@ -166,6 +166,12 @@ describe('DetailTitle, Lede', () => {
     expect(h1.className).toContain('md:text-[72px]')
     rerender(<DetailTitle size="person">Chờ đồng ý</DetailTitle>)
     expect(screen.getByRole('heading', { level: 1 }).className).toContain('md:text-[64px]')
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('text-[40px]')
+    rerender(<DetailTitle size="product">Chiếu cạp điều</DetailTitle>)
+    const product = screen.getByRole('heading', { level: 1 }).className
+    expect(product).toContain('text-[38px]')
+    expect(product).toContain('md:text-[52px]')
+    expect(product).not.toContain('text-[40px]')
   })
   it('as="p" (styleguide): cùng kiểu chữ, không phải heading', () => {
     const { container } = render(<DetailTitle size="person" as="p">Mẫu</DetailTitle>)
