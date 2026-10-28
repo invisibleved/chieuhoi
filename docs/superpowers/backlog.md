@@ -47,27 +47,31 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 ### Phase 7 (Staging, kiểm tra)
 Mã `Task N` là task trong plan Phase 7.
 - [ ] Phase 7: chạy `npm run dev` một lần trên DB dev cũ trước `npm run build` (2 cột mới `prefix`, `_objectkey` của migration `phase7_sync` được đẩy bằng `push`; nếu không, build lỗi `column archive_assets.prefix does not exist`). Chưa ghi vào README/HANDOFF.
-- [ ] Task 1: kiểm `STAGING_AUTH` trong `assertDeployEnv` chỉ yêu cầu có `:` (`":"`, `"user:"`, `":pw"` qua build nhưng proxy trả 503 lúc chạy) → dùng một vị từ chung trong `env.ts` cho cả build và proxy (Task 2 ghi lại cùng lỗi).
+- [x] Task 1: (đã sửa: `isValidStagingAuth` dùng chung cho build và proxy) kiểm `STAGING_AUTH` trong `assertDeployEnv` chỉ yêu cầu có `:` (`":"`, `"user:"`, `":pw"` qua build nhưng proxy trả 503 lúc chạy) → dùng một vị từ chung trong `env.ts` cho cả build và proxy (Task 2 ghi lại cùng lỗi).
 - [ ] Task 1: `siteUrl` ném `TypeError` trần khi `SITE_URL` sai định dạng ở dev.
 - [ ] Task 1: thiếu test staging cho phép `PREVIEW_ALL=true`; test robots thiếu ca `APP_ENV` không hợp lệ.
 - [ ] Task 1: `images.localPatterns` vô hiệu khi `unoptimized: true` (giữ theo brief); dọn khi chắc không quay lại bộ tối ưu.
 - [ ] Task 2: test `basicAuth` thiếu ca scheme chữ thường, nhiều dấu cách, khoảng trắng cuối; test matcher chỉ xấp xỉ path-to-regexp.
 - [ ] Task 3: `images.e2e` có `expect(assetFileUrl)` đệm trong test 403; `afterAll` bỏ qua kết quả DELETE (có thể để lại asset `permitted` mồ côi); test R6 "không có /_next/image" vô nghĩa ở route không có ảnh.
-- [ ] Task 3: comment trong `docker-compose.yml` về tag MinIO: chỉ xác minh với image có sẵn ở máy, chưa kéo được từ quay.io (đã sửa lời ở Task 9; vẫn chưa xác minh trên máy khác).
+- [x] Task 3: (đã sửa lời ở Task 9, comment không còn nói kéo được) comment trong `docker-compose.yml` về tag MinIO: chỉ xác minh với image có sẵn ở máy, chưa kéo được từ quay.io (đã sửa lời ở Task 9; vẫn chưa xác minh trên máy khác).
 - [ ] Task 3: e2e `stories` "sao chép đường dẫn" ở 390 chập chờn (không liên quan tới Phase 7).
 - [x] Task 4: `products.e2e` PatternTeaser (bấm điểm 2 rồi link nguồn) chập chờn khi tải nặng → đã ổn định ở commit 22a11c3 (chờ `toBeInViewport()` + `expect.poll`), 12/12 qua với `--repeat-each=12 --workers=8` (Phase 7 T6).
 - [ ] Task 4: quy tắc vùng chạm pseudo-element trong `a11y.e2e` rộng hơn cần thiết (nên đòi mỗi pseudo ≥ 44 ở cả hai trục, chứa tâm phần tử, `pointer-events` ≠ none); kiểm reflow chỉ đọc `documentElement.scrollWidth`.
-- [ ] Task 4: trạng thái mở (chip `aria-pressed`, v.v.) ngoài menu và lightbox chưa quét axe.
+- [x] Task 4: (đã phủ: `keyboard.e2e` `axeClean` quét các trạng thái mở) trạng thái mở (chip `aria-pressed`, v.v.) ngoài menu và lightbox chưa quét axe.
 - [ ] Task 4: hai chú thích sát nhau (`[1][2]`) có vùng chạm 44px chồng nhau (mỗi số còn ≥ 24px); tách hẳn cần đổi khoảng cách trên artboard.
 - [ ] Task 5: test CraftJourney `.focus()` bước hiện tại trước khi Tab; locator `next`/`nextName` rối; test menu mở nút bằng `.focus()`; viền focus chấp nhận `box-shadow` (CLAUDE.md cấm bóng đổ); selector điểm hoa văn `.rounded-full` mong manh; đường danh sách nút của PatternExplorer chưa có test bàn phím.
 - [ ] Task 6: CLS chỉ đo `scrollHeight` một lần; unit test `craft-teaser` chỉ kiểm chuỗi class; báo cáo sửa lỗi thiếu lệnh chạy chính xác.
 - [ ] Task 7: `lighthouse.mjs` coi mọi non-200 kể cả 3xx là lỗi (chưa đặt `redirect: 'manual'`); fetch timeout in stack thô thay vì dòng `FAIL`; so sánh `a11yRaw*100` là số thực; JSON ghi CLS chưa làm tròn; `--auth` lộ trong argv.
 - [ ] Task 7: Performance mobile ở bản public chỉ 76–85 (LCP ~4–5 giây), không phải mục tiêu bắt buộc. Xem lại sau khi quyết định R6 (tắt bộ tối ưu ảnh, không có `srcset`) và kích thước ảnh `card`.
-- [ ] Task 8: báo cáo ghi mũi tên là "⟶" nhưng `LinkArrow` vẽ "→" (khoảng cách và gạch chân mới là chỗ lệch thật); mục Components và Foundations chụp `/styleguide` hai lần; vài dòng gộp nhiều điểm lệch.
+- [x] Task 8 (mũi tên đã sửa lời trong báo cáo; các ý còn lại vẫn mở): báo cáo ghi mũi tên là "⟶" nhưng `LinkArrow` vẽ "→" (khoảng cách và gạch chân mới là chỗ lệch thật); mục Components và Foundations chụp `/styleguide` hai lần; vài dòng gộp nhiều điểm lệch.
 - [ ] Task 9: e2e staging `expect(del.ok())` trong `finally` có thể che lỗi đầu tiên hoặc để lại asset; kiểm OG so với `STAGING_URL` thay vì `SITE_URL`; guard R5 trong int test (`typeof result === 'object'`) yếu, đường phục vụ S3 chỉ được e2e staging phủ; project `staging` nhận diện bằng argv (hỏng thì chạy thừa/chặn nhầm, không mở site).
 - [ ] Task 9: mỗi lần admin tải ảnh qua `clientUploads` + đổi tên R24 để lại một object gốc mồ côi `<_objectKey>/<tên gốc>` trong bucket (private, không phục vụ, nhưng tốn chỗ và giữ tên file gốc của người tải). Sửa: xoá object gốc trong `afterChange` khi tên đổi, hoặc đổi tên phía client trước khi xin signed URL.
 - [ ] Task 9: e2e staging `admin-upload` tạo/xoá một asset thật trên staging đã deploy và để một object mồ côi ở R2 mỗi lần chạy.
 - [ ] Task 9 / `npm audit` (R15), 10 cảnh báo còn lại: `happy-dom` 20.14.6 (cao; qua `@payloadcms/richtext-lexical` → `@lexical/headless`, sửa cần happy-dom 21 là bản major, npm gợi ý hạ richtext-lexical 3.78.0 là phá vỡ; chờ Payload/Lexical); `@lexical/headless` và `@payloadcms/richtext-lexical` (cao, cùng chuỗi); `deepmerge` qua payload (thấp, chưa có bản sửa); `esbuild` ≤ 0.24.2 qua `@esbuild-kit` → `drizzle-kit` → `@payloadcms/db-postgres` (vừa, chỉ ảnh hưởng dev server, chưa có bản sửa); `payload`, `@payloadcms/db-postgres`, `drizzle-kit`, `@esbuild-kit/*` (thấp/vừa, là cha của các mục trên).
+- [ ] Cuối Phase 7 (a): mỗi lần admin tải ảnh, object gốc mồ côi giữ tên file gốc của người tải trong bucket. PHẢI sửa trước khi production nhận ảnh tải lên thật.
+- [ ] Cuối Phase 7 (b): e2e 401 của staging nên thử thêm `/_next/image?url=…`, một request `_rsc`, `/api/graphql`, `/robots.txt`.
+- [ ] Cuối Phase 7 (c): Lighthouse `--auth` lộ trong argv; cân nhắc đọc từ biến môi trường.
+- [x] Cuối Phase 7: đã sửa ở fix wave cuối: `APP_ENV=development` + `next start` không còn mở preview, `assertDeployEnv` từ chối development khi có `VERCEL`; `isValidStagingAuth` dùng chung; helper `openAuditRoute` kiểm HTTP status; `tools/check-env.mjs` chạy trước migrate trong `npm run ci`; eslint ép `env.ts`/`basicAuth.ts`; `chrome-launcher` vào devDependencies.
 - [ ] Việc cần người dùng: chưa deploy staging thật. Cần tài khoản Vercel, Neon, Cloudflare R2 theo `docs/DEPLOY.md` (Task 11 dừng chờ người dùng).
 - [ ] Điểm lệch so với thiết kế (Task 8; xem `docs/superpowers/reports/2026-10-28-phase-7-kiem-tra.md`, mục "So với thiết kế"; 66 dòng: 7 `rõ`, 59 `nhỏ`; Phase 7 chỉ liệt kê, không sửa giao diện — R14). Mỗi mục dưới đây trỏ tới một phần của báo cáo:
   - Toàn site (header, footer, link): 15 dòng, trong đó 1 `rõ`.

@@ -37,6 +37,8 @@ Mọi lượt: accessibility 100, CLS 0. `/cau-chuyen/chuyen-ve-trang-chieu` tr�
 
 ### Bản preview (:3101, `PREVIEW_ALL=true`) — 22 lượt đo, 0 lỗi
 
+Ghi chú: lượt đo này chạy `next start` với `APP_ENV=development`. Sau fix cuối Phase 7, cấu hình đó là public; muốn lặp lại phải dùng `APP_ENV=staging` + `STAGING_AUTH` + `--auth`. Chưa đo lại.
+
 Mọi lượt: accessibility 100, CLS 0.
 
 | Route | Mobile perf | Mobile LCP (ms) | Desktop perf | Desktop LCP (ms) |
@@ -141,7 +143,7 @@ Loại: `dữ liệu` (CMS khác chữ/ảnh minh hoạ, đúng ý), `bố cục
 
 | Viewport | Vùng | Lệch gì | Loại | Mức |
 |---|---|---|---|---|
-| 1440 + 390 | Link mũi tên (`LinkArrow`) và link chữ đứng riêng ("Đọc về làng Hới →", "Tất cả câu chuyện →", "Xem nguồn →", "Kết nối với cơ sở dệt", "Gửi yêu cầu →", "Yêu cầu sửa hoặc gỡ bài →") | Thiết kế: gạch chân, mũi tên cách chữ ~10px. Build: không gạch chân, mũi tên dài (⟶) dính liền chữ. Có ở mọi trang và trên `/styleguide` (mục "LINK MŨI TÊN"). | kiểu chữ | rõ |
+| 1440 + 390 | Link mũi tên (`LinkArrow`) và link chữ đứng riêng ("Đọc về làng Hới →", "Tất cả câu chuyện →", "Xem nguồn →", "Kết nối với cơ sở dệt", "Gửi yêu cầu →", "Yêu cầu sửa hoặc gỡ bài →") | Thiết kế: gạch chân, mũi tên cách chữ ~10px. Build: không gạch chân, mũi tên dính liền chữ (không có khoảng cách), glyph trông dài hơn vì font. Có ở mọi trang và trên `/styleguide` (mục "LINK MŨI TÊN"). | kiểu chữ | rõ |
 | 1440 + 390 | Breadcrumb | Thiết kế gạch chân các mục cha ("Trang chủ", "Câu chuyện"). Build không gạch chân. | kiểu chữ | nhỏ |
 | 390 | Link quay lại "← Câu chuyện" / "← Con người" / "← Sản phẩm" | Thiết kế: chữ thường, màu chữ chính, gạch chân. Build: đậm, màu đỏ điều, không gạch chân. | kiểu chữ | nhỏ |
 | 1440 | Header | VI/EN có khung viền; header cao hơn artboard ~10px (đã có trong backlog). | bố cục | nhỏ |
@@ -154,7 +156,7 @@ Loại: `dữ liệu` (CMS khác chữ/ảnh minh hoạ, đúng ý), `bố cục
 | 1440 + 390 | Danh sách nguồn (`SourceList`) ở Làng Hới, bài viết, hiện vật | Thiết kế: tiêu đề nguồn màu đỏ điều. Build: màu chữ chính (gạch chân). Số thứ tự "1." ở ghi chú nguồn: thiết kế màu chữ, build màu vàng. | màu | nhỏ |
 | 390 | Danh sách nguồn mobile | Thiết kế cắt tiêu đề dài bằng "…" trên một dòng. Build xuống đủ 2–3 dòng. | bố cục | nhỏ |
 | 1440 | Ô "Đọc tiếp"/"Liên quan"/"Hiện vật khác" (preview) | Nhãn "Ảnh chưa được phép đăng" trên ảnh thẻ hiện bằng font serif (kế thừa từ thẻ), ở mọi nơi khác là sans. Chỉ bản preview. | kiểu chữ | nhỏ |
-| 390 | Mũi tên dòng "Đọc tiếp"/"Liên quan" mobile | Build dùng mũi tên dài, to hơn (⟶). Thiết kế dùng → nhỏ. | kiểu chữ | nhỏ |
+| 390 | Mũi tên dòng "Đọc tiếp"/"Liên quan" mobile | Build: mũi tên dính liền chữ (không có khoảng cách), glyph trông dài và to hơn vì font. Thiết kế: → nhỏ. | kiểu chữ | nhỏ |
 | 390 | Chữ trích dẫn (pull quote) ở bài viết và chân dung | Build lớn hơn artboard: câu trích xuống thêm 1 dòng (desktop 3 dòng thay vì 2, mobile "[Trích nguyên văn lời kể]" xuống 2 dòng). | kiểu chữ | nhỏ |
 
 ### Trang chủ — Home (1440) / HomeMobile (390)

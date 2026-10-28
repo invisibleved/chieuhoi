@@ -120,7 +120,7 @@ Nếu sau này đổi tên miền staging, nhớ sửa lại CORS. Sai CORS thì
    npm run ci
    ```
 
-   Lệnh này chạy `payload migrate` rồi `npm run build`: schema DB luôn khớp code trước khi dựng trang (R10). Migration lỗi thì deploy dừng, bản đang chạy giữ nguyên.
+   Lệnh này kiểm biến môi trường (`tools/check-env.mjs`, cấu hình sai thì dừng trước khi chạm DB), chạy `payload migrate` rồi `npm run build`: schema DB luôn khớp code trước khi dựng trang (R10). Migration lỗi thì deploy dừng, bản đang chạy giữ nguyên.
 5. **Install Command** và **Output Directory**: để mặc định.
 6. Chưa bấm Deploy. Nhập biến môi trường trước (mục 3.3).
 
@@ -142,7 +142,7 @@ Làm ở **Settings** của project (sau khi import, hoặc ngay trong màn hìn
 | `SITE_URL` | `https://chieuhoi-staging.vercel.app` | Vercel, `.env.staging` | **Đúng tên miền `*.vercel.app` của project**, có `https://`, không có `/` cuối. Dùng cho ảnh OG và robots. |
 | `PAYLOAD_SECRET` | `<openssl rand -hex 32>` | Vercel, `.env.staging` | Ít nhất 32 ký tự. Dùng **cùng một giá trị** ở Vercel và `.env.staging`. |
 | `DATABASE_URI` | `postgresql://<user>:<mật-khẩu>@<host>-pooler…/<db>?sslmode=require` | Vercel, `.env.staging` | Chuỗi Neon ở mục 1.2. |
-| `PREVIEW_ALL` | `true` | Vercel | Staging hiện cả nội dung chờ xác minh để người xem thấy giống thiết kế (R4). Production **không** đặt. |
+| `PREVIEW_ALL` | `true` | Vercel | (`APP_ENV=development` chỉ mở nội dung chưa duyệt qua `next dev`; `next start` bỏ qua `PREVIEW_ALL`, và `APP_ENV=development` bị từ chối khi có `VERCEL`.) Staging hiện cả nội dung chờ xác minh để người xem thấy giống thiết kế (R4). Production **không** đặt. |
 | `ALLOW_FIRST_USER` | `false` | Vercel (nên đặt) | Staging/production mà đặt `true` thì build dừng. Người duyệt đầu tiên tạo bằng `npm run create-reviewer`. |
 | `STAGING_AUTH` | `<user>:<mật-khẩu>` | Vercel | Chỉ staging. Tên và mật khẩu xem site, cách nhau bằng dấu `:` đầu tiên. Thiếu thì build dừng; nếu vẫn chạy được tới server thì site trả 503, không bao giờ mở toang. |
 | `S3_BUCKET` | `chieuhoi-staging` | Vercel, `.env.staging` | Tên bucket R2. |
@@ -235,6 +235,8 @@ File `.env.staging` có mật khẩu thật: không gửi cho ai, xoá khi khôn
    ```
 
    Thêm `--out=.superpowers/lighthouse-staging.json` nếu muốn lưu bảng kết quả. Lệnh thoát lỗi khi có trang dưới ngưỡng.
+
+Muốn đo bản xem trước (nội dung chờ xác minh) bằng `next start` thì phải chạy với `APP_ENV=staging`, `STAGING_AUTH`, `PREVIEW_ALL=true` và thêm `--auth` (hoặc đo thẳng staging); `APP_ENV=development` không còn mở bản xem trước ngoài `next dev`.
 
 Lưu ý: lệnh có mật khẩu sẽ nằm trong lịch sử terminal. Xoá lịch sử hoặc thêm dấu cách ở đầu lệnh (bash bỏ qua lệnh đó khi `HISTCONTROL=ignorespace`).
 
