@@ -1,20 +1,22 @@
 # Việc tồn đọng (backlog)
 
-Gom các mục review để lại sau Phase 1–5b. Cập nhật lần cuối khi kết thúc Phase 5b (nhánh phase-5b-san-pham-thu-vien-ket-noi).
+Gom các mục review để lại sau Phase 1–6. Cập nhật lần cuối khi kết thúc Phase 6 (nhánh phase-6-hoan-thien-admin).
 Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây **trước** khi xoá thư mục `.superpowers/sdd/<plan>/`.
 
 ## A. Phải xong trước khi deploy staging/production (Phase 6–7)
 
-- [ ] `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
+- [ ] (Phase 6 đã giải: bản preview qua Draft Mode + `/preview`, nội dung mới cập nhật qua revalidate. Còn lại cho Phase 7: chặn build production bằng `.env` dev / `PREVIEW_ALL=true`.) `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
 - [x] Link 404 cho tới khi có trang: `/san-pham`, `/san-pham/*`, `/thu-vien`, `/ket-noi` và chú thích nguồn hoa văn → trang hiện vật đã có (Phase 5b); `tests/e2e/links.e2e.spec.ts` duyệt link từ header, footer và 5 trang chính.
-- [ ] `Sources.url` không kiểm tra giao thức; `src/components/content/Sources.tsx:49` đặt thẳng `href={s.url}` → nên chỉ nhận `http(s):` (chỉ staff nhập, update cần reviewer — rủi ro thấp).
+- [x] `Sources.url` chỉ nhận `http(s)://` ở admin và lib bỏ url khác giao thức khỏi view model (Phase 6, R10).
 - [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; 9 cảnh báo `npm audit` (Phase 1).
 - [ ] `metadataBase` chưa đặt → URL ảnh OG của bài viết/chân dung là đường dẫn tương đối (Next cảnh báo). Đặt theo tên miền khi deploy (Phase 5a T6).
 - [ ] `/cau-chuyen/[slug]`, `/con-nguoi/[slug]`: `generateStaticParams` chỉ gồm bản ghi public, nhưng mode vẫn chốt lúc build như mục đầu tiên (Phase 5a R20).
 - [x] E2E public: regex `page.content()` không bắt được URL `next/image` đã mã hoá (`%2Fimages%2Freference`) → `public-pages.e2e.spec.ts` dùng `REFERENCE_IMAGE` nhận cả dạng mã hoá, chạy trên 7 route (gồm 4 route Phase 5b) (Phase 5b T11).
 - [ ] E2E public: seed chưa có asset `permitted` nên vòng kiểm ảnh qua vì không có ảnh nào để kiểm. Cần seed một asset `permitted` (cô lập trong e2e) để kiểm có đối tượng.
 - [ ] `/thu-vien` đọc `searchParams` nên là route động (R11 Phase 5b): render theo từng request, ngược với mục đầu tiên (mode chốt lúc build). Cân nhắc cache theo mode khi deploy.
-- [ ] `/san-pham`, `/san-pham/[slug]`, `/ket-noi` prerender tĩnh như trang chủ: mode chốt lúc build, build bằng `.env` dev sẽ đóng băng bản preview (mục đầu tiên). `/ket-noi` còn đọc `SiteSettings` (email, điện thoại, tham quan) lúc build nên sửa trong admin không thấy ngay.
+- [ ] `/san-pham`, `/san-pham/[slug]`, `/ket-noi` prerender tĩnh như trang chủ: mode chốt lúc build, build bằng `.env` dev sẽ đóng băng bản preview (mục đầu tiên). `/ket-noi` còn đọc `SiteSettings` lúc build; phần "sửa trong admin không thấy ngay" đã xong nhờ revalidate (Phase 6, R2).
+- [ ] Ảnh `next/image` đã tối ưu còn trong cache sau khi thu hồi quyền ảnh (R12 Phase 6) → cấu hình `minimumCacheTTL`/xoá cache khi deploy.
+- [ ] Race bootstrap user đầu tiên (`ALLOW_FIRST_USER`, chỉ dev; R12 Phase 6).
 
 ## B. Phải làm trong Phase 4–5
 
@@ -42,6 +44,19 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 
 ## C. Lỗi nhỏ còn mở
 
+### Phase 6 (Admin)
+Mã `Task N` là task trong plan Phase 6.
+- [ ] Mở: sau khi người duyệt đăng trong admin, tải lại trang thấy trạng thái "Đã thay đổi" (có bản nháp mới hơn). Chưa điều tra; kiểm hook `syncWorkflow`/`guardPublish`/revalidate có tạo thêm version nháp khi đăng không.
+- [ ] Task 1: `Makers`/`People` dùng chung một object `controlAdmin` cho nhiều trường (có thể bị sửa chung khi sanitize) → gọi `controlFieldAdmin()` cho từng trường; dòng literal dài ở `People.ts`/`Makers.ts`.
+- [ ] Task 1: `admin-config.test.ts` export `collections`/`globals` từ file test (plan bắt buộc); import lại sẽ đăng ký lại describe → tách helper dùng chung.
+- [ ] Task 2: url `Sources` ở preview bị `isHttpUrl` bỏ (chưa test); `validateHttpUrl` chỉ kiểm tiền tố, `"https://a b"` qua admin rồi bị lib bỏ → khớp `[^\s]+`.
+- [ ] Task 2: `context.skipLastReviewerGuard` là lối tắt chỉ cho test trong hook Users (local API) → ghi chú trong code; kiểm tra hạ vai trò dùng `data.role === 'editor'` cứng, nên đổi thành "không còn là người duyệt".
+- [ ] Task 2: xoá/hạ hàng loạt mọi người duyệt có thể qua guard nếu Payload chạy hook theo từng bản ghi đồng thời (mỗi hook thấy count 2) → kiểm op delete của Payload, rồi thêm test.
+- [ ] Task 3: `safeInternalPath` kiểm `/admin|/api` phân biệt hoa thường (`/Admin` qua; Next route phân biệt hoa thường nên chỉ 404) → thêm cờ `i`. Thiếu test `previewFor('archive-assets')` trả null với bản ghi không lưu trữ qua hàm admin. Thứ tự import ở `ArchiveAssets.ts` và các collection; `routes.test.ts` không có lượt RED.
+- [ ] Task 4: `aria-label` "Chế độ xem trước" của `PreviewBar` viết cứng trong component (nên ở `previewCopy`/view); styleguide viết cứng `/preview/exit` thay vì `PREVIEW_EXIT_ROUTE`. Thiếu unit test href thoát có `?anh=`; int `canPreview` chỉ kiểm đường JWT header (đường cookie do e2e kiểm). Layout await `getSiteSettings` và `getPreviewBar` tuần tự (→ `Promise.all`); redirect `/preview(/exit)` chưa đặt `Cache-Control`.
+- [ ] Task 5: tiêu đề test `admin-config` ghi "7 nội dung" (thực tế 6); hai câu hook của global cùng một dòng; seed không đặt `disableRevalidate` (dựa vào nhánh nuốt lỗi); kiểu `revalidator` hẹp hơn của Next.
+- [ ] Task 6: selector admin trong e2e dựa lớp nội bộ Payload `.doc-controls__popup .popup-button`; chromium phụ thuộc `workflow` nên workflow lỗi thì e2e dev bị bỏ qua (cần ghi vào tài liệu chạy test); khôi phục site-settings đăng lại email đã đăng (mất bản nháp chờ); `finally` chỉ `console.error` khi khôi phục lỗi mà không có lỗi trước → email có thể vẫn bị đổi; chưa kiểm bấm "Đăng" thành công trước khi poll trang công khai; `loginReviewer` trên :3100 chưa xác minh `baseURL`.
+
 ### Phase 5b (Sản phẩm, Thư viện, Kết nối)
 Mã `T1`–`T10` là task trong plan Phase 5b.
 
@@ -49,13 +64,13 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `getProduct` (`queries.ts`) dài ~80 dòng, trộn chú thích, chú thích ảnh và nguồn → tách helper `annotationViews`, `imageCaptions` (T1).
 - [ ] `others` (hiện vật khác): `eyebrow` là `''` khi mã bị ẩn, component phải render an toàn (T1).
 - [ ] Nguồn bị ẩn thì `sourceNote` viết tay cũng bị ẩn; chưa có test cho ca có `sourceNote` (T1). Test cơ sở dệt thiếu ca nháp nhưng có đồng ý và ca preview hiện liên hệ (T1).
-- [ ] Cơ sở đã đăng nhưng không có liên hệ: tên cơ sở hiện cạnh câu "Chưa có cơ sở được xác minh…" (mâu thuẫn). Chọn nhánh trong view model thay vì component (T8).
+- [x] Cơ sở đã đăng nhưng không có liên hệ: nhánh chọn trong view model (`ProductView.contactLine`; câu "Chưa có cơ sở…" chỉ khi không có cơ sở; T8; sửa ở `fd68826`).
 - [ ] Không có guard h1 khi tên hiện vật null; `optionalText` chưa có test riêng; `ReadNext` đặt lề theo `p.sources.length` (bố cục phụ thuộc dữ liệu) (T8).
-- [ ] `archive.ts`: nhãn dự phòng "Xưa"/"Nay" viết cứng → dựng từ `ARCHIVE_ERA_OPTIONS`; `createArchive` còn tham số `_payload` thừa (T2).
+- [x] `archive.ts`: nhãn Xưa/Nay dựng từ `ARCHIVE_ERA_OPTIONS` (`archiveEraOptions`), bỏ tham số `_payload` thừa (T2; sửa ở `fd68826`).
 - [ ] Thiếu test: nhãn `restricted`, nhãn quyền `permitted` mobile, bỏ tư liệu không có mã (T2).
 - [ ] `connect.int.spec` chỉ reset liên hệ ở nhánh thành công → dùng `try/finally` (T2).
 - [ ] Seed `page-intros` (tiêu đề `/ket-noi` có `\n`) chỉ cập nhật khi chạy `SEED_FORCE_GLOBALS` trên DB đã có dữ liệu; `products.json` đổi dòng cuối (T1, T2).
-- [ ] `docNumber ?? code` và nhãn ô ảnh `[docCode, categoryLabel].join(' · ')` lặp trong `ArchiveGallery` → chuyển sang view model (T5).
+- [x] `docNumber ?? code` và nhãn ô ảnh đã chuyển sang view model (`displayCode`, `docLabel`, `chipLabel`; T5; sửa ở `fd68826`).
 - [ ] `ProductsView` ghép số đếm bằng `fillTemplate` trong component → helper/view model (T7).
 - [ ] `connectContact`: `mailHref`/`telHref` còn lỏng (khoảng trắng giữa chuỗi; ở preview "[cần xác minh] 0123" vẫn thành link) (T10).
 - [ ] `src/lib/content/pages.ts`: import `./connectContact` sai thứ tự chữ cái (T10).
@@ -66,8 +81,9 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `PeopleView` truyền `href ?? undefined` nên chuỗi rỗng vẫn render `Link href=""` → dùng `||` (T3).
 - [ ] `Button` bỏ qua `size` với biến thể không phải outline (T3).
 - [ ] `ShotNeeded` tự chuyển desktop/mobile như `VariantText`; `FactList columns=2` với số mục lẻ thiếu đường kẻ mục kế cuối, chưa test; `Segmented` pill sáng không có gap (có thể viền đôi, đối chiếu artboard); test `cards` so chuỗi con thay vì `aria-label` chính xác (T3).
-- [ ] `PatternExplorer`: đóng chi tiết bằng nút/Esc làm focus rơi về `body` → trả về điểm đang chọn; điểm ẩn (opacity 0, `tabIndex -1`) chưa có `aria-hidden`; `StageHint` render chip rỗng khi copy null; viền ảnh nhỏ đang chọn có thể che vòng focus; nút danh sách khi tiêu đề null chỉ có số; test ảnh đơn kiểm "không có nhóm" có thể qua vì rỗng (T4).
-- [ ] Nhãn "n · tiêu đề" và `aria-label` điểm dựng ở 3 component, khác chữ hoa/thường (PatternTeaser và PatternExplorer) → đưa vào lib (T4).
+- [x] `PatternExplorer`: đóng chi tiết trả focus về điểm đã chọn; điểm ẩn có `aria-hidden` (T4; `fd68826`).
+- [ ] `PatternExplorer` còn lại: `StageHint` render chip rỗng khi copy null; viền ảnh nhỏ đang chọn có thể che vòng focus; nút danh sách khi tiêu đề null chỉ có số; test ảnh đơn kiểm "không có nhóm" có thể qua vì rỗng (T4).
+- [x] Nhãn "n · tiêu đề" và `aria-label` điểm đã vào lib (`markerLabel`, `pickerLabel`; T4; sửa ở `fd68826`).
 - [ ] Lightbox: `open(code, opener:boolean)` dùng cờ và `useCallback` thừa; vuốt cũng chạy với chuột kéo ở desktop; focus về ô đã mở chứ không về ô của ảnh hiện tại sau Trước/Tiếp; bẫy focus coi `visibility:hidden` là nhìn thấy (`getClientRects`); thiếu test click kèm phím bổ trợ; chú thích test "hidden-focus" khó hiểu; 2 test styleguide e2e bị skip không giải thích (T5).
 - [ ] `ArchiveGallery` có mẹo `{' '}`; `Eyebrow` nằm trong `dt` → dùng `as="dt"`; test e2e "đổi chủ đề đóng hộp" chưa mở lightbox trước; unit `ArchiveView` chưa kiểm `initialCode` được chuyển xuống (T9).
 - [ ] Form: viền thẻ `ChoiceGroup` đổi 1→2px khi chọn làm nội dung xê ~1px; test form thiếu ConsentCheck đã tick, input email, `ErrorSummary` với `{n}` khác nhau (T6).
@@ -141,8 +157,9 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `test:int` chạy `vitest run` cả config → chạy luôn test unit.
 - [ ] Focus nền tối chỉ áp cho con của `.bg-bg-inverse/.bg-bg-deep/.bg-bg-ink`; rule focus toàn cục chưa nằm trong `@layer base`.
 - [ ] Chưa có token line-height và eyebrow (600 / +0.24em).
-- [ ] Bootstrap user đầu tiên: đếm-rồi-tạo có race; reviewer cuối cùng tự xoá được mình (khoá admin).
-- [ ] `Sources.date` chưa validate `YYYY-MM-DD`.
+- [ ] Bootstrap user đầu tiên: đếm-rồi-tạo có race (chỉ dev; R12 Phase 6, thuộc Phase 7).
+- [x] Người duyệt cuối cùng không xoá/hạ vai trò được (Phase 6, R9). Còn mối lo xoá hàng loạt: xem mục Task 2 ở Phase 6.
+- [x] `Sources.date` validate `YYYY-MM-DD` và ngày có thật (Phase 6, R10).
 - [ ] Collection nào ghi đè `hooks` sau khi spread `contentCollectionDefaults` sẽ mất `recordDraftArg` (fail closed).
 - [ ] Test kích thước ảnh nhận 403|404; thư mục tmp rò khi SIGKILL.
 - [ ] `Stories.category` có lựa chọn thứ 5 "Con người" (theo artboard); `Products.code` để `localized` không cần thiết; vài test dùng `rejects.toThrow` trơn.
@@ -152,6 +169,12 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] Menu mobile vẫn mở (aria-expanded cũ) khi resize qua 1024; nền chưa `inert` khi menu mở; `text-[14px]` viết cứng; footer liên hệ hiện `[cần xác minh]` ở preview.
 
 ## D. Quyết định cần biết (không phải lỗi)
+
+- Phase 6 (đủ danh sách R1–R12 trong `docs/superpowers/plans/2026-10-28-phase-6-hoan-thien-admin.md`), thêm các quyết định khi chạy:
+  - P1: `safeInternalPath` kiểm cả giá trị thô và giá trị giải mã một lần; trả về giá trị thô khi hợp lệ để giữ mã hoá query (ví dụ `?anh=`).
+  - P2: `lib/content/preview.ts` xuất factory `createPreview(payload)` → `{ canPreview(headers) }` gắn trong `index.ts` như các module `create*`; `getPreviewBar()` là export thường.
+  - Plan ghi "7 collection nội dung" nhưng thực tế có 6 (stories, people, craft-steps, timeline-events, products, makers); bộ hook đúng là 8 collection (6 + archive-assets + sources).
+  - Project Playwright `chromium` phụ thuộc `workflow` (ngoài brief): bài tạm của e2e quy trình dùng chung DB làm hỏng đếm của `stories.e2e` khi chạy đồng thời. Hệ quả: `--project=chromium` cũng chạy `public` + `workflow` (cần build :3100) trừ khi dùng `--no-deps`.
 
 - Phase 5b (đủ danh sách R1–R21 trong `docs/superpowers/plans/2026-10-28-phase-5b-san-pham-thu-vien-ket-noi.md`), thêm các quyết định khi chạy:
   - R-P1 (tinh chỉnh ở T10): `getConnectPage` trả liên hệ đã dựng sẵn (`{text, href|null}`, `visit` kèm câu mặc định, `mobileLine` gồm các phần có `href` để giữ `mailto:`/`tel:`); email/điện thoại trống là null ở cả hai mode, preview hiện placeholder từ copy.
