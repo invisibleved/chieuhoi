@@ -162,4 +162,41 @@ describe('users', () => {
     const { totalDocs } = await payload.count({ collection: 'users', where: { role: { equals: 'reviewer' } } })
     expect(totalDocs).toBe(1)
   })
+  it('xoá hàng loạt mọi người duyệt bị chặn, cả hai còn nguyên', async () => {
+    const a = await makeUser(payload, 'reviewer')
+    await makeUser(payload, 'reviewer')
+    await expect(
+      payload.delete({ collection: 'users', where: { role: { equals: 'reviewer' } }, user: a, overrideAccess: false }),
+    ).rejects.toThrow(/Phải còn ít nhất một người duyệt/)
+    const { totalDocs } = await payload.count({ collection: 'users', where: { role: { equals: 'reviewer' } } })
+    expect(totalDocs).toBe(2)
+  })
+
+  it('hạ hàng loạt mọi người duyệt thành biên tập viên bị chặn, cả hai còn nguyên', async () => {
+    const a = await makeUser(payload, 'reviewer')
+    await makeUser(payload, 'reviewer')
+    await expect(
+      payload.update({
+        collection: 'users',
+        where: { role: { equals: 'reviewer' } },
+        data: { role: 'editor' },
+        user: a,
+        overrideAccess: false,
+      }),
+    ).rejects.toMatchObject({
+      data: { errors: [{ path: 'role', message: 'Phải còn ít nhất một người duyệt.' }] },
+    })
+    const { totalDocs } = await payload.count({ collection: 'users', where: { role: { equals: 'reviewer' } } })
+    expect(totalDocs).toBe(2)
+  })
+
+  it('xoá hàng loạt một trong hai người duyệt (theo where) thì được', async () => {
+    const a = await makeUser(payload, 'reviewer')
+    const b = await makeUser(payload, 'reviewer')
+    const res = await payload.delete({ collection: 'users', where: { id: { equals: b.id } }, user: a, overrideAccess: false })
+    expect(res.errors).toHaveLength(0)
+    expect(res.docs).toHaveLength(1)
+    const { totalDocs } = await payload.count({ collection: 'users', where: { role: { equals: 'reviewer' } } })
+    expect(totalDocs).toBe(1)
+  })
 })

@@ -4,8 +4,10 @@ import {
   ValidationError,
   type Access,
   type CollectionBeforeChangeHook,
-  type CollectionBeforeDeleteHook,
+  type CollectionBeforeOperationHook,
   type CollectionConfig,
+  type PayloadRequest,
+  type Where,
 } from 'payload'
 
 import { ADMIN_GROUPS, controlFieldAdmin, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
@@ -49,41 +51,51 @@ const firstUserIsReviewer: CollectionBeforeChangeHook = async ({ data, operation
 
 const LAST_REVIEWER = 'Phải còn ít nhất một người duyệt.'
 
-const countReviewers = async (req: Parameters<CollectionBeforeDeleteHook>[0]['req']) => {
+type GuardArgs = { data?: { role?: unknown }; id?: number | string; where?: Where }
+
+const countReviewers = async (req: PayloadRequest, where?: Where) => {
   const { totalDocs } = await req.payload.count({
     collection: 'users',
-    where: { role: { equals: 'reviewer' } },
+    where: where ? { and: [{ role: { equals: 'reviewer' } }, where] } : { role: { equals: 'reviewer' } },
     overrideAccess: true,
     req,
   })
   return totalDocs
 }
 
-/** R9: không để hệ thống hết người duyệt (race giữa hai người duyệt xoá nhau được chấp nhận). */
-const keepOneReviewerOnDemote: CollectionBeforeChangeHook = async ({ data, originalDoc, operation, req }) => {
-  if (operation !== 'update') return data
-  if (originalDoc?.role === 'reviewer' && data?.role === 'editor' && (await countReviewers(req)) <= 1) {
-    throw new ValidationError({
-      collection: 'users',
-      errors: [{ message: LAST_REVIEWER, path: 'role' }],
-    })
-  }
-  return data
-}
+/**
+ * R9: không để hệ thống hết người duyệt (race giữa hai người duyệt xoá nhau được chấp nhận).
+ * Kiểm ở beforeOperation, một lần cho cả thao tác: Payload chạy hook từng bản ghi song song
+ * trong một transaction, nên xoá/hạ hàng loạt sẽ thấy cùng một số đếm ở mọi bản ghi.
+ */
+const keepOneReviewer: CollectionBeforeOperationHook = async ({ args, operation, req }) => {
+  if (operation !== 'delete' && operation !== 'update') return args
+  // Lối tắt chỉ dành cho test (resetDb) qua local API: dọn DB cần xoá sạch, kể cả người duyệt cuối.
+  if (req.context?.skipLastReviewerGuard) return args
+  const { data, id, where } = args as GuardArgs
+  // Hạ vai trò = vai trò mới không còn là người duyệt.
+  if (operation === 'update' && (data?.role === undefined || data.role === 'reviewer')) return args
+  const target: Where | undefined = id !== undefined ? { id: { equals: id } } : where
+  if (!target) return args
 
-const keepOneReviewerOnDelete: CollectionBeforeDeleteHook = async ({ id, req }) => {
-  // Test dọn DB cần xoá sạch, kể cả người duyệt cuối.
-  if (req.context?.skipLastReviewerGuard) return
-  const doc = await req.payload.findByID({
+  const { docs } = await req.payload.find({
     collection: 'users',
-    id,
+    where: target,
     depth: 0,
+    pagination: false,
     overrideAccess: true,
     req,
   })
-  if (doc.role === 'reviewer' && (await countReviewers(req)) <= 1) {
-    throw new APIError(LAST_REVIEWER, 400)
-  }
+  const targetIds = docs.map((d) => d.id)
+  if (targetIds.length === 0) return args
+  const affected = await countReviewers(req, { id: { in: targetIds } })
+  if (affected === 0 || affected < (await countReviewers(req))) return args
+
+  if (operation === 'delete') throw new APIError(LAST_REVIEWER, 400)
+  throw new ValidationError({
+    collection: 'users',
+    errors: [{ message: LAST_REVIEWER, path: 'role' }],
+  })
 }
 
 export const Users: CollectionConfig = {
@@ -101,8 +113,8 @@ export const Users: CollectionConfig = {
     update: readOwnOrReviewer,
   },
   hooks: {
-    beforeChange: [firstUserIsReviewer, keepOneReviewerOnDemote],
-    beforeDelete: [keepOneReviewerOnDelete],
+    beforeChange: [firstUserIsReviewer],
+    beforeOperation: [keepOneReviewer],
   },
   fields: [
     { name: 'name', type: 'text', label: 'Họ và tên' },
