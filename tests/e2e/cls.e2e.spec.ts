@@ -1,5 +1,6 @@
 // CLS < 0.1 (spec) trên bản production public (:3100), không giảm chuyển động. Project `a11y-public`.
 import { expect, test } from '@playwright/test'
+import { openAuditRoute } from './helpers/open'
 import { AUDIT_ROUTES, VIEWPORTS } from './helpers/routes'
 
 const MAX_CLS = 0.1
@@ -37,9 +38,7 @@ for (const [vpName, vp] of Object.entries(VIEWPORTS)) {
           }
         }).observe({ type: 'layout-shift', buffered: true })
       })
-      const res = await page.goto(route.path)
-      expect(res, route.path).toBeTruthy()
-      await page.waitForLoadState('load')
+      await openAuditRoute(page, route, { publicBuild: true, waitUntil: 'load' })
       const height = await page.evaluate(() => document.documentElement.scrollHeight)
       for (let y = 0; y <= height; y += 400) {
         await page.evaluate((top) => window.scrollTo(0, top), y)

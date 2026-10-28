@@ -3,8 +3,7 @@
 // - Tương tác: menu mobile, lightbox, CraftJourney, Tabs, PatternExplorer, form Kết nối.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { existsSync, readFileSync } from 'node:fs'
-import { REVIEWER_STATE } from './global-setup'
+import { openAuditRoute } from './helpers/open'
 import { AUDIT_ROUTES, VIEWPORTS } from './helpers/routes'
 
 const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
@@ -13,13 +12,7 @@ const MAX_TABS = 300
 async function open(page: Page, path: string, viewport = VIEWPORTS.desktop) {
   await page.setViewportSize(viewport)
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  if (existsSync(REVIEWER_STATE)) {
-    const { cookies } = JSON.parse(readFileSync(REVIEWER_STATE, 'utf8'))
-    await page.context().addCookies(cookies)
-  }
-  const res = await page.goto(path)
-  expect(res, path).toBeTruthy()
-  await page.waitForLoadState('networkidle')
+  await openAuditRoute(page, { path })
 }
 
 async function axeClean(page: Page, what: string) {

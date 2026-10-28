@@ -1,23 +1,13 @@
 // Giảm chuyển động (Phase 7, Task 6): với prefers-reduced-motion: reduce, không còn Reveal ẩn, không animation đang chạy,
 // không transition/animation nào dài hơn 0.01s. Chạy ở project `chromium` (bản xem trước, :3000).
 import { expect, test, type Page } from '@playwright/test'
-import { existsSync, readFileSync } from 'node:fs'
-import { REVIEWER_STATE } from './global-setup'
+import { openAuditRoute } from './helpers/open'
 import { AUDIT_ROUTES, VIEWPORTS } from './helpers/routes'
 
 test.use({ reducedMotion: 'reduce' })
 
 const MAX_S = 0.01
 
-async function open(page: Page, path: string) {
-  if (existsSync(REVIEWER_STATE)) {
-    const { cookies } = JSON.parse(readFileSync(REVIEWER_STATE, 'utf8'))
-    await page.context().addCookies(cookies)
-  }
-  const res = await page.goto(path)
-  expect(res, path).toBeTruthy()
-  await page.waitForLoadState('load')
-}
 
 /** Reveal đánh dấu `data-reveal`; ở reduced-motion phải ở trạng thái idle: hiện đủ, không dịch chuyển. */
 function revealCount(page: Page) {
@@ -77,7 +67,7 @@ for (const [vpName, vp] of Object.entries(VIEWPORTS)) {
   for (const route of AUDIT_ROUTES) {
     test(`giảm chuyển động ${vpName}: ${route.name}`, async ({ page }) => {
       await page.setViewportSize(vp)
-      await open(page, route.path)
+      await openAuditRoute(page, route, { waitUntil: 'load' })
       // Chỉ HomeView dùng Reveal. Không có phần tử nào thì kiểm bên dưới thành vô nghĩa, nên bắt buộc phải thấy.
       if (route.path === '/') expect(await revealCount(page), 'trang chủ phải có [data-reveal]').toBeGreaterThan(0)
       expect(await hiddenReveals(page), 'Reveal còn ẩn/dịch chuyển').toEqual([])

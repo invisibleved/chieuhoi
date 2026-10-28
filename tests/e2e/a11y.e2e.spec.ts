@@ -4,23 +4,16 @@
 //   nên ở public route này trả trang 404: vẫn quét, vì trang 404 cũng phải đạt a11y.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { existsSync, readFileSync } from 'node:fs'
-import { REVIEWER_STATE } from './global-setup'
-import { AUDIT_ROUTES, VIEWPORTS } from './helpers/routes'
+import { openAuditRoute } from './helpers/open'
+import { AUDIT_ROUTES, VIEWPORTS, type AuditRoute } from './helpers/routes'
 
 const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 const MIN_FONT_PX = 12
 const MIN_TARGET_PX = 44
 
-async function open(page: Page, path: string) {
+async function open(page: Page, route: AuditRoute) {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  if (test.info().project.name === 'chromium' && existsSync(REVIEWER_STATE)) {
-    const { cookies } = JSON.parse(readFileSync(REVIEWER_STATE, 'utf8'))
-    await page.context().addCookies(cookies)
-  }
-  const res = await page.goto(path)
-  expect(res, path).toBeTruthy()
-  await page.waitForLoadState('networkidle')
+  await openAuditRoute(page, route, { publicBuild: test.info().project.name !== 'chromium' })
 }
 
 /** Nút text hiển thị có font-size dưới 12px: trả "cỡ chữ \"đoạn chữ\"" để so với []. */
@@ -88,7 +81,7 @@ for (const route of AUDIT_ROUTES) {
   for (const [vpName, vp] of Object.entries(VIEWPORTS)) {
     test(`a11y ${route.name} ${vpName}`, async ({ page }) => {
       await page.setViewportSize(vp)
-      await open(page, route.path)
+      await open(page, route)
 
       const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze()
       expect
@@ -106,7 +99,7 @@ for (const route of AUDIT_ROUTES) {
   for (const width of [320, 640]) {
     test(`a11y ${route.name} ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 })
-      await open(page, route.path)
+      await open(page, route)
       const { scrollWidth, innerWidth } = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
         innerWidth: window.innerWidth,
