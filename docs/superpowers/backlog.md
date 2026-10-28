@@ -46,15 +46,20 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 
 ### Phase 6 (Admin)
 Mã `Task N` là task trong plan Phase 6.
-- [ ] Mở: sau khi người duyệt đăng trong admin, tải lại trang thấy trạng thái "Đã thay đổi" (có bản nháp mới hơn). Chưa điều tra; kiểm hook `syncWorkflow`/`guardPublish`/revalidate có tạo thêm version nháp khi đăng không.
+- [x] Đã điều tra (Phase 6 final): sau khi người duyệt đăng trong admin, tải lại trang thấy trạng thái "Đã thay đổi". Hook của ta (`syncWorkflow`/`guardPublish`/revalidate) không tạo thêm version. Trong e2e đó là bản nháp mới hơn thật, hoặc tải lại trước khi PATCH đăng xong. Trong admin, nút đăng theo locale ("Xuất bản trong Tiếng Việt") của Payload lưu thêm một version nháp chụp lại với thời điểm muộn hơn, nên trạng thái đọc là "Đã thay đổi". Không ảnh hưởng trang công khai (bản đã đăng vẫn đúng).
+- [ ] Hướng dẫn biên tập: người duyệt dùng "Xuất bản tài liệu", không dùng "Xuất bản trong Tiếng Việt", để tránh trạng thái "Đã thay đổi" gây nhầm (ghi vào tài liệu hướng dẫn admin).
 - [ ] Task 1: `Makers`/`People` dùng chung một object `controlAdmin` cho nhiều trường (có thể bị sửa chung khi sanitize) → gọi `controlFieldAdmin()` cho từng trường; dòng literal dài ở `People.ts`/`Makers.ts`.
 - [ ] Task 1: `admin-config.test.ts` export `collections`/`globals` từ file test (plan bắt buộc); import lại sẽ đăng ký lại describe → tách helper dùng chung.
 - [ ] Task 2: url `Sources` ở preview bị `isHttpUrl` bỏ (chưa test); `validateHttpUrl` chỉ kiểm tiền tố, `"https://a b"` qua admin rồi bị lib bỏ → khớp `[^\s]+`.
-- [ ] Task 2: `context.skipLastReviewerGuard` là lối tắt chỉ cho test trong hook Users (local API) → ghi chú trong code; kiểm tra hạ vai trò dùng `data.role === 'editor'` cứng, nên đổi thành "không còn là người duyệt".
-- [ ] Task 2: xoá/hạ hàng loạt mọi người duyệt có thể qua guard nếu Payload chạy hook theo từng bản ghi đồng thời (mỗi hook thấy count 2) → kiểm op delete của Payload, rồi thêm test.
+- [x] Task 2: `context.skipLastReviewerGuard` là lối tắt chỉ cho test trong hook Users (local API) → đã ghi chú trong code; kiểm tra hạ vai trò nay là "vai trò mới không còn là người duyệt" (Phase 6 final fix).
+- [x] Task 2: xoá/hạ hàng loạt mọi người duyệt qua được guard vì Payload chạy hook từng bản ghi song song trong một transaction → guard chuyển sang `beforeOperation` của Users, tính trên cả tập bản ghi bị nhắm; có test int (Phase 6 final fix).
 - [ ] Task 3: `safeInternalPath` kiểm `/admin|/api` phân biệt hoa thường (`/Admin` qua; Next route phân biệt hoa thường nên chỉ 404) → thêm cờ `i`. Thiếu test `previewFor('archive-assets')` trả null với bản ghi không lưu trữ qua hàm admin. Thứ tự import ở `ArchiveAssets.ts` và các collection; `routes.test.ts` không có lượt RED.
-- [ ] Task 4: `aria-label` "Chế độ xem trước" của `PreviewBar` viết cứng trong component (nên ở `previewCopy`/view); styleguide viết cứng `/preview/exit` thay vì `PREVIEW_EXIT_ROUTE`. Thiếu unit test href thoát có `?anh=`; int `canPreview` chỉ kiểm đường JWT header (đường cookie do e2e kiểm). Layout await `getSiteSettings` và `getPreviewBar` tuần tự (→ `Promise.all`); redirect `/preview(/exit)` chưa đặt `Cache-Control`.
+- [ ] Task 4: `aria-label` "Chế độ xem trước" của `PreviewBar` viết cứng trong component (nên ở `previewCopy`/view); styleguide viết cứng `/preview/exit` thay vì `PREVIEW_EXIT_ROUTE`. Thiếu unit test href thoát có `?anh=`; int `canPreview` chỉ kiểm đường JWT header (đường cookie do e2e kiểm). Layout await `getSiteSettings` và `getPreviewBar` tuần tự (→ `Promise.all`).
+- [x] Task 4: redirect `/preview(/exit)` đặt `Cache-Control: private, no-store` (Phase 6 final fix).
+- [x] Xem trước gắn với phiên admin: cookie `__prerender_bypass` dùng chung cả bản build nên `getMode`/`getPreviewBar` kiểm thêm phiên Payload khi Draft Mode bật; đăng xuất là mất xem trước (Phase 6 final fix).
 - [ ] Task 5: tiêu đề test `admin-config` ghi "7 nội dung" (thực tế 6); hai câu hook của global cùng một dòng; seed không đặt `disableRevalidate` (dựa vào nhánh nuốt lỗi); kiểu `revalidator` hẹp hơn của Next.
+- [ ] Revalidate chạy cả khi lưu bản nháp (render lại thừa, R2 chấp nhận); có thể bỏ qua khi `context.publishingDraftArg` và tài liệu chưa đăng.
+- [ ] E2E workflow: chờ toast thành công sau khi bấm "Xuất bản tài liệu" rồi mới poll trang công khai.
 - [ ] Task 6: selector admin trong e2e dựa lớp nội bộ Payload `.doc-controls__popup .popup-button`; chromium phụ thuộc `workflow` nên workflow lỗi thì e2e dev bị bỏ qua (cần ghi vào tài liệu chạy test); khôi phục site-settings đăng lại email đã đăng (mất bản nháp chờ); `finally` chỉ `console.error` khi khôi phục lỗi mà không có lỗi trước → email có thể vẫn bị đổi; chưa kiểm bấm "Đăng" thành công trước khi poll trang công khai; `loginReviewer` trên :3100 chưa xác minh `baseURL`.
 
 ### Phase 5b (Sản phẩm, Thư viện, Kết nối)

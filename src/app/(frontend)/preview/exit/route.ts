@@ -1,9 +1,10 @@
 import { draftMode } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 import { safeInternalPath } from '@/lib/routes'
 
+import { privateRedirect } from '../privateRedirect'
+
 export async function GET(request: Request) {
   ;(await draftMode()).disable()
-  redirect(safeInternalPath(new URL(request.url).searchParams.get('path')))
+  return privateRedirect(safeInternalPath(new URL(request.url).searchParams.get('path')))
 }

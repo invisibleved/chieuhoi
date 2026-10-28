@@ -1,8 +1,9 @@
 import { draftMode } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 import { canPreview } from '@/lib/content'
 import { safeInternalPath } from '@/lib/routes'
+
+import { privateRedirect } from './privateRedirect'
 
 export async function GET(request: Request) {
   if (!(await canPreview(request.headers))) {
@@ -12,5 +13,5 @@ export async function GET(request: Request) {
     })
   }
   ;(await draftMode()).enable()
-  redirect(safeInternalPath(new URL(request.url).searchParams.get('path')))
+  return privateRedirect(safeInternalPath(new URL(request.url).searchParams.get('path')))
 }

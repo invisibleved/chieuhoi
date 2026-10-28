@@ -84,7 +84,7 @@ test('biên tập viên tạo nháp, gửi duyệt, không đăng được', asy
   expect((await publicStatus(browser, `/cau-chuyen/${slug}`)).status).toBe(404)
 })
 
-test('người duyệt xem trước bản nháp từ admin', async () => {
+test('người duyệt xem trước bản nháp từ admin', async ({ browser }) => {
   await reviewerPage.goto(`/admin/collections/stories/${storyId}`)
   const [tab] = await Promise.all([
     reviewerCtx.waitForEvent('page'),
@@ -94,6 +94,9 @@ test('người duyệt xem trước bản nháp từ admin', async () => {
   await expect(tab.getByRole('heading', { level: 1, name: title })).toBeVisible()
   await expect(tab.getByRole('complementary', { name: 'Chế độ xem trước' })).toBeVisible()
   await tab.close()
+
+  // Bản render ở Draft Mode không được vào cache công khai: khách (không cookie) vẫn nhận 404.
+  expect((await publicStatus(browser, `/cau-chuyen/${slug}`)).status).toBe(404)
 })
 
 test('người duyệt đăng → công khai hiện ngay; nháp của biên tập viên không lộ; đăng bản sửa → công khai đổi', async ({ browser }) => {
