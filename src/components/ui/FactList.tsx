@@ -2,7 +2,14 @@ import type { ReactNode } from 'react'
 import { Eyebrow } from './Eyebrow'
 
 type FactListProps = {
-  items: { term: string; detail: ReactNode }[]
+  items: {
+    term: string
+    detail: ReactNode
+    /** Chỉ columns=2: dòng trải hai cột. */
+    wide?: boolean
+    /** Liên kết đặt bên phải dòng (ví dụ "Kết nối với làng"). */
+    action?: ReactNode
+  }[]
   /** stacked: nhãn viết hoa trên, chi tiết dưới. inline: hai cột, nhãn chữ thường màu phụ (PersonDetail). */
   layout?: 'stacked' | 'inline'
   /** 2: từ md chia hai cột, hai hàng đầu viền đậm (bảng thông số hiện vật). */
@@ -23,16 +30,26 @@ export function FactList({ items, layout = 'stacked', columns = 1, className }: 
       {items.map((it, i) => (
         <div
           key={`${i}-${it.term}`}
-          className={`border-t ${rows[layout]} ${i === 0 ? 'border-border-strong' : 'border-border-soft'} ${
-            two ? `md:py-4 ${i === 1 ? 'md:border-border-strong' : ''}` : ''
+          className={`border-t ${it.action ? 'grid grid-cols-[1fr_auto] gap-x-6 gap-y-1.5 py-3.5' : rows[layout]} ${i === 0 ? 'border-border-strong' : 'border-border-soft'} ${
+            two ? `md:py-4 ${i === 1 ? 'md:border-border-strong' : ''} ${it.wide ? 'md:col-span-2' : ''}` : ''
           } ${i === items.length - 1 ? 'border-b border-b-border-soft' : ''}`}
         >
-          {layout === 'inline' ? (
-            <dt className="text-text-muted">{it.term}</dt>
+          {it.action ? (
+            <>
+              <Eyebrow as="dt" tone="muted" tracking="label" uppercase className="col-start-1 row-start-1">{it.term}</Eyebrow>
+              <dd className="col-start-1 row-start-2 m-0 text-[15px] leading-[1.6] text-text-primary">{it.detail}</dd>
+              <dd className="col-start-2 row-span-2 row-start-1 m-0 self-center whitespace-nowrap">{it.action}</dd>
+            </>
           ) : (
-            <Eyebrow as="dt" tone="muted" tracking="label">{it.term}</Eyebrow>
+            <>
+              {layout === 'inline' ? (
+                <dt className="text-text-muted">{it.term}</dt>
+              ) : (
+                <Eyebrow as="dt" tone="muted" tracking="label" uppercase>{it.term}</Eyebrow>
+              )}
+              <dd className={`m-0 text-text-primary ${layout === 'stacked' ? 'text-[15px] leading-[1.6]' : ''}`}>{it.detail}</dd>
+            </>
           )}
-          <dd className={`m-0 text-text-primary ${layout === 'stacked' ? 'text-[15px] leading-[1.6]' : ''}`}>{it.detail}</dd>
         </div>
       ))}
     </dl>

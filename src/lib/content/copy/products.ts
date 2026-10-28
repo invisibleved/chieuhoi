@@ -49,7 +49,8 @@ export const productsCopy = {
       maker: 'Nơi làm', care: 'Bảo quản', contact: 'Liên hệ người làm',
     },
     noMaker: 'Chưa có cơ sở được xác minh và đồng ý công khai',
-    connect: { desktop: 'Kết nối với làng →', mobile: 'Kết nối với người làm chiếu', href: '/ket-noi' },
+    // Desktop: LinkArrow tự thêm mũi tên. Mobile: nút viền thay cho dòng liên hệ.
+    connect: { label: { desktop: 'Kết nối với làng', mobile: 'Kết nối với người làm chiếu' }, href: '/ket-noi' },
     sourcesTitle: 'Nguồn',
     others: { title: 'Hiện vật khác', eyebrow: 'HIỆN VẬT KHÁC', all: 'Toàn bộ sưu tập', cta: 'Xem hiện vật →' },
     preview: {

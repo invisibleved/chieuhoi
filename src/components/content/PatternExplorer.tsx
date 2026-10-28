@@ -53,8 +53,10 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
     : { transform: 'scale(1)', transformOrigin: '50% 50%' }
 
   return (
-    <div className="grid md:col-span-12 md:grid-cols-12 md:grid-rows-[auto_auto_1fr] md:gap-x-6 md:gap-y-[18px]">
-      <div className="flex flex-col gap-3.5 md:col-span-8 md:row-span-3">
+    <div className="flex flex-col md:col-span-12 md:grid md:grid-cols-12 md:grid-rows-[auto_auto_1fr] md:gap-x-6 md:gap-y-[18px]">
+      {/* Đứng đầu DOM để h1 đọc trước sân khấu; mobile đưa xuống cuối bằng order (ảnh → nút → chú thích → tiêu đề). */}
+      {aside ? <div className="mt-8 max-md:order-last md:col-span-3 md:col-start-10 md:row-start-1 md:mt-0">{aside}</div> : null}
+      <div className="flex flex-col gap-3.5 md:col-span-8 md:col-start-1 md:row-span-3 md:row-start-1">
         <div className="relative -mx-5 h-[340px] overflow-hidden bg-bg-ink md:mx-0 md:h-[620px]">
           {image ? (
             <ContentImage
@@ -109,7 +111,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
                 }}
                 className={`block cursor-pointer p-0 ${k === imgIdx ? 'outline outline-2 outline-offset-[3px] outline-accent' : 'opacity-75'}`}
               >
-                <ContentImage image={{ ...im, alt: '' }} size="thumb" sizes="16vw" className="block h-[110px]" />
+                <ContentImage image={{ ...im, alt: '' }} size="thumb" sizes="16vw" className="block h-[110px]" showNotes={false} />
               </button>
             ))}
           </div>
@@ -173,7 +175,6 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
         </>
       ) : null}
 
-      {aside ? <div className="mt-8 md:col-span-3 md:col-start-10 md:row-start-1 md:mt-0">{aside}</div> : null}
     </div>
   )
 }

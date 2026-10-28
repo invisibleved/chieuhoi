@@ -102,10 +102,13 @@ export interface ProductView extends ProductCardView {
   hasPattern: boolean
   material: string | null
   technique: string | null
+  /** Trống là null ở cả hai mode: UI hiện placeholder của copy ở preview. */
   size: string | null
   care: string | null
   context: string | null
   pattern: string | null
+  /** "{mã} · {nhóm}" trên tiêu đề trang chi tiết; bỏ phần nào trống. */
+  eyebrow: string
   /** Câu riêng của trang chi tiết: có ảnh mà chưa xác nhận loại (R1). */
   typeNote: string | null
   /** Song song `images` (R6). */

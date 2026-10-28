@@ -11,7 +11,7 @@ import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft
 import { villageCopy, villageFacts, villageSourceOrder, villageTimelineAdd } from './copy/village'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
 import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
-import { isUnverified, showText, toImageView } from './visibility'
+import { isUnverified, optionalText, showText, toImageView } from './visibility'
 
 type Content = ReturnType<typeof createContent>
 type MediaRow = { slot?: string; image?: unknown; caption?: string | null }
@@ -119,17 +119,11 @@ export function createPages(payload: Payload, content: Content) {
     }
   }
 
-  /** Trống thì null ở cả hai mode (R-P1); có dấu chưa xác minh thì ẩn ở public, nguyên văn ở preview. */
-  const contactText = (v: unknown, mode: Mode): string | null => {
-    if (typeof v !== 'string' || v.trim() === '') return null
-    return mode === 'public' && isUnverified(v) ? null : v
-  }
-
   async function getConnectPage(mode: Mode): Promise<ConnectPageView> {
     const [intro, g] = await Promise.all([
       content.getPageIntro('ket-noi', mode), readGlobalDoc(payload, 'site-settings', mode),
     ])
-    const t = (k: string) => contactText(g[k], mode)
+    const t = (k: string) => optionalText(g[k], mode)
     return {
       intro,
       contact: {

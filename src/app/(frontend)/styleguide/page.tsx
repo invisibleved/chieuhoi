@@ -102,9 +102,10 @@ export default function StyleguidePage() {
           <div className={state}><Lab>LINK MŨI TÊN</Lab><LinkArrow href="#">Đọc về làng Hới</LinkArrow></div>
           <div className={state}><Lab>LINK HOVER</Lab><LinkArrow href="#" className="text-accent-hover underline decoration-2 underline-offset-4">Đọc về làng Hới</LinkArrow></div>
           <div className={`${state} bg-bg-inverse justify-center self-stretch p-4`}><Lab tone="dark">TRÊN NỀN TỐI</Lab><LinkArrow href="#" tone="dark">Xem cả hành trình</LinkArrow></div>
+          <div className={state}><Lab>NÚT VIỀN · SÁNG</Lab><Button variant="outline" href="#">Kết nối với người làm chiếu</Button></div>
           <div className={`${state} bg-bg-inverse justify-center self-stretch p-4`}><Lab tone="dark">NÚT VIỀN · TỐI</Lab><Button variant="outline-dark" href="#">Vào thư viện</Button></div>
         </div>
-        <Tok>button/primary · button/secondary · link/arrow · link/on-dark · button/outline-dark — chiều cao tối thiểu 44px, nút chính 52px</Tok>
+        <Tok>button/primary · button/secondary · link/arrow · link/on-dark · button/outline · button/outline-dark — chiều cao tối thiểu 44px, nút chính 52px</Tok>
       </section>
 
       {rowThreads}
@@ -259,7 +260,7 @@ export default function StyleguidePage() {
           </div>
           <div className="flex flex-col gap-3 md:col-span-2">
             <Lab>DANH SÁCH THÔNG TIN · 2 CỘT (columns=2, từ md)</Lab>
-            <FactList columns={2} items={[{ term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'KỸ THUẬT', detail: '[cần xác minh]' }, { term: 'HOA VĂN', detail: '[cần xác minh]' }, { term: 'KÍCH THƯỚC', detail: '[chỉ ghi khi đã đo]' }]} />
+            <FactList columns={2} items={[{ term: 'CHẤT LIỆU', detail: 'Cói' }, { term: 'KỸ THUẬT', detail: '[cần xác minh]' }, { term: 'HOA VĂN', detail: '[cần xác minh]' }, { term: 'KÍCH THƯỚC', detail: '[chỉ ghi khi đã đo]' }, { term: 'LIÊN HỆ NGƯỜI LÀM', detail: 'Chưa có cơ sở được xác minh và đồng ý công khai', wide: true, action: <LinkArrow href="#">Kết nối với làng</LinkArrow> }]} />
           </div>
           <div className="flex min-w-0 flex-col gap-3 md:col-span-2">
             <Lab>TIÊU ĐỀ TRANG CHI TIẾT · BÀI ĐỌC</Lab>

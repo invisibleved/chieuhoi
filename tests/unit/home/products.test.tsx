@@ -12,7 +12,7 @@ const img: ImageView = {
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: img,
   typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null,
-  context: null, pattern: null, typeNote: null, imageCaptions: [], sources: [],
+  context: null, pattern: null, eyebrow: '', typeNote: null, imageCaptions: [], sources: [],
   annotations: [
     { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null, sourceN: null, sourceLine: null },
     { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: null },

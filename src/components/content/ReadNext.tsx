@@ -60,7 +60,9 @@ export function ReadNext({ items, eyebrow, title, action, imageClassName = 'h-[2
               {it.image ? (
                 <ContentImage image={{ ...it.image, alt: '' }} size="card" sizes="(min-width: 768px) 30vw, 0px" className={`block ${imageClassName} max-md:hidden`} wrapperClassName="max-md:hidden" />
               ) : null}
-              <span className="font-sans text-[12px] font-semibold uppercase tracking-meta text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
+              {it.eyebrow ? (
+                <span className="font-sans text-[12px] font-semibold uppercase tracking-meta text-text-muted-alt max-md:hidden">{it.eyebrow}</span>
+              ) : null}
               <span className="group-hover:text-accent">{it.title}</span>
               <span className="font-sans text-[15px] font-medium text-accent max-md:hidden">{it.cta}</span>
               <span aria-hidden="true" className="font-sans text-accent md:hidden">→</span>

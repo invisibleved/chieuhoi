@@ -307,3 +307,59 @@ for (const vp of [
     })
   })
 }
+
+// /san-pham/[slug] ở public: ảnh chưa được phép nên không có ảnh, không có khối khám phá, không tên/liên hệ cơ sở.
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`hiện vật public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openProduct(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/san-pham/chieu-cap-dieu')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+
+    test('200, không ảnh tham khảo, không khối khám phá, không chữ chưa xác minh, câu chưa có cơ sở', async ({ page }) => {
+      await openProduct(page)
+      const main = page.locator('main')
+      await expect(main.locator('h1')).toHaveText('Chiếu cạp điều')
+      const html = await page.content()
+      expect(html).not.toMatch(/images\/reference/)
+      const srcs = await main.locator('img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
+      expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
+      await expect(page.getByRole('button', { name: /^Chi tiết \d/ })).toHaveCount(0)
+      await expect(main.getByText('KHÁM PHÁ ĐƯỜNG DỆT')).toHaveCount(0)
+      await expect(main.getByRole('button', { name: 'Đóng chi tiết' })).toHaveCount(0)
+      const text = await main.evaluate((el) => el.textContent ?? '')
+      expect(text).not.toMatch(/\[[^\]]*(cần|chờ)[^\]]*\]/i)
+      expect(text).not.toContain('[chỉ ghi khi đã đo]')
+      expect(text).not.toContain('[hướng dẫn từ cơ sở dệt]')
+      if (vp.width >= 768) {
+        await expect(main.getByText('Chưa có cơ sở được xác minh và đồng ý công khai').filter({ visible: true })).toBeVisible()
+      }
+      await expect(page.locator('meta[property="og:image"]')).toHaveCount(0)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
+    })
+
+    test('axe: không có vi phạm serious/critical', async ({ page }) => {
+      await openProduct(page)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+
+    test('chụp toàn trang hiện vật public', async ({ page }) => {
+      test.skip(!process.env.SHOTS_DIR, 'đặt SHOTS_DIR để lưu ảnh chụp')
+      await openProduct(page)
+      await page.screenshot({ path: `${process.env.SHOTS_DIR}/san-pham-slug-public-${vp.name}.png`, fullPage: true })
+    })
+  })
+}
+
+test('/san-pham/khong-co trả 404', async ({ page }) => {
+  const res = await page.goto('/san-pham/khong-co')
+  expect(res?.status()).toBe(404)
+})

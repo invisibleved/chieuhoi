@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 type ButtonProps = {
-  variant?: 'primary' | 'secondary' | 'outline-dark'
+  variant?: 'primary' | 'secondary' | 'outline' | 'outline-dark'
   href?: string
   /** Chỉ cho outline-dark: md 48/22 (màn hình thành công), lg 52/28 (khối kêu gọi). Nút chính luôn 52/28. */
   size?: 'md' | 'lg'
@@ -23,6 +23,9 @@ const variants = {
   primary:
     'min-h-[52px] px-7 bg-accent text-on-accent text-[15px] font-medium hover:bg-accent-hover active:bg-accent-press disabled:bg-[#D9CDB8] disabled:text-[#3E3B35] disabled:cursor-not-allowed',
   secondary: 'min-h-11 gap-3 text-[15px] font-medium text-text-primary',
+  // Nút viền trên nền sáng (ProductMobile): full-width do className quyết định.
+  outline:
+    'min-h-[52px] justify-center border border-text-primary px-7 text-[15px] font-medium text-text-primary hover:bg-bg-secondary',
   'outline-dark':
     'border border-text-on-dark text-text-on-dark text-[15px] hover:bg-text-on-dark/10',
 } as const

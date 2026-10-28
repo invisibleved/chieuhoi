@@ -101,6 +101,11 @@ describe('view model Sản phẩm', () => {
       expect(v!.others[2]).toMatchObject({ eyebrow: 'CÁCH LÀM', title: 'Công đoạn tạo hoa văn' })
       expect(v!.others[2].image).not.toBeNull()
     })
+    it('preview: size/care trống là null (copy hiện placeholder), không phải [cần xác minh]', async () => {
+      const p = (await products.getProductPage('chieu-cap-dieu', 'preview'))!.product
+      expect(p.size).toBeNull()
+      expect(p.care).toBeNull()
+    })
     it('others vòng lại đầu danh sách', async () => {
       const v = await products.getProductPage('chieu-duong-dai', 'preview')
       expect(v!.others.slice(0, 2).map((o) => o.href)).toEqual(['/san-pham/chieu-cap-dieu', '/san-pham/chieu-hoa-cai'])

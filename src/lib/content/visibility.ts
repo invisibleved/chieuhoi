@@ -21,6 +21,15 @@ export function showText(v: string | null | undefined, mode: Mode): string | nul
   return v === null || v === undefined || v.trim() === '' ? UNVERIFIED : v
 }
 
+/**
+ * Trường tuỳ chọn (liên hệ, kích thước, bảo quản): trống thì null ở cả hai mode để UI hiện placeholder của copy;
+ * có dấu chưa xác minh thì ẩn ở public, nguyên văn ở preview.
+ */
+export function optionalText(v: unknown, mode: Mode): string | null {
+  if (typeof v !== 'string' || v.trim() === '') return null
+  return mode === 'public' && isUnverified(v) ? null : v
+}
+
 /** Mã tư liệu chỉ hiện khi dạng TL-<số>; trả về phần số. */
 export function docNumber(code: string | null | undefined): string | null {
   const m = code?.match(/^TL-(\d+)$/)

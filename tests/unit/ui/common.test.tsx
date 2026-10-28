@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { ReadNext } from '@/components/content/ReadNext'
 import { ShotNeeded } from '@/components/content/ShotNeeded'
+import { Button } from '@/components/ui/Button'
+import { LinkArrow } from '@/components/ui/LinkArrow'
 import { Callout } from '@/components/ui/Callout'
 import { BackLink } from '@/components/ui/BackLink'
 import { VariantText } from '@/components/ui/VariantText'
@@ -370,3 +372,41 @@ describe('StatusDot', () => {
   })
 })
 
+
+describe('FactList dòng rộng có liên kết', () => {
+  it('dòng wide trải hai cột, liên kết là dd thứ hai cùng dòng', () => {
+    const { container } = render(
+      <FactList
+        columns={2}
+        items={[
+          { term: 'Chất liệu', detail: 'Cói' },
+          { term: 'Liên hệ', detail: 'Chưa có', wide: true, action: <LinkArrow href="/ket-noi">Kết nối với làng</LinkArrow> },
+        ]}
+      />,
+    )
+    const rows = container.querySelectorAll('dl > div')
+    expect(rows[1].className).toContain('md:col-span-2')
+    expect(rows[1].querySelectorAll('dd')).toHaveLength(2)
+    expect(rows[1].querySelector('a')?.getAttribute('href')).toBe('/ket-noi')
+    expect(container.querySelectorAll('dl > div > div')).toHaveLength(0)
+  })
+})
+
+describe('Button outline', () => {
+  it('nút viền nền sáng là liên kết cao 52px, chữ màu chính', () => {
+    render(<Button variant="outline" href="/ket-noi">Kết nối với người làm chiếu</Button>)
+    const a = screen.getByRole('link', { name: 'Kết nối với người làm chiếu' })
+    expect(a.className).toContain('min-h-[52px]')
+    expect(a.className).toContain('border-text-primary')
+  })
+})
+
+describe('ReadNext eyebrow thẻ trống', () => {
+  it('eyebrow rỗng thì không có span rỗng', () => {
+    const { container } = render(
+      <ReadNext eyebrow="HIỆN VẬT KHÁC" items={[{ href: '/san-pham/a', eyebrow: '', title: 'Chiếu A', cta: 'Xem →', image: null }]} />,
+    )
+    expect(screen.getByText('Chiếu A')).toBeTruthy()
+    expect([...container.querySelectorAll('a span')].filter((s) => s.textContent === '')).toHaveLength(0)
+  })
+})

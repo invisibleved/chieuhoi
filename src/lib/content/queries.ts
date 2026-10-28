@@ -18,7 +18,7 @@ import type {
   ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView, Variant,
 } from './types'
-import { isUnverified, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
+import { isUnverified, optionalText, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
 
 const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v as Source) : null)
 const sourcesOf = (v: unknown): Source[] =>
@@ -243,10 +243,11 @@ export function createContent(payload: Payload) {
       images,
       material: showText(d.material, mode),
       technique: showText(d.technique, mode),
-      size: showText(d.size, mode),
-      care: showText(d.care, mode),
+      size: optionalText(d.size, mode),
+      care: optionalText(d.care, mode),
       context: showText(d.context, mode),
       pattern: showText(d.pattern, mode),
+      eyebrow: [card.code, card.groupLabel].filter(Boolean).join(' · '),
       typeNote: images.length > 0 && !d.typeConfirmed ? productsCopy.detail.typeNote : null,
       imageCaptions,
       annotations,

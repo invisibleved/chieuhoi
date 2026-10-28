@@ -49,6 +49,10 @@ describe('ContentImage biến thể (R20)', () => {
     expect(cls).toContain('right-3')
     expect(cls).not.toContain('bottom-3')
   })
+  it('showNotes=false không phủ nhãn xem trước', () => {
+    render(<ContentImage image={img(['rights-not-permitted'])} showNotes={false} />)
+    expect(screen.queryByText('Ảnh chưa được phép đăng')).toBeNull()
+  })
   it('fit=contain cho object-contain', () => {
     render(<ContentImage image={img([])} className="block" fit="contain" />)
     expect(screen.getByRole('img').className).toContain('object-contain')

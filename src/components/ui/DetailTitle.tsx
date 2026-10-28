@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react'
 
-type Size = 'story' | 'person'
+type Size = 'story' | 'person' | 'product'
 
 const titles = {
   // StoryDetail: 40px mobile, 72px từ md.
-  story: 'md:text-[72px]',
+  story: 'text-[40px] md:text-[72px]',
   // PersonDetail: 40px mobile, 64px từ md.
-  person: 'md:text-[64px]',
+  person: 'text-[40px] md:text-[64px]',
+  // ProductDetail: 38px mobile, 52px từ md (cột hẹp).
+  product: 'text-[38px] md:text-[52px]',
 } as const
 
 const ledes = {
@@ -19,10 +21,10 @@ const ledes = {
 // h1 của trang chi tiết (bài đọc, chân dung): font display, 40px mobile.
 // `as="p"` chỉ dùng để trình bày mẫu (styleguide) mà không thêm h1 vào trang.
 export function DetailTitle({ size, as: Tag = 'h1', children }: { size: Size; as?: 'h1' | 'p'; children: ReactNode }) {
-  return <Tag className={`m-0 font-display text-[40px] leading-[1.12] font-normal md:leading-[1.1] ${titles[size]}`}>{children}</Tag>
+  return <Tag className={`m-0 font-display leading-[1.12] font-normal md:leading-[1.1] ${titles[size]}`}>{children}</Tag>
 }
 
 // Đoạn mở đầu nghiêng (sapo, câu giới thiệu) dưới h1 trang chi tiết.
-export function Lede({ size, children }: { size: Size; children: ReactNode }) {
+export function Lede({ size, children }: { size: keyof typeof ledes; children: ReactNode }) {
   return <p className={`m-0 font-serif text-text-secondary italic ${ledes[size]}`}>{children}</p>
 }
