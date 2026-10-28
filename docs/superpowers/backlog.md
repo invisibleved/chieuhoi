@@ -1,6 +1,6 @@
 # Việc tồn đọng (backlog)
 
-Gom các mục review để lại sau Phase 1–5a. Cập nhật lần cuối khi kết thúc Phase 5b (nhánh phase-5b-san-pham-thu-vien-ket-noi).
+Gom các mục review để lại sau Phase 1–5b. Cập nhật lần cuối khi kết thúc Phase 5b (nhánh phase-5b-san-pham-thu-vien-ket-noi).
 Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây **trước** khi xoá thư mục `.superpowers/sdd/<plan>/`.
 
 ## A. Phải xong trước khi deploy staging/production (Phase 6–7)
@@ -58,6 +58,8 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `docNumber ?? code` và nhãn ô ảnh `[docCode, categoryLabel].join(' · ')` lặp trong `ArchiveGallery` → chuyển sang view model (T5).
 - [ ] `ProductsView` ghép số đếm bằng `fillTemplate` trong component → helper/view model (T7).
 - [ ] `connectContact`: `mailHref`/`telHref` còn lỏng (khoảng trắng giữa chuỗi; ở preview "[cần xác minh] 0123" vẫn thành link) (T10).
+- [ ] `src/lib/content/pages.ts`: import `./connectContact` sai thứ tự chữ cái (T10).
+- [ ] `ConnectView` đọc `contact.mobileLine?.separator` thừa bên trong `.map` (T10).
 - [ ] `generateMetadata` của `/thu-vien` có thể trả title rỗng khi cả intro và breadcrumb null; URL OG tương đối (xem `metadataBase` ở mục A) (T9).
 
 **Component dùng chung**
@@ -154,7 +156,7 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - Phase 5b (đủ danh sách R1–R21 trong `docs/superpowers/plans/2026-10-28-phase-5b-san-pham-thu-vien-ket-noi.md`), thêm các quyết định khi chạy:
   - R-P1 (tinh chỉnh ở T10): `getConnectPage` trả liên hệ đã dựng sẵn (`{text, href|null}`, `visit` kèm câu mặc định, `mobileLine` gồm các phần có `href` để giữ `mailto:`/`tel:`); email/điện thoại trống là null ở cả hai mode, preview hiện placeholder từ copy.
   - Size/care trống của hiện vật trả null ở cả hai mode; component hiện chỉ dẫn biên tập chỉ ở preview (T1/T8).
-  - `PatternExplorer` có slot `aside` cho khối tiêu đề, hiện `ShotNeeded` khi không có ảnh; DOM đặt khối chính trước (T4/T8).
+  - `PatternExplorer` có slot `aside` cho khối tiêu đề, hiện `ShotNeeded` khi không có ảnh; thứ tự đọc "h1 sau sân khấu" đã được sửa ở T8: aside đứng đầu DOM, mobile đặt cuối bằng `max-md:order-last` (đã xong, không còn mở).
   - Radio ChoiceGroup: kiểm phím mũi tên bằng e2e (jsdom không mô phỏng được) (T6/T10).
   - Nhãn ô ảnh thư viện mở rộng "Mở ảnh: {tiêu đề}, TL · 001 · Làng quê" để đạt WCAG 2.5.3 (T5).
   - Khối liên hệ của hiện vật luôn có ở desktop kể cả khi không còn dòng nào, vì câu "Chưa có cơ sở được xác minh…" (R5) thắng yêu cầu bỏ section rỗng (T8).
