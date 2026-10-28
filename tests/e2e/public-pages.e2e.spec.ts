@@ -1,7 +1,9 @@
 // Trang chủ, Nghề dệt chiếu, Làng Hới ở chế độ public. Chạy bằng project "public" (máy chủ riêng, PREVIEW_ALL=false): xem playwright.config.ts.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { readFileSync } from 'node:fs'
+import { mkdirSync, readFileSync } from 'node:fs'
+
+const SHOTS_DIR = process.env.SHOTS_DIR
 
 const ideaSlugs: string[] = (JSON.parse(readFileSync('content/seed/stories.json', 'utf8')) as { slug: string }[]).map((s) => s.slug)
 
@@ -403,3 +405,77 @@ for (const vp of [
     })
   })
 }
+
+// /ket-noi ở public: seed chưa có email, điện thoại, thông tin tham quan. Form chỉ là minh hoạ, không gửi gì đi.
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`kết nối public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openConnect(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/ket-noi')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+    const submit = (page: Page) => page.getByRole('button', { name: 'Gửi đóng góp' })
+    const shoot = async (page: Page, name: string) => {
+      if (!SHOTS_DIR) return
+      mkdirSync(`${SHOTS_DIR}/ket-noi`, { recursive: true })
+      await page.screenshot({ path: `${SHOTS_DIR}/ket-noi/public-${name}-${vp.name}.png`, fullPage: true })
+    }
+
+    test('không lộ placeholder liên hệ, câu tham quan thật, gửi trống 3 lỗi, axe sạch', async ({ page }) => {
+      await openConnect(page)
+      await shoot(page, 'default')
+      const text = await page.locator('main').evaluate((el) => el.textContent ?? '')
+      expect(text).not.toMatch(/\[[^\]]*(cần|chờ)\s/i)
+      expect(text).not.toContain('[Email liên hệ]')
+      expect(text).not.toContain('[Số điện thoại]')
+      expect(text).toMatch(/Chưa có thông tin tham quan chính thức|Thăm làng: chưa có thông tin chính thức/)
+      await submit(page).click()
+      await expect(page.locator('main [role=alert]')).toContainText('Còn 3 mục cần bổ sung.')
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+      await shoot(page, 'error')
+    })
+
+    test('điền đủ: thành công có minh hoạ, không request, URL không đổi', async ({ page }) => {
+      await openConnect(page)
+      const url = page.url()
+      await page.waitForTimeout(500)
+      const requests: string[] = []
+      page.on('request', (r) => {
+        if (['fetch', 'xhr', 'document'].includes(r.resourceType())) requests.push(`${r.resourceType()} ${r.url()}`)
+      })
+      await page.getByLabel('Họ và tên').fill('Lan')
+      await page.getByLabel('Số điện thoại hoặc email').fill('lan@example.com')
+      await page.getByText(/Tôi là chủ sở hữu/).click()
+      await submit(page).click()
+      await expect(page.getByRole('status')).toContainText('minh hoạ')
+      await page.waitForTimeout(400)
+      expect(requests).toEqual([])
+      expect(page.url()).toBe(url)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+      await shoot(page, 'success')
+    })
+  })
+}
+
+test.describe('kết nối public không JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
+  test('điền tên rồi bấm Gửi: URL không đổi, không có query name=', async ({ page }) => {
+    const res = await page.goto('/ket-noi')
+    expect(res?.status()).toBe(200)
+    const url = page.url()
+    await page.getByLabel('Họ và tên').fill('Lan')
+    await page.getByRole('button', { name: 'Gửi đóng góp' }).click()
+    await page.waitForTimeout(500)
+    expect(page.url()).toBe(url)
+    expect(new URL(page.url()).search).toBe('')
+    await expect(page.getByLabel('Họ và tên')).toBeVisible()
+  })
+})
