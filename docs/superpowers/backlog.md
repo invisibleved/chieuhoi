@@ -47,6 +47,7 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 ### Phase 6 (Admin)
 Mã `Task N` là task trong plan Phase 6.
 - [x] Đã điều tra (Phase 6 final): sau khi người duyệt đăng trong admin, tải lại trang thấy trạng thái "Đã thay đổi". Hook của ta (`syncWorkflow`/`guardPublish`/revalidate) không tạo thêm version. Trong e2e đó là bản nháp mới hơn thật, hoặc tải lại trước khi PATCH đăng xong. Trong admin, nút đăng theo locale ("Xuất bản trong Tiếng Việt") của Payload lưu thêm một version nháp chụp lại với thời điểm muộn hơn, nên trạng thái đọc là "Đã thay đổi". Không ảnh hưởng trang công khai (bản đã đăng vẫn đúng).
+- [ ] Chốt "giữ ít nhất một người duyệt" (`beforeOperation` của Users) chạy trước kiểm quyền: biên tập viên thử xoá/hạ người duyệt duy nhất nhận lỗi 400 thay vì 403. Không lộ dữ liệu (Phase 6 final).
 - [ ] Hướng dẫn biên tập: người duyệt dùng "Xuất bản tài liệu", không dùng "Xuất bản trong Tiếng Việt", để tránh trạng thái "Đã thay đổi" gây nhầm (ghi vào tài liệu hướng dẫn admin).
 - [ ] Task 1: `Makers`/`People` dùng chung một object `controlAdmin` cho nhiều trường (có thể bị sửa chung khi sanitize) → gọi `controlFieldAdmin()` cho từng trường; dòng literal dài ở `People.ts`/`Makers.ts`.
 - [ ] Task 1: `admin-config.test.ts` export `collections`/`globals` từ file test (plan bắt buộc); import lại sẽ đăng ký lại describe → tách helper dùng chung.
