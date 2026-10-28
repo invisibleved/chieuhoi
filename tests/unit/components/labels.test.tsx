@@ -71,6 +71,16 @@ describe('labels', () => {
     const { container } = render(<VerifyNote size="sm">[CẦN XÁC MINH] x</VerifyNote>)
     expect(container.querySelector('p')?.textContent).toBe('[CẦN XÁC MINH] x')
   })
+  it('VerifyNote không role thì không có role; role="note" áp cho cả p và aside', () => {
+    const plain = render(<VerifyNote>a</VerifyNote>).container
+    expect(plain.querySelector('p')?.hasAttribute('role')).toBe(false)
+    const note = render(<VerifyNote role="note">b</VerifyNote>).container
+    expect(note.querySelector('p')?.getAttribute('role')).toBe('note')
+    const titled = render(<VerifyNote title="T" role="note">c</VerifyNote>).container
+    expect(titled.querySelector('aside')?.getAttribute('role')).toBe('note')
+    const titledPlain = render(<VerifyNote title="T">c</VerifyNote>).container
+    expect(titledPlain.querySelector('aside')?.hasAttribute('role')).toBe(false)
+  })
   it('ShotNeeded có tiêu đề ẢNH CẦN CHỤP và mô tả', () => {
     render(<ShotNeeded description="Chiếu trơn chụp phẳng" />)
     expect(screen.getByText('ẢNH CẦN CHỤP')).toBeTruthy()

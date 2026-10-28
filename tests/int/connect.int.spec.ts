@@ -39,32 +39,34 @@ describe('view model Kết nối', () => {
     else process.env.SEED_FORCE_GLOBALS = savedForce
   })
 
-  it('public: email/điện thoại null, địa chỉ là chuỗi seed, visitInfo null, tiêu đề giữ \\n (R17)', async () => {
+  it('public: email/điện thoại null, địa chỉ là chuỗi seed, visit là câu thật, tiêu đề giữ \\n (R17)', async () => {
     const v = await pages.getConnectPage('public')
     expect(v.contact.email).toBeNull()
     expect(v.contact.phone).toBeNull()
+    expect(v.contact.mobileLine).toBeNull()
     expect(v.contact.address).toBe('Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên')
     expect(v.contact.addressNote).toContain('Vietnam+')
-    expect(v.contact.visitInfo).toBeNull()
+    expect(v.contact.visit).toEqual({ desktop: 'Chưa có thông tin tham quan chính thức', mobile: 'Thăm làng: chưa có thông tin chính thức' })
     expect(v.intro.title).toContain('\n')
     expect(v.copy.contact.preview).toBeNull()
   })
 
-  it('preview: email/điện thoại vẫn null (R-P1), component tự hiện placeholder', async () => {
+  it('preview: email/điện thoại là placeholder không có liên kết (R18)', async () => {
     const v = await pages.getConnectPage('preview')
-    expect(v.contact.email).toBeNull()
-    expect(v.contact.phone).toBeNull()
-    expect(v.contact.visitInfo).toBeNull()
+    expect(v.contact.email).toEqual({ text: '[Email liên hệ]', href: null })
+    expect(v.contact.phone).toEqual({ text: '[Số điện thoại]', href: null })
+    expect(v.contact.mobileLine).toBe('[Email liên hệ] · [Số điện thoại]')
     expect(v.copy.contact.preview?.email).toBe('[Email liên hệ]')
   })
 
   it('giá trị có dấu chưa xác minh: ẩn ở public, nguyên văn ở preview', async () => {
     await setContact({ email: 'a@b.vn', phone: '[cần xác minh]' })
     const pub = await pages.getConnectPage('public')
-    expect(pub.contact.email).toBe('a@b.vn')
+    expect(pub.contact.email).toEqual({ text: 'a@b.vn', href: 'mailto:a@b.vn' })
     expect(pub.contact.phone).toBeNull()
+    expect(pub.contact.mobileLine).toBe('a@b.vn')
     const pre = await pages.getConnectPage('preview')
-    expect(pre.contact.phone).toBe('[cần xác minh]')
+    expect(pre.contact.phone).toEqual({ text: '[cần xác minh]', href: null })
     await setContact({ email: '', phone: '' })
   })
 })

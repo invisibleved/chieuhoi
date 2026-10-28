@@ -94,4 +94,15 @@ describe("ConnectForm", () => {
     const { container } = setup()
     expect(container.querySelector("input[type=file]")).toBeNull()
   })
+
+  it("lựa chọn đầu tiên được chọn sẵn, kể cả sau khi đặt lại", () => {
+    const first = copy.type.options[0].label ?? ""
+    setup()
+    expect((screen.getByLabelText(first) as HTMLInputElement).checked).toBe(true)
+    fireEvent.click(screen.getByLabelText(copy.type.options[1].label ?? ""))
+    fillAll()
+    submit()
+    fireEvent.click(screen.getByRole("button", { name: "Góp thêm một ký ức" }))
+    expect((screen.getByLabelText(first) as HTMLInputElement).checked).toBe(true)
+  })
 })

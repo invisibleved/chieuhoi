@@ -1,4 +1,4 @@
-import type { ConnectPageView, Variant } from "@/lib/content"
+import type { ConnectPageView } from "@/lib/content"
 import { PageHeader } from "@/components/content/PageHeader"
 import { VerifyNote } from "@/components/content/VerifyNote"
 import { Eyebrow } from "@/components/ui/Eyebrow"
@@ -7,7 +7,8 @@ import { VariantText } from "@/components/ui/VariantText"
 import { ConnectForm } from "./ConnectForm"
 
 const link = "text-accent hover:text-accent-hover"
-const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`
+const contactNode = (c: { text: string; href: string | null }) =>
+  c.href ? <a href={c.href} className={link}>{c.text}</a> : c.text
 
 // Trang Kết nối: đầu trang, bốn cách kết nối (chỉ desktop), form minh hoạ, thông tin liên hệ.
 export function ConnectView({ page }: { page: ConnectPageView }) {
@@ -17,16 +18,7 @@ export function ConnectView({ page }: { page: ConnectPageView }) {
     { label: copy.breadcrumb.home ?? "", href: "/" },
     { label: copy.breadcrumb.current ?? "" },
   ]
-
-  // Trống thì ẩn ở public; preview hiện placeholder (R18).
-  const email = contact.email ?? c.preview?.email ?? null
-  const phone = contact.phone ?? c.preview?.phone ?? null
-  const emailNode = contact.email ? (
-    <a href={`mailto:${contact.email}`} className={link}>{contact.email}</a>
-  ) : email
-  const phoneNode = contact.phone ? (
-    <a href={telHref(contact.phone)} className={link}>{contact.phone}</a>
-  ) : phone
+  const { email, phone, visit } = contact
 
   const address = contact.address ? (
     <>
@@ -40,13 +32,9 @@ export function ConnectView({ page }: { page: ConnectPageView }) {
     </>
   ) : null
 
-  const visit: Variant = contact.visitInfo
-    ? { desktop: contact.visitInfo, mobile: `${c.visitPrefix.mobile ?? ""}${contact.visitInfo}` }
-    : c.noVisit
-
   const facts = [
-    email ? { term: c.labels.email ?? "", detail: emailNode } : null,
-    phone ? { term: c.labels.phone ?? "", detail: phoneNode } : null,
+    email ? { term: c.labels.email ?? "", detail: contactNode(email) } : null,
+    phone ? { term: c.labels.phone ?? "", detail: contactNode(phone) } : null,
     address ? { term: c.labels.address ?? "", detail: address } : null,
     { term: c.labels.visit ?? "", detail: <VariantText value={{ desktop: visit.desktop, mobile: null }} /> },
   ].filter((f) => f !== null)
@@ -104,13 +92,7 @@ export function ConnectView({ page }: { page: ConnectPageView }) {
         </h2>
         <FactList items={facts} columns={2} className="max-md:hidden md:col-span-7 md:col-start-6" />
         <div className="md:hidden">
-          {email || phone ? (
-            <p className={`${rowBase} !border-border-strong`}>
-              {emailNode}
-              {email && phone ? " · " : null}
-              {phoneNode}
-            </p>
-          ) : null}
+          {contact.mobileLine ? <p className={`${rowBase} !border-border-strong`}>{contact.mobileLine}</p> : null}
           {address ? <p className={rowBase}>{address}</p> : null}
           <p className={`${rowBase} border-b`}>
             <VariantText value={{ desktop: null, mobile: visit.mobile }} />

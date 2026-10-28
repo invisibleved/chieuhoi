@@ -78,6 +78,7 @@ export default function StyleguidePage() {
         </p>
         <div className="flex max-w-[760px] flex-col gap-4">
           <VerifyNote size="sm">Ảnh mẫu chỉ có ở máy dev.</VerifyNote>
+          <VerifyNote role="note">Khung ghi chú có role=note (khung minh hoạ của form Kết nối).</VerifyNote>
           <VerifyNote title="CẦN THẨM ĐỊNH TRƯỚC KHI ĐĂNG">
             <ul className="m-0 list-disc pl-5">
               <li>Đối chiếu năm sinh, năm mất, năm đỗ với sử liệu khoa bảng.</li>

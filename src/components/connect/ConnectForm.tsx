@@ -13,17 +13,18 @@ import { TextField } from "@/components/ui/form/TextField"
 import { UploadPlaceholder } from "@/components/ui/form/UploadPlaceholder"
 import { connectErrors } from "./connectErrors"
 
-const INITIAL = { name: "", contact: "", story: "", type: "photo", consent: false, tried: false, sent: false }
+const initial = (type: string) => ({ name: "", contact: "", story: "", type, consent: false, tried: false, sent: false })
 
 // Form minh hoạ (R16): không fetch, không lưu trình duyệt, không đưa dữ liệu lên URL.
 // `method="dialog"` ngoài <dialog> không gửi gì, nên tắt JS cũng không có dữ liệu rời trang.
 export function ConnectForm({ copy }: { copy: ConnectCopyView["form"] }) {
-  const [s, setS] = useState(INITIAL)
+  const defaultType = copy.type.options[0]?.value ?? ""
+  const [s, setS] = useState(() => initial(defaultType))
   const [attempt, setAttempt] = useState(0)
   const [again, setAgain] = useState(0)
   const summaryRef = useRef<HTMLDivElement>(null)
   const successRef = useRef<HTMLDivElement>(null)
-  const set = (patch: Partial<typeof INITIAL>) => setS((prev) => ({ ...prev, ...patch }))
+  const set = (patch: Partial<ReturnType<typeof initial>>) => setS((prev) => ({ ...prev, ...patch }))
 
   const errors = connectErrors(s, s.tried)
 
@@ -59,7 +60,7 @@ export function ConnectForm({ copy }: { copy: ConnectCopyView["form"] }) {
           action={{
             label: success.again ?? "",
             onClick: () => {
-              setS(INITIAL)
+              setS(initial(defaultType))
               setAgain((n) => n + 1)
             },
           }}

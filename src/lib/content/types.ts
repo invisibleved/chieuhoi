@@ -320,13 +320,16 @@ export interface ArchivePageView {
 export interface ConnectPageView {
   /** title giữ nguyên '\n' (R17) */
   intro: PageIntroView
-  /** Trống thì null ở cả hai mode; component tự hiện placeholder `copy.contact.preview` ở preview. */
+  /** Giá trị đã định dạng sẵn (R18): email/điện thoại trống thì null ở public, placeholder không liên kết ở preview. */
   contact: {
-    email: string | null
-    phone: string | null
+    email: { text: string; href: string | null } | null
+    phone: { text: string; href: string | null } | null
     address: string | null
     addressNote: string | null
-    visitInfo: string | null
+    /** visitInfo hoặc câu "chưa có thông tin", đã gồm tiền tố mobile. */
+    visit: Variant
+    /** "{email} · {điện thoại}" cho mobile; null khi cả hai trống. */
+    mobileLine: string | null
   }
   copy: ConnectCopyView
 }

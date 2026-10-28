@@ -10,6 +10,7 @@ import { connectCopy } from './copy/connect'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft'
 import { villageCopy, villageFacts, villageSourceOrder, villageTimelineAdd } from './copy/village'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
+import { buildConnectContact } from './connectContact'
 import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
 import { isUnverified, optionalText, showText, toImageView } from './visibility'
 
@@ -124,13 +125,14 @@ export function createPages(payload: Payload, content: Content) {
       content.getPageIntro('ket-noi', mode), readGlobalDoc(payload, 'site-settings', mode),
     ])
     const t = (k: string) => optionalText(g[k], mode)
+    const copy = applyMode(connectCopy, mode)
     return {
       intro,
-      contact: {
+      contact: buildConnectContact({
         email: t('email'), phone: t('phone'), address: t('address'),
         addressNote: t('addressNote'), visitInfo: t('visitInfo'),
-      },
-      copy: applyMode(connectCopy, mode),
+      }, copy),
+      copy,
     }
   }
 

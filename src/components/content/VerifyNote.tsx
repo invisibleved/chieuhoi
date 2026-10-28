@@ -14,7 +14,7 @@ type VerifyNoteProps = {
 export function VerifyNote({ children, size = 'md', title, role }: VerifyNoteProps) {
   if (title) {
     return (
-      <aside className="flex flex-col gap-2 border border-dashed border-border-dashed p-[18px] md:gap-2.5 md:px-6 md:py-[22px]">
+      <aside role={role} className="flex flex-col gap-2 border border-dashed border-border-dashed p-[18px] md:gap-2.5 md:px-6 md:py-[22px]">
         <Eyebrow as="p" tone="muted" tracking="label">{title}</Eyebrow>
         <div className="text-[14px] leading-[1.6] text-text-primary md:text-[15px] md:leading-[1.7]">{children}</div>
       </aside>
