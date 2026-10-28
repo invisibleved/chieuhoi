@@ -245,6 +245,8 @@ export interface ArchiveAsset {
    */
   sourceFile?: string | null;
   inArchive?: boolean | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -673,6 +675,8 @@ export interface ArchiveAssetsSelect<T extends boolean = true> {
   subjectConsent?: T;
   sourceFile?: T;
   inArchive?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

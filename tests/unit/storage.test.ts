@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { storagePlugins } from '@/storage'
 
-type Opts = { collections: unknown; bucket: string; clientUploads: boolean; disablePayloadAccessControl?: boolean; config: { endpoint: string; region: string; forcePathStyle: boolean; credentials: unknown } }
+type Opts = { collections: unknown; bucket: string; enabled: boolean; alwaysInsertFields: boolean; clientUploads: boolean; disablePayloadAccessControl?: boolean; config: { endpoint: string; region: string; forcePathStyle: boolean; credentials: unknown } }
 
 const full = {
   S3_BUCKET: 'chieuhoi-staging',
@@ -11,8 +11,12 @@ const full = {
 }
 
 describe('storagePlugins', () => {
-  it('rỗng khi thiếu S3_BUCKET (dev lưu ảnh vào media/)', () => {
-    expect(storagePlugins({})).toEqual([])
+  it('thiếu S3_BUCKET: plugin tắt (dev lưu ảnh vào media/) nhưng vẫn chèn trường để schema giống staging', () => {
+    const factory = vi.fn(() => () => null)
+    expect(storagePlugins({}, factory as never)).toHaveLength(1)
+    const opts = (factory.mock.calls[0] as unknown[])[0] as Opts
+    expect(opts.enabled).toBe(false)
+    expect(opts.alwaysInsertFields).toBe(true)
   })
 
   it('đủ biến thì trả đúng 1 plugin', () => {
@@ -32,6 +36,8 @@ describe('storagePlugins', () => {
     expect(opts.config.forcePathStyle).toBe(true)
     expect(opts.config.credentials).toEqual({ accessKeyId: 'khoa', secretAccessKey: 'bimat' })
     expect(opts.clientUploads).toBe(true)
+    expect(opts.enabled).toBe(true)
+    expect(opts.alwaysInsertFields).toBe(true)
     expect(opts.disablePayloadAccessControl).not.toBe(true)
   })
 
