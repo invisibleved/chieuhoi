@@ -4,7 +4,7 @@ import { ValidationError, type Access, type CollectionConfig, type Where } from 
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
-import { isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -57,6 +57,7 @@ export const ArchiveAssets: CollectionConfig = {
   slug: 'archive-assets',
   labels: { singular: 'Tư liệu ảnh', plural: 'Kho tư liệu ảnh' },
   admin: {
+    group: ADMIN_GROUPS.archive,
     useAsTitle: 'title',
     defaultColumns: ['code', 'title', 'category', 'rights', 'subjectConsent'],
   },
@@ -108,6 +109,7 @@ export const ArchiveAssets: CollectionConfig = {
       required: true,
       options: ARCHIVE_RIGHTS_OPTIONS,
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
+      admin: controlFieldAdmin(),
     },
     {
       name: 'subjectConsent',
@@ -121,6 +123,7 @@ export const ArchiveAssets: CollectionConfig = {
         { label: 'Đã đồng ý', value: 'given' },
       ],
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
+      admin: controlFieldAdmin(),
     },
     {
       name: 'sourceFile',

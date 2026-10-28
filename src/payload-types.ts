@@ -144,6 +144,9 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   role: 'editor' | 'reviewer';
   updatedAt: string;
   createdAt: string;
@@ -198,6 +201,9 @@ export interface TimelineEvent {
   title: string;
   body?: string | null;
   order: number;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   confidence?: ('press' | 'oral' | 'pending') | null;
   sources?: (number | Source)[] | null;
   workflow: 'draft' | 'in_review' | 'published';
@@ -226,7 +232,13 @@ export interface ArchiveAsset {
   photographer?: string | null;
   owner?: string | null;
   source?: string | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   rights: 'unknown' | 'permitted' | 'restricted';
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   subjectConsent: 'not_applicable' | 'pending' | 'given';
   /**
    * Chỉ seed ghi; dùng làm khoá tự nhiên, không công khai.
@@ -297,6 +309,9 @@ export interface CraftStep {
   shotNeeded?: string | null;
   focusX?: number | null;
   focusY?: number | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   verifiedBy?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -343,6 +358,9 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   typeConfirmed?: boolean | null;
   maker?: (number | null) | Maker;
   updatedAt: string;
@@ -358,7 +376,13 @@ export interface Maker {
   workflow: 'draft' | 'in_review' | 'published';
   name?: string | null;
   contact?: string | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   verified?: boolean | null;
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   publicConsent?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -451,10 +475,22 @@ export interface Person {
   quote?: string | null;
   quoteSource?: (number | null) | Source;
   consent?: {
+    /**
+     * Chỉ người duyệt sửa được.
+     */
     name?: boolean | null;
+    /**
+     * Chỉ người duyệt sửa được.
+     */
     photo?: boolean | null;
+    /**
+     * Chỉ người duyệt sửa được.
+     */
     quote?: boolean | null;
   };
+  /**
+   * Chỉ người duyệt sửa được.
+   */
   reviewedBySubject?: boolean | null;
   updatedAt: string;
   createdAt: string;

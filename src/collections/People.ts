@@ -1,7 +1,7 @@
 import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
-import { reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 import { slugify } from '@/lib/slugify'
 
@@ -17,11 +17,16 @@ export const PERSON_CATEGORY_OPTIONS = [
 ]
 
 const control = { create: reviewerOnlyField, update: reviewerOnlyField }
+const controlAdmin = controlFieldAdmin()
 
 export const People: CollectionConfig = {
   slug: 'people',
   labels: { singular: 'Con người', plural: 'Con người' },
-  admin: { useAsTitle: 'name', defaultColumns: ['name', 'category', 'workflow'] },
+  admin: {
+    group: ADMIN_GROUPS.content,
+    useAsTitle: 'name',
+    defaultColumns: ['name', 'category', 'workflow'],
+  },
   ...contentCollectionDefaults,
   fields: [
     workflowField(),
@@ -88,9 +93,9 @@ export const People: CollectionConfig = {
       type: 'group',
       label: 'Đồng ý công khai',
       fields: [
-        { name: 'name', type: 'checkbox', label: 'Tên', defaultValue: false, access: control },
-        { name: 'photo', type: 'checkbox', label: 'Ảnh', defaultValue: false, access: control },
-        { name: 'quote', type: 'checkbox', label: 'Trích dẫn', defaultValue: false, access: control },
+        { name: 'name', type: 'checkbox', label: 'Tên', defaultValue: false, access: control, admin: controlAdmin },
+        { name: 'photo', type: 'checkbox', label: 'Ảnh', defaultValue: false, access: control, admin: controlAdmin },
+        { name: 'quote', type: 'checkbox', label: 'Trích dẫn', defaultValue: false, access: control, admin: controlAdmin },
       ],
     },
     {
@@ -99,6 +104,7 @@ export const People: CollectionConfig = {
       label: 'Nhân vật đã xem lại',
       defaultValue: false,
       access: control,
+      admin: controlAdmin,
     },
   ],
 }

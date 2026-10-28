@@ -1,6 +1,6 @@
 import { Forbidden, type Access, type CollectionBeforeChangeHook, type CollectionConfig } from 'payload'
 
-import { isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
 /** Không có đăng ký công khai: chỉ người duyệt tạo user, trừ user đầu tiên khi DB trống và ALLOW_FIRST_USER=true (R21). */
 const canCreateUser: Access = async ({ req }) => {
@@ -41,7 +41,9 @@ const firstUserIsReviewer: CollectionBeforeChangeHook = async ({ data, operation
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: { singular: 'Người dùng', plural: 'Người dùng' },
   admin: {
+    group: ADMIN_GROUPS.admin,
     useAsTitle: 'email',
   },
   auth: true,
@@ -70,6 +72,7 @@ export const Users: CollectionConfig = {
         create: reviewerOnlyField,
         update: reviewerOnlyField,
       },
+      admin: controlFieldAdmin(),
     },
   ],
 }

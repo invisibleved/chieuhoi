@@ -1,11 +1,12 @@
 import type { GlobalConfig } from 'payload'
 
 import { guardPublish, recordDraftArg } from '@/access/publishing'
-import { isLoggedIn } from '@/access/roles'
+import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Thông tin site',
+  admin: { group: ADMIN_GROUPS.pages },
   versions: { drafts: true },
   access: { read: isLoggedIn, update: isLoggedIn },
   hooks: { beforeOperation: [recordDraftArg], beforeChange: [guardPublish] },

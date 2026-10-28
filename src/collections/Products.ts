@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 /** Nguồn duy nhất của nhãn nhóm sản phẩm. */
@@ -12,7 +12,11 @@ export const PRODUCT_GROUP_OPTIONS = [
 export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'Sản phẩm', plural: 'Sản phẩm' },
-  admin: { useAsTitle: 'name', defaultColumns: ['code', 'name', 'group', 'workflow'] },
+  admin: {
+    group: ADMIN_GROUPS.content,
+    useAsTitle: 'name',
+    defaultColumns: ['code', 'name', 'group', 'workflow'],
+  },
   ...contentCollectionDefaults,
   fields: [
     workflowField(),
@@ -66,6 +70,7 @@ export const Products: CollectionConfig = {
       label: 'Đã xác nhận loại hình',
       defaultValue: false,
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
+      admin: controlFieldAdmin(),
     },
     { name: 'maker', type: 'relationship', relationTo: 'makers', label: 'Cơ sở dệt' },
   ],

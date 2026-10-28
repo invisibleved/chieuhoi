@@ -1,12 +1,16 @@
 import type { CollectionConfig } from 'payload'
 
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
-import { reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
 
 export const TimelineEvents: CollectionConfig = {
   slug: 'timeline-events',
   labels: { singular: 'Mốc thời gian', plural: 'Dòng thời gian' },
-  admin: { useAsTitle: 'title', defaultColumns: ['label', 'title', 'order', 'workflow'] },
+  admin: {
+    group: ADMIN_GROUPS.content,
+    useAsTitle: 'title',
+    defaultColumns: ['label', 'title', 'order', 'workflow'],
+  },
   ...contentCollectionDefaults,
   fields: [
     {
@@ -30,6 +34,7 @@ export const TimelineEvents: CollectionConfig = {
         { label: 'Chờ xác minh', value: 'pending' },
       ],
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
+      admin: controlFieldAdmin(),
     },
     { name: 'sources', type: 'relationship', relationTo: 'sources', hasMany: true, label: 'Nguồn' },
     workflowField(),

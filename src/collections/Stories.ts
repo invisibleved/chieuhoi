@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 
 import { citeInlineBlock, restrictedEditor } from './restrictedEditor'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { ADMIN_GROUPS } from '@/access/roles'
 
 /** Nguồn duy nhất của nhãn chuyên mục; lớp content map value -> label từ đây. */
 export const STORY_CATEGORY_OPTIONS = [
@@ -16,7 +17,11 @@ export const STORY_CATEGORY_OPTIONS = [
 export const Stories: CollectionConfig = {
   slug: 'stories',
   labels: { singular: 'Bài viết', plural: 'Bài viết' },
-  admin: { useAsTitle: 'title', defaultColumns: ['title', 'category', 'workflow'] },
+  admin: {
+    group: ADMIN_GROUPS.content,
+    useAsTitle: 'title',
+    defaultColumns: ['title', 'category', 'workflow'],
+  },
   ...contentCollectionDefaults,
   fields: [
     workflowField({ allowIdea: true }),

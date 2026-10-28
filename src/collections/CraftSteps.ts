@@ -1,12 +1,16 @@
 import type { CollectionConfig } from 'payload'
 
-import { reviewerOnlyField } from '@/access/roles'
+import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
 import { contentCollectionDefaults, workflowField } from '@/access/publishing'
 
 export const CraftSteps: CollectionConfig = {
   slug: 'craft-steps',
   labels: { singular: 'Công đoạn', plural: 'Công đoạn làm nghề' },
-  admin: { useAsTitle: 'title', defaultColumns: ['n', 'title', 'workflow'] },
+  admin: {
+    group: ADMIN_GROUPS.content,
+    useAsTitle: 'title',
+    defaultColumns: ['n', 'title', 'workflow'],
+  },
   ...contentCollectionDefaults,
   fields: [
     workflowField(),
@@ -26,6 +30,7 @@ export const CraftSteps: CollectionConfig = {
       type: 'text',
       label: 'Người xác minh',
       access: { create: reviewerOnlyField, update: reviewerOnlyField },
+      admin: controlFieldAdmin(),
     },
   ],
 }

@@ -1,11 +1,15 @@
 import type { CollectionConfig } from 'payload'
 
-import { isLoggedIn, isReviewer } from '@/access/roles'
+import { ADMIN_GROUPS, isLoggedIn, isReviewer } from '@/access/roles'
 
 export const Sources: CollectionConfig = {
   slug: 'sources',
   labels: { singular: 'Nguồn', plural: 'Nguồn' },
-  admin: { useAsTitle: 'title', defaultColumns: ['sourceId', 'title', 'publisher', 'date'] },
+  admin: {
+    group: ADMIN_GROUPS.archive,
+    useAsTitle: 'title',
+    defaultColumns: ['sourceId', 'title', 'publisher', 'date'],
+  },
   access: { read: isLoggedIn, create: isLoggedIn, update: isReviewer, delete: isReviewer },
   fields: [
     {
