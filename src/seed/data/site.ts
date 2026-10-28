@@ -80,12 +80,12 @@ export const pageIntros: Record<string, Intro> = {
   },
   'san-pham': {
     eyebrow: '05 — SẢN PHẨM',
-    title: 'Nét đẹp từ những đường dệt.',
+    title: 'Nét đẹp từ\nnhững đường dệt.',
     lead: 'Mỗi tấm chiếu ở đây được trình bày như một hiện vật: chất liệu, cách làm, nơi làm ra. Đây là bộ sưu tập để hiểu, không phải cửa hàng.',
   },
   'thu-vien': {
     eyebrow: '06 — THƯ VIỆN',
-    title: 'Ký ức qua từng khung hình.',
+    title: 'Ký ức qua\ntừng khung hình.',
     lead: 'Kho ảnh và tư liệu của làng Hới. Mỗi tấm đều có chỗ cho tên, thời gian, người chụp, nguồn và quyền sử dụng.',
   },
   'ket-noi': {

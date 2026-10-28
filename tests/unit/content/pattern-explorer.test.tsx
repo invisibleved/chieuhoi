@@ -14,7 +14,7 @@ const img = (i: number): ImageView => ({
 })
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: null, summary: null, image: img(1),
-  typeConfirmed: false, tag: null, flags: [], images: [1, 2, 3, 4].map(img), primaryImage: img(1), hasPattern: true,
+  typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [1, 2, 3, 4].map(img), primaryImage: img(1), hasPattern: true,
   material: null, technique: null, size: null, care: null, maker: null, context: null, pattern: null, typeNote: null,
   imageCaptions: ['Ảnh 1/4', 'Ảnh 2/4', 'Ảnh 3/4', 'Ảnh 4/4'],
   sources: [],

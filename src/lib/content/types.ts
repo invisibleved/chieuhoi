@@ -89,6 +89,8 @@ export interface ProductCardView {
   typeConfirmed: boolean
   /** Nhãn trên thẻ: chưa có ảnh, hoặc có ảnh mà chưa xác nhận loại (R1). */
   tag: { text: string; style: 'filled' | 'dashed' } | null
+  /** Chữ khung "Ảnh cần chụp" đã điền tên (bản desktop/mobile); null khi chưa có tên. */
+  shotNeeded: Variant | null
   flags: Flag[]
 }
 

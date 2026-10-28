@@ -158,6 +158,15 @@ export function createContent(payload: Payload) {
     return null
   }
 
+  /** Chữ khung "Ảnh cần chụp" điền tên hiện vật. */
+  const productShotNeeded = (name: string | null): Variant | null =>
+    name
+      ? {
+          desktop: fillTemplate(productsCopy.shotNeeded.desktop, { name }),
+          mobile: fillTemplate(productsCopy.shotNeeded.mobile, { name }),
+        }
+      : null
+
   const productCard = (d: Product, mode: Mode): ProductCardView => {
     const image = imageOf(d, mode)
     return {
@@ -170,6 +179,7 @@ export function createContent(payload: Payload) {
       image,
       typeConfirmed: !!d.typeConfirmed,
       tag: productTag(image, !!d.typeConfirmed),
+      shotNeeded: productShotNeeded(showText(d.name, mode)),
       flags: flagsOf(d, mode, [d.name, d.summary]),
     }
   }

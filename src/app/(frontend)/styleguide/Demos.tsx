@@ -273,7 +273,7 @@ const sgImg = (code: string, alt: string): ImageView => ({
 })
 const SG_IMAGES = [sgImg('kn8', 'Tấm chiếu hoa văn đỏ (mẫu)'), sgImg('kn2', 'Ảnh mẫu 2'), sgImg('hc9', 'Ảnh mẫu 3'), sgImg('kn1', 'Ảnh mẫu 4')]
 const SG_PRODUCT: ProductView = {
-  slug: 'mau', code: null, name: 'Hiện vật mẫu', group: null, groupLabel: null, summary: null, image: SG_IMAGES[0], typeConfirmed: false, tag: null, flags: [],
+  slug: 'mau', code: null, name: 'Hiện vật mẫu', group: null, groupLabel: null, summary: null, image: SG_IMAGES[0], typeConfirmed: false, tag: null, shotNeeded: null, flags: [],
   images: SG_IMAGES, primaryImage: SG_IMAGES[0], hasPattern: true, material: null, technique: null, size: null, care: null, maker: null, context: null, pattern: null, typeNote: null,
   imageCaptions: ['Ảnh 1/4 (mẫu)', 'Ảnh 2/4 (mẫu)', 'Ảnh 3/4 (mẫu)', 'Ảnh 4/4 (mẫu)'],
   sources: [],

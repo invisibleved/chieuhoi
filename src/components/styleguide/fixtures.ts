@@ -91,6 +91,7 @@ export const productNoImage: ProductCardView = {
   image: null,
   typeConfirmed: false,
   tag: { text: 'Chưa có ảnh', style: 'dashed' },
+  shotNeeded: { desktop: 'Chiếu cạp điều chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt', mobile: 'Chiếu cạp điều' },
   flags: [],
 }
 
@@ -101,6 +102,7 @@ export const productWithImage: ProductCardView = {
   image: imgStory,
   typeConfirmed: false,
   tag: { text: 'Ảnh cần xác nhận loại', style: 'filled' },
+  shotNeeded: { desktop: 'Chiếu cạp điều chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt', mobile: 'Chiếu cạp điều' },
 }
 
 // Hai nguồn thật trích từ content/seed/sources.json.

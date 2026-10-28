@@ -9,7 +9,7 @@ type ProductCardProps = {
   product: ProductCardView
   href: string
   /** Chữ khung "Ảnh cần chụp" (đã điền tên), hai bản desktop/mobile. */
-  shotNeeded: Variant
+  shotNeeded?: Variant | null
   /** Hiện tóm tắt dưới tên, chỉ từ md. */
   showSummary?: boolean
 }
@@ -24,7 +24,7 @@ export function ProductCard({ product, href, shotNeeded, showSummary = false }: 
       {product.image ? (
         <ContentImage image={product.image} size="card" sizes="(min-width: 1024px) 25vw, 50vw" className={`block ${frame} transition-opacity duration-[var(--dur-micro)] group-hover:opacity-[.88]`} />
       ) : (
-        <ShotNeeded description={product.name ? shotNeeded : undefined} className={frame} />
+        <ShotNeeded description={product.name && shotNeeded ? shotNeeded : undefined} className={frame} />
       )}
       <span className="flex items-center justify-between gap-2 border-t border-border-strong pt-1">
         <span className="text-[12px] font-semibold tracking-label text-text-muted-alt">{product.code}</span>

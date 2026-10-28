@@ -258,3 +258,52 @@ test('/con-nguoi/khong-co trả 404', async ({ page }) => {
   const res = await page.goto('/con-nguoi/khong-co')
   expect(res?.status()).toBe(404)
 })
+
+// /san-pham ở public: 7 hiện vật, ảnh chưa được phép nên mọi thẻ không ảnh; không ghi chú quy trình.
+for (const vp of [
+  { name: '1440', width: 1440, height: 900 },
+  { name: '390', width: 390, height: 844 },
+]) {
+  test.describe(`sản phẩm public ${vp.name}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    async function openProducts(page: Page) {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const res = await page.goto('/san-pham')
+      expect(res?.status()).toBe(200)
+      await page.locator('main h1').waitFor()
+    }
+
+    test('7 thẻ, lọc theo chip, link thẻ, không cuộn ngang, không lộ ảnh tham khảo hay chữ chưa xác minh', async ({ page }) => {
+      await openProducts(page)
+      const main = page.locator('main')
+      const cards = main.locator('a[href^="/san-pham/"]')
+      await expect(main.locator('h1')).toHaveCount(1)
+      await expect(cards).toHaveCount(7)
+      await expect(cards.first()).toHaveAttribute('href', '/san-pham/chieu-cap-dieu')
+      const desktop = vp.width >= 768
+      await expect(page.getByRole('status').locator('span').filter({ visible: true })).toHaveText(
+        desktop ? '7 hiện vật · danh mục theo Vietnam+' : '7 hiện vật',
+      )
+      const text = await main.evaluate((el) => el.textContent ?? '')
+      expect(text).not.toMatch(/cần xác minh/i)
+      const srcs = await main.locator('img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
+      expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
+      await page.getByRole('button', { name: 'Chiếu đương đại' }).click()
+      await expect(cards).toHaveCount(1)
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(vp.width)
+    })
+
+    test('axe: không có vi phạm serious/critical', async ({ page }) => {
+      await openProducts(page)
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => v.id)).toEqual([])
+    })
+
+    test('chụp toàn trang sản phẩm public', async ({ page }) => {
+      test.skip(!process.env.SHOTS_DIR, 'đặt SHOTS_DIR để lưu ảnh chụp')
+      await openProducts(page)
+      await page.screenshot({ path: `${process.env.SHOTS_DIR}/san-pham-public-${vp.name}.png`, fullPage: true })
+    })
+  })
+}

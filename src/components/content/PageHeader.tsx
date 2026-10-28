@@ -23,6 +23,8 @@ type PageHeaderProps = {
   wideIntro?: boolean
   /** Dòng cuối của tiêu đề in nghiêng, màu nhấn (Kết nối). */
   accentLastLine?: boolean
+  /** Ẩn đường dẫn trên mobile (artboard mobile không vẽ). */
+  hideCrumbsOnMobile?: boolean
 }
 
 const asideSpans = {
@@ -42,11 +44,12 @@ export function PageHeader({
   leadClassName,
   wideIntro = false,
   accentLastLine = false,
+  hideCrumbsOnMobile = false,
 }: PageHeaderProps) {
   const lines = (intro.title ?? '').split('\n')
   return (
     <section className="flex flex-col gap-4 px-5 pt-5 pb-10 md:grid md:grid-cols-12 md:gap-x-6 md:gap-y-10 md:px-20 md:pt-10 md:pb-24">
-      <div className="-my-1 md:col-span-12 md:my-0">
+      <div className={`-my-1 md:col-span-12 md:my-0${hideCrumbsOnMobile ? ' max-md:hidden' : ''}`}>
         <Breadcrumb items={crumbs} />
       </div>
       <div

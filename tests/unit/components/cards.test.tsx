@@ -69,7 +69,7 @@ describe('StoryCard: hero và thẻ không link', () => {
   })
 })
 
-const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, tag: { text: 'Chưa có ảnh', style: 'dashed' }, flags: [] }
+const product: ProductCardView = { slug: 'chieu-tron', code: 'HIỆN VẬT 01', name: 'Chiếu trơn', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: null, typeConfirmed: false, tag: { text: 'Chưa có ảnh', style: 'dashed' }, shotNeeded: null, flags: [] }
 
 const shot = { desktop: 'Chiếu trơn chụp phẳng', mobile: 'Chiếu trơn' }
 
