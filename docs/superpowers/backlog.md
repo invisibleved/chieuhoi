@@ -1,23 +1,26 @@
 # Việc tồn đọng (backlog)
 
-Gom các mục review để lại sau Phase 1–5a. Cập nhật lần cuối khi kết thúc Phase 5a (nhánh phase-5a-cau-chuyen-con-nguoi).
+Gom các mục review để lại sau Phase 1–5a. Cập nhật lần cuối khi kết thúc Phase 5b (nhánh phase-5b-san-pham-thu-vien-ket-noi).
 Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây **trước** khi xoá thư mục `.superpowers/sdd/<plan>/`.
 
 ## A. Phải xong trước khi deploy staging/production (Phase 6–7)
 
 - [ ] `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
-- [ ] Link 404 cho tới khi có trang (`/nghe-det-chieu`, `/lang-hoi` có từ Phase 4; `/cau-chuyen`, `/con-nguoi` có từ Phase 5a): `/san-pham`, `/thu-vien`, `/ket-noi`, và chú thích nguồn hoa văn → trang hiện vật.
+- [x] Link 404 cho tới khi có trang: `/san-pham`, `/san-pham/*`, `/thu-vien`, `/ket-noi` và chú thích nguồn hoa văn → trang hiện vật đã có (Phase 5b); `tests/e2e/links.e2e.spec.ts` duyệt link từ header, footer và 5 trang chính.
 - [ ] `Sources.url` không kiểm tra giao thức; `src/components/content/Sources.tsx:49` đặt thẳng `href={s.url}` → nên chỉ nhận `http(s):` (chỉ staff nhập, update cần reviewer — rủi ro thấp).
 - [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; 9 cảnh báo `npm audit` (Phase 1).
 - [ ] `metadataBase` chưa đặt → URL ảnh OG của bài viết/chân dung là đường dẫn tương đối (Next cảnh báo). Đặt theo tên miền khi deploy (Phase 5a T6).
 - [ ] `/cau-chuyen/[slug]`, `/con-nguoi/[slug]`: `generateStaticParams` chỉ gồm bản ghi public, nhưng mode vẫn chốt lúc build như mục đầu tiên (Phase 5a R20).
-- [ ] E2E public: regex `page.content()` không bắt được URL `next/image` đã mã hoá (`%2Fimages%2Freference`), và vòng kiểm ảnh qua được khi trang không có ảnh nào. Cần seed một asset `permitted` để kiểm có đối tượng (Phase 5a T9).
+- [x] E2E public: regex `page.content()` không bắt được URL `next/image` đã mã hoá (`%2Fimages%2Freference`) → `public-pages.e2e.spec.ts` dùng `REFERENCE_IMAGE` nhận cả dạng mã hoá, chạy trên 7 route (gồm 4 route Phase 5b) (Phase 5b T11).
+- [ ] E2E public: seed chưa có asset `permitted` nên vòng kiểm ảnh qua vì không có ảnh nào để kiểm. Cần seed một asset `permitted` (cô lập trong e2e) để kiểm có đối tượng.
+- [ ] `/thu-vien` đọc `searchParams` nên là route động (R11 Phase 5b): render theo từng request, ngược với mục đầu tiên (mode chốt lúc build). Cân nhắc cache theo mode khi deploy.
+- [ ] `/san-pham`, `/san-pham/[slug]`, `/ket-noi` prerender tĩnh như trang chủ: mode chốt lúc build, build bằng `.env` dev sẽ đóng băng bản preview (mục đầu tiên). `/ket-noi` còn đọc `SiteSettings` (email, điện thoại, tham quan) lúc build nên sửa trong admin không thấy ngay.
 
 ## B. Phải làm trong Phase 4–5
 
 - [x] Nhãn tiếng Việt cho `Products.group` và `ArchiveAssets.era` (`groupLabel`, `eraLabel` trong view model — Phase 4).
 - [x] `ArchiveTeaser` tự chép `LABELS` → nhãn chip lấy từ `categories.ts` qua props (Phase 4).
-- [ ] Trang hiện vật (Phase 5) đánh số nguồn theo đúng thứ tự trang chủ đang dùng cho chú thích hoa văn.
+- [x] Trang hiện vật đánh số nguồn theo đúng thứ tự trang chủ đang dùng cho chú thích hoa văn (`ProductView.sources`, `sourceN`, khối "Nguồn" với neo `#nguon-{n}` — Phase 5b R2).
 - [x] Renderer rich text bỏ `cite` trỏ tới nguồn đã xoá (Phase 1 final).
 - [x] Timeline: mục "+ Mốc của bạn" là phần tử tĩnh, không phải dữ liệu (Phase 1 R18) — làm ở Phase 4 (R6).
 - [x] Rich text chưa có khối ảnh; nếu cần thì thêm khối ảnh đã kiểm soát quyền (Phase 1 R16).
@@ -39,8 +42,48 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 
 ## C. Lỗi nhỏ còn mở
 
+### Phase 5b (Sản phẩm, Thư viện, Kết nối)
+Mã `T1`–`T10` là task trong plan Phase 5b.
+
+**Lớp lib/content và view model**
+- [ ] `getProduct` (`queries.ts`) dài ~80 dòng, trộn chú thích, chú thích ảnh và nguồn → tách helper `annotationViews`, `imageCaptions` (T1).
+- [ ] `others` (hiện vật khác): `eyebrow` là `''` khi mã bị ẩn, component phải render an toàn (T1).
+- [ ] Nguồn bị ẩn thì `sourceNote` viết tay cũng bị ẩn; chưa có test cho ca có `sourceNote` (T1). Test cơ sở dệt thiếu ca nháp nhưng có đồng ý và ca preview hiện liên hệ (T1).
+- [ ] Cơ sở đã đăng nhưng không có liên hệ: tên cơ sở hiện cạnh câu "Chưa có cơ sở được xác minh…" (mâu thuẫn). Chọn nhánh trong view model thay vì component (T8).
+- [ ] Không có guard h1 khi tên hiện vật null; `optionalText` chưa có test riêng; `ReadNext` đặt lề theo `p.sources.length` (bố cục phụ thuộc dữ liệu) (T8).
+- [ ] `archive.ts`: nhãn dự phòng "Xưa"/"Nay" viết cứng → dựng từ `ARCHIVE_ERA_OPTIONS`; `createArchive` còn tham số `_payload` thừa (T2).
+- [ ] Thiếu test: nhãn `restricted`, nhãn quyền `permitted` mobile, bỏ tư liệu không có mã (T2).
+- [ ] `connect.int.spec` chỉ reset liên hệ ở nhánh thành công → dùng `try/finally` (T2).
+- [ ] Seed `page-intros` (tiêu đề `/ket-noi` có `\n`) chỉ cập nhật khi chạy `SEED_FORCE_GLOBALS` trên DB đã có dữ liệu; `products.json` đổi dòng cuối (T1, T2).
+- [ ] `docNumber ?? code` và nhãn ô ảnh `[docCode, categoryLabel].join(' · ')` lặp trong `ArchiveGallery` → chuyển sang view model (T5).
+- [ ] `ProductsView` ghép số đếm bằng `fillTemplate` trong component → helper/view model (T7).
+- [ ] `connectContact`: `mailHref`/`telHref` còn lỏng (khoảng trắng giữa chuỗi; ở preview "[cần xác minh] 0123" vẫn thành link) (T10).
+- [ ] `generateMetadata` của `/thu-vien` có thể trả title rỗng khi cả intro và breadcrumb null; URL OG tương đối (xem `metadataBase` ở mục A) (T9).
+
+**Component dùng chung**
+- [ ] `PeopleView` truyền `href ?? undefined` nên chuỗi rỗng vẫn render `Link href=""` → dùng `||` (T3).
+- [ ] `Button` bỏ qua `size` với biến thể không phải outline (T3).
+- [ ] `ShotNeeded` tự chuyển desktop/mobile như `VariantText`; `FactList columns=2` với số mục lẻ thiếu đường kẻ mục kế cuối, chưa test; `Segmented` pill sáng không có gap (có thể viền đôi, đối chiếu artboard); test `cards` so chuỗi con thay vì `aria-label` chính xác (T3).
+- [ ] `PatternExplorer`: đóng chi tiết bằng nút/Esc làm focus rơi về `body` → trả về điểm đang chọn; điểm ẩn (opacity 0, `tabIndex -1`) chưa có `aria-hidden`; `StageHint` render chip rỗng khi copy null; viền ảnh nhỏ đang chọn có thể che vòng focus; nút danh sách khi tiêu đề null chỉ có số; test ảnh đơn kiểm "không có nhóm" có thể qua vì rỗng (T4).
+- [ ] Nhãn "n · tiêu đề" và `aria-label` điểm dựng ở 3 component, khác chữ hoa/thường (PatternTeaser và PatternExplorer) → đưa vào lib (T4).
+- [ ] Lightbox: `open(code, opener:boolean)` dùng cờ và `useCallback` thừa; vuốt cũng chạy với chuột kéo ở desktop; focus về ô đã mở chứ không về ô của ảnh hiện tại sau Trước/Tiếp; bẫy focus coi `visibility:hidden` là nhìn thấy (`getClientRects`); thiếu test click kèm phím bổ trợ; chú thích test "hidden-focus" khó hiểu; 2 test styleguide e2e bị skip không giải thích (T5).
+- [ ] `ArchiveGallery` có mẹo `{' '}`; `Eyebrow` nằm trong `dt` → dùng `as="dt"`; test e2e "đổi chủ đề đóng hộp" chưa mở lightbox trước; unit `ArchiveView` chưa kiểm `initialCode` được chuyển xuống (T9).
+- [ ] Form: viền thẻ `ChoiceGroup` đổi 1→2px khi chọn làm nội dung xê ~1px; test form thiếu ConsentCheck đã tick, input email, `ErrorSummary` với `{n}` khác nhau (T6).
+- [ ] `ConnectView`: `!text-text-meta`, `!border-border-strong` và `text-[13px]`/`text-[15px]`/`py-[104px]` viết cứng; `rowBase` mobile có thể trùng mẫu danh sách chung; email/điện thoại render hai lần (desktop và mobile, CSS ẩn); dòng trống thừa; `connectErrors.ts` nằm ở components (nên ở lib) (T10).
+- [ ] Trang hiện vật: desktop không có `context` thì cột 1–4 trống, khối liên hệ nằm cột 6 (T8). Test: đếm `1 hiện vật` chỉ dùng `toContain`, test CTA "chỉ desktop" chưa kiểm ẩn, lề mobile của divider thừa, kiểm "Ô liên hệ desktop" đếm yếu (T7, T10).
+
+**Khác biệt giao diện so với artboard**
+- [ ] Header/footer toàn site giữ nền sáng ở `/thu-vien` trong khi artboard vẽ nền tối (layout dùng chung) (T9).
+- [ ] `PageHeader` dùng chung hơi cao hơn artboard ở `/san-pham`; VI/EN có khung viền; "Xem nguồn" 15px thay vì 14px; `/con-nguoi` và `/cau-chuyen` còn breadcrumb trên mobile (T7).
+- [ ] `/ket-noi` mobile: đệm khung thành công 48 (artboard 28/20); ô liên hệ desktop cuối thiếu viền; breadcrumb 1440 cao 21px, kiểm vùng chạm ở desktop đang bỏ qua (T10).
+- [ ] "ĐÃ XÁC MINH NGUỒN" ở thư viện đếm theo dữ liệu (R12), chưa có cờ xác minh riêng do người duyệt bật.
+
+**Test / quy trình**
+- [ ] E2E `ket-noi` dùng `waitForTimeout` cố định (T10).
+- [ ] `test:int` chạy cả bộ unit (đã ghi ở Phase 1); `test:int` sau Phase 5b gồm 708 test.
+
 ### Phase 5a (Câu chuyện, Con người)
-- [ ] **Preview chân dung:** chú thích "CHÂN DUNG · …" (`PersonView.tsx` figcaption, absolute góc dưới trái) đè lên nhãn "Ảnh chưa được phép đăng" của `ContentImage.tsx:41` (cũng góc dưới trái) → người duyệt không thấy cảnh báo quyền ảnh trên ảnh chân dung (1440 và 390). Xếp chung một khối hoặc dời nhãn.
+- [x] **Preview chân dung:** nhãn "Ảnh chưa được phép đăng" bị chú thích đè → `ContentImage` có prop `notesPosition`, chân dung dùng `bottom-right` (Phase 5b R20).
 - [ ] Chữ hiển thị còn viết cứng trong component: `StoryCard.tsx` "`{n} PHÚT ĐỌC`", `PortraitCard.tsx` mặc định `cta = 'Xem chân dung →'` (trùng `peopleCopy.card.cta`), `PeopleTeaser.tsx` `'Đọc câu chuyện →'`. `StoryCardView.status` dựng chuỗi hiển thị trong `queries.ts` thay vì đọc từ `storiesCopy`.
 - [ ] Ảnh thẻ "Liên quan" (công đoạn/hiện vật) chỉ kiểm quyền của asset, không kiểm đồng ý của người: nếu ảnh chân dung của người chưa đồng ý ảnh được dùng lại cho công đoạn/hiện vật thì sẽ hiện. So id asset với chân dung/phóng sự khi chưa có đồng ý ảnh.
 - [ ] `getPersonPage` tải mọi công đoạn và sản phẩm để tìm một bản ghi liên quan.
@@ -51,12 +94,14 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] `VerifyNote` có `title` đổi p→aside và bỏ qua `size`; `SourceList` biến thể `notes` có key rỗng thừa; `RichText` chỉ nhận định dạng đậm/nghiêng; `story.h3` trùng `story.h`.
 - [ ] `ConsentPanel` render cả khối desktop và mobile (chữ lặp trong DOM); test `StatusDot` so tên class. Lời trích chân dung có mục 2 cũng render hai lần (mỗi breakpoint ẩn một bản, Phase 5a F1).
 - [ ] `Tag` overlay gap 8px (artboard 6px); `StatusDot` cỡ 8 ngầm định viền 1.5px.
-- [ ] Heading viết riêng chưa thành biến thể `SectionHeading`: lời mời 44px (`PeopleView`), h2 câu chuyện 30/40px (`PersonView`), `ReadNext` 40px — gom nếu Phase 5b lặp lại.
+- [x] Heading lời mời 44px (`PeopleView`) đã thành `ui/CtaBand` (Phase 5b R10).
+- [ ] Heading viết riêng còn lại chưa thành biến thể `SectionHeading`: h2 câu chuyện 30/40px (`PersonView`), `ReadNext` 40px.
 - [ ] Test: `stories-view.test.tsx` có đoạn bị prettier dàn lại; fixture tự tái tạo định dạng featured của lib; ảnh hero bài nổi bật không còn preload ở desktop; chưa có test cấp trang cho trường hợp "đồng ý ảnh nhưng chưa đồng ý tên" (lib int đã có); kiểm "Chủ đề đề xuất" ở home dùng `.first()`.
 - [ ] Ngày đăng trống ở preview hiện `[cần xác minh]` (artboard "[chờ thẩm định]").
 
 ### Phase 4 (Nghề dệt chiếu, Làng Hới)
-- [ ] `src/components/content/labels.ts` (`productTag`, `previewNotes`; `storyStatus` đã chuyển ở Phase 5a) vẫn là luật nghiệp vụ trong component → chuyển vào `lib/content`.
+- [x] `productTag` đã chuyển vào view model `ProductCardView.tag` (Phase 5b R1).
+- [ ] `src/components/content/labels.ts` (`previewNotes`; `storyStatus` đã chuyển ở Phase 5a) vẫn là luật nghiệp vụ trong component → chuyển vào `lib/content`.
 - [ ] Rule lint kiến trúc chưa chặn import tương đối (`../../lib/content/visibility`) và `payload/*`; test "Ok" của `architecture.test.ts` nên thêm ca đường dẫn tương đối.
 - [ ] Không có `aria-live` khi đổi công đoạn/mốc (Tiếp, Mốc sau); cân nhắc vùng `polite` ở khối chi tiết.
 - [ ] Vòng quanh điểm mốc đang chọn dùng `track-on-dark` (.2) thay vì `rgba(227,205,156,.25)` của artboard.
@@ -106,6 +151,16 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 
 ## D. Quyết định cần biết (không phải lỗi)
 
+- Phase 5b (đủ danh sách R1–R21 trong `docs/superpowers/plans/2026-10-28-phase-5b-san-pham-thu-vien-ket-noi.md`), thêm các quyết định khi chạy:
+  - R-P1 (tinh chỉnh ở T10): `getConnectPage` trả liên hệ đã dựng sẵn (`{text, href|null}`, `visit` kèm câu mặc định, `mobileLine` gồm các phần có `href` để giữ `mailto:`/`tel:`); email/điện thoại trống là null ở cả hai mode, preview hiện placeholder từ copy.
+  - Size/care trống của hiện vật trả null ở cả hai mode; component hiện chỉ dẫn biên tập chỉ ở preview (T1/T8).
+  - `PatternExplorer` có slot `aside` cho khối tiêu đề, hiện `ShotNeeded` khi không có ảnh; DOM đặt khối chính trước (T4/T8).
+  - Radio ChoiceGroup: kiểm phím mũi tên bằng e2e (jsdom không mô phỏng được) (T6/T10).
+  - Nhãn ô ảnh thư viện mở rộng "Mở ảnh: {tiêu đề}, TL · 001 · Làng quê" để đạt WCAG 2.5.3 (T5).
+  - Khối liên hệ của hiện vật luôn có ở desktop kể cả khi không còn dòng nào, vì câu "Chưa có cơ sở được xác minh…" (R5) thắng yêu cầu bỏ section rỗng (T8).
+  - Payload RSC lặp lại query `?anh=TL-004` do người gọi tự gõ: không coi là rò rỉ, e2e public bỏ tham số đó trước khi kiểm (T9).
+  - Header/footer giữ nền sáng ở `/thu-vien` dù artboard tối, vì layout dùng chung (T9).
+  - `getArchivePage`/`getProductPage` được `cache()` bọc nên gọi hai lần (metadata và trang) không tốn thêm truy vấn.
 - Phase 5a (đủ danh sách R1–R21 trong `docs/superpowers/plans/2026-10-27-phase-5a-cau-chuyen-con-nguoi.md`), thêm các quyết định khi chạy:
   - Thẻ "Chủ đề đề xuất" hiện ở public (R2); trên `/cau-chuyen` không bấm được (R21).
   - Thứ tự bài theo ngày tạo, cũ trước (T5a); "Xem thêm" giữ ở mobile (T5b).

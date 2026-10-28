@@ -132,15 +132,20 @@ for (const vp of [
   })
 }
 
-// Vòng kiểm ảnh: 4 route mới ở public không có ảnh tham khảo hay ảnh chưa được phép (bài chi tiết public là 404 nên dùng chân dung mẫu).
-for (const route of ['/cau-chuyen', '/con-nguoi', '/con-nguoi/mau-nghe-nhan']) {
+// Vòng kiểm ảnh: các route có ảnh ở public không có ảnh tham khảo hay ảnh chưa được phép.
+// Bài chi tiết public là 404 nên dùng chân dung mẫu. Regex nhận cả dạng mã hoá của URL next/image (`%2Fimages%2Freference`).
+// Seed hiện chưa có asset `permitted` nên vòng kiểm ảnh qua khi trang không có ảnh nào (xem backlog A).
+const REFERENCE_IMAGE = /images(\/|%2F)reference|archive-assets/i
+for (const route of ['/cau-chuyen', '/con-nguoi', '/con-nguoi/mau-nghe-nhan', '/san-pham', '/san-pham/chieu-cap-dieu', '/thu-vien', '/ket-noi']) {
   test(`${route} public không có ảnh chưa được phép`, async ({ page }) => {
     const res = await page.goto(route)
     expect(res?.status()).toBe(200)
     await page.locator('main h1').first().waitFor()
-    const srcs = await page.locator('img').evaluateAll((els) => els.map((e) => decodeURIComponent((e as HTMLImageElement).currentSrc || (e as HTMLImageElement).src)))
-    expect(srcs.filter((s) => /archive-assets|images\/reference/.test(s))).toEqual([])
-    expect(await page.content()).not.toMatch(/images\/reference|archive-assets/)
+    const rawSrcs = await page.locator('img').evaluateAll((els) =>
+      els.flatMap((e) => [e.getAttribute('src') ?? '', e.getAttribute('srcset') ?? '', (e as HTMLImageElement).currentSrc]),
+    )
+    expect(rawSrcs.filter((s) => REFERENCE_IMAGE.test(s) || REFERENCE_IMAGE.test(decodeURIComponent(s)))).toEqual([])
+    expect(await page.content()).not.toMatch(REFERENCE_IMAGE)
   })
 }
 
