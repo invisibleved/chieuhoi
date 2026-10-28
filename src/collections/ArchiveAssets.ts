@@ -5,6 +5,7 @@ import { ValidationError, type Access, type CollectionConfig, type Where } from 
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
+import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, controlFieldAdmin, isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -137,6 +138,8 @@ export const ArchiveAssets: CollectionConfig = {
     { name: 'inArchive', type: 'checkbox', label: 'Thuộc kho tư liệu', defaultValue: false },
   ],
   hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
     // R24: tên file công khai là mã tư liệu hoặc UUID, không bao giờ là tên file gốc (cả khi thay file).
     beforeOperation: [
       ({ args, operation }) => {

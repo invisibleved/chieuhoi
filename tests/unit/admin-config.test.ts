@@ -3,6 +3,7 @@ import type { CollectionConfig, Field, GlobalConfig } from 'payload'
 import { describe, expect, it } from 'vitest'
 
 import { ADMIN_GROUPS, CONTROL_FIELD_NOTE, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
+import { revalidateAfterChange, revalidateAfterDelete, revalidateGlobalAfterChange } from '@/hooks/revalidate'
 import { ArchiveAssets } from '@/collections/ArchiveAssets'
 import { CraftSteps } from '@/collections/CraftSteps'
 import { Makers } from '@/collections/Makers'
@@ -134,5 +135,23 @@ describe('xem trước', () => {
   it('Stories trả URL qua /preview', async () => {
     const preview = Stories.admin?.preview as (d: Record<string, unknown>, o: never) => unknown
     expect(await preview({ slug: 'a', workflow: 'draft' }, {} as never)).toBe('/preview?path=%2Fcau-chuyen%2Fa')
+  })
+})
+
+describe('revalidate', () => {
+  const withHooks = collections.filter((c) => c.slug !== 'users')
+  it('8 collection (7 nội dung + sources, archive-assets) có hook revalidate khi lưu và xoá', () => {
+    expect(withHooks).toHaveLength(8)
+    for (const c of withHooks) {
+      expect(c.hooks?.afterChange, c.slug).toContain(revalidateAfterChange)
+      expect(c.hooks?.afterDelete, c.slug).toContain(revalidateAfterDelete)
+    }
+  })
+  it('2 global có revalidateGlobalAfterChange', () => {
+    for (const g of globals) expect(g.hooks?.afterChange, g.slug).toContain(revalidateGlobalAfterChange)
+  })
+  it('users không có', () => {
+    expect(Users.hooks?.afterChange ?? []).not.toContain(revalidateAfterChange)
+    expect(Users.hooks?.afterDelete ?? []).not.toContain(revalidateAfterDelete)
   })
 })

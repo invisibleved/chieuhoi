@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { guardPublish, recordDraftArg, previewFor } from '@/access/publishing'
+import { revalidateGlobalAfterChange } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
 
 export const SiteSettings: GlobalConfig = {
@@ -9,7 +10,10 @@ export const SiteSettings: GlobalConfig = {
   admin: { group: ADMIN_GROUPS.pages, preview: previewFor('site-settings') },
   versions: { drafts: true },
   access: { read: isLoggedIn, update: isLoggedIn },
-  hooks: { beforeOperation: [recordDraftArg], beforeChange: [guardPublish] },
+  hooks: {
+    beforeOperation: [recordDraftArg], beforeChange: [guardPublish],
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     { name: 'tagline', type: 'text', label: 'Khẩu hiệu', localized: true },
     { name: 'description', type: 'textarea', label: 'Mô tả site', localized: true },

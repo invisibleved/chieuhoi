@@ -10,6 +10,7 @@ import type {
   SelectField,
 } from 'payload'
 
+import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
 import { isLoggedIn, isReviewer, isReviewerUser } from '@/access/roles'
 import { previewPathFor, previewUrl } from '@/lib/routes'
 import type { PreviewCollection } from '@/lib/routes'
@@ -139,6 +140,8 @@ export const contentCollectionDefaults = {
   hooks: {
     beforeOperation: [recordDraftArg],
     beforeChange: [guardPublish, syncWorkflow],
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
   },
 } satisfies Partial<CollectionConfig>
 

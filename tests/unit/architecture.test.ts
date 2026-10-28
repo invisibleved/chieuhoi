@@ -29,4 +29,7 @@ describe('lint kiến trúc', () => {
   it('lib/content không được import component', async () => {
     expect(await rulesFor('src/lib/content/Bad.ts', "import { Button } from '@/components/ui/Button'\nexport default Button\n")).toContain(RULE)
   })
+  it('hooks không được import component', async () => {
+    expect(await rulesFor('src/hooks/x.ts', "import { Button } from '@/components/ui/Button'\nexport default Button\n")).toContain(RULE)
+  })
 })

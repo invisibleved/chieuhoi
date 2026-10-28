@@ -54,7 +54,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ['src/lib/**', 'src/collections/**', 'src/globals/**', 'src/access/**'],
+    files: ['src/lib/**', 'src/collections/**', 'src/globals/**', 'src/access/**', 'src/hooks/**'],
     rules: {
       '@typescript-eslint/no-restricted-imports': [
         'error',

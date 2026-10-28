@@ -1,6 +1,7 @@
 import type { Field, GlobalConfig } from 'payload'
 
 import { guardPublish, recordDraftArg, previewFor } from '@/access/publishing'
+import { revalidateGlobalAfterChange } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
 import { PAGE_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS, isPageMediaRoute } from './pageMedia'
 
@@ -83,6 +84,9 @@ export const PageIntros: GlobalConfig = {
   admin: { group: ADMIN_GROUPS.pages, preview: previewFor('page-intros') },
   versions: { drafts: true },
   access: { read: isLoggedIn, update: isLoggedIn },
-  hooks: { beforeOperation: [recordDraftArg], beforeChange: [guardPublish] },
+  hooks: {
+    beforeOperation: [recordDraftArg], beforeChange: [guardPublish],
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: ROUTE_KEYS.map(routeGroup),
 }
