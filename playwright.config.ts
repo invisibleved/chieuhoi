@@ -50,6 +50,13 @@ export default defineConfig({
       dependencies: ['public'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },
+    {
+      // Quét a11y trên bản production public (cổng 3100). Bản xem trước của cùng file chạy trong project chromium.
+      name: 'a11y-public',
+      testMatch: /a11y\.e2e/,
+      dependencies: ['public'],
+      use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
+    },
   ],
   webServer: [
     {
