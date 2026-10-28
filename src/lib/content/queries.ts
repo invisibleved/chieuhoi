@@ -492,6 +492,8 @@ export function createContent(payload: Payload) {
       if (!image) continue
       // Tư liệu không có mã thì không có khoá ?anh=, bỏ qua.
       if (typeof d.code !== 'string' || d.code.trim() === '') continue
+      // Mã thô đi vào ?anh=, key và data-code; mã còn dấu chưa xác minh thì public bỏ hẳn tư liệu.
+      if (mode === 'public' && isUnverified(d.code)) continue
       const label = showText(d.relatedLabel, mode)
       // Chỉ nhận đường dẫn nội bộ (bắt đầu bằng một dấu '/'), tránh liên kết ra ngoài/giao thức lạ.
       const href = showText(d.relatedHref, mode)

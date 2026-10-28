@@ -93,16 +93,15 @@ describe('view model Thư viện', () => {
     expect(item?.sourceVerified).toBe(false)
   })
 
-  it('mã có dấu chưa xác minh: giữ mã thô làm khoá tra cứu, không hiện ở public', async () => {
+  it('mã có dấu chưa xác minh: preview giữ, public bỏ hẳn tư liệu', async () => {
     await makeAsset({
       alt: 'Ảnh thử 3', code: 'TL-[cần xác minh]', title: 'Tư liệu mã lạ', category: 'village', era: 'now', rights: 'permitted', subjectConsent: 'not_applicable',
       takenAt: '1990', photographer: 'Nguyễn Văn A', source: 'Gia đình ông A',
     })
-    const pub = (await archive.getArchivePage('public')).items.find((i) => i.title === 'Tư liệu mã lạ')
-    expect(pub).toBeDefined()
-    expect(pub!.code).toBe('TL-[cần xác minh]')
-    expect(pub).toMatchObject({ displayCode: null, docLabel: null, chipLabel: 'Làng quê', name: 'Tư liệu mã lạ' })
-    const { code: _raw, ...shown } = pub!
-    expect(JSON.stringify(shown)).not.toContain('cần xác minh')
+    const prev = (await archive.getArchivePage('preview')).items.find((i) => i.title === 'Tư liệu mã lạ')
+    expect(prev?.code).toBe('TL-[cần xác minh]')
+    const pub = await archive.getArchivePage('public')
+    expect(pub.items.find((i) => i.title === 'Tư liệu mã lạ')).toBeUndefined()
+    expect(JSON.stringify(pub)).not.toContain('cần xác minh')
   })
 })
