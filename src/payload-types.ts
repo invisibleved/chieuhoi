@@ -182,7 +182,7 @@ export interface Source {
   title: string;
   url?: string | null;
   /**
-   * Dạng YYYY-MM-DD
+   * Dạng YYYY-MM-DD. Để trống nếu chưa rõ.
    */
   date?: string | null;
   updatedAt: string;

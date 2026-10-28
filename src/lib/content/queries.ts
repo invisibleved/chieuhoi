@@ -18,7 +18,7 @@ import type {
   ProductCardView, ProductView, Rich, SiteSettingsView, SourceView, StoryCardView, StoryView,
   TimelineEventView, Variant,
 } from './types'
-import { isUnverified, optionalText, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
+import { isHttpUrl, isUnverified, optionalText, showText, toImageView, toPersonView, UNVERIFIED } from './visibility'
 
 const sourceOf = (v: unknown): Source | null => (v && typeof v === 'object' ? (v as Source) : null)
 const sourcesOf = (v: unknown): Source[] =>
@@ -31,9 +31,10 @@ const sourcesOf = (v: unknown): Source[] =>
 function toSourceView(s: Source, mode: Mode = 'public'): SourceView | null {
   const title = showText(s.title, mode)
   if (title === null) return null
+  const url = showText(s.url, mode)
   return {
     id: s.sourceId, publisher: showText(s.publisher, mode), title,
-    url: showText(s.url, mode), date: showText(s.date, mode),
+    url: isHttpUrl(url) ? url : null, date: showText(s.date, mode),
   }
 }
 const viewable = (v: SourceView | null): v is SourceView => v !== null

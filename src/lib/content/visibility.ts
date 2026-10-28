@@ -16,6 +16,11 @@ export function isUnverified(v: unknown): boolean {
   return s.trim() === '' || UNVERIFIED_MARK.test(s)
 }
 
+/** Chỉ đường dẫn http(s) mới được hiện thành liên kết (chặn javascript:, data:, ftp:…). */
+export function isHttpUrl(v: unknown): v is string {
+  return typeof v === 'string' && /^https?:\/\/[^\s]+$/i.test(v)
+}
+
 export function showText(v: string | null | undefined, mode: Mode): string | null {
   if (mode === 'public') return isUnverified(v) ? null : (v as string)
   return v === null || v === undefined || v.trim() === '' ? UNVERIFIED : v

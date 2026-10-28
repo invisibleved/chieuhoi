@@ -123,4 +123,43 @@ describe('users', () => {
     const { totalDocs } = await payload.count({ collection: 'users' })
     expect(totalDocs).toBe(0)
   })
+
+  it('không xoá được người duyệt cuối cùng', async () => {
+    const reviewer = await makeUser(payload, 'reviewer')
+    await expect(
+      payload.delete({ collection: 'users', id: reviewer.id, user: reviewer, overrideAccess: false }),
+    ).rejects.toThrow(/Phải còn ít nhất một người duyệt/)
+  })
+
+  it('không hạ vai trò người duyệt cuối cùng', async () => {
+    const reviewer = await makeUser(payload, 'reviewer')
+    await expect(
+      payload.update({
+        collection: 'users',
+        id: reviewer.id,
+        data: { role: 'editor' },
+        user: reviewer,
+        overrideAccess: false,
+      }),
+    ).rejects.toMatchObject({
+      data: { errors: [{ path: 'role', message: 'Phải còn ít nhất một người duyệt.' }] },
+    })
+  })
+
+  it('còn người duyệt khác thì xoá và hạ vai trò được', async () => {
+    const a = await makeUser(payload, 'reviewer')
+    const b = await makeUser(payload, 'reviewer')
+    const c = await makeUser(payload, 'reviewer')
+    const demoted = await payload.update({
+      collection: 'users',
+      id: c.id,
+      data: { role: 'editor' },
+      user: a,
+      overrideAccess: false,
+    })
+    expect(demoted.role).toBe('editor')
+    await payload.delete({ collection: 'users', id: b.id, user: a, overrideAccess: false })
+    const { totalDocs } = await payload.count({ collection: 'users', where: { role: { equals: 'reviewer' } } })
+    expect(totalDocs).toBe(1)
+  })
 })

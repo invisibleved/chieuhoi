@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { ArchiveAsset, Person } from '@/payload-types'
 import { isAssetPubliclyAllowed } from '@/access/assetRules'
-import { docNumber, isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
+import { docNumber, isHttpUrl, isUnverified, showText, toImageView, toPersonView } from '@/lib/content/visibility'
 
 const asset = (over: Partial<ArchiveAsset> = {}): ArchiveAsset =>
   ({
@@ -230,5 +230,17 @@ describe('docNumber', () => {
   it('toImageView điền docNumber từ code đã lọc', () => {
     expect(toImageView(asset({ code: 'TL-007' }), 'public')?.docNumber).toBe('007')
     expect(toImageView(asset({ code: '[cần xác minh]' }), 'public')?.docNumber).toBeNull()
+  })
+})
+
+describe('isHttpUrl', () => {
+  it('chỉ nhận http/https', () => {
+    expect(isHttpUrl('https://example.test/a')).toBe(true)
+    expect(isHttpUrl('HTTP://example.test')).toBe(true)
+    expect(isHttpUrl('javascript:alert(1)')).toBe(false)
+    expect(isHttpUrl('ftp://x')).toBe(false)
+    expect(isHttpUrl('https://a b')).toBe(false)
+    expect(isHttpUrl('')).toBe(false)
+    expect(isHttpUrl(null)).toBe(false)
   })
 })
