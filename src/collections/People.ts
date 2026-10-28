@@ -2,7 +2,7 @@ import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
 import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 import { slugify } from '@/lib/slugify'
 
 import { citeInlineBlock, restrictedEditor } from './restrictedEditor'
@@ -23,6 +23,7 @@ export const People: CollectionConfig = {
   slug: 'people',
   labels: { singular: 'Con người', plural: 'Con người' },
   admin: {
+    preview: previewFor('people'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'name',
     defaultColumns: ['name', 'category', 'workflow'],

@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 
 /** Nguồn duy nhất của nhãn nhóm sản phẩm. */
 export const PRODUCT_GROUP_OPTIONS = [
@@ -13,6 +13,7 @@ export const Products: CollectionConfig = {
   slug: 'products',
   labels: { singular: 'Sản phẩm', plural: 'Sản phẩm' },
   admin: {
+    preview: previewFor('products'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'name',
     defaultColumns: ['code', 'name', 'group', 'workflow'],

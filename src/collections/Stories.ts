@@ -2,7 +2,7 @@ import { BlocksFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
 import { citeInlineBlock, restrictedEditor } from './restrictedEditor'
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 import { ADMIN_GROUPS } from '@/access/roles'
 
 /** Nguồn duy nhất của nhãn chuyên mục; lớp content map value -> label từ đây. */
@@ -18,6 +18,7 @@ export const Stories: CollectionConfig = {
   slug: 'stories',
   labels: { singular: 'Bài viết', plural: 'Bài viết' },
   admin: {
+    preview: previewFor('stories'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'workflow'],

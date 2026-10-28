@@ -1,12 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
 
 export const TimelineEvents: CollectionConfig = {
   slug: 'timeline-events',
   labels: { singular: 'Mốc thời gian', plural: 'Dòng thời gian' },
   admin: {
+    preview: previewFor('timeline-events'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'title',
     defaultColumns: ['label', 'title', 'order', 'workflow'],

@@ -1,6 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 
-import { guardPublish, recordDraftArg } from '@/access/publishing'
+import { guardPublish, recordDraftArg, previewFor } from '@/access/publishing'
 import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
 import { PAGE_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS, isPageMediaRoute } from './pageMedia'
 
@@ -80,7 +80,7 @@ const routeGroup = (key: RouteKey): Field => ({
 export const PageIntros: GlobalConfig = {
   slug: 'page-intros',
   label: 'Phần mở đầu trang',
-  admin: { group: ADMIN_GROUPS.pages },
+  admin: { group: ADMIN_GROUPS.pages, preview: previewFor('page-intros') },
   versions: { drafts: true },
   access: { read: isLoggedIn, update: isLoggedIn },
   hooks: { beforeOperation: [recordDraftArg], beforeChange: [guardPublish] },

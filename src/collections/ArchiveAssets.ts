@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto'
 import path from 'path'
+import { previewFor } from '@/access/publishing'
 import { ValidationError, type Access, type CollectionConfig, type Where } from 'payload'
 import { fileURLToPath } from 'url'
 
@@ -57,6 +58,7 @@ export const ArchiveAssets: CollectionConfig = {
   slug: 'archive-assets',
   labels: { singular: 'Tư liệu ảnh', plural: 'Kho tư liệu ảnh' },
   admin: {
+    preview: previewFor('archive-assets'),
     group: ADMIN_GROUPS.archive,
     useAsTitle: 'title',
     defaultColumns: ['code', 'title', 'category', 'rights', 'subjectConsent'],

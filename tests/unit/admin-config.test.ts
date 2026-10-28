@@ -114,3 +114,25 @@ describe('cấu hình admin', () => {
     expect(controlFieldAdmin('A.')).toEqual({ description: `A. ${CONTROL_FIELD_NOTE}` })
   })
 })
+
+describe('xem trước', () => {
+  const previewable = ['stories', 'people', 'products', 'craft-steps', 'timeline-events', 'makers', 'archive-assets', 'site-settings', 'page-intros']
+
+  it('admin.preview là hàm ở collection nội dung, archive-assets và 2 global', () => {
+    const all = [...collections, ...globals]
+    for (const slug of previewable) {
+      const c = all.find((x) => x.slug === slug)
+      expect(typeof c?.admin?.preview, slug).toBe('function')
+    }
+  })
+
+  it('sources và users không có admin.preview', () => {
+    expect(Sources.admin?.preview).toBeUndefined()
+    expect(Users.admin?.preview).toBeUndefined()
+  })
+
+  it('Stories trả URL qua /preview', async () => {
+    const preview = Stories.admin?.preview as (d: Record<string, unknown>, o: never) => unknown
+    expect(await preview({ slug: 'a', workflow: 'draft' }, {} as never)).toBe('/preview?path=%2Fcau-chuyen%2Fa')
+  })
+})

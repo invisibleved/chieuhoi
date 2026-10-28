@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 
 const control = { create: reviewerOnlyField, update: reviewerOnlyField }
 const controlAdmin = controlFieldAdmin()
@@ -10,6 +10,7 @@ export const Makers: CollectionConfig = {
   slug: 'makers',
   labels: { singular: 'Cơ sở dệt', plural: 'Cơ sở dệt' },
   admin: {
+    preview: previewFor('makers'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'name',
     defaultColumns: ['name', 'verified', 'publicConsent'],

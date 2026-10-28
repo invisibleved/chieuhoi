@@ -1,12 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
 import { ADMIN_GROUPS, controlFieldAdmin, reviewerOnlyField } from '@/access/roles'
-import { contentCollectionDefaults, workflowField } from '@/access/publishing'
+import { contentCollectionDefaults, workflowField, previewFor } from '@/access/publishing'
 
 export const CraftSteps: CollectionConfig = {
   slug: 'craft-steps',
   labels: { singular: 'Công đoạn', plural: 'Công đoạn làm nghề' },
   admin: {
+    preview: previewFor('craft-steps'),
     group: ADMIN_GROUPS.content,
     useAsTitle: 'title',
     defaultColumns: ['n', 'title', 'workflow'],

@@ -6,10 +6,13 @@ import type {
   PayloadRequest,
   CollectionConfig,
   GlobalBeforeChangeHook,
+  GeneratePreviewURL,
   SelectField,
 } from 'payload'
 
 import { isLoggedIn, isReviewer, isReviewerUser } from '@/access/roles'
+import { previewPathFor, previewUrl } from '@/lib/routes'
+import type { PreviewCollection } from '@/lib/routes'
 
 type WorkflowValue = 'idea' | 'draft' | 'in_review' | 'published'
 
@@ -138,3 +141,11 @@ export const contentCollectionDefaults = {
     beforeChange: [guardPublish, syncWorkflow],
   },
 } satisfies Partial<CollectionConfig>
+
+/** admin.preview: đường dẫn tới trang công khai qua route /preview, hoặc null (ẩn nút). */
+export function previewFor(slug: PreviewCollection): GeneratePreviewURL {
+  return (doc) => {
+    const p = previewPathFor(slug, doc)
+    return p ? previewUrl(p) : null
+  }
+}
