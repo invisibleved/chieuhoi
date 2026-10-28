@@ -25,8 +25,10 @@ beforeEach(() => {
   hasAdminSession.mockClear()
   delete process.env.APP_ENV
   delete process.env.PREVIEW_ALL
+  vi.stubEnv('NODE_ENV', 'test')
 })
 afterEach(() => {
+  vi.unstubAllEnvs()
   process.env = { ...saved }
 })
 
@@ -75,6 +77,27 @@ describe('getMode', () => {
   })
   it('development + PREVIEW_ALL -> preview', async () => {
     process.env.APP_ENV = 'development'
+    process.env.PREVIEW_ALL = 'true'
+    expect(await getMode()).toBe('preview')
+  })
+})
+
+describe('getMode: development chạy bằng next start', () => {
+  it('development + NODE_ENV=production + PREVIEW_ALL -> public (không mở nội dung chưa duyệt)', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    process.env.APP_ENV = 'development'
+    process.env.PREVIEW_ALL = 'true'
+    expect(await getMode()).toBe('public')
+  })
+  it('development + NODE_ENV=development + PREVIEW_ALL -> preview', async () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    process.env.APP_ENV = 'development'
+    process.env.PREVIEW_ALL = 'true'
+    expect(await getMode()).toBe('preview')
+  })
+  it('staging + NODE_ENV=production + PREVIEW_ALL -> preview', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    process.env.APP_ENV = 'staging'
     process.env.PREVIEW_ALL = 'true'
     expect(await getMode()).toBe('preview')
   })

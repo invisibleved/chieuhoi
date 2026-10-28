@@ -23,6 +23,13 @@ function validSiteUrl(value: string | undefined): boolean {
   }
 }
 
+/** STAGING_AUTH hợp lệ khi có dạng user:password, user (trước dấu ':' đầu tiên) và password đều không rỗng. */
+export function isValidStagingAuth(value: string | undefined): boolean {
+  const v = value ?? ''
+  const i = v.indexOf(':')
+  return i > 0 && i < v.length - 1
+}
+
 /** Dừng build khi cấu hình deploy thiếu hoặc nguy hiểm. Thông báo không chứa giá trị bí mật. */
 export function assertDeployEnv(env: Env): void {
   let appEnv: AppEnv
@@ -31,7 +38,10 @@ export function assertDeployEnv(env: Env): void {
   } catch (e) {
     throw new Error(`Cấu hình môi trường chưa đúng:\n- ${(e as Error).message}`)
   }
-  if (appEnv === 'development') return
+  if (appEnv === 'development') {
+    if (env.VERCEL) throw new Error('Cấu hình môi trường chưa đúng:\n- APP_ENV=development không dùng để deploy; đặt staging hoặc production.')
+    return
+  }
 
   const errors: string[] = []
   if (!validSiteUrl(env.SITE_URL)) errors.push('SITE_URL phải là địa chỉ http(s) đầy đủ.')
@@ -39,7 +49,7 @@ export function assertDeployEnv(env: Env): void {
   for (const key of REQUIRED_DEPLOY) {
     if (!env[key]) errors.push(`${key} chưa được đặt.`)
   }
-  if (appEnv === 'staging' && !(env.STAGING_AUTH ?? '').includes(':')) errors.push('STAGING_AUTH phải có dạng user:password.')
+  if (appEnv === 'staging' && !isValidStagingAuth(env.STAGING_AUTH)) errors.push('STAGING_AUTH phải có dạng user:password.')
   if (appEnv === 'production' && env.PREVIEW_ALL === 'true') errors.push('PREVIEW_ALL không được là true ở production.')
   if (env.ALLOW_FIRST_USER === 'true') errors.push('ALLOW_FIRST_USER không được là true ở staging hoặc production.')
 

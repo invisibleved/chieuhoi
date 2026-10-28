@@ -86,6 +86,28 @@ const eslintConfig = [
     },
   },
   {
+    files: ['src/lib/env.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        { patterns: [{ regex: '.*', message: 'src/lib/env.ts không import gì. Xem CLAUDE.md#Kiến trúc.' }] },
+      ],
+    },
+  },
+  {
+    files: ['src/lib/basicAuth.ts'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            { regex: '^(?!node:crypto$)', message: 'src/lib/basicAuth.ts chỉ được import node:crypto. Xem CLAUDE.md#Kiến trúc.' },
+          ],
+        },
+      ],
+    },
+  },
+  {
     ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts', 'src/migrations/'],
   },
 ]

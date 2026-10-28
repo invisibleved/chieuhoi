@@ -40,4 +40,13 @@ describe('lint kiến trúc', () => {
     const code = "import { NextResponse } from 'next/server'\nimport { isStaging } from '@/lib/env'\nimport { checkBasicAuth } from '@/lib/basicAuth'\nexport const a = [NextResponse, isStaging, checkBasicAuth]\n"
     expect(await rulesFor('src/proxy.ts', code)).toEqual([])
   })
+  it('env.ts không import gì', async () => {
+    expect(await rulesFor('src/lib/env.ts', "import { x } from '@/lib/basicAuth'\nexport const a = x\n")).toContain(RULE)
+    expect(await rulesFor('src/lib/env.ts', "import { createHash } from 'node:crypto'\nexport const a = createHash\n")).toContain(RULE)
+    expect(await rulesFor('src/lib/env.ts', 'export const a = 1\n')).toEqual([])
+  })
+  it('basicAuth.ts chỉ được import node:crypto', async () => {
+    expect(await rulesFor('src/lib/basicAuth.ts', "import { x } from '@/lib/env'\nexport const a = x\n")).toContain(RULE)
+    expect(await rulesFor('src/lib/basicAuth.ts', "import { createHash } from 'node:crypto'\nexport const a = createHash\n")).toEqual([])
+  })
 })

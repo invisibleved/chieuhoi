@@ -12,10 +12,14 @@ export async function isAdminPreview(): Promise<boolean> {
   return hasAdminSession(await headers())
 }
 
-/** Chế độ hiển thị: Draft Mode + phiên admin là preview; PREVIEW_ALL chỉ có tác dụng khi APP_ENV là development hoặc staging. */
+/**
+ * Chế độ hiển thị: Draft Mode + phiên admin là preview. PREVIEW_ALL chỉ có tác dụng ở staging, hoặc ở development
+ * khi chạy `next dev` (NODE_ENV khác production): `next start` với APP_ENV=development không được mở nội dung chưa duyệt.
+ */
 export async function getMode(): Promise<Mode> {
   if (await isAdminPreview()) return 'preview'
-  if ((process.env.APP_ENV === 'development' || process.env.APP_ENV === 'staging') &&
-    process.env.PREVIEW_ALL === 'true') return 'preview'
+  const appEnv = process.env.APP_ENV
+  const allowed = appEnv === 'staging' || (appEnv === 'development' && process.env.NODE_ENV !== 'production')
+  if (allowed && process.env.PREVIEW_ALL === 'true') return 'preview'
   return 'public'
 }

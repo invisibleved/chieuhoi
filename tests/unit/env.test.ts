@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { assertDeployEnv, isIndexable, isStaging, readAppEnv, siteUrl } from '@/lib/env'
+import { assertDeployEnv, isIndexable, isValidStagingAuth, isStaging, readAppEnv, siteUrl } from '@/lib/env'
 
 const SECRET = 's'.repeat(40)
 const full = {
@@ -24,6 +24,19 @@ function msgOf(env: Record<string, string | undefined>): string {
   return ''
 }
 
+describe('isValidStagingAuth', () => {
+  it.each([[undefined, false], ['', false], [':', false], ['u:', false], [':p', false], ['nocolon', false], ['u:p', true], ['u:a:b', true]])(
+    '%s -> %s',
+    (v, ok) => expect(isValidStagingAuth(v)).toBe(ok),
+  )
+  it.each([':', 'u:', ':p'])('assertDeployEnv từ chối STAGING_AUTH "%s"', (v) => {
+    expect(msgOf({ ...staging, STAGING_AUTH: v })).toContain('STAGING_AUTH')
+  })
+  it('assertDeployEnv nhận u:a:b', () => {
+    expect(msgOf({ ...staging, STAGING_AUTH: 'u:a:b' })).toBe('')
+  })
+})
+
 describe('readAppEnv', () => {
   it('nhận đúng 3 giá trị', () => {
     expect(readAppEnv({ APP_ENV: 'development' })).toBe('development')
@@ -36,6 +49,11 @@ describe('readAppEnv', () => {
 })
 
 describe('assertDeployEnv', () => {
+  it('development trên host deploy (VERCEL) bị từ chối', () => {
+    const m = msgOf({ APP_ENV: 'development', VERCEL: '1' })
+    expect(m).toContain('APP_ENV')
+    expect(m).toContain('development không dùng để deploy')
+  })
   it('development không ném', () => {
     expect(() => assertDeployEnv({ APP_ENV: 'development' })).not.toThrow()
   })
