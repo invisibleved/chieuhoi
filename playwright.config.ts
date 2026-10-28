@@ -31,13 +31,23 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /public-pages\.e2e/,
+      testIgnore: /public-pages\.e2e|workflow\.e2e/,
+      // Chạy sau workflow: story tạm của workflow nằm chung DB nên sẽ hiện trong bản xem trước ở cổng 3000 nếu chạy song song.
+      dependencies: ['workflow'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium' },
     },
     {
       // Trang chủ ở chế độ public (PREVIEW_ALL=false) trên máy chủ production riêng, cổng 3100.
       name: 'public',
       testMatch: /public-pages\.e2e/,
+      use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
+    },
+    {
+      // Quy trình hai vai trò trên bản build production (cổng 3100, có cache nên kiểm được revalidate).
+      // Chạy sau project public để câu chuyện tạm không lọt vào các kiểm tra của trang public.
+      name: 'workflow',
+      testMatch: /workflow\.e2e/,
+      dependencies: ['public'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },
   ],
