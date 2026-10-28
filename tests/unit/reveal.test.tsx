@@ -70,4 +70,14 @@ describe('Reveal', () => {
     const { container } = render(<Reveal><p>x</p></Reveal>)
     expect(container.innerHTML).not.toContain('opacity-0')
   })
+  it('đánh dấu data-reveal theo trạng thái (e2e giảm chuyển động đọc thuộc tính này)', () => {
+    installIO(); mockMatchMedia(true); rect(5000)
+    expect((render(<Reveal><p>a</p></Reveal>).container.firstElementChild as HTMLElement).dataset.reveal).toBe('idle')
+    mockMatchMedia(false)
+    const { container } = render(<Reveal><p>b</p></Reveal>)
+    const el = container.firstElementChild as HTMLElement
+    expect(el.dataset.reveal).toBe('hidden')
+    act(() => ioCallbacks[ioCallbacks.length - 1]([{ isIntersecting: true, target: el }]))
+    expect(el.dataset.reveal).toBe('shown')
+  })
 })

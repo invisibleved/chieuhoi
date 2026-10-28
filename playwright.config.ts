@@ -31,7 +31,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e/,
+      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e|cls\.e2e/,
       // Chạy sau workflow: story tạm của workflow nằm chung DB nên sẽ hiện trong bản xem trước ở cổng 3000 nếu chạy song song.
       dependencies: ['workflow'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium' },
@@ -53,7 +53,7 @@ export default defineConfig({
     {
       // Quét a11y trên bản production public (cổng 3100). Bản xem trước của cùng file chạy trong project chromium.
       name: 'a11y-public',
-      testMatch: /a11y\.e2e/,
+      testMatch: /(a11y|cls)\.e2e/,
       dependencies: ['public'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },

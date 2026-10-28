@@ -29,5 +29,5 @@ export function Reveal({ children }: RevealProps) {
     state === 'idle' ? '' :
     state === 'hidden' ? 'opacity-0 translate-y-4 print:opacity-100 print:translate-y-0 transition-[opacity,transform] duration-[var(--dur-reveal)]' :
     'opacity-100 translate-y-0 transition-[opacity,transform] duration-[var(--dur-reveal)]'
-  return <div ref={ref} className={cls}>{children}</div>
+  return <div ref={ref} data-reveal={state} className={cls}>{children}</div>
 }
