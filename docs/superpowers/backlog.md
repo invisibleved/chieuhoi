@@ -1,22 +1,22 @@
 # Việc tồn đọng (backlog)
 
-Gom các mục review để lại sau Phase 1–6. Cập nhật lần cuối khi kết thúc Phase 6 (nhánh phase-6-hoan-thien-admin).
+Gom các mục review để lại sau Phase 1–7. Cập nhật lần cuối khi kết thúc Phase 7 (nhánh phase-7-staging-kiem-tra).
 Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây **trước** khi xoá thư mục `.superpowers/sdd/<plan>/`.
 
 ## A. Phải xong trước khi deploy staging/production (Phase 6–7)
 
-- [ ] (Phase 6 đã giải: bản preview qua Draft Mode + `/preview`, nội dung mới cập nhật qua revalidate. Còn lại cho Phase 7: chặn build production bằng `.env` dev / `PREVIEW_ALL=true`.) `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
+- [x] (Phase 7, R10, R16: `assertDeployEnv` trong `src/lib/env.ts` làm build dừng khi `APP_ENV` thiếu/sai, hoặc production có `PREVIEW_ALL=true`/`ALLOW_FIRST_USER=true`; deploy chạy `npm run ci` = migrate + build; test `tests/unit/env.test.ts`. Staging chủ ý bật `PREVIEW_ALL=true` (R4). Phần "mode chốt lúc build" của các trang tĩnh vẫn còn ở các mục `generateStaticParams`, `/san-pham`, `/thu-vien` bên dưới.) (Phase 6 đã giải: bản preview qua Draft Mode + `/preview`, nội dung mới cập nhật qua revalidate.) `/` đang prerender tĩnh: `getMode()` chốt lúc build → build bằng `.env` dev sẽ đóng băng bản preview (placeholder, ảnh chưa duyệt) vào HTML. Cần render động hoặc revalidate + draft mode, và chặn build production khi `PREVIEW_ALL=true`. Cùng vấn đề cho mọi trang dùng `getMode` (Phase 1 T11: settings/mode chốt lúc build).
 - [x] Link 404 cho tới khi có trang: `/san-pham`, `/san-pham/*`, `/thu-vien`, `/ket-noi` và chú thích nguồn hoa văn → trang hiện vật đã có (Phase 5b); `tests/e2e/links.e2e.spec.ts` duyệt link từ header, footer và 5 trang chính.
 - [x] `Sources.url` chỉ nhận `http(s)://` ở admin và lib bỏ url khác giao thức khỏi view model (Phase 6, R10).
-- [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; 9 cảnh báo `npm audit` (Phase 1).
+- [ ] `.npmrc` `legacy-peer-deps=true` che xung đột peer; `npm audit` còn 10 cảnh báo (2 thấp, 5 vừa, 3 cao) sau khi nâng `sharp` 0.35.5. Giữ `legacy-peer-deps` trong Phase 7 (R15). Chi tiết ở mục Phase 7 bên dưới.
 - [x] (đã đóng Phase 7 T1) `metadataBase` chưa đặt → URL ảnh OG của bài viết/chân dung là đường dẫn tương đối (Next cảnh báo). Đặt theo tên miền khi deploy (Phase 5a T6).
 - [ ] `/cau-chuyen/[slug]`, `/con-nguoi/[slug]`: `generateStaticParams` chỉ gồm bản ghi public, nhưng mode vẫn chốt lúc build như mục đầu tiên (Phase 5a R20).
 - [x] E2E public: regex `page.content()` không bắt được URL `next/image` đã mã hoá (`%2Fimages%2Freference`) → `public-pages.e2e.spec.ts` dùng `REFERENCE_IMAGE` nhận cả dạng mã hoá, chạy trên 7 route (gồm 4 route Phase 5b) (Phase 5b T11).
-- [ ] E2E public: seed chưa có asset `permitted` nên vòng kiểm ảnh qua vì không có ảnh nào để kiểm. Cần seed một asset `permitted` (cô lập trong e2e) để kiểm có đối tượng.
+- [x] E2E public: seed chưa có asset `permitted` nên vòng kiểm ảnh qua vì không có ảnh nào để kiểm → `tests/e2e/images.e2e.spec.ts` (project `public`, :3100) tạo asset `permitted` cô lập, kiểm file phục vụ qua Payload và URL file chưa được phép vẫn 403 (Phase 7, R5, R6). Còn sót: `afterAll` bỏ qua kết quả DELETE (xem mục Phase 7).
 - [ ] `/thu-vien` đọc `searchParams` nên là route động (R11 Phase 5b): render theo từng request, ngược với mục đầu tiên (mode chốt lúc build). Cân nhắc cache theo mode khi deploy.
 - [ ] `/san-pham`, `/san-pham/[slug]`, `/ket-noi` prerender tĩnh như trang chủ: mode chốt lúc build, build bằng `.env` dev sẽ đóng băng bản preview (mục đầu tiên). `/ket-noi` còn đọc `SiteSettings` lúc build; phần "sửa trong admin không thấy ngay" đã xong nhờ revalidate (Phase 6, R2).
-- [ ] Ảnh `next/image` đã tối ưu còn trong cache sau khi thu hồi quyền ảnh (R12 Phase 6) → cấu hình `minimumCacheTTL`/xoá cache khi deploy.
-- [ ] Race bootstrap user đầu tiên (`ALLOW_FIRST_USER`, chỉ dev; R12 Phase 6).
+- [x] Ảnh `next/image` đã tối ưu còn trong cache sau khi thu hồi quyền ảnh (R12 Phase 6) → đã đóng bằng `images.unoptimized: true`, không còn cache của bộ tối ưu; ảnh đi qua file `thumb`/`card`/`wide` do Payload tạo (Phase 7, R6). Hệ quả: `localPatterns` của `next.config` không còn tác dụng; ảnh mobile nặng hơn một chút.
+- [x] Race bootstrap user đầu tiên (`ALLOW_FIRST_USER`, chỉ dev; R12 Phase 6) → ngoài dev bị cấm: `assertDeployEnv` không cho `ALLOW_FIRST_USER=true` ở staging và production; người duyệt đầu tiên tạo bằng `npm run create-reviewer`. Race còn ở dev, không đáng sửa (Phase 7, R16).
 
 ## B. Phải làm trong Phase 4–5
 
@@ -43,6 +43,59 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 - [ ] `home` chuyển sang `media` slot (R2): hiện trang chủ vẫn lấy ảnh từ ô cũ, chưa dùng slot media như hai trang Phase 4.
 
 ## C. Lỗi nhỏ còn mở
+
+### Phase 7 (Staging, kiểm tra)
+Mã `Task N` là task trong plan Phase 7.
+- [ ] Phase 7: chạy `npm run dev` một lần trên DB dev cũ trước `npm run build` (2 cột mới `prefix`, `_objectkey` của migration `phase7_sync` được đẩy bằng `push`; nếu không, build lỗi `column archive_assets.prefix does not exist`). Chưa ghi vào README/HANDOFF.
+- [ ] Task 1: kiểm `STAGING_AUTH` trong `assertDeployEnv` chỉ yêu cầu có `:` (`":"`, `"user:"`, `":pw"` qua build nhưng proxy trả 503 lúc chạy) → dùng một vị từ chung trong `env.ts` cho cả build và proxy (Task 2 ghi lại cùng lỗi).
+- [ ] Task 1: `siteUrl` ném `TypeError` trần khi `SITE_URL` sai định dạng ở dev.
+- [ ] Task 1: thiếu test staging cho phép `PREVIEW_ALL=true`; test robots thiếu ca `APP_ENV` không hợp lệ.
+- [ ] Task 1: `images.localPatterns` vô hiệu khi `unoptimized: true` (giữ theo brief); dọn khi chắc không quay lại bộ tối ưu.
+- [ ] Task 2: test `basicAuth` thiếu ca scheme chữ thường, nhiều dấu cách, khoảng trắng cuối; test matcher chỉ xấp xỉ path-to-regexp.
+- [ ] Task 3: `images.e2e` có `expect(assetFileUrl)` đệm trong test 403; `afterAll` bỏ qua kết quả DELETE (có thể để lại asset `permitted` mồ côi); test R6 "không có /_next/image" vô nghĩa ở route không có ảnh.
+- [ ] Task 3: comment trong `docker-compose.yml` về tag MinIO: chỉ xác minh với image có sẵn ở máy, chưa kéo được từ quay.io (đã sửa lời ở Task 9; vẫn chưa xác minh trên máy khác).
+- [ ] Task 3: e2e `stories` "sao chép đường dẫn" ở 390 chập chờn (không liên quan tới Phase 7).
+- [x] Task 4: `products.e2e` PatternTeaser (bấm điểm 2 rồi link nguồn) chập chờn khi tải nặng → đã ổn định ở commit 22a11c3 (chờ `toBeInViewport()` + `expect.poll`), 12/12 qua với `--repeat-each=12 --workers=8` (Phase 7 T6).
+- [ ] Task 4: quy tắc vùng chạm pseudo-element trong `a11y.e2e` rộng hơn cần thiết (nên đòi mỗi pseudo ≥ 44 ở cả hai trục, chứa tâm phần tử, `pointer-events` ≠ none); kiểm reflow chỉ đọc `documentElement.scrollWidth`.
+- [ ] Task 4: trạng thái mở (chip `aria-pressed`, v.v.) ngoài menu và lightbox chưa quét axe.
+- [ ] Task 4: hai chú thích sát nhau (`[1][2]`) có vùng chạm 44px chồng nhau (mỗi số còn ≥ 24px); tách hẳn cần đổi khoảng cách trên artboard.
+- [ ] Task 5: test CraftJourney `.focus()` bước hiện tại trước khi Tab; locator `next`/`nextName` rối; test menu mở nút bằng `.focus()`; viền focus chấp nhận `box-shadow` (CLAUDE.md cấm bóng đổ); selector điểm hoa văn `.rounded-full` mong manh; đường danh sách nút của PatternExplorer chưa có test bàn phím.
+- [ ] Task 6: CLS chỉ đo `scrollHeight` một lần; unit test `craft-teaser` chỉ kiểm chuỗi class; báo cáo sửa lỗi thiếu lệnh chạy chính xác.
+- [ ] Task 7: `lighthouse.mjs` coi mọi non-200 kể cả 3xx là lỗi (chưa đặt `redirect: 'manual'`); fetch timeout in stack thô thay vì dòng `FAIL`; so sánh `a11yRaw*100` là số thực; JSON ghi CLS chưa làm tròn; `--auth` lộ trong argv.
+- [ ] Task 7: Performance mobile ở bản public chỉ 76–85 (LCP ~4–5 giây), không phải mục tiêu bắt buộc. Xem lại sau khi quyết định R6 (tắt bộ tối ưu ảnh, không có `srcset`) và kích thước ảnh `card`.
+- [ ] Task 8: báo cáo ghi mũi tên là "⟶" nhưng `LinkArrow` vẽ "→" (khoảng cách và gạch chân mới là chỗ lệch thật); mục Components và Foundations chụp `/styleguide` hai lần; vài dòng gộp nhiều điểm lệch.
+- [ ] Task 9: e2e staging `expect(del.ok())` trong `finally` có thể che lỗi đầu tiên hoặc để lại asset; kiểm OG so với `STAGING_URL` thay vì `SITE_URL`; guard R5 trong int test (`typeof result === 'object'`) yếu, đường phục vụ S3 chỉ được e2e staging phủ; project `staging` nhận diện bằng argv (hỏng thì chạy thừa/chặn nhầm, không mở site).
+- [ ] Task 9: mỗi lần admin tải ảnh qua `clientUploads` + đổi tên R24 để lại một object gốc mồ côi `<_objectKey>/<tên gốc>` trong bucket (private, không phục vụ, nhưng tốn chỗ và giữ tên file gốc của người tải). Sửa: xoá object gốc trong `afterChange` khi tên đổi, hoặc đổi tên phía client trước khi xin signed URL.
+- [ ] Task 9: e2e staging `admin-upload` tạo/xoá một asset thật trên staging đã deploy và để một object mồ côi ở R2 mỗi lần chạy.
+- [ ] Task 9 / `npm audit` (R15), 10 cảnh báo còn lại: `happy-dom` 20.14.6 (cao; qua `@payloadcms/richtext-lexical` → `@lexical/headless`, sửa cần happy-dom 21 là bản major, npm gợi ý hạ richtext-lexical 3.78.0 là phá vỡ; chờ Payload/Lexical); `@lexical/headless` và `@payloadcms/richtext-lexical` (cao, cùng chuỗi); `deepmerge` qua payload (thấp, chưa có bản sửa); `esbuild` ≤ 0.24.2 qua `@esbuild-kit` → `drizzle-kit` → `@payloadcms/db-postgres` (vừa, chỉ ảnh hưởng dev server, chưa có bản sửa); `payload`, `@payloadcms/db-postgres`, `drizzle-kit`, `@esbuild-kit/*` (thấp/vừa, là cha của các mục trên).
+- [ ] Việc cần người dùng: chưa deploy staging thật. Cần tài khoản Vercel, Neon, Cloudflare R2 theo `docs/DEPLOY.md` (Task 11 dừng chờ người dùng).
+- [ ] Điểm lệch so với thiết kế (Task 8; xem `docs/superpowers/reports/2026-10-28-phase-7-kiem-tra.md`, mục "So với thiết kế"; 66 dòng: 7 `rõ`, 59 `nhỏ`; Phase 7 chỉ liệt kê, không sửa giao diện — R14). Mỗi mục dưới đây trỏ tới một phần của báo cáo:
+  - Toàn site (header, footer, link): 15 dòng, trong đó 1 `rõ`.
+  - Trang chủ — Home / HomeMobile: 7 dòng.
+  - Menu mobile — MenuMobile: 2 dòng.
+  - Nghề dệt chiếu — CraftPage / CraftMobile: 2 dòng.
+  - Làng Hới — VillagePage / VillageMobile: 5 dòng, trong đó 1 `rõ`.
+  - Câu chuyện — StoriesIndex / StoriesMobile: 6 dòng, trong đó 2 `rõ`.
+  - Bài câu chuyện — StoryDetail / StoryMobile: 5 dòng.
+  - Con người — PeopleIndex / PeopleMobile: 3 dòng.
+  - Chân dung — PersonDetail / PersonMobile: 2 dòng.
+  - Sản phẩm — ProductsIndex / ProductsMobile: 4 dòng.
+  - Chi tiết sản phẩm — ProductDetail / ProductMobile: 4 dòng.
+  - Thư viện — ArchivePage / ArchiveMobile: 3 dòng, trong đó 1 `rõ`.
+  - Kết nối — ConnectPage / ConnectMobile: 2 dòng.
+  - Component / Nền tảng — Components / Foundations so với `/styleguide`: 6 dòng, trong đó 2 `rõ`.
+- [ ] Điểm lệch mức `rõ` (7 mục, nên sửa trước tiên):
+  - Link mũi tên `LinkArrow` và link chữ đứng riêng: thiết kế gạch chân, mũi tên cách chữ ~10px; build không gạch chân, mũi tên dính liền chữ (toàn site, cả `/styleguide`).
+  - `/lang-hoi` 1440: khoảng giữa đầu trang và ảnh lớn ~150px, thiết kế ~56px.
+  - `/cau-chuyen` 1440: ô tìm kiếm đầu trang hẹp (~230px so với ~360px), placeholder bị cắt.
+  - `/cau-chuyen` 1440 + 390: đoạn mô tả trong thẻ bài dùng serif, thiết kế dùng sans (Be Vietnam Pro).
+  - `/thu-vien` 1440 + 390: header/footer nền sáng, artboard vẽ nền tối (đã có trong backlog, do layout dùng chung).
+  - `/styleguide` 1440, "Thành phần di sản": chỗ "Bước công đoạn" và "Điểm hoa văn" chỉ còn khung "Làm ở Phase 4/5.".
+  - `/styleguide` 1440, "Lightbox thư viện": chỉ còn khung "Làm ở Phase 5.".
+- [ ] Cần người dùng quyết (3 điểm lệch mang tính phán đoán, không rõ build hay thiết kế đúng):
+  - Mục nav đang ở có gạch chân màu rơm: artboard các trang không vẽ, chỉ `Components` vẽ ("03 · trang hiện tại: gạch chân sợi rơm"). Giữ hay bỏ.
+  - Eyebrow đầu trang ở mobile: thiết kế mobile không có gạch ngang phía trước, build có ở mọi trang.
+  - Các đường kẻ sợi thêm so với thiết kế: dưới khối "Nghề dệt chiếu" ở trang chủ, trên "Di sản hôm nay" ở `/lang-hoi` (và thiếu đường kẻ giữa "Vị trí" và "Đời sống làng"), giữa khung nguyên tắc và bộ lọc ở mobile Con người/Câu chuyện.
 
 ### Phase 6 (Admin)
 Mã `Task N` là task trong plan Phase 6.
@@ -135,7 +188,7 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] Màu `rgba` chỉ dùng một lần còn lại (ArchiveTeaser .88, FilterChips/PatternTeaser .35, PatternTeaser .82, SiteFooter .18); `StepProgress` gap desktop 2 thay vì 2.5; nền sân khấu `bg-bg-deep` thay vì `#2A3D31` (chưa có token).
 - [ ] `PAGE_MEDIA_SLOT_LABELS` nên có kiểu theo slot; `seed.int` chỉ kiểm ảnh slot của `nghe-det-chieu`.
 - [ ] `applyMode` `nullTexts` xoá mọi chuỗi trong object có `cite` (sẽ mất `href` nếu sau này đặt cạnh `cite`) → thêm test chặn trước.
-- [ ] E2E: `global-setup` viết cứng cổng 3000; regex ảnh public chỉ nhận 2 dạng đường dẫn; test bàn phím craft dùng `focus()` thay vì Tab; `craft-journey.test` gán thẳng `window.matchMedia`; test cỡ mặc định `ThreadsDivider` so chuỗi con.
+- [ ] E2E: `global-setup` viết cứng cổng 3000; regex ảnh public chỉ nhận 2 dạng đường dẫn; test bàn phím craft dùng `focus()` thay vì Tab (Phase 7 T5 có test Tab thật tới nút Tiếp nhưng vẫn `.focus()` bước hiện tại trước khi Tab → chưa đóng hẳn); `craft-journey.test` gán thẳng `window.matchMedia`; test cỡ mặc định `ThreadsDivider` so chuỗi con.
 - [ ] Cảnh báo dev next/image "width or height modified" với `nkc8-840x560.webp`.
 - [ ] `ScrollStrip focusable` thành thêm một điểm Tab ở desktop (nơi dải không cuộn).
 - [ ] H2 "Di sản hôm nay" mobile 32px (token) thay vì 30px của artboard; bảng thông tin và chú giải timeline render hai lần theo breakpoint.
@@ -163,7 +216,7 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `test:int` chạy `vitest run` cả config → chạy luôn test unit.
 - [ ] Focus nền tối chỉ áp cho con của `.bg-bg-inverse/.bg-bg-deep/.bg-bg-ink`; rule focus toàn cục chưa nằm trong `@layer base`.
 - [ ] Chưa có token line-height và eyebrow (600 / +0.24em).
-- [ ] Bootstrap user đầu tiên: đếm-rồi-tạo có race (chỉ dev; R12 Phase 6, thuộc Phase 7).
+- [x] Bootstrap user đầu tiên: đếm-rồi-tạo có race → chỉ còn ở dev (Phase 7, R16; xem mục A).
 - [x] Người duyệt cuối cùng không xoá/hạ vai trò được (Phase 6, R9). Còn mối lo xoá hàng loạt: xem mục Task 2 ở Phase 6.
 - [x] `Sources.date` validate `YYYY-MM-DD` và ngày có thật (Phase 6, R10).
 - [ ] Collection nào ghi đè `hooks` sau khi spread `contentCollectionDefaults` sẽ mất `recordDraftArg` (fail closed).
@@ -172,9 +225,21 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [ ] `toImageView` thiếu url → `''` và kích thước 0; `sourceMap()` tải hết nguồn mỗi bài/người.
 - [ ] Độ phủ cờ preview chưa đều (craft subtitle/tools, nguồn timeline); thiếu test DB cho chặn `getPerson` (R14), lọc ảnh sản phẩm, maker chưa đăng.
 - [ ] Seed: slug kỹ thuật `mau-nguoi-2..8`; idempotency upload theo tên file lưu (media cũ + DB trống → trùng); biên tập viên có thể gõ tên người vào `code` → thành tên file; dữ liệu dev cũ giữ tên file gốc (seed lại staging từ đầu).
-- [ ] Menu mobile vẫn mở (aria-expanded cũ) khi resize qua 1024; nền chưa `inert` khi menu mở; `text-[14px]` viết cứng; footer liên hệ hiện `[cần xác minh]` ở preview.
+- [x] Nền chưa `inert` khi menu mở → giải bằng cách khác: menu mobile dùng vòng focus, `keyboard.e2e.spec.ts` khẳng định Tab/Shift+Tab 16 lần không ra khỏi `#menu-mobile` (Phase 7, ruling P4). Nền vẫn không `inert` với trình đọc màn hình.
+- [ ] Menu mobile vẫn mở (aria-expanded cũ) khi resize qua 1024; `text-[14px]` viết cứng; footer liên hệ hiện `[cần xác minh]` ở preview.
 
 ## D. Quyết định cần biết (không phải lỗi)
+
+- Phase 7 (đủ danh sách R1–R16 trong `docs/superpowers/plans/2026-10-28-phase-7-staging-kiem-tra.md`), thêm các quyết định khi chạy:
+  - P1: ảnh tải lên qua `clientUploads` (R8) được kiểm bằng giao diện admin (Playwright), vì tải qua REST không đi đường đó.
+  - P2: test CLS nằm trong `cls.e2e.spec.ts` riêng (project `a11y-public` khớp `/(a11y|cls)\.e2e/`; `chromium` bỏ qua).
+  - P3: script `audit:lighthouse` chạy bằng `node --import tsx/esm` để import `routes.ts`.
+  - P4: test menu mobile chỉ đòi Tab không ra khỏi menu (vòng focus hoặc nền `inert` đều đạt); hiện dùng vòng focus.
+  - MinIO ghim image `quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z` có sẵn ở máy, bucket tạo bằng `mkdir` (kéo từ quay.io treo ở máy này); dùng cho diễn tập, không ảnh hưởng dev thường.
+  - Plugin S3 luôn đăng ký (tắt khi thiếu `S3_BUCKET`) cùng migration `phase7_sync`, để schema giống nhau ở mọi môi trường.
+  - Staging: đọc file ảnh trả `{ id: { exists: true } }` thay vì `true` để `storage-s3` nhận được doc; dev/production không đổi.
+  - Lighthouse: chỉ bỏ qua 404 với route đánh dấu `draftOnPublic` và cờ `--public`; mọi 404 khác là lỗi.
+  - Điểm lệch so với thiết kế ghi thẳng vào `docs/superpowers/reports/2026-10-28-phase-7-kiem-tra.md`; ảnh chụp không commit.
 
 - Phase 6 (đủ danh sách R1–R12 trong `docs/superpowers/plans/2026-10-28-phase-6-hoan-thien-admin.md`), thêm các quyết định khi chạy:
   - P1: `safeInternalPath` kiểm cả giá trị thô và giá trị giải mã một lần; trả về giá trị thô khi hợp lệ để giữ mã hoá query (ví dụ `?anh=`).

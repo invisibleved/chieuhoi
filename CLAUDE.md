@@ -18,6 +18,9 @@ Thiết kế đã hoàn tất. Việc của bạn là **triển khai đúng thi�
 - Postgres cục bộ: `docker compose up -d` (host port 5433; DB `chieuhoi` và `chieuhoi_test`). Biến môi trường: xem `.env.example`.
 - Cơ sở dữ liệu: chỉ `APP_ENV=development` tự đồng bộ schema (`push`). Đổi schema thì chạy `npm run migrate:create <tên>` và commit `src/migrations`; deploy chạy `npm run migrate`. Người duyệt đầu tiên ở production: `npm run create-reviewer` (đặt `REVIEWER_EMAIL`/`REVIEWER_PASSWORD`); `ALLOW_FIRST_USER` chỉ bật ở dev.
 - Test: `npm run test:unit` (vitest, `tests/unit`), `npm run test:int` (vitest, `tests/int`, dùng `DATABASE_URI_TEST`, chạy tuần tự), `npm run test:e2e` (Playwright).
+- Staging/production: biến `SITE_URL`, `STAGING_AUTH` (`user:password`), `S3_*` được `src/lib/env.ts` kiểm lúc build (thiếu hoặc sai thì build dừng). Hướng dẫn deploy: `docs/DEPLOY.md`. Lệnh build trên Vercel/VPS là `npm run ci` (migrate + build).
+- `npm run audit:lighthouse -- --base=<url> [--auth=user:pass] [--public] [--out=<file.json>]` chạy Lighthouse cho mọi route kiểm (ngoài `test:e2e` vì chậm). Chụp so thiết kế: `SCREENS=1 npm run test:e2e -- --project=chromium --no-deps tests/e2e/screens.e2e.spec.ts`, rồi `node tools/screens-sheet.mjs`; ảnh nằm trong thư mục gitignore, không bao giờ commit.
+- `--no-deps` cho project `chromium` chạy không cần bản build :3100. Trên DB dev có sẵn, sau khi pull migration mới: chạy `npm run dev` một lần (push schema) rồi mới `npm run build`.
 - Spec thiết kế kiến trúc: `docs/superpowers/specs/2026-10-26-chieu-hoi-web-design.md`.
 - KHÔNG làm: giỏ hàng, thanh toán, đăng nhập người xem, form Kết nối (form chỉ là minh hoạ, phải giữ dòng "minh hoạ"). Đăng nhập chỉ dành cho biên tập viên và người duyệt qua Payload admin.
 
