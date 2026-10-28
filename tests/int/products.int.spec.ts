@@ -63,6 +63,10 @@ describe('view model Sản phẩm', () => {
       const by = Object.fromEntries(v.products.map((p) => [p.slug, p]))
       expect(by['chieu-dot'].tag).toEqual({ text: 'Chưa có ảnh', style: 'dashed' })
       expect(by['chieu-cap-dieu'].tag).toEqual({ text: 'Ảnh cần xác nhận loại', style: 'filled' })
+      expect(by['chieu-dot'].shotNeeded).toEqual({
+        desktop: 'Chiếu đót chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt',
+        mobile: 'Chiếu đót',
+      })
       expect(v.catalogSourceUrl).toMatch(/^https:\/\/www\.vietnamplus\.vn\//)
       expect(v.copy.detail.preview).not.toBeNull()
     })
@@ -183,6 +187,16 @@ describe('view model Sản phẩm', () => {
       expect(p.annotations[1].sourceLine).toBe('Báo A (04/03/2021)')
       expect(p.hasPattern).toBe(true)
       expect(p.typeNote).toBe('Ảnh cần cơ sở dệt xác nhận đúng loại')
+    })
+  })
+
+  describe('chữ khung "Ảnh cần chụp"', () => {
+    it('tên bị ẩn ở public thì shotNeeded null (không điền "[cần xác minh]")', async () => {
+      await create('products', { slug: 'khong-ten', workflow: 'published' })
+      const pub = (await products.getProductsPage('public')).products.find((p) => p.slug === 'khong-ten')
+      expect(pub).toBeTruthy()
+      expect(pub!.name).toBeNull()
+      expect(pub!.shotNeeded).toBeNull()
     })
   })
 })

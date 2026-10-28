@@ -18,6 +18,14 @@ describe('PageHeader', () => {
     expect(screen.getByText('Cột phải')).toBeTruthy()
   })
 
+  it('hideCrumbsOnMobile ẩn đường dẫn dưới md; mặc định thì không', () => {
+    const crumbs = [{ label: 'Trang chủ', href: '/' }, { label: 'Sản phẩm' }]
+    const { rerender } = render(<PageHeader crumbs={crumbs} intro={intro} />)
+    expect(screen.getByRole('navigation', { name: 'Đường dẫn' }).parentElement?.className).not.toContain('max-md:hidden')
+    rerender(<PageHeader crumbs={crumbs} intro={intro} hideCrumbsOnMobile />)
+    expect(screen.getByRole('navigation', { name: 'Đường dẫn' }).parentElement?.className).toContain('max-md:hidden')
+  })
+
   it('leadClassName thêm vào lead; wideIntro mở cột chữ thành 8 cột', () => {
     const { container } = render(<PageHeader crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Câu chuyện' }]} intro={intro} leadClassName="md:hidden" wideIntro />)
     const lead = screen.getByText('Lead')

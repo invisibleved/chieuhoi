@@ -89,6 +89,13 @@ describe('ProductCard', () => {
     render(<ProductCard product={{ ...product, tag: { text: 'Đã xác nhận', style: 'filled' } }} href="#" shotNeeded={shot} />)
     expect(screen.getByText('Đã xác nhận').className).toContain('bg-bg-secondary')
   })
+  it('shotNeeded null hoặc bỏ trống: khung chỉ có nhãn, không mô tả', () => {
+    const { unmount } = render(<ProductCard product={product} href="#" shotNeeded={null} />)
+    expect(screen.getByRole('img', { name: 'Ảnh cần chụp' })).toBeTruthy()
+    unmount()
+    render(<ProductCard product={product} href="#" />)
+    expect(screen.getByRole('img', { name: 'Ảnh cần chụp' })).toBeTruthy()
+  })
   it('khung ẢNH CẦN CHỤP lấy chữ theo Variant desktop/mobile', () => {
     render(<ProductCard product={product} href="#" shotNeeded={shot} />)
     expect(screen.getByRole('img', { name: 'Ảnh cần chụp: Chiếu trơn chụp phẳng' })).toBeTruthy()

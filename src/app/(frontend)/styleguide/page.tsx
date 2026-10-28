@@ -251,6 +251,7 @@ export default function StyleguidePage() {
           <div className="flex flex-col gap-3"><Lab>KHUNG GIỮ CHỖ · NỀN SÁNG</Lab><PlaceholderFrame label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3 bg-bg-inverse p-4"><Lab tone="dark">KHUNG GIỮ CHỖ · NỀN TỐI</Lab><PlaceholderFrame tone="dark" label="ẢNH CẦN CHỤP" title="Chẻ cói bằng tay" description="Cận cảnh đôi tay đang chẻ sợi cói." className="min-h-[200px]" /></div>
           <div className="flex flex-col gap-3"><Lab>CALLOUT</Lab><Callout title="LƯU Ý">Nội dung này cần được xác minh với nghệ nhân trước khi đăng.</Callout></div>
+          <div className="flex flex-col gap-3"><Lab>CALLOUT · VIỀN MẢNH</Lab><Callout tone="outline" title="VỀ DANH MỤC">Các loại chiếu dưới đây theo bài Vietnam+. Tên gọi và ảnh cần cơ sở dệt xác nhận.</Callout></div>
           <div className="flex flex-col gap-3"><Lab>CALLOUT · NỀN TỐI</Lab><Callout tone="dark" title="NGUYÊN TẮC CHÂN DUNG" label="Nguyên tắc chân dung"><ul className="m-0 flex flex-col gap-1.5 pl-[18px]"><li>Tên, tuổi, vai trò chỉ đăng khi người được kể đồng ý.</li><li>Lời trích chỉ đăng khi có ghi âm hoặc ghi chép gốc.</li></ul></Callout></div>
           <div className="flex flex-col gap-3">
             <Lab>DANH SÁCH THÔNG TIN</Lab>

@@ -274,6 +274,17 @@ describe('Callout tone dark', () => {
   })
 })
 
+describe('Callout tone outline', () => {
+  it('khung viền mảnh, không nền, eyebrow chữ phụ', () => {
+    render(<Callout tone="outline" title="VỀ DANH MỤC">x</Callout>)
+    const aside = screen.getByRole('complementary')
+    expect(aside.className).toContain('border-border-subtle')
+    expect(aside.className).not.toContain('bg-bg-secondary')
+    expect(aside.className).not.toContain('border-accent')
+    expect(screen.getByText('VỀ DANH MỤC').className).toContain('text-text-muted')
+  })
+})
+
 describe('EmptyState body hai bản', () => {
   it('nhận VariantText: bản mobile null thì chỉ có span desktop; không body thì không có dòng chữ', () => {
     const { container, rerender } = render(<EmptyState title="T" body={<VariantText value={{ desktop: 'Bản desktop', mobile: null }} />} />)
