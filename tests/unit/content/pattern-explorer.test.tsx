@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { PatternExplorer } from '@/components/content/PatternExplorer'
@@ -15,17 +15,17 @@ const img = (i: number): ImageView => ({
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: null, summary: null, image: img(1),
   typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [1, 2, 3, 4].map(img), primaryImage: img(1), hasPattern: true,
-  material: null, technique: null, size: null, care: null, maker: null, context: null, pattern: null, eyebrow: '', typeNote: null,
+  material: null, technique: null, size: null, care: null, maker: null, contactLine: null, context: null, pattern: null, eyebrow: '', typeNote: null,
   imageCaptions: ['Ảnh 1/4', 'Ảnh 2/4', 'Ảnh 3/4', 'Ảnh 4/4'],
   sources: [],
   annotations: [
-    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền đỏ.', sourceId: null, sourceN: null, sourceLine: 'Quan sát từ ảnh' },
-    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: 'Vietnam+ (14/08/2026)' },
-    { n: 3, title: 'Mặt cói dệt', shortTitle: null, x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null, sourceN: null, sourceLine: null },
+    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền đỏ.', sourceId: null, sourceN: null, sourceLine: 'Quan sát từ ảnh', heading: '1 · Viền chiếu', markerLabel: 'Chi tiết 1: viền chiếu', pickerLabel: '1 · Viền' },
+    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: 'Vietnam+ (14/08/2026)', heading: '2 · Hoa văn in', markerLabel: 'Chi tiết 2: hoa văn in', pickerLabel: '2 · Hoa văn' },
+    { n: 3, title: 'Mặt cói dệt', shortTitle: null, x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null, sourceN: null, sourceLine: null, heading: '3 · Mặt cói dệt', markerLabel: 'Chi tiết 3: mặt cói dệt', pickerLabel: '3 · Mặt cói dệt' },
   ],
 }
 const detail = copy.detail
-const marker = (n: number, title: string) => screen.getByRole('button', { name: `Chi tiết ${n}: ${title}` })
+const marker = (n: number, title: string) => screen.getByLabelText(`Chi tiết ${n}: ${title.toLocaleLowerCase('vi')}`)
 const stageImg = () => screen.getByAltText('Ảnh 1') as HTMLImageElement
 const thumb = (n: number) => screen.getByRole('button', { name: `Xem ảnh ${n}` })
 
@@ -47,6 +47,8 @@ describe('PatternExplorer', () => {
     expect(stageImg().style.transformOrigin).toBe('52% 60%')
     expect(marker(1, 'Viền chiếu').tabIndex).toBe(-1)
     expect(marker(3, 'Mặt cói dệt').tabIndex).toBe(-1)
+    expect(marker(1, 'Viền chiếu').getAttribute('aria-hidden')).toBe('true')
+    expect(marker(2, 'Hoa văn in').getAttribute('aria-hidden')).toBeNull()
     const region = screen.getByRole('region', { name: detail.explore.regionLabel! })
     expect(region.getAttribute('aria-live')).toBe('polite')
     expect(within(region).getByText('Hoạ tiết chưa xác định.')).toBeTruthy()
@@ -66,6 +68,37 @@ describe('PatternExplorer', () => {
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(stageImg().style.transform).toBe('scale(1)')
     expect(screen.queryByRole('button', { name: detail.explore.close! })).toBeNull()
+  })
+
+  it('đóng chi tiết bằng nút hoặc Esc thì focus về điểm vừa chọn (WCAG 2.4.3)', () => {
+    // jsdom không có layout: coi mọi phần tử là đang hiện.
+    const spy = vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList)
+    try {
+      render(<PatternExplorer product={product} copy={detail} />)
+      fireEvent.click(marker(2, 'Hoa văn in'))
+      fireEvent.click(screen.getByRole('button', { name: detail.explore.close! }))
+      expect(document.activeElement).toBe(marker(2, 'Hoa văn in'))
+      fireEvent.click(marker(3, 'Mặt cói dệt'))
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(document.activeElement).toBe(marker(3, 'Mặt cói dệt'))
+      expect(marker(1, 'Viền chiếu').getAttribute('aria-hidden')).toBeNull()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it('điểm không hiện (không có vùng chạm) thì focus về nút cùng số trong danh sách', () => {
+    const spy = vi.spyOn(HTMLElement.prototype, 'getClientRects').mockImplementation(function (this: HTMLElement) {
+      return (this.hasAttribute('aria-label') && this.getAttribute('aria-label')!.startsWith('Chi tiết') ? [] : [{}]) as unknown as DOMRectList
+    })
+    try {
+      render(<PatternExplorer product={product} copy={detail} />)
+      fireEvent.click(screen.getByRole('button', { name: /^2\s*Hoa văn in$/ }))
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: /^2\s*Hoa văn in$/ }))
+    } finally {
+      spy.mockRestore()
+    }
   })
 
   it('chọn từ danh sách (desktop) và nhóm nút (mobile) đều chọn điểm', () => {
@@ -102,7 +135,7 @@ describe('PatternExplorer', () => {
   })
 
   it('điểm không có tiêu đề: nhãn lấy từ copy, danh sách không có span rỗng', () => {
-    const annotations = [{ ...product.annotations[0], title: null, shortTitle: null }]
+    const annotations = [{ ...product.annotations[0], title: null, shortTitle: null, heading: '1', markerLabel: 'Chi tiết 1', pickerLabel: '1' }]
     render(<PatternExplorer product={{ ...product, annotations }} copy={detail} />)
     expect(screen.getByRole('button', { name: 'Chi tiết 1' }).getAttribute('aria-pressed')).toBe('false')
     const rows = screen.getAllByRole('button', { name: '1' }).filter((b) => b.querySelector('span'))
@@ -147,7 +180,8 @@ describe('PatternMarker, StageHint, AnnotationNote', () => {
   it('PatternMarker: đặt theo %, hidden thì tabIndex -1 và không nhận chuột', async () => {
     const { PatternMarker } = await import('@/components/ui/PatternMarker')
     render(<PatternMarker n={4} x={10} y={20} pressed={false} hidden label="Chi tiết 4" onClick={() => {}} />)
-    const b = screen.getByRole('button', { name: 'Chi tiết 4' })
+    const b = screen.getByLabelText('Chi tiết 4')
+    expect(b.getAttribute('aria-hidden')).toBe('true')
     expect(b.style.left).toBe('10%')
     expect(b.style.top).toBe('20%')
     expect(b.tabIndex).toBe(-1)

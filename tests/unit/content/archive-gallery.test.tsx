@@ -21,6 +21,10 @@ function item(n: number, over: Partial<ArchiveItemView> & { cat: 'village' | 'we
     related: { label: 'Trang Làng Hới', href: '/lang-hoi' },
     flags: [],
     code,
+    displayCode: `00${n}`,
+    docLabel: `TL · 00${n}`,
+    chipLabel: `TL · 00${n} · ${cat === 'village' ? 'Làng quê' : 'Nghề dệt'}`,
+    name: `Tiêu đề ${code}`,
     takenAt: '1990',
     photographer: 'Nguyễn A',
     source: 'Gia đình B',
@@ -169,5 +173,21 @@ describe('ArchiveGallery', () => {
     const dialog = screen.getByRole('dialog')
     const eyebrow = within(dialog).getByText('TL · 002 · Nghề dệt')
     expect(eyebrow.className).toContain('uppercase')
+  })
+  it('mã hiển thị bị ẩn: không chip, không mã trong tên đọc, tên ô lấy name; href vẫn dùng mã thô đã mã hoá', () => {
+    const raw = 'TL-[cần xác minh]'
+    const hidden = item(1, { cat: 'village', code: raw, displayCode: null, docLabel: null, chipLabel: 'Làng quê', title: null, name: null })
+    const { container } = render(<ArchiveGallery page={page([hidden])} initialCode={null} />)
+    const tile = container.querySelector('a[data-code]') as HTMLAnchorElement
+    expect(tile.getAttribute('aria-label')).toBe('Mở ảnh: , Làng quê')
+    expect(tile.textContent).not.toContain('TL')
+    expect(tile.textContent).not.toContain('cần xác minh')
+    expect(tile.getAttribute('href')).toBe(`/thu-vien?anh=${encodeURIComponent(raw)}`)
+  })
+  it('hộp xem ảnh: mã chứa ký tự đặc biệt được mã hoá trong liên kết Trước/Tiếp', () => {
+    const odd = item(2, { cat: 'village', code: 'TL 2&x' })
+    render(<ArchiveGallery page={page([item(1, { cat: 'village' }), odd])} initialCode="TL-001" />)
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).getByRole('link', { name: 'Ảnh tiếp' }).getAttribute('href')).toBe('/thu-vien?anh=TL%202%26x')
   })
 })

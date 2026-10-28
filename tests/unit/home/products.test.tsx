@@ -11,12 +11,12 @@ const img: ImageView = {
 }
 const product: ProductView = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: 'Chiếu cói truyền thống', summary: null, image: img,
-  typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null,
+  typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [img], primaryImage: img, hasPattern: true, material: null, technique: null, size: null, care: null, maker: null, contactLine: null,
   context: null, pattern: null, eyebrow: '', typeNote: null, imageCaptions: [], sources: [],
   annotations: [
-    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null, sourceN: null, sourceLine: null },
-    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: null },
-    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null, sourceN: null, sourceLine: null },
+    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Phần viền màu đỏ.', sourceId: null, sourceN: null, sourceLine: null, heading: '1 · Viền chiếu', markerLabel: 'Chi tiết 1: viền chiếu', pickerLabel: '1 · Viền' },
+    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Hoạ tiết chưa xác định.', sourceId: 'vietnamplus-2026', sourceN: 1, sourceLine: null, heading: '2 · Hoa văn in', markerLabel: 'Chi tiết 2: hoa văn in', pickerLabel: '2 · Hoa văn' },
+    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Kiểu dệt.', sourceId: null, sourceN: null, sourceLine: null, heading: '3 · Mặt cói dệt', markerLabel: 'Chi tiết 3: mặt cói dệt', pickerLabel: '3 · Mặt cói' },
   ],
 }
 const card = (i: number, over: Partial<ProductCardView> = {}): ProductCardView => ({
@@ -61,7 +61,7 @@ describe('PatternTeaser', () => {
     expect(container.querySelector('[aria-live="polite"]')).not.toBeNull()
   })
   it('mở mặc định là annotations[0] dù n khác 1; title null không vỡ', () => {
-    const p = { ...product, annotations: [{ n: 2, title: null, shortTitle: null, x: 10, y: 10, body: 'Nội dung hai', sourceId: null, sourceN: null, sourceLine: null }] }
+    const p = { ...product, annotations: [{ n: 2, title: null, shortTitle: null, x: 10, y: 10, body: 'Nội dung hai', sourceId: null, sourceN: null, sourceLine: null, heading: '2', markerLabel: 'Chi tiết 2', pickerLabel: '2' }] }
     render(<PatternTeaser product={p} />)
     const b = screen.getByRole('button', { name: 'Chi tiết 2' })
     expect(b.getAttribute('aria-pressed')).toBe('true')

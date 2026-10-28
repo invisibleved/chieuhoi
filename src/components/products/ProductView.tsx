@@ -40,7 +40,7 @@ export function ProductView({ page }: { page: ProductPageView }) {
   const connectHref = d.connect.href ?? ''
   const contact = {
     term: d.specs.contact ?? '',
-    detail: p.maker?.contact ?? d.noMaker,
+    detail: p.contactLine,
     wide: true,
     action: <LinkArrow href={connectHref}>{d.connect.label.desktop}</LinkArrow>,
   }

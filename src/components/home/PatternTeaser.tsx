@@ -14,8 +14,6 @@ export function PatternTeaser({ product }: { product: ProductView }) {
   const open = annotations.find((a) => a.n === openN) ?? annotations[0]
   if (!open || !product.hasPattern || !primaryImage) return null
 
-  const label = (n: number, title: string | null) => (title ? `${n} · ${title}` : `${n}`)
-
   return (
     <>
       <figure className="relative -mx-5 m-0 md:col-span-8 md:mx-0">
@@ -27,7 +25,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
             x={a.x}
             y={a.y}
             pressed={a.n === open.n}
-            label={a.title ? `Chi tiết ${a.n}: ${a.title.toLocaleLowerCase('vi')}` : `Chi tiết ${a.n}`}
+            label={a.markerLabel}
             onClick={() => setOpenN(a.n)}
           />
         ))}
@@ -42,7 +40,7 @@ export function PatternTeaser({ product }: { product: ProductView }) {
           .filter((a) => a.n !== open.n)
           .map((a) => (
             <p key={a.n} className="m-0 hidden pl-[21px] text-[16px] text-text-muted-alt md:block">
-              {label(a.n, a.title)}
+              {a.heading}
             </p>
           ))}
       </div>

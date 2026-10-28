@@ -33,7 +33,7 @@ describe('HomeView', () => {
     const archive: ArchiveItemView = {
       image: { url: '/images/reference/a.webp', alt: 'Ảnh', width: 800, height: 600, sizes: {}, photographer: null, code: 'TL-001', docNumber: '001', flags: [] },
       title: null, description: null, category: 'village', categoryLabel: 'Làng quê', era: null, eraLabel: null, related: null, flags: [],
-      code: 'TL-001', takenAt: null, photographer: null, source: null, rights: { desktop: null, mobile: null }, sourceVerified: false,
+      code: 'TL-001', displayCode: '001', docLabel: 'TL · 001', chipLabel: 'TL · 001 · Làng quê', name: 'TL-001', takenAt: null, photographer: null, source: null, rights: { desktop: null, mobile: null }, sourceVerified: false,
     }
     const { container } = render(
       <HomeView mode="public" {...base} steps={[step]} people={[person]} stories={[story('co', true), story('khong', false)]} products={[product]} archive={[archive]} storyHref="/cau-chuyen/co" />,

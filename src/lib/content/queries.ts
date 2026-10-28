@@ -202,6 +202,7 @@ export function createContent(payload: Payload) {
     // R2: chỉ tính chú thích còn hiện và nguồn nhìn thấy được; nguồn đánh số theo lần xuất hiện đầu.
     const sources: SourceView[] = []
     const annotations: ProductView['annotations'] = []
+    const explore = productsCopy.detail.explore
     for (const a of d.annotations ?? []) {
       const body = showText(a.body, mode)
       if (body === null) continue
@@ -217,10 +218,17 @@ export function createContent(payload: Payload) {
       const note = filled(a.sourceNote)
       const hiddenSource = mode === 'public' && rel !== null && view === null
       const title = showText(a.title, mode)
+      const n = a.n ?? annotations.length + 1
+      const shortTitle = filled(a.shortTitle) ?? title
       annotations.push({
-        n: a.n ?? annotations.length + 1, title, shortTitle: filled(a.shortTitle) ?? title,
+        n, title, shortTitle,
         x: a.x ?? 0, y: a.y ?? 0, body, sourceId: view?.id ?? null, sourceN,
         sourceLine: hiddenSource ? null : (note ?? (view ? sourceLine([view]) : null)),
+        heading: title ? `${n} · ${title}` : `${n}`,
+        markerLabel: title
+          ? fillTemplate(explore.markerLabel, { n, title: title.toLocaleLowerCase('vi') })
+          : fillTemplate(explore.markerLabelUntitled, { n }),
+        pickerLabel: shortTitle ? `${n} · ${shortTitle}` : `${n}`,
       })
     }
     const images = (Array.isArray(d.images) ? d.images : [])
@@ -258,6 +266,7 @@ export function createContent(payload: Payload) {
             contact: contactOk ? showText(m.contact, mode) : null,
           }
         : null,
+      contactLine: makerOk ? (contactOk ? showText(m.contact, mode) : null) : productsCopy.detail.noMaker,
     }
   }
 
@@ -487,17 +496,26 @@ export function createContent(payload: Payload) {
       // Chỉ nhận đường dẫn nội bộ (bắt đầu bằng một dấu '/'), tránh liên kết ra ngoài/giao thức lạ.
       const href = showText(d.relatedHref, mode)
       const internalHref = href && /^\/(?!\/)/.test(href) ? href : null
+      // Mã hiển thị đi qua cùng luật hiện/ẩn như chữ khác (image.code); `code` thô chỉ là khoá tra cứu.
+      const displayCode = image.docNumber ?? image.code
+      const docLabel = displayCode ? `${archiveCopy.docLabel} · ${displayCode}` : null
+      const categoryLabel = archiveCategoryLabel(d.category)
+      const title = showText(d.title, mode)
       items.push({
         image,
-        title: showText(d.title, mode),
+        title,
         description: showText(d.description, mode),
         category: d.category ?? null,
-        categoryLabel: archiveCategoryLabel(d.category),
+        categoryLabel,
         era: d.era ?? null,
         eraLabel: archiveEraLabel(d.era),
         related: label && internalHref ? { label, href: internalHref } : null,
         flags: image.flags,
         code: d.code,
+        displayCode,
+        docLabel,
+        chipLabel: [docLabel, categoryLabel].filter(Boolean).join(' · ') || null,
+        name: title ?? displayCode,
         takenAt: showText(d.takenAt, mode),
         photographer: showText(d.photographer, mode),
         source: showText(d.source, mode),

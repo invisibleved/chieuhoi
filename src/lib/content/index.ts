@@ -31,7 +31,7 @@ const boundStories = async () => {
 }
 const boundArchive = async () => {
   const payload = await getPayload({ config })
-  return createArchive(payload, createContent(payload))
+  return createArchive(createContent(payload))
 }
 const boundProducts = async () => {
   const payload = await getPayload({ config })

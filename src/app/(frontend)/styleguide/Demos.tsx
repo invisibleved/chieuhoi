@@ -274,13 +274,13 @@ const sgImg = (code: string, alt: string): ImageView => ({
 const SG_IMAGES = [sgImg('kn8', 'Tấm chiếu hoa văn đỏ (mẫu)'), sgImg('kn2', 'Ảnh mẫu 2'), sgImg('hc9', 'Ảnh mẫu 3'), sgImg('kn1', 'Ảnh mẫu 4')]
 const SG_PRODUCT: ProductView = {
   slug: 'mau', code: null, name: 'Hiện vật mẫu', group: null, groupLabel: null, summary: null, image: SG_IMAGES[0], typeConfirmed: false, tag: null, shotNeeded: null, flags: [],
-  images: SG_IMAGES, primaryImage: SG_IMAGES[0], hasPattern: true, material: null, technique: null, size: null, care: null, maker: null, context: null, pattern: null, eyebrow: '', typeNote: null,
+  images: SG_IMAGES, primaryImage: SG_IMAGES[0], hasPattern: true, material: null, technique: null, size: null, care: null, maker: null, contactLine: null, context: null, pattern: null, eyebrow: '', typeNote: null,
   imageCaptions: ['Ảnh 1/4 (mẫu)', 'Ảnh 2/4 (mẫu)', 'Ảnh 3/4 (mẫu)', 'Ảnh 4/4 (mẫu)'],
   sources: [],
   annotations: [
-    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Chú thích mẫu cho điểm thứ nhất.', sourceId: null, sourceN: null, sourceLine: 'Quan sát từ ảnh · chưa xác minh' },
-    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Chú thích mẫu có số nguồn.', sourceId: 'mau', sourceN: 1, sourceLine: 'Nguồn mẫu' },
-    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Chú thích mẫu cho điểm thứ ba.', sourceId: null, sourceN: null, sourceLine: null },
+    { n: 1, title: 'Viền chiếu', shortTitle: 'Viền', x: 30, y: 72, body: 'Chú thích mẫu cho điểm thứ nhất.', sourceId: null, sourceN: null, sourceLine: 'Quan sát từ ảnh · chưa xác minh', heading: '1 · Viền chiếu', markerLabel: 'Chi tiết 1: viền chiếu', pickerLabel: '1 · Viền' },
+    { n: 2, title: 'Hoa văn in', shortTitle: 'Hoa văn', x: 52, y: 60, body: 'Chú thích mẫu có số nguồn.', sourceId: 'mau', sourceN: 1, sourceLine: 'Nguồn mẫu', heading: '2 · Hoa văn in', markerLabel: 'Chi tiết 2: hoa văn in', pickerLabel: '2 · Hoa văn' },
+    { n: 3, title: 'Mặt cói dệt', shortTitle: 'Mặt cói', x: 70, y: 82, body: 'Chú thích mẫu cho điểm thứ ba.', sourceId: null, sourceN: null, sourceLine: null, heading: '3 · Mặt cói dệt', markerLabel: 'Chi tiết 3: mặt cói dệt', pickerLabel: '3 · Mặt cói' },
   ],
 }
 

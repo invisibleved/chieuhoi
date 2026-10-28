@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { ProductPageView, ProductView } from '@/lib/content'
 import { fillTemplate } from '@/lib/template'
 import { PatternMarker } from '@/components/ui/PatternMarker'
@@ -33,21 +33,38 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
   const image = images[imgIdx] ?? images[0] ?? null
   const showMarkers = hasPattern && imgIdx === 0
 
+  // WCAG 2.4.3: đóng chi tiết (nút, Esc) thì trả focus về điểm vừa chọn; điểm không hiện thì về nút trong danh sách.
+  const returnN = useRef<number | null>(null)
+  const markerEls = useRef(new Map<number, HTMLButtonElement>())
+  const listEls = useRef(new Map<number, HTMLButtonElement>())
+  const closeZoom = () => {
+    returnN.current = sel
+    setSel(null)
+  }
+
   useEffect(() => {
     if (!zoomed) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSel(null)
+      if (e.key === 'Escape') closeZoom()
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [zoomed])
+    // closeZoom đọc `sel` từ closure: đăng ký lại mỗi khi đổi điểm.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomed, sel])
+
+  useEffect(() => {
+    const n = returnN.current
+    if (sel !== null || n === null) return
+    returnN.current = null
+    const shown = (el: HTMLElement | undefined) => (el && el.getClientRects().length > 0 ? el : null)
+    ;(shown(markerEls.current.get(n)) ?? shown(listEls.current.get(n)))?.focus()
+  }, [sel])
 
   const pick = (n: number) => {
     setImgIdx(0)
     setSel(sel === n ? null : n)
   }
-  const markerLabel = (n: number, title: string | null) =>
-    fillTemplate((title ? explore.markerLabel : explore.markerLabelUntitled) ?? '', { n, title })
   const stageStyle = zoomed
     ? { transform: `scale(${ZOOM})`, transformOrigin: `${current.x}% ${current.y}%` }
     : { transform: 'scale(1)', transformOrigin: '50% 50%' }
@@ -81,7 +98,11 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
                   y={a.y}
                   pressed={a.n === sel}
                   hidden={zoomed && a.n !== sel}
-                  label={markerLabel(a.n, a.title)}
+                  label={a.markerLabel}
+                  buttonRef={(el) => {
+                    if (el) markerEls.current.set(a.n, el)
+                    else markerEls.current.delete(a.n)
+                  }}
                   onClick={() => pick(a.n)}
                 />
               ))
@@ -90,7 +111,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
           {zoomed ? (
             <button
               type="button"
-              onClick={() => setSel(null)}
+              onClick={closeZoom}
               className="absolute right-4 top-4 z-10 inline-flex min-h-11 cursor-pointer items-center bg-bg-primary px-4 text-[14px] font-medium text-text-primary focus-visible:outline-focus-dark"
             >
               {explore.close}
@@ -129,7 +150,7 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
               onChange={(k) => pick(Number(k))}
               options={annotations.map((a) => ({
                 key: String(a.n),
-                label: `${a.n} · ${a.shortTitle ?? a.title ?? ''}`.replace(/ · $/, ''),
+                label: a.pickerLabel,
               }))}
             />
           </div>
@@ -140,6 +161,10 @@ export function PatternExplorer({ product, copy, aside }: PatternExplorerProps) 
               return (
                 <button
                   key={a.n}
+                  ref={(el) => {
+                    if (el) listEls.current.set(a.n, el)
+                    else listEls.current.delete(a.n)
+                  }}
                   type="button"
                   aria-pressed={on}
                   onClick={() => pick(a.n)}

@@ -25,7 +25,7 @@ export function AnnotationNote({ annotation: a, productSlug, variant, headingSiz
   const href = variant === 'teaser' ? `/san-pham/${productSlug}#nguon-${a.sourceN}` : `#nguon-${a.sourceN}`
   return (
     <div className={frames[variant]}>
-      <p className={`m-0 font-display leading-[1.2] ${headings[headingSize]}`}>{a.title ? `${a.n} · ${a.title}` : `${a.n}`}</p>
+      <p className={`m-0 font-display leading-[1.2] ${headings[headingSize]}`}>{a.heading}</p>
       <p className={`m-0 ${bodies[variant]}`}>
         {a.body}
         {a.sourceN !== null ? <FootnoteRef n={a.sourceN} href={href} /> : null}

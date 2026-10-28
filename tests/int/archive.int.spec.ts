@@ -30,7 +30,7 @@ describe('view model Thư viện', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
-    archive = createArchive(payload, createContent(payload))
+    archive = createArchive(createContent(payload))
   }, 240_000)
   afterAll(() => {
     if (savedAppEnv === undefined) delete process.env.APP_ENV
@@ -77,6 +77,8 @@ describe('view model Thư viện', () => {
     expect(v.items[0].code).toBe('TL-900')
     expect(v.items[0].rights.desktop).toBe('Được phép')
     expect(v.items[0].sourceVerified).toBe(true)
+    expect(v.items[0]).toMatchObject({ displayCode: '900', docLabel: 'TL · 900', chipLabel: 'TL · 900 · Làng quê', name: 'Tư liệu thử' })
+    expect(v.eras).toEqual([{ key: 'all', label: 'Mọi thời kỳ' }, { key: 'old', label: 'Xưa' }, { key: 'now', label: 'Nay' }])
     expect(v.stats).toEqual({ total: 1, verified: 1 })
     expect(v.hasOld).toBe(true)
   })
@@ -89,5 +91,18 @@ describe('view model Thư viện', () => {
     const v = await archive.getArchivePage('preview')
     const item = v.items.find((i) => i.code === 'TL-901')
     expect(item?.sourceVerified).toBe(false)
+  })
+
+  it('mã có dấu chưa xác minh: giữ mã thô làm khoá tra cứu, không hiện ở public', async () => {
+    await makeAsset({
+      alt: 'Ảnh thử 3', code: 'TL-[cần xác minh]', title: 'Tư liệu mã lạ', category: 'village', era: 'now', rights: 'permitted', subjectConsent: 'not_applicable',
+      takenAt: '1990', photographer: 'Nguyễn Văn A', source: 'Gia đình ông A',
+    })
+    const pub = (await archive.getArchivePage('public')).items.find((i) => i.title === 'Tư liệu mã lạ')
+    expect(pub).toBeDefined()
+    expect(pub!.code).toBe('TL-[cần xác minh]')
+    expect(pub).toMatchObject({ displayCode: null, docLabel: null, chipLabel: 'Làng quê', name: 'Tư liệu mã lạ' })
+    const { code: _raw, ...shown } = pub!
+    expect(JSON.stringify(shown)).not.toContain('cần xác minh')
   })
 })

@@ -12,7 +12,7 @@ import { Segmented } from '@/components/ui/Segmented'
 import { hasVariant, VariantText } from '@/components/ui/VariantText'
 import Link from 'next/link'
 import { ContentImage } from './ContentImage'
-import { ArchiveChip, docCode } from './DocumentLabel'
+import { ArchiveChip } from './DocumentLabel'
 import { previewNotes } from './labels'
 
 type EraKey = ArchivePageView['eras'][number]['key']
@@ -35,7 +35,7 @@ function spanClass(i: number): string {
     .join(' ')
 }
 
-const hrefFor = (code: string) => `/thu-vien?anh=${code}`
+const hrefFor = (code: string) => `/thu-vien?anh=${encodeURIComponent(code)}`
 
 // Giữ pathname và các tham số khác, chỉ đặt hoặc bỏ `anh`.
 function syncUrl(code: string | null) {
@@ -138,7 +138,7 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
               data-code={item.code}
               href={hrefFor(item.code)}
               // Tên đọc chứa mọi chữ đang hiển thị trong ô, theo thứ tự DOM: nhãn preview (nếu có), rồi chip (mã · chủ đề). WCAG 2.5.3 / axe label-content-name-mismatch.
-              aria-label={[fillTemplate(t(copy.open), { title: item.title ?? item.code }), ...previewNotes(item.image.flags), [docCode(t(copy.docLabel), item.image.docNumber ?? item.code), item.categoryLabel].filter(Boolean).join(' · ')].join(', ')}
+              aria-label={[fillTemplate(t(copy.open), { title: item.name ?? '' }), ...previewNotes(item.image.flags), item.chipLabel].filter(Boolean).join(', ')}
               onClick={(e) => {
                 if (!isPlainClick(e)) return
                 e.preventDefault()
@@ -155,7 +155,9 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
                 notesPosition="top-right"
               />
               {/* Khoảng trắng giữa nhãn preview và chip: tên đọc nối chữ hai phần này bằng dấu cách. */}{' '}
-              <ArchiveChip overlay label={t(copy.docLabel)} code={item.image.docNumber ?? item.code} category={item.categoryLabel} className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5" />
+              {item.displayCode ? (
+                <ArchiveChip overlay label={t(copy.docLabel)} code={item.displayCode} category={item.categoryLabel} className="absolute bottom-1.5 left-1.5 md:bottom-2.5 md:left-2.5" />
+              ) : null}
             </a>
           ))}
         </div>
@@ -185,9 +187,7 @@ export function ArchiveGallery({ page, initialCode }: ArchiveGalleryProps) {
           returnFocusRef={returnRef}
           image={<ContentImage image={current.image} size="full" sizes="(min-width: 768px) 70vw, 100vw" fit="contain" className="h-full" wrapperClassName="h-full w-full" priority />}
         >
-          <Eyebrow tone="dark" tracking="label" uppercase>
-            {[docCode(t(copy.docLabel), current.image.docNumber ?? current.code), current.categoryLabel].filter(Boolean).join(' · ')}
-          </Eyebrow>
+          {current.chipLabel ? <Eyebrow tone="dark" tracking="label" uppercase>{current.chipLabel}</Eyebrow> : null}
           {current.title ? <h2 className="m-0 font-display text-[26px] leading-[1.2] font-normal md:text-[32px]">{current.title}</h2> : null}
           {current.description ? <p className="m-0 text-[15px] leading-[1.6] text-text-on-dark-muted md:leading-[1.65]">{current.description}</p> : null}
           {meta.length > 0 ? (

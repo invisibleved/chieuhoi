@@ -10,7 +10,7 @@ const CATEGORY_LABELS = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label
 const item = (n: number, category: ArchiveItemView['category'], code: string | null = `TL-${String(n).padStart(3, '0')}`): ArchiveItemView => ({
   image: { url: `/images/reference/a${n}.webp`, alt: `Ảnh ${n}`, width: 800, height: 600, sizes: {}, photographer: null, code, docNumber: code?.match(/^TL-(\d+)$/)?.[1] ?? null, flags: [] },
   title: null, description: null, category, categoryLabel: CATEGORY_LABELS[category ?? ''] ?? null, era: null, eraLabel: null, related: null, flags: [],
-  code: code ?? 'TL-000', takenAt: null, photographer: null, source: null, rights: { desktop: null, mobile: null }, sourceVerified: false,
+  code: code ?? 'TL-000', displayCode: code?.match(/^TL-(\d+)$/)?.[1] ?? null, docLabel: null, chipLabel: null, name: null, takenAt: null, photographer: null, source: null, rights: { desktop: null, mobile: null }, sourceVerified: false,
 })
 const items = [item(1, 'village'), item(2, 'weaving'), item(3, 'weaving'), item(4, 'products'), item(5, 'village'), item(6, 'memory')]
 const tenItems = Array.from({ length: 10 }, (_, i) => item(i + 1, 'weaving'))

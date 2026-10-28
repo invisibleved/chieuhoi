@@ -29,6 +29,12 @@ export const archiveCategoryOptions: { key: ArchiveCategory; label: string }[] =
   label: o.label,
 }))
 
+/** Thời kỳ ảnh tư liệu theo thứ tự option, cho bộ lọc (không gồm chip "Mọi thời kỳ"). */
+export const archiveEraOptions: { key: 'old' | 'now'; label: string }[] = ARCHIVE_ERA_OPTIONS.map((o) => ({
+  key: o.value as 'old' | 'now',
+  label: o.label,
+}))
+
 /** Nhóm người theo thứ tự option, cho bộ lọc (không gồm chip "Tất cả"). */
 export const personCategoryOptions: { key: string; label: string }[] = PERSON_CATEGORY_OPTIONS.map((o) => ({
   key: o.value,

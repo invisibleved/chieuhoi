@@ -10,7 +10,7 @@ afterEach(cleanup)
 const one = {
   image: { url: '/x.webp', alt: 'Alt', width: 800, height: 600, sizes: {}, photographer: null, code: 'TL-001', docNumber: '001', flags: [] },
   title: 'Tiêu đề', description: null, category: 'village', categoryLabel: 'Làng quê', era: 'now', eraLabel: 'Nay',
-  related: null, flags: [], code: 'TL-001', takenAt: null, photographer: null, source: null,
+  related: null, flags: [], code: 'TL-001', displayCode: '001', docLabel: 'TL · 001', chipLabel: 'TL · 001 · Làng quê', name: 'Tiêu đề', takenAt: null, photographer: null, source: null,
   rights: { desktop: 'Được phép', mobile: 'Được phép' }, sourceVerified: false,
 } as unknown as ArchiveItemView
 

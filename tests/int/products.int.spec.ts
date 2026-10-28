@@ -84,6 +84,9 @@ describe('view model Sản phẩm', () => {
       const p = v!.product
       expect(p.annotations).toHaveLength(3)
       expect(p.annotations.map((a) => a.shortTitle)).toEqual(['Viền', 'Hoa văn', 'Mặt cói'])
+      expect(p.annotations.map((a) => a.heading)).toEqual(p.annotations.map((a) => `${a.n} · ${a.title}`))
+      expect(p.annotations[0].markerLabel).toBe(`Chi tiết 1: ${p.annotations[0].title!.toLocaleLowerCase('vi')}`)
+      expect(p.annotations.map((a) => a.pickerLabel)).toEqual(['1 · Viền', '2 · Hoa văn', '3 · Mặt cói'])
       expect(p.annotations[1].sourceN).toBe(1)
       expect(p.annotations[1].sourceLine).toBe('Vietnam+ (14/08/2026) · danh sách hoạ tiết chung, không riêng tấm này')
       expect(p.annotations[0].sourceN).toBeNull()
@@ -149,6 +152,28 @@ describe('view model Sản phẩm', () => {
       } as never)
       const shown = await products.getProductPage('co-maker', 'public')
       expect(shown!.product.maker).toEqual({ name: 'Cơ sở Thử', verified: true, contact: '0900' })
+      expect(shown!.product.contactLine).toBe('0900')
+    })
+    it('không có cơ sở nào qua cổng: contactLine là câu noMaker', async () => {
+      await create('products', { slug: 'khong-maker', name: 'Chiếu không maker', workflow: 'published' })
+      const v = await products.getProductPage('khong-maker', 'public')
+      expect(v!.product.maker).toBeNull()
+      expect(v!.product.contactLine).toBe('Chưa có cơ sở được xác minh và đồng ý công khai')
+    })
+    it('cơ sở đã đăng, đồng ý, xác minh nhưng liên hệ trống: không có câu noMaker (contactLine null)', async () => {
+      const m = await create('makers', { name: 'Cơ sở C', publicConsent: true, verified: true, workflow: 'published' })
+      await create('products', { slug: 'co-maker-c', name: 'Chiếu C', workflow: 'published', maker: m.id })
+      const v = await products.getProductPage('co-maker-c', 'public')
+      expect(v!.product.maker).toEqual({ name: 'Cơ sở C', verified: true, contact: null })
+      expect(v!.product.contactLine).toBeNull()
+    })
+    it('cơ sở nháp dù có đồng ý: ẩn ở public, contactLine là noMaker', async () => {
+      const m = await create('makers', { name: 'Cơ sở Nháp', contact: '0922', publicConsent: true, verified: true, workflow: 'draft' }, true)
+      await create('products', { slug: 'co-maker-nhap', name: 'Chiếu Nháp', workflow: 'published', maker: m.id })
+      const v = await products.getProductPage('co-maker-nhap', 'public')
+      expect(v!.product.maker).toBeNull()
+      expect(v!.product.contactLine).toBe('Chưa có cơ sở được xác minh và đồng ý công khai')
+      expect(JSON.stringify(v)).not.toContain('0922')
     })
     it('đồng ý nhưng chưa xác minh: có tên, chưa có liên hệ', async () => {
       const m = await create('makers', { name: 'Cơ sở B', contact: '0911', publicConsent: true, verified: false, workflow: 'published' })

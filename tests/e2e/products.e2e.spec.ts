@@ -163,8 +163,12 @@ for (const vp of VIEWPORTS) {
     test('bấm điểm 2: phóng, region có chú thích và nút Đóng; Esc thu nhỏ', async ({ page }) => {
       await loginReviewer(page)
       await openDetail(page)
-      await markers(page).nth(1).click()
-      await expect(markers(page).nth(1)).toHaveAttribute('aria-pressed', 'true')
+      const second = markers(page).nth(1)
+      const secondLabel = (await second.getAttribute('aria-label'))!
+      await second.click()
+      // Các điểm khác bị ẩn khỏi cây truy cập khi đang phóng.
+      await expect(markers(page)).toHaveCount(1)
+      await expect(page.getByRole('button', { name: secondLabel })).toHaveAttribute('aria-pressed', 'true')
       const region = page.getByRole('region', { name: 'Chú thích chi tiết' })
       await expect(region).toContainText('Hoa văn in')
       await expect(region.getByRole('link', { name: 'Nguồn 1' })).toHaveAttribute('href', '#nguon-1')
@@ -173,6 +177,8 @@ for (const vp of VIEWPORTS) {
       await page.keyboard.press('Escape')
       await expect(page.getByRole('button', { name: 'Đóng chi tiết' })).toHaveCount(0)
       await expect(stageImg(page)).toHaveCSS('transform', /matrix\(1,/)
+      // WCAG 2.4.3: focus trở về điểm vừa chọn.
+      await expect(page.getByRole('button', { name: secondLabel })).toBeFocused()
     })
 
     test('thứ tự DOM: h1 trước ảnh; mobile ảnh → nút chọn → panel → h1', async ({ page }) => {

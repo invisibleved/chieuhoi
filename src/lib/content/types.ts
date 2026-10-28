@@ -125,11 +125,22 @@ export interface ProductView extends ProductCardView {
     /** Số thứ tự trong `sources` (R2); null khi không có nguồn nhìn thấy được. */
     sourceN: number | null
     sourceLine: string | null
+    /** "n · tiêu đề", hoặc chỉ "n" khi không có tiêu đề. */
+    heading: string
+    /** Tên đọc của điểm trên ảnh ("Chi tiết n: tiêu đề viết thường"); cùng một quy tắc ở mọi trang. */
+    markerLabel: string
+    /** Nhãn nút chọn trên mobile: "n · tên ngắn". */
+    pickerLabel: string
   }[]
   /** Nguồn theo lần xuất hiện đầu trong các chú thích còn hiện (R2); date dạng dd/mm/yyyy. */
   sources: SourceView[]
   /** `contact` chỉ có khi cơ sở đã đăng, được xác minh và đồng ý công khai (R5). */
   maker: { name: string | null; verified: boolean; contact: string | null } | null
+  /**
+   * Chữ dòng "Liên hệ người làm": liên hệ khi cơ sở được hiện và có liên hệ; câu "chưa có cơ sở" chỉ khi không có cơ sở
+   * nào qua cổng; null khi cơ sở được hiện mà chưa có liên hệ (UI chỉ giữ liên kết kết nối).
+   */
+  contactLine: string | null
 }
 
 export interface ProductsPageView {
@@ -294,8 +305,16 @@ export interface ArchiveItemView {
   eraLabel: string | null
   related: { label: string; href: string } | null
   flags: Flag[]
-  /** Mã gốc `TL-001`, khoá của `?anh=`. */
+  /** Mã gốc `TL-001`, khoá của `?anh=`. Không dùng để hiển thị: dùng `displayCode`. */
   code: string
+  /** Mã hiển thị: phần số của `TL-n`, hoặc mã đã qua luật hiện/ẩn; null khi bị ẩn ở public. */
+  displayCode: string | null
+  /** "TL · 001", null khi không có mã hiển thị. */
+  docLabel: string | null
+  /** "TL · 001 · Làng quê" (chữ hoa do CSS): tên đọc của chip và dòng đầu hộp xem ảnh. */
+  chipLabel: string | null
+  /** Tên gọi của ô ảnh: tiêu đề, hoặc mã hiển thị. */
+  name: string | null
   takenAt: string | null
   photographer: string | null
   source: string | null

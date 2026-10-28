@@ -13,7 +13,7 @@ const img = (i: number): ImageView => ({
 const base: ProductVM = {
   slug: 'chieu-cap-dieu', code: 'HIỆN VẬT 01', name: 'Chiếu cạp điều', group: 'traditional', groupLabel: 'Chiếu cói', summary: null, image: null,
   typeConfirmed: false, tag: null, shotNeeded: null, flags: [], images: [], primaryImage: null, hasPattern: false,
-  material: null, technique: null, pattern: null, size: null, care: null, maker: null, context: null,
+  material: null, technique: null, pattern: null, size: null, care: null, maker: null, contactLine: 'Chưa có cơ sở được xác minh và đồng ý công khai', context: null,
   eyebrow: 'HIỆN VẬT 01 · Chiếu cói', typeNote: null, imageCaptions: [], annotations: [], sources: [],
 }
 const others: ReadNextItem[] = [
@@ -34,6 +34,7 @@ const previewProduct: Partial<ProductVM> = {
   annotations: [1, 2, 3].map((n) => ({
     n, title: `Điểm ${n}`, shortTitle: `Đ${n}`, x: 10 * n, y: 20 * n, body: `Chú thích ${n}.`,
     sourceId: n === 2 ? 's1' : null, sourceN: n === 2 ? 1 : null, sourceLine: null,
+    heading: `${n} · Điểm ${n}`, markerLabel: `Chi tiết ${n}: điểm ${n}`, pickerLabel: `${n} · Đ${n}`,
   })),
   sources: [{ id: 's1', title: 'Danh sách hoạ tiết', publisher: 'Vietnam+', url: 'https://example.vn/x', date: '14/08/2026' } as ProductVM['sources'][number]],
 }
@@ -61,10 +62,18 @@ describe('ProductView (public)', () => {
 
   it('maker có tên và liên hệ thì hiện, không còn câu chưa có cơ sở', () => {
     const maker = { name: 'Cơ sở Hới', verified: true, contact: '0900 000 000' }
-    render(<ProductView page={page('public', { ...publicProduct, maker })} />)
+    render(<ProductView page={page('public', { ...publicProduct, maker, contactLine: '0900 000 000' })} />)
     expect(screen.getAllByText('Cơ sở Hới').length).toBeGreaterThan(0)
     expect(screen.getByText('0900 000 000')).toBeTruthy()
     expect(screen.queryByText('Chưa có cơ sở được xác minh và đồng ý công khai')).toBeNull()
+  })
+
+  it('maker được hiện nhưng chưa có liên hệ (contactLine null): không có câu chưa có cơ sở, vẫn có link Kết nối', () => {
+    const maker = { name: 'Cơ sở Hới', verified: true, contact: null }
+    render(<ProductView page={page('public', { ...publicProduct, maker, contactLine: null })} />)
+    expect(screen.getAllByText('Cơ sở Hới').length).toBeGreaterThan(0)
+    expect(screen.queryByText('Chưa có cơ sở được xác minh và đồng ý công khai')).toBeNull()
+    expect(screen.getByRole('link', { name: /^Kết nối với làng/ }).getAttribute('href')).toBe('/ket-noi')
   })
 
   it('R5: không có dòng nào và không có context vẫn hiện câu chưa có cơ sở, link Kết nối với làng và nút mobile; không có cột Bối cảnh', () => {
