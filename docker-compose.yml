@@ -14,7 +14,7 @@ services:
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   # Giả lập S3 để diễn tập staging ở máy (R11). Chỉ chạy khi: docker compose --profile s3 up -d
-  # Tag ghim vào bản phát hành cộng đồng cuối cùng còn tải được từ quay.io (không dùng latest).
+  # Tag ghim (không dùng latest). Đã kiểm chạy được với image có sẵn trên máy; lệnh pull từ quay.io chưa kiểm được.
   minio:
     image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     profiles: ['s3']

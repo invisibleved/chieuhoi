@@ -6,12 +6,31 @@ import { defineConfig, devices } from '@playwright/test'
  */
 import 'dotenv/config'
 
+/** Tên project chọn bằng --project (hai cách viết: `--project=x` và `--project x`). */
+function selectedProjects(argv: string[]): string[] {
+  return argv.flatMap((arg, i) => {
+    if (arg.startsWith('--project=')) return [arg.slice('--project='.length)]
+    if (arg === '--project' && argv[i + 1]) return [argv[i + 1]]
+    return []
+  })
+}
+
+// Chỉ chạy project staging (site đã deploy hoặc :3200 diễn tập): không cần máy chủ :3000/:3100 và phiên người duyệt seed.
+const selected = selectedProjects(process.argv)
+const stagingOnly = selected.length > 0 && selected.every((name) => name === 'staging')
+
+// STAGING_AUTH dạng user:password, tách ở dấu ':' đầu tiên (mật khẩu được phép chứa ':').
+const stagingAuth = process.env.STAGING_AUTH ?? ''
+const authSplit = stagingAuth.indexOf(':')
+const stagingCredentials =
+  authSplit > 0 ? { username: stagingAuth.slice(0, authSplit), password: stagingAuth.slice(authSplit + 1) } : undefined
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: './tests/e2e',
-  globalSetup: './tests/e2e/global-setup.ts',
+  globalSetup: stagingOnly ? undefined : './tests/e2e/global-setup.ts',
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -31,7 +50,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e|cls\.e2e/,
+      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e|cls\.e2e|staging\.e2e/,
       // Chạy sau workflow: story tạm của workflow nằm chung DB nên sẽ hiện trong bản xem trước ở cổng 3000 nếu chạy song song.
       dependencies: ['workflow'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium' },
@@ -57,8 +76,20 @@ export default defineConfig({
       dependencies: ['public'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },
+    {
+      // Kiểm site staging (deploy thật hoặc diễn tập :3200). Cả file tự bỏ qua khi thiếu STAGING_URL.
+      // Chạy: STAGING_URL=... STAGING_AUTH=... npm run test:e2e -- --project=staging
+      name: 'staging',
+      testMatch: /staging\.e2e/,
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chromium',
+        baseURL: process.env.STAGING_URL,
+        httpCredentials: stagingCredentials,
+      },
+    },
   ],
-  webServer: [
+  webServer: stagingOnly ? undefined : [
     {
       command: 'npm run dev',
       reuseExistingServer: true,
