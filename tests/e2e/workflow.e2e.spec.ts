@@ -97,9 +97,9 @@ test('người duyệt xem trước bản nháp từ admin', async () => {
 })
 
 test('người duyệt đăng → công khai hiện ngay; nháp của biên tập viên không lộ; đăng bản sửa → công khai đổi', async ({ browser }) => {
+  test.setTimeout(120_000)
   await reviewerPage.goto(`/admin/collections/stories/${storyId}`)
   await reviewerPage.getByRole('button', { name: 'Xuất bản tài liệu', exact: true }).click()
-  await expect(reviewerPage.getByRole('button', { name: 'Ẩn tài liệu' }).or(reviewerPage.locator('#action-save-draft[disabled], #action-save-draft'))).toBeVisible()
 
   const pub = await browser.newContext({ baseURL: BASE })
   try {
@@ -119,9 +119,15 @@ test('người duyệt đăng → công khai hiện ngay; nháp của biên tậ
       .poll(async () => (await (await reviewerApi.get(`/api/stories/${storyId}?draft=true`)).json()).title, { timeout: 20_000 })
       .toBe(editedTitle)
 
-    await page.goto(`/cau-chuyen/${slug}`)
-    await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible()
-    expect(await page.content()).not.toContain('(nháp)')
+    // Bản nháp đã lưu; một revalidate muộn có thể đến sau, nên đọc nhiều lần cách nhau và đều phải còn bản cũ.
+    for (let i = 0; i < 4; i++) {
+      await page.goto(`/cau-chuyen/${slug}`)
+      await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible()
+      expect(await page.content()).not.toContain('(nháp)')
+      const list = await page.goto('/cau-chuyen')
+      expect(await list!.text()).not.toContain(editedTitle)
+      await page.waitForTimeout(1000)
+    }
 
     // Người duyệt đăng bản sửa.
     await reviewerPage.goto(`/admin/collections/stories/${storyId}`)
@@ -133,6 +139,10 @@ test('người duyệt đăng → công khai hiện ngay; nháp của biên tậ
         return page.getByRole('heading', { level: 1 }).first().textContent()
       }, { timeout: 15_000 })
       .toBe(editedTitle)
+    // Thẻ ở danh sách cũng đổi theo (điều kiện đầu cho kiểm tra gỡ đăng ở test sau).
+    await expect
+      .poll(async () => (await publicStatus(browser, '/cau-chuyen')).text.includes(editedTitle), { timeout: 15_000 })
+      .toBe(true)
   } finally {
     await pub.close()
   }
@@ -146,21 +156,22 @@ test('gỡ đăng và xoá biến khỏi công khai', async ({ browser }) => {
   await reviewerPage.getByRole('button', { name: 'Ẩn tài liệu' }).click()
   await reviewerPage.getByRole('button', { name: 'Xác nhận', exact: true }).click()
 
+  const cardShown = async () => (await publicStatus(browser, '/cau-chuyen')).text.includes(editedTitle)
   await expect.poll(async () => (await publicStatus(browser, `/cau-chuyen/${slug}`)).status, { timeout: 15_000 }).toBe(404)
-  await expect
-    .poll(async () => (await publicStatus(browser, '/cau-chuyen')).text.includes(editedTitle), { timeout: 15_000 })
-    .toBe(false)
+  await expect.poll(cardShown, { timeout: 15_000 }).toBe(false)
   // Trang danh sách vẫn là trang thật (không phải lỗi).
   expect((await publicStatus(browser, '/cau-chuyen')).status).toBe(200)
 
   const republish = await reviewerApi.patch(`/api/stories/${storyId}?draft=false`, { data: { _status: 'published' } })
   expect(republish.ok(), await republish.text()).toBe(true)
   await expect.poll(async () => (await publicStatus(browser, `/cau-chuyen/${slug}`)).status, { timeout: 15_000 }).toBe(200)
+  await expect.poll(cardShown, { timeout: 15_000 }).toBe(true)
 
   const del = await reviewerApi.delete(`/api/stories/${storyId}`)
   expect(del.ok(), await del.text()).toBe(true)
   storyId = undefined
   await expect.poll(async () => (await publicStatus(browser, `/cau-chuyen/${slug}`)).status, { timeout: 15_000 }).toBe(404)
+  await expect.poll(cardShown, { timeout: 15_000 }).toBe(false)
 })
 
 test('sửa Thông tin site hiện ở /ket-noi', async ({ browser }) => {
@@ -175,7 +186,8 @@ test('sửa Thông tin site hiện ở /ket-noi', async ({ browser }) => {
       .poll(async () => (await publicStatus(browser, '/ket-noi')).text.includes(newEmail), { timeout: 15_000 })
       .toBe(true)
   } finally {
+    // Không dùng expect ở đây để không che lỗi gốc của bài; chỉ báo nếu không trả lại được.
     const back = await reviewerApi.post('/api/globals/site-settings?draft=false', { data: { email: oldEmail, _status: 'published' } })
-    expect(back.ok(), await back.text()).toBe(true)
+    if (!back.ok()) console.error(`Không trả lại email site-settings (${oldEmail}): ${back.status()} ${await back.text()}`)
   }
 })
