@@ -17,6 +17,8 @@ const env = {
   APP_ENV: 'development',
   // Ảnh mẫu nằm riêng, không lẫn với media/ của DB dev.
   MEDIA_DIR: path.resolve(root, '.superpowers/guide-media'),
+  // Không bao giờ dùng bucket thật: S3_BUCKET trống thì plugin lưu trữ tắt (seeder và máy chủ :3300).
+  S3_BUCKET: '',
   NODE_OPTIONS: '--no-deprecation',
 }
 

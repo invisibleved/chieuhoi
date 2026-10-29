@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import path from 'path'
 
-import { assertGuideDatabase, assertGuideMediaDir } from '@/seed/guard'
+import { assertGuideDatabase, assertGuideMediaDir, assertGuideNoS3 } from '@/seed/guard'
 import { GUIDE_SHOTS } from '@/admin/guide/shots'
 import { forbiddenImageSources, srcsetUrls } from '../../e2e/helpers/guideSafety'
 
@@ -24,6 +24,21 @@ describe('assertGuideMediaDir', () => {
     expect(() => assertGuideMediaDir(path.join(root, '.superpowers/guide-media'), root)).not.toThrow()
     expect(() => assertGuideMediaDir('/repo/media-guide', root)).not.toThrow()
     expect(() => assertGuideMediaDir('/tmp/chieuhoi-guide', root)).not.toThrow()
+  })
+})
+
+describe('assertGuideNoS3', () => {
+  it('chặn khi S3_BUCKET được đặt, không lộ tên bucket', () => {
+    expect(() => assertGuideNoS3({ S3_BUCKET: 'chieuhoi-staging' })).toThrow(/S3_BUCKET/)
+    try {
+      assertGuideNoS3({ S3_BUCKET: 'chieuhoi-staging' })
+    } catch (e) {
+      expect((e as Error).message).not.toContain('chieuhoi-staging')
+    }
+  })
+  it('cho qua khi S3_BUCKET trống hoặc không có', () => {
+    expect(() => assertGuideNoS3({})).not.toThrow()
+    expect(() => assertGuideNoS3({ S3_BUCKET: '' })).not.toThrow()
   })
 })
 

@@ -49,3 +49,16 @@ export function assertGuideMediaDir(mediaDir: string | undefined, repoRoot: stri
     throw new Error('Dữ liệu mẫu hướng dẫn bị chặn: MEDIA_DIR không được là media/ của DB dev hoặc nằm trong đó.')
   }
 }
+
+/**
+ * Seeder hướng dẫn xoá rồi tạo lại ảnh tư liệu. Khi có S3_BUCKET, plugin lưu trữ bật và việc xoá/tải lên
+ * đi thẳng vào bucket thật, nên seeder chỉ chạy khi S3_BUCKET trống (npm run guide:* luôn đặt nó trống).
+ * Thông báo không chứa tên bucket.
+ */
+export function assertGuideNoS3(env: Record<string, string | undefined>): void {
+  if (env.S3_BUCKET) {
+    throw new Error(
+      'Dữ liệu mẫu hướng dẫn bị chặn: S3_BUCKET đang được đặt, seeder sẽ xoá và tải ảnh lên bucket thật. Chạy bằng npm run guide:seed.',
+    )
+  }
+}
