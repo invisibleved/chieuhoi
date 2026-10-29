@@ -16,29 +16,22 @@ import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
 import { storagePlugins } from './storage'
-import { defaultLayout, dashboardWidgets } from './admin/dashboard/layout'
 import { PageIntros } from './globals/PageIntros'
 import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-const config = buildConfig({
+export default buildConfig({
   admin: {
     user: Users.slug,
     meta: { titleSuffix: ' — Chiếu Hới' },
-    theme: 'light',
     components: {
-      graphics: { Logo: '/admin/Logo#Logo', Icon: '/admin/Icon#Icon' },
-      Nav: '/admin/Nav#Nav',
-      providers: ['/admin/AdminFonts#AdminFonts'],
-      afterLogin: ['/admin/LoginHelp#LoginHelp'],
       afterNavLinks: ['/admin/guide/GuideNavLink#GuideNavLink'],
       views: {
         huongDan: { Component: '/admin/guide/GuideView#GuideView', path: '/huong-dan', exact: true },
       },
     },
-    dashboard: { widgets: dashboardWidgets, defaultLayout },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -63,11 +56,4 @@ const config = buildConfig({
   }),
   sharp,
   plugins: storagePlugins(process.env),
-})
-
-// Payload tự thêm widget `collections` (liệt kê mọi mục, kể cả Người dùng) sau khi chuẩn hoá cấu hình; gỡ để
-// thay bằng widget `tat-ca-muc` đã lọc theo vai trò, kẻo người dùng thêm lại được từ chế độ sửa trang đầu.
-export default config.then((c) => {
-  if (c.admin.dashboard) c.admin.dashboard.widgets = c.admin.dashboard.widgets.filter((w) => w.slug !== 'collections')
-  return c
 })

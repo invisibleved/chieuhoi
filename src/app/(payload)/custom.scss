@@ -1,234 +1,10 @@
-// Nhận diện Chiếu Hới cho Payload admin. Màu lấy từ design/tokens/tokens.css, khai báo một lần ở đây.
-$bg-raised: #fbf6ee; // --bg-raised
-$bg-inverse: #344b3d; // --bg-inverse (xanh làng)
-$bg-ink: #282724; // --bg-ink
-$text-primary: #282724; // --text-primary
-$text-secondary: #4a4741; // --text-secondary
-$text-on-dark: #f3ebdd; // --text-on-dark
-$focus-light: #344b3d; // --focus-light
-
-// Payload đặt style trong @layer; style ngoài layer này luôn thắng.
-:root,
-html[data-theme='light'] {
-  --theme-bg: #{$bg-raised};
-  --theme-input-bg: #{$bg-raised};
-  --theme-text: #{$text-primary};
-  --style-radius-s: 0;
-  --style-radius-m: 0;
-  --style-radius-l: 0;
-  --accessibility-outline: 2px solid #{$focus-light};
-}
-
-// --admin-font-* chỉ có bên trong AdminFonts (.ch-admin-fonts), nên --font-body đặt tại đó.
-.ch-admin-fonts {
-  --font-body: var(--admin-font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-family: var(--font-body);
-}
-
-*,
-*::before,
-*::after {
-  box-shadow: none !important;
-}
-
-:focus-visible {
-  outline: 2px solid $focus-light;
-  outline-offset: 2px;
-}
-
-// Nút chính: xanh làng, chữ sáng (không đổi --theme-success-*).
-.btn--style-primary {
-  --color: #{$text-on-dark};
-  --bg-color: #{$bg-inverse};
-  --hover-bg: #{$bg-ink};
-  --hover-color: #{$text-on-dark};
-}
-
-// Logo và biểu tượng
-.ch-admin-logo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: $text-primary;
-
-  &__name {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 1.25rem;
-    letter-spacing: 0.08em;
-    line-height: 1.2;
-  }
-
-  &__sub {
-    font-size: 0.875rem;
-    color: $text-secondary;
-    line-height: 1.3;
-  }
-}
-
-// Trang đăng nhập đủ lớn để dùng Noto Serif Display (>= 20px).
-.template-minimal .ch-admin-logo__name {
-  font-family: var(--admin-font-display), serif;
-  font-weight: 400;
-  font-size: 2rem;
-  letter-spacing: 0.04em;
-}
-
-.ch-admin-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: $bg-inverse;
-  color: $text-on-dark;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-.step-nav__home {
-  // Payload cố định 18×18px, quá nhỏ cho biểu tượng CH.
-  width: auto;
-  height: auto;
-}
-
-.ch-admin-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-// Trang đăng nhập: thay link "Quên mật khẩu?" mặc định bằng LoginHelp.
-// Selector thật (DOM /admin/login): form.login__form > a[href$='/forgot'].
-.login__form a[href$='/forgot'] {
-  display: none;
-}
-
-.ch-admin-login-help {
-  margin: 0;
-  color: $text-secondary;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-}
-
-// Trang đầu: các widget Việc thường làm, Đang chờ duyệt, Tất cả mục.
-.ch-widget {
-  margin-bottom: 2rem;
-
-  &__title {
-    margin: 0 0 0.75rem;
-    color: $text-primary;
-  }
-
-  &__empty {
-    margin: 0;
-    color: $text-secondary;
-    font-size: 1rem;
-  }
-}
-
-.ch-tasks {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-
-  &__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 56px; // px: Payload đặt rem nhỏ hơn 16px
-    padding: 0.5rem 1rem;
-    background: $bg-inverse;
-    border: 2px solid $bg-inverse;
-    color: $text-on-dark;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-
-    &--outline {
-      background: transparent;
-      color: $text-primary;
-    }
-  }
-}
-
-.ch-pending {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  &__link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: $text-primary;
-    font-size: 1rem;
-    text-decoration: underline;
-  }
-}
-
-.ch-entities {
-  &__group {
-    margin-bottom: 1.5rem;
-  }
-
-  &__label {
-    margin: 0 0 0.75rem;
-    color: $text-primary;
-  }
-
-  &__list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    gap: 0.75rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    .card {
-      height: 100%;
-    }
-
-    // Nút "+" tạo mới: vùng chạm tối thiểu 44×44px.
-    .card__actions a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      min-height: 44px;
-    }
-  }
-}
-
-// Chỉ có một ngôn ngữ nội dung (vi): ẩn bộ chọn ngôn ngữ trên thanh trên. Nó chỉ gây rối và vi phạm axe (nhãn, tương phản).
-.app-header .localizer {
-  display: none;
-}
-
-// Menu "Bảng điều khiển" (sửa bố cục, thêm widget) của Payload: người trong làng không cần tự xếp lại trang đầu,
-// và hộp chọn của nó thiếu nhãn (vi phạm axe). Ẩn để trang đầu luôn đúng bố cục theo vai trò.
-.step-nav__last:has(.dashboard-breadcrumb-select),
-.dashboard-breadcrumb-select {
-  display: none;
-}
-
+// Kiểu cho trang Hướng dẫn (/admin/huong-dan). Màu lấy từ biến của Payload; phần còn lại của admin giữ nguyên bản gốc.
 // Trang Hướng dẫn (/admin/huong-dan). Đơn vị px: rem của Payload nhỏ hơn 16px.
 .ch-guide {
   max-width: 960px;
   padding-top: 24px;
   padding-bottom: 64px;
-  color: $text-primary;
+  color: var(--theme-text);
   font-size: 16px;
   line-height: 1.6;
 
@@ -241,7 +17,7 @@ html[data-theme='light'] {
   &__intro,
   &__when {
     margin: 0 0 16px;
-    color: $text-secondary;
+    color: var(--theme-elevation-800);
     font-size: 16px;
   }
 
@@ -272,7 +48,7 @@ html[data-theme='light'] {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    color: $text-primary;
+    color: var(--theme-text);
     font-size: 16px;
     text-decoration: underline;
     text-underline-offset: 3px;

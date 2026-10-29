@@ -20,16 +20,9 @@ import { ChecklistFeatureClient as ChecklistFeatureClient_e70f5e05f09f93e00b997e
 import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { Nav as Nav_0093e585c2b8179db0a2ec805741a8fa } from '../../../admin/Nav'
-import { Icon as Icon_ecb2d425e0c47f2704e0f6c0188b49d0 } from '../../../admin/Icon'
-import { Logo as Logo_8c3bf6d9c8d24e4e81ab6192a4938147 } from '../../../admin/Logo'
-import { LoginHelp as LoginHelp_16a516c267fedcc9778576830c04db4a } from '../../../admin/LoginHelp'
 import { GuideNavLink as GuideNavLink_a6ea6674422927fedb50a8e7b729552f } from '../../../admin/guide/GuideNavLink'
-import { AdminFonts as AdminFonts_ac187d83d20da28b5b6a40a61611c6bd } from '../../../admin/AdminFonts'
 import { GuideView as GuideView_94d64de5bc2d65b04bee13db9f263b96 } from '../../../admin/guide/GuideView'
-import { TasksWidget as TasksWidget_6fcffc26e17d190198a10bd18345f81f } from '../../../admin/dashboard/TasksWidget'
-import { PendingWidget as PendingWidget_95fda027e9da010f3cb2a3defe2b49c7 } from '../../../admin/dashboard/PendingWidget'
-import { EntitiesWidget as EntitiesWidget_0c1ffd7261f49a1ff86afdb9be6c3661 } from '../../../admin/dashboard/EntitiesWidget'
+import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 /** @type import('payload').ImportMap */
@@ -56,15 +49,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlockquoteFeatureClient": BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient": InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "/admin/Nav#Nav": Nav_0093e585c2b8179db0a2ec805741a8fa,
-  "/admin/Icon#Icon": Icon_ecb2d425e0c47f2704e0f6c0188b49d0,
-  "/admin/Logo#Logo": Logo_8c3bf6d9c8d24e4e81ab6192a4938147,
-  "/admin/LoginHelp#LoginHelp": LoginHelp_16a516c267fedcc9778576830c04db4a,
   "/admin/guide/GuideNavLink#GuideNavLink": GuideNavLink_a6ea6674422927fedb50a8e7b729552f,
-  "/admin/AdminFonts#AdminFonts": AdminFonts_ac187d83d20da28b5b6a40a61611c6bd,
   "/admin/guide/GuideView#GuideView": GuideView_94d64de5bc2d65b04bee13db9f263b96,
-  "/admin/dashboard/TasksWidget#TasksWidget": TasksWidget_6fcffc26e17d190198a10bd18345f81f,
-  "/admin/dashboard/PendingWidget#PendingWidget": PendingWidget_95fda027e9da010f3cb2a3defe2b49c7,
-  "/admin/dashboard/EntitiesWidget#EntitiesWidget": EntitiesWidget_0c1ffd7261f49a1ff86afdb9be6c3661,
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

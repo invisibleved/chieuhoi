@@ -111,9 +111,7 @@ export interface Config {
   };
   locale: 'vi';
   widgets: {
-    'viec-thuong-lam': ViecThuongLamWidget;
-    'dang-cho-duyet': DangChoDuyetWidget;
-    'tat-ca-muc': TatCaMucWidget;
+    collections: CollectionsWidget;
   };
   user: User;
   jobs: {
@@ -1181,29 +1179,9 @@ export interface PageIntrosSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "viec-thuong-lam_widget".
+ * via the `definition` "collections_widget".
  */
-export interface ViecThuongLamWidget {
-  data?: {
-    [k: string]: unknown;
-  };
-  width: 'full';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "dang-cho-duyet_widget".
- */
-export interface DangChoDuyetWidget {
-  data?: {
-    [k: string]: unknown;
-  };
-  width: 'full';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tat-ca-muc_widget".
- */
-export interface TatCaMucWidget {
+export interface CollectionsWidget {
   data?: {
     [k: string]: unknown;
   };
