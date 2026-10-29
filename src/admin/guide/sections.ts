@@ -33,7 +33,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Gõ mật khẩu vào ô **Mật khẩu**.' },
       { text: 'Bấm **Đăng nhập**.', shot: 'dang-nhap' },
       {
-        text: 'Bạn sẽ thấy trang đầu, gồm nhiều thẻ xếp theo nhóm. Việc của bạn nằm ở nhóm **Nội dung**.',
+        text: 'Bạn sẽ thấy trang đầu, gồm nhiều thẻ xếp theo nhóm. Việc của bạn nằm ở hai nhóm **Tư liệu** và **Nội dung**.',
         shot: 'trang-dau',
       },
       {
@@ -74,6 +74,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
         text: 'Các ô **Sapo**, **Chuyên mục**, **Ảnh bìa**, **Chú thích ảnh bìa** và **Nguồn** có thể bỏ trống. Có thì điền, chưa có thì để đó.',
       },
       { text: 'Bấm **Lưu bản nháp** để giữ bài. Bài chưa hiện lên trang web.' },
+      { text: 'Bản nháp lưu được cả khi còn ô có dấu sao đỏ để trống. Nhưng bài chỉ được đăng khi mọi ô có dấu sao đỏ đã điền.' },
     ],
   },
   {
@@ -146,7 +147,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
         text: 'Đọc thông báo màu đỏ hiện ở phía dưới màn hình. Chữ sau dấu hai chấm là tên ô đang thiếu hoặc sai.',
         shot: 'loi-o-thieu',
       },
-      { text: 'Tìm ô có tên đó. Ô có dấu sao đỏ là ô phải điền.' },
+      { text: 'Tìm ô có tên đó trên trang.' },
       { text: 'Điền ô đó.' },
       { text: 'Bấm lưu lại.' },
       { text: 'Nếu trang báo bạn không có quyền, hãy bấm **Lưu bản nháp** thay cho nút bạn vừa bấm.' },
@@ -196,7 +197,9 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'reviewer',
     when: 'Dùng khi bạn đã đọc bài chờ duyệt và thấy bài đúng, đủ.',
     steps: [
-      { text: 'Trong danh sách **Bài viết**, bấm vào bài có chữ **Chờ duyệt** ở cột **Quy trình**.' },
+      { text: 'Trong menu, bấm **Bài viết**.' },
+      { text: 'Tìm bài có chữ **Chờ duyệt** ở cột **Quy trình**.' },
+      { text: 'Bấm vào tên bài đó, là dòng chữ có gạch chân ở cột đầu. Bấm vào chữ Chờ duyệt thì không mở được bài.', shot: 'dang-bai-mo' },
       { text: 'Xem lại: ảnh trong bài đã được phép dùng, người trong bài đã đồng ý.' },
       { text: 'Bấm **Xuất bản tài liệu**.', shot: 'duyet-dang' },
       { text: 'Bài hiện lên trang web. Ô **Quy trình** tự chuyển sang **Đã đăng**.' },

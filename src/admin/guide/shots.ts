@@ -15,7 +15,11 @@ export const GUIDE_SHOTS: GuideShot[] = [
   { id: 'dang-nhap', alt: 'Trang đăng nhập đã điền email và mật khẩu, khung đỏ ở nút Đăng nhập.', mobile: false },
   { id: 'mo-menu', alt: 'Trang đầu, khung đỏ ở nút ba gạch ở góc trên bên trái để mở menu.', mobile: true },
   { id: 'menu-huong-dan', alt: 'Menu đã mở bên trái, khung đỏ ở mục Hướng dẫn cuối menu.', mobile: false },
-  { id: 'trang-dau', alt: 'Trang đầu gồm các thẻ, khung đỏ quanh nhóm Nội dung có thẻ Sản phẩm, Bài viết và Con người.', mobile: false },
+  {
+    id: 'trang-dau',
+    alt: 'Trang đầu gồm các thẻ, khung đỏ quanh hai nhóm Tư liệu và Nội dung, có thẻ Kho tư liệu ảnh, Sản phẩm, Bài viết và Con người.',
+    mobile: false,
+  },
   { id: 'tai-anh-mo', alt: 'Trang đầu, khung đỏ quanh thẻ Kho tư liệu ảnh có nút dấu cộng.', mobile: false },
   { id: 'tai-anh-chon-file', alt: 'Trang tải ảnh lên, khung đỏ ở nút Chọn một file.', mobile: false },
   { id: 'tai-anh-luu', alt: 'Ảnh đã chọn và đã điền văn bản thay thế, khung đỏ ở nút Lưu.', mobile: false },
@@ -35,6 +39,7 @@ export const GUIDE_SHOTS: GuideShot[] = [
   },
   { id: 'duyet-danh-sach', alt: 'Danh sách Bài viết, khung đỏ ở chữ Chờ duyệt trong cột Quy trình.', mobile: false },
   { id: 'duyet-quyen-anh', alt: 'Trang sửa ảnh tư liệu, khung đỏ quanh ô Quyền sử dụng đang chọn Được phép.', mobile: false },
+  { id: 'dang-bai-mo', alt: 'Danh sách Bài viết, khung đỏ ở tên bài đang chờ duyệt trong cột đầu.', mobile: false },
   { id: 'duyet-dang', alt: 'Bài viết đang chờ duyệt, khung đỏ ở nút Xuất bản tài liệu.', mobile: false },
   { id: 'tao-tai-khoan', alt: 'Trang tạo người dùng mới, khung đỏ quanh ô Vai trò.', mobile: false },
 ]

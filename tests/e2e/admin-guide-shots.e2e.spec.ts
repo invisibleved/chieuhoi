@@ -31,7 +31,7 @@ type Recipe = { role: Role; step: Step; keepToast?: boolean }
 /** Thẻ của một loại nội dung ở trang đầu gốc của Payload (có nút dấu cộng để tạo mới). */
 const card = (page: Page, collection: string) => page.locator(`#card-${collection}`)
 /** Một nhóm thẻ ở trang đầu, tìm theo tên nhóm. */
-const group = (page: Page, name: string) =>
+const group = (page: Page, name: string | RegExp) =>
   page.locator('.collections__group').filter({ has: page.locator('.collections__label', { hasText: name }) })
 /** Khối một ô nhập trong form, tìm theo nhãn. */
 const field = (page: Page, label: string) =>
@@ -49,6 +49,12 @@ async function openStory(page: Page, slug: string) {
   const id = await idOf(page, 'stories', `where[slug][equals]=${slug}`)
   await page.goto(`/admin/collections/stories/${id}`)
   await expect(page.locator('#field-slug')).toHaveValue(slug)
+}
+
+/** Các ảnh trước vừa mở bài nháp mẫu nên bài đó đang bị khoá (hiện ổ khoá trong danh sách); gỡ khoá cho ảnh gọn. */
+async function unlockAll(page: Page) {
+  const res = await page.request.delete('/api/payload-locked-documents?where[id][exists]=true')
+  expect(res.ok(), await res.text()).toBe(true)
 }
 
 async function chooseWorkflow(page: Page, label: string) {
@@ -95,7 +101,8 @@ const RECIPES: Record<string, Recipe> = {
     role: 'editor',
     step: async (page) => {
       await page.goto('/admin')
-      return highlight(page, group(page, 'Nội dung'))
+      // Việc của biên tập viên nằm ở hai nhóm: Tư liệu (Kho tư liệu ảnh) và Nội dung (Bài viết, Con người, Sản phẩm).
+      return highlight(page, group(page, /^(Tư liệu|Nội dung)$/))
     },
   },
   'tai-anh-mo': {
@@ -184,13 +191,22 @@ const RECIPES: Record<string, Recipe> = {
   'duyet-danh-sach': {
     role: 'reviewer',
     step: async (page) => {
-      // Các ảnh trước vừa mở bài nháp mẫu nên bài đó đang bị khoá (hiện ổ khoá trong danh sách); gỡ khoá cho ảnh gọn.
-      const unlock = await page.request.delete('/api/payload-locked-documents?where[id][exists]=true')
-      expect(unlock.ok(), await unlock.text()).toBe(true)
+      await unlockAll(page)
       await page.goto('/admin/collections/stories')
       const cell = page.locator('td.cell-workflow').filter({ hasText: /^Chờ duyệt$/ })
       await expect(cell).toHaveCount(1)
       return highlight(page, cell)
+    },
+  },
+  'dang-bai-mo': {
+    role: 'reviewer',
+    step: async (page) => {
+      await unlockAll(page)
+      await page.goto('/admin/collections/stories')
+      const row = page.locator('tbody tr').filter({ has: page.locator('td.cell-workflow', { hasText: /^Chờ duyệt$/ }) })
+      await expect(row).toHaveCount(1)
+      // Chỉ tên bài là link mở bài; khung đỏ vào đúng ô đó.
+      return highlight(page, row.locator('td.cell-title a'))
     },
   },
   'duyet-quyen-anh': {
@@ -261,7 +277,17 @@ async function save(page: Page, file: string) {
 
 async function shoot(browser: Browser, baseURL: string, users: Users, id: string, kind: keyof typeof VIEWPORT) {
   const recipe = RECIPES[id]
-  const ctx = await browser.newContext({ ...VIEWPORT[kind], baseURL, locale: 'vi-VN', reducedMotion: 'reduce' })
+  // Payload chọn giao diện sáng/tối theo máy người xem; ghim sáng để ảnh giống máy thường gặp (trang đăng nhập cũng vậy).
+  const ctx = await browser.newContext({
+    ...VIEWPORT[kind],
+    baseURL,
+    locale: 'vi-VN',
+    reducedMotion: 'reduce',
+    colorScheme: 'light',
+  })
+  // Payload đọc cookie theme trước gợi ý trình duyệt (Sec-CH-Prefers-Color-Scheme): kênh chromium đầy đủ gửi theo máy
+  // chạy chụp, nên trang đăng nhập (chưa có cookie) ra tối. Cookie ghim sáng cho mọi ảnh.
+  await ctx.addCookies([{ name: 'payload-theme', value: 'light', url: baseURL }])
   try {
     if (recipe.role) {
       const res = await ctx.request.post('/api/users/login', { data: users[recipe.role] })

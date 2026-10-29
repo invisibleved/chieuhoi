@@ -2,7 +2,7 @@
   "dang-nhap": "Đăng nhập",
   "mo-menu": "Mở Menu",
   "menu-huong-dan": "Hướng dẫn",
-  "trang-dau": "Nội dung\nDòng thời gian\nCông đoạn làm nghề\nSản phẩm\nBài viết\nCon người\nCơ sở dệt",
+  "trang-dau": "Tư liệu\nNguồn\nKho tư liệu ảnh\nNội dung\nDòng thời gian\nCông đoạn làm nghề\nSản phẩm\nBài viết\nCon người\nCơ sở dệt",
   "tai-anh-mo": "Kho tư liệu ảnh",
   "tai-anh-chon-file": "Chọn một file",
   "tai-anh-luu": "Lưu",
@@ -14,6 +14,7 @@
   "loi-o-thieu": "Lỗi - Field sau không hợp lệ: Văn bản thay thế",
   "duyet-danh-sach": "Chờ duyệt",
   "duyet-quyen-anh": "Quyền sử dụng\n*\nĐược phép\nChỉ người duyệt sửa được.",
+  "dang-bai-mo": "Bài viết chờ duyệt (mẫu)",
   "duyet-dang": "Xuất bản tài liệu",
   "tao-tai-khoan": "Vai trò\n*\nBiên tập viên\nChỉ người duyệt sửa được."
 }
