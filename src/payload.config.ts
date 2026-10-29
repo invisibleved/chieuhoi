@@ -29,6 +29,7 @@ export default buildConfig({
     theme: 'light',
     components: {
       graphics: { Logo: '/admin/Logo#Logo', Icon: '/admin/Icon#Icon' },
+      Nav: '/admin/Nav#Nav',
       providers: ['/admin/AdminFonts#AdminFonts'],
       afterLogin: ['/admin/LoginHelp#LoginHelp'],
     },
