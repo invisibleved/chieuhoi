@@ -65,6 +65,20 @@ export function isStaging(env: Env): boolean {
   }
 }
 
+/**
+ * PREVIEW_ALL=true mở bản xem trước cho mọi người xem. Chỉ có tác dụng ở staging, hoặc ở development khi chạy
+ * `next dev` (NODE_ENV khác production): `next start` với APP_ENV=development không được mở nội dung chưa duyệt.
+ */
+export function isPreviewAll(env: Env): boolean {
+  if (env.PREVIEW_ALL !== 'true') return false
+  try {
+    const appEnv = readAppEnv(env)
+    return appEnv === 'staging' || (appEnv === 'development' && env.NODE_ENV !== 'production')
+  } catch {
+    return false
+  }
+}
+
 /** Chỉ production cho công cụ tìm kiếm lập chỉ mục. */
 export function isIndexable(env: Env): boolean {
   try {

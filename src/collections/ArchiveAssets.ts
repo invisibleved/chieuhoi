@@ -5,7 +5,7 @@ import { ValidationError, type Access, type CollectionConfig, type Where } from 
 import { fileURLToPath } from 'url'
 
 import { isAssetPubliclyAllowed, publicAssetQuery } from '@/access/assetRules'
-import { isStaging } from '@/lib/env'
+import { isPreviewAll, isStaging } from '@/lib/env'
 import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, controlFieldAdmin, isLoggedIn, isReviewer, isReviewerUser, reviewerOnlyField } from '@/access/roles'
 
@@ -37,10 +37,11 @@ const STAGING_ANY_FILE: Where = { id: { exists: true } }
 // R19: khách chỉ được tải file (isReadingStaticFile), không liệt kê/đọc metadata qua REST.
 const readAccess: Access = ({ req, isReadingStaticFile }) => {
   if (req.user) return true
-  // R5: ở staging khách đã qua mật khẩu được tải mọi file ảnh (REST liệt kê vẫn đóng).
+  // R5: ở staging khách đã qua mật khẩu được tải mọi file ảnh (REST liệt kê vẫn đóng). `next dev` với
+  // PREVIEW_ALL cũng vậy, vì trang đang hiện bản xem trước có các ảnh này.
   // Trả điều kiện khớp mọi bản ghi thay vì `true`: Payload chỉ tra bản ghi theo tên file khi quyền là
   // điều kiện, và adapter S3 cần bản ghi đó (thiếu thì nó tự tra bằng quyền REST của khách và lỗi 500).
-  if (isReadingStaticFile && isStaging(process.env)) return STAGING_ANY_FILE
+  if (isReadingStaticFile && (isStaging(process.env) || isPreviewAll(process.env))) return STAGING_ANY_FILE
   return isReadingStaticFile ? publicAssetQuery : false
 }
 

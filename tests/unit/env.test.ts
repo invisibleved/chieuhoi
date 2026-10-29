@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { assertDeployEnv, isIndexable, isValidStagingAuth, isStaging, readAppEnv, siteUrl } from '@/lib/env'
+import { assertDeployEnv, isIndexable, isPreviewAll, isValidStagingAuth, isStaging, readAppEnv, siteUrl } from '@/lib/env'
 
 const SECRET = 's'.repeat(40)
 const full = {
@@ -108,6 +108,15 @@ describe('isIndexable / isStaging / siteUrl', () => {
     expect(isStaging({ APP_ENV: 'staging' })).toBe(true)
     expect(isStaging({})).toBe(false)
     expect(isStaging({ APP_ENV: 'prod' })).toBe(false)
+  })
+  it('isPreviewAll chỉ mở ở staging hoặc next dev', () => {
+    expect(isPreviewAll({ APP_ENV: 'staging', PREVIEW_ALL: 'true', NODE_ENV: 'production' })).toBe(true)
+    expect(isPreviewAll({ APP_ENV: 'development', PREVIEW_ALL: 'true', NODE_ENV: 'development' })).toBe(true)
+    expect(isPreviewAll({ APP_ENV: 'development', PREVIEW_ALL: 'true', NODE_ENV: 'production' })).toBe(false)
+    expect(isPreviewAll({ APP_ENV: 'production', PREVIEW_ALL: 'true' })).toBe(false)
+    expect(isPreviewAll({ APP_ENV: 'development', PREVIEW_ALL: 'false' })).toBe(false)
+    expect(isPreviewAll({ APP_ENV: 'prod', PREVIEW_ALL: 'true' })).toBe(false)
+    expect(isPreviewAll({ PREVIEW_ALL: 'true' })).toBe(false)
   })
   it('siteUrl mặc định localhost', () => {
     expect(siteUrl({}).href).toBe('http://localhost:3000/')

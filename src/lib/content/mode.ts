@@ -1,5 +1,7 @@
 import { draftMode, headers } from 'next/headers'
 
+import { isPreviewAll } from '@/lib/env'
+
 import { hasAdminSession } from './session'
 import type { Mode } from './types'
 
@@ -12,14 +14,8 @@ export async function isAdminPreview(): Promise<boolean> {
   return hasAdminSession(await headers())
 }
 
-/**
- * Chế độ hiển thị: Draft Mode + phiên admin là preview. PREVIEW_ALL chỉ có tác dụng ở staging, hoặc ở development
- * khi chạy `next dev` (NODE_ENV khác production): `next start` với APP_ENV=development không được mở nội dung chưa duyệt.
- */
+/** Chế độ hiển thị: Draft Mode + phiên admin là preview, hoặc PREVIEW_ALL ở môi trường cho phép (xem isPreviewAll). */
 export async function getMode(): Promise<Mode> {
   if (await isAdminPreview()) return 'preview'
-  const appEnv = process.env.APP_ENV
-  const allowed = appEnv === 'staging' || (appEnv === 'development' && process.env.NODE_ENV !== 'production')
-  if (allowed && process.env.PREVIEW_ALL === 'true') return 'preview'
-  return 'public'
+  return isPreviewAll(process.env) ? 'preview' : 'public'
 }

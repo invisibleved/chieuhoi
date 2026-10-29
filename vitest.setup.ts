@@ -3,6 +3,9 @@
 // Load .env files
 import 'dotenv/config'
 import { cleanup } from '@testing-library/react'
+
+// PREVIEW_ALL trong .env dev không được đổi hành vi test; test nào cần thì tự đặt.
+delete process.env.PREVIEW_ALL
 import { afterEach } from 'vitest'
 
 // Dọn DOM sau mỗi test (RTL không tự dọn vì vitest không bật globals).

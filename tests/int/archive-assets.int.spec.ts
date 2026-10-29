@@ -75,11 +75,17 @@ describe('archive-assets', () => {
 
   it('R5: staging cho khách tải file ảnh unknown, development vẫn chặn, find vẫn đóng', async () => {
     const saved = process.env.APP_ENV
+    const savedPreviewAll = process.env.PREVIEW_ALL
     try {
       const doc = await makeAsset({ subjectConsent: 'not_applicable' })
       expect(doc.rights).toBe('unknown')
       process.env.APP_ENV = 'development'
+      process.env.PREVIEW_ALL = 'false'
       expect([403, 404]).toContain((await anonGetFile(doc.filename as string)).status)
+      // next dev với PREVIEW_ALL đang hiện bản xem trước có ảnh này, nên khách tải được.
+      process.env.PREVIEW_ALL = 'true'
+      expect((await anonGetFile(doc.filename as string)).status).toBe(200)
+      process.env.PREVIEW_ALL = 'false'
       process.env.APP_ENV = 'staging'
       expect((await anonGetFile(doc.filename as string)).status).toBe(200)
       // Quyền là điều kiện (không phải true) để Payload tra bản ghi và chuyển cho adapter S3.
@@ -92,6 +98,8 @@ describe('archive-assets', () => {
     } finally {
       if (saved === undefined) delete process.env.APP_ENV
       else process.env.APP_ENV = saved
+      if (savedPreviewAll === undefined) delete process.env.PREVIEW_ALL
+      else process.env.PREVIEW_ALL = savedPreviewAll
     }
   })
 
