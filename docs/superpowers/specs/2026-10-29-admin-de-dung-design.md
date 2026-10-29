@@ -152,3 +152,4 @@ Chỉ giữ **mục tiêu 4, bộ hướng dẫn**, viết lại theo giao diệ
 - ảnh chụp và nhãn in đậm chụp lại trên admin gốc;
 - link "Quên mật khẩu?" gốc không gửi được thư, nên hướng dẫn vẫn bảo nhờ người duyệt;
 - người duyệt tìm bài chờ duyệt bằng cột hoặc bộ lọc "Quy trình" trong danh sách.
+- component admin đặt trong `src/admin/` (không import `@/components`), thay cho `src/components/admin/` ở mục "Ràng buộc".

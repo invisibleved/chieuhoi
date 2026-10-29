@@ -66,6 +66,9 @@ Plan `docs/superpowers/plans/2026-10-29-admin-de-dung.md`. Admin về giao diệ
 - [ ] Kiểm Task 6: nút xem trước gốc của Payload ở 390 chỉ ~17×30px (dưới 44×44), nằm sát trái nút "Lưu bản nháp" đúng như hướng dẫn tả.
 - [ ] Kiểm Task 6: ở 390, mở menu thì trang rộng ~570px (khối nội dung bị đẩy sang phải, cuộn ngang), là hành vi gốc của Payload.
 - [ ] Kiểm Task 6: biên tập viên thấy cả nhóm Quản trị (Người dùng), Nguồn và Trang trong menu và trang đầu (admin gốc, không ẩn); hướng dẫn chỉ đúng nhóm Tư liệu/Nội dung nên không sai, nhưng menu dài hơn cần.
+- [ ] Bộ chọn "Ngôn ngữ" gốc trên thanh trên cùng chỉ có một lựa chọn (Tiếng Việt), dễ làm người trong làng bối rối; ẩn hoặc giải thích khi chỉ có một ngôn ngữ.
+- [ ] `GuideView` và `GuideNavLink` chưa có test unit, chỉ có e2e (`admin-ui.e2e.spec.ts`); một test RTL cho `aria-current` của `GuideNavLink` là đủ rẻ.
+- [ ] `public/admin-guide` (ảnh và `labels.json`) được phục vụ công khai, không cần đăng nhập; chỉ chứa dữ liệu mẫu, chấp nhận có chủ ý (ruling A4).
 
 ### Phase 7 (Staging, kiểm tra)
 Mã `Task N` là task trong plan Phase 7.

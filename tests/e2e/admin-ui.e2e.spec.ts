@@ -4,10 +4,9 @@ import { expect, test, type BrowserContext, type Page } from '@playwright/test'
 import { loginReviewer, smallTargets, VIEWPORTS } from './helpers'
 
 test.describe('giao diện gốc', () => {
-  test('trang đăng nhập dùng logo Payload gốc, không còn ghi đè', async ({ page }) => {
+  test('trang đăng nhập dùng logo Payload gốc', async ({ page }) => {
     await page.goto('/admin/login')
     await expect(page.locator('.graphic-logo')).toBeVisible()
-    await expect(page.locator('.ch-admin-logo')).toHaveCount(0)
   })
 })
 

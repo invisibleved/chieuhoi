@@ -65,9 +65,8 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     when: 'Dùng khi bạn muốn kể một câu chuyện về làng, về nghề hay về một người.',
     steps: [
       { text: 'Ở trang đầu, bấm nút tròn có dấu cộng trong thẻ **Bài viết**.', shot: 'viet-bai-mo' },
-      {
-        text: 'Ô trên cùng bên trái có dấu sao đỏ cần một tên ngắn cho bài: viết không dấu, nối các chữ bằng gạch ngang, ví dụ chieu-hoa-ngay-tet. Mỗi bài một tên riêng.',
-      },
+      { text: 'Gõ một tên ngắn cho bài vào ô trên cùng bên trái, ô có dấu sao đỏ.' },
+      { text: 'Tên ngắn viết không dấu, nối các chữ bằng gạch ngang, ví dụ chieu-hoa-ngay-tet. Mỗi bài một tên riêng.' },
       { text: 'Gõ tên bài vào ô **Tiêu đề**.' },
       { text: 'Viết bài vào ô lớn **Nội dung**.', shot: 'viet-bai-noi-dung' },
       {
@@ -85,9 +84,9 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     steps: [
       { text: 'Ở trang đầu, nhóm **Nội dung**, tìm thẻ **Con người** hoặc thẻ **Sản phẩm**.', shot: 'trang-dau' },
       { text: 'Bấm nút tròn có dấu cộng trong thẻ đó.' },
-      {
-        text: 'Ô trên cùng bên trái có dấu sao đỏ cần một tên ngắn, viết không dấu, nối bằng gạch ngang. Với người, tên ngắn này không được có tên của người đó.',
-      },
+      { text: 'Gõ một tên ngắn vào ô trên cùng bên trái, ô có dấu sao đỏ.' },
+      { text: 'Tên ngắn viết không dấu, nối các chữ bằng gạch ngang.' },
+      { text: 'Với người, tên ngắn này không được có tên của người đó.' },
       { text: 'Gõ tên vào ô **Tên**.' },
       { text: 'Điền những ô bạn biết chắc. Ô nào chưa rõ thì để trống, đừng đoán.' },
       { text: 'Với người, phần **Đồng ý công khai** do người duyệt đánh dấu khi người đó đã đồng ý. Bạn để nguyên.' },
@@ -106,8 +105,8 @@ export const GUIDE_SECTIONS: GuideSection[] = [
         text: 'Bấm nút nhỏ hình ô vuông có mũi tên chỉ ra ngoài. Nút này nằm ngay bên trái nút lưu bản nháp.',
         shot: 'xem-truoc',
       },
-      { text: 'Trang web mở ra ở một thẻ mới. Người ngoài chưa thấy bài này.' },
-      { text: 'Xem xong, đóng thẻ đó để quay lại sửa bài.' },
+      { text: 'Một trang mới mở ra, cho thấy bài trên trang web. Người ngoài chưa thấy bài này.' },
+      { text: 'Xem xong, đóng trang mới mở ra đó để quay lại sửa bài.' },
     ],
   },
   {
@@ -133,6 +132,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Đừng bấm **Quên mật khẩu?** ở trang đăng nhập. Trang này chưa gửi thư được, bạn sẽ không nhận được gì.' },
       { text: 'Gọi điện hoặc nhắn tin, nhờ người duyệt đặt lại mật khẩu cho bạn.' },
       { text: 'Người duyệt sẽ đưa bạn mật khẩu mới.' },
+      { text: 'Gõ email của bạn vào ô **Email**.' },
       { text: 'Gõ mật khẩu mới đó vào ô **Mật khẩu**.' },
       { text: 'Bấm **Đăng nhập**.', shot: 'dang-nhap' },
     ],
@@ -149,7 +149,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       },
       { text: 'Tìm ô có tên đó trên trang.' },
       { text: 'Điền ô đó.' },
-      { text: 'Bấm lưu lại.' },
+      { text: 'Bấm lại đúng nút lưu bạn vừa bấm, là nút Lưu hoặc nút Lưu bản nháp.' },
       { text: 'Nếu trang báo bạn không có quyền, hãy bấm **Lưu bản nháp** thay cho nút bạn vừa bấm.' },
       { text: 'Nếu trang đứng yên hay trắng trơn, hãy tải lại trang. Những gì đã lưu vẫn còn.' },
       { text: 'Vẫn không được thì chụp màn hình và gửi cho người duyệt.' },
@@ -187,7 +187,8 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Với một người: trong menu, bấm **Con người**.' },
       { text: 'Bấm vào tên người đó.' },
       { text: 'Ở phần **Đồng ý công khai**, chỉ đánh dấu **Tên**, **Ảnh**, **Trích dẫn** mà người đó đã đồng ý.' },
-      { text: 'Bấm **Xuất bản tài liệu**.' },
+      { text: 'Đọc lại hồ sơ người đó trước. Bước sau sẽ đăng cả hồ sơ này lên trang web.' },
+      { text: 'Bấm **Xuất bản tài liệu**. Việc này lưu sự đồng ý và cũng đăng hồ sơ người đó lên trang web.' },
       { text: 'Ô nào chưa đánh dấu, trang web sẽ hiện chữ "Chờ đồng ý" thay cho phần đó.' },
     ],
   },
