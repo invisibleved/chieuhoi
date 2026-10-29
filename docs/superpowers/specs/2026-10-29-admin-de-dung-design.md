@@ -138,3 +138,17 @@ Kèm một e2e: biên tập viên thêm được nguồn từ form Bài viết.
   - `/admin/huong-dan` mở được khi đã đăng nhập;
   - axe không có lỗi trên trang đầu và trang hướng dẫn ở 1440 và 390.
 - Chụp trang đăng nhập, trang đầu và trang hướng dẫn ở 1440 và 390 để người dùng xem cuối phase.
+
+## Thay đổi ngày 2026-10-29 (sau khi người dùng xem bản đầu)
+
+Người dùng thấy giao diện đã đổi kém đẹp hơn admin gốc và quyết định **về hẳn admin gốc của Payload**. Bỏ các mục tiêu 1, 2, 3:
+- nhận diện (logo, icon, màu, font, trang đăng nhập, tắt chế độ tối);
+- trang đầu có nút việc và số chờ duyệt;
+- menu ẩn theo vai trò.
+
+Chỉ giữ **mục tiêu 4, bộ hướng dẫn**, viết lại theo giao diện gốc:
+- trang `/admin/huong-dan` và link "Hướng dẫn" trong menu;
+- kiểu chữ của trang hướng dẫn dùng biến màu sẵn có của Payload, chữ thân vẫn 16px để dễ đọc;
+- ảnh chụp và nhãn in đậm chụp lại trên admin gốc;
+- link "Quên mật khẩu?" gốc không gửi được thư, nên hướng dẫn vẫn bảo nhờ người duyệt;
+- người duyệt tìm bài chờ duyệt bằng cột hoặc bộ lọc "Quy trình" trong danh sách.

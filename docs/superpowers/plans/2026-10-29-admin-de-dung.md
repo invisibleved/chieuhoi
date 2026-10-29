@@ -341,3 +341,66 @@ Hết plan thì dừng để người dùng xem.
 - **A2:** không dùng `admin.hidden`. Ở bản 3.92 nó làm view tài liệu trả 404 và hỏng hộp "Thêm mới" của ô quan hệ (đã đọc `views/Document/index.js`). Thay bằng `Nav` bọc `DefaultNav` và widget lọc. Nếu sai: thêm một component Nav.
 - **A3:** trang đầu dùng dashboard widget của 3.92 thay vì `beforeDashboard`, vì cần thay lưới thẻ mặc định bằng bản đã lọc. Nếu sai: người dùng có thể tự sắp widget (tính năng sẵn của Payload).
 - **A4:** ảnh hướng dẫn được commit vào `public/admin-guide/` vì chỉ chứa dữ liệu mẫu và ảnh tự sinh. Nếu sai: repo nặng thêm vài MB.
+
+---
+
+## Bổ sung sau khi người dùng xem (2026-10-29): về admin gốc
+
+Người dùng chọn "Về hẳn admin gốc". Task 6 dừng giữa chừng, chưa có commit. Thay bằng Task 7 → Task 8 → Task 6 (chạy lại).
+
+### Task 7: Gỡ giao diện tuỳ biến
+
+**Files:**
+- Delete:
+  - `src/admin/Logo.tsx`, `Icon.tsx`, `AdminFonts.tsx`, `LoginHelp.tsx`, `Nav.tsx`, `visibility.ts`, `src/admin/dashboard/`;
+  - `tests/unit/admin/branding.test.tsx`, `visibility.test.ts`, `dashboard.test.ts`;
+  - `tests/int/admin-pending.int.spec.ts`.
+- Modify: `src/payload.config.ts`, `src/app/(payload)/custom.scss`, `importMap.js`, `src/payload-types.ts` (sinh lại), `tests/e2e/admin-ui.e2e.spec.ts`.
+- Keep:
+  - tầng `src/admin/` cùng lint và test kiến trúc;
+  - `src/admin/guide/*` và `GuideNavLink`;
+  - `views.huongDan`, `afterNavLinks`;
+  - seeder và pipeline chụp ảnh;
+  - `smallTargets(page, scope)`.
+
+- [ ] **Step 1:** Trong `payload.config.ts`:
+  - bỏ `graphics`, `providers`, `afterLogin`, `Nav`, `admin.dashboard`, `admin.theme`;
+  - bỏ bộ lọc `config.then(...)` widget `collections`, để default export lại đúng là `buildConfig(...)`;
+  - giữ `views.huongDan` và `afterNavLinks: [GuideNavLink]`.
+- [ ] **Step 2:** `custom.scss` chỉ còn kiểu của trang hướng dẫn (`.ch-guide…` và `@media print`).
+  - Màu lấy từ biến của Payload (`--theme-text`, `--theme-elevation-*`, `--theme-bg`); bỏ biến SCSS màu token.
+  - Không đổi gì ngoài `.ch-guide`.
+- [ ] **Step 3:** Xoá file, sinh lại importMap (`npx payload generate:importmap`) và types (`npx payload generate:types`).
+  - Trong `admin-ui.e2e.spec.ts` bỏ các `describe` của nhận diện, menu theo vai trò và trang đầu. Giữ `describe('hướng dẫn')`.
+  - Thêm một test: `/admin/login` hiện logo Payload gốc. Test này chứng minh không còn ghi đè.
+- [ ] **Step 4:** Chạy `npm run lint`, `npm run test:unit`, `npm run test:int`, e2e `admin-ui`. Lúc này mục hướng dẫn có thể còn sai nhãn: test unit nhãn hướng dẫn được phép fail **chỉ** vì `labels.json` cũ; ghi rõ trong report. Task 8 sửa.
+- [ ] **Step 5:** Commit `revert(admin): về giao diện admin gốc của Payload, giữ trang Hướng dẫn`.
+
+### Task 8: Viết lại hướng dẫn theo admin gốc
+
+**Files:** `src/admin/guide/shots.ts`, `src/admin/guide/sections.ts`, `tests/e2e/admin-guide-shots.e2e.spec.ts`, `public/admin-guide/*`, `tests/unit/admin/guide.test.ts`, `tests/e2e/admin-ui.e2e.spec.ts`
+
+- [ ] **Step 1:** Cập nhật `GUIDE_SHOTS` và spec chụp cho giao diện gốc. Bỏ `trang-dau` kiểu nút việc. Các id mới là gợi ý; người làm chọn theo màn hình thật:
+  - `trang-dau`: lưới thẻ gốc, khung đỏ vào nút "+" của thẻ **Bài viết**, hoặc vào thẻ;
+  - `menu-may-tinh`: nút mở menu và link **Hướng dẫn**;
+  - `duyet-danh-sach`: danh sách Bài viết có cột **Quy trình** = **Chờ duyệt**, hoặc bộ lọc.
+
+  Mỗi mục trong 12 mục vẫn có ít nhất một ảnh ở bước quan trọng nhất. Chạy `npm run guide:seed && npm run guide:shots`; `labels.json` sinh lại.
+- [ ] **Step 2:** Viết lại `sections.ts` cho đúng giao diện gốc. Giữ các quy tắc của Task 5:
+  - 12 mục, thứ tự theo spec;
+  - một việc mỗi bước, xưng "bạn";
+  - không có từ cấm;
+  - "Quên mật khẩu" bảo nhờ người duyệt, vì link gốc không gửi được thư;
+  - chữ in đậm khớp nguyên dòng trong `labels.json` (bước có ảnh) hoặc khớp bản dịch tiếng Việt của Payload (bước không ảnh).
+
+  Mở đầu trang có một câu: menu nằm sau nút ba gạch ở góc trên bên trái.
+- [ ] **Step 3:** Cập nhật test unit và e2e `hướng dẫn` theo id mới. Chạy unit, e2e `admin-ui`, lint.
+- [ ] **Step 4:** Commit `feat(admin): viết lại hướng dẫn theo giao diện admin gốc`.
+
+### Task 6 (chạy lại)
+Như Task 6 ở trên, nhưng bỏ các phần đã gỡ:
+- backlog không cần các mục đếm ảnh chưa xác nhận quyền dùng và ô "Ngôn ngữ";
+- vẫn ghi "Thêm: Review Checklist", dịch vụ email, ô "Đường dẫn";
+- vẫn ghi thứ tự `test:int` → `guide:seed`.
+
+Ảnh cho người dùng xem: trang đăng nhập, trang đầu, menu và trang Hướng dẫn ở 1440 và 390.
