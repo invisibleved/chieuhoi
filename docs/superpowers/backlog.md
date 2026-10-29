@@ -44,6 +44,29 @@ Quy ước: mỗi phase kết thúc phải chép các mục còn mở vào đây
 
 ## C. Lỗi nhỏ còn mở
 
+### Admin dễ dùng
+Plan `docs/superpowers/plans/2026-10-29-admin-de-dung.md`. Admin về giao diện gốc của Payload, chỉ giữ trang Hướng dẫn (`src/admin/`).
+- [ ] Nút "Thêm: Review Checklist" trong form còn tiếng Anh.
+- [ ] Chưa có dịch vụ email nên "Quên mật khẩu" không gửi thư; hiện phải nhờ người duyệt đặt lại. Cần một email adapter cho Payload.
+- [ ] Ô "Đường dẫn" (tên ngắn không dấu, nối gạch ngang) là chỗ khó với người trong làng; cân nhắc tự sinh từ tiêu đề.
+- [ ] Thứ tự chạy: `test:int` rồi mới `guide:seed` (cả hai xoá sạch `chieuhoi_test`), không chạy song song.
+- [ ] Toast lỗi của Payload còn chữ tiếng Anh "Field" (khoá `followingFieldsInvalid`); sửa được bằng ghi đè bản dịch `vi` trong `i18n.translations`.
+- [ ] `guide:shots` để lại `.next` build trên DB test; chạy `npm run build` lại trước `test:e2e`/`start`. Nên dùng thư mục build riêng hoặc in cảnh báo.
+- [ ] `.superpowers/guide-media` phình dần: seeder xoá hàng trong DB nhưng không xoá file ảnh.
+- [ ] Bộ chọn ngôn ngữ gốc của Payload không đạt tương phản màu; axe của trang Hướng dẫn chỉ quét trong `.ch-guide`.
+- [ ] `GuideNavLink` viết cứng `/admin` (`GUIDE_HREF`), không theo `routes.admin` của config.
+- [ ] Ảnh hướng dẫn chụp desktop chỉ còn ~360px trên điện thoại, người đọc phải phóng to.
+- [ ] Nếu `GUIDE_SHOTS=1` lọt vào môi trường (vd. `.env`), `playwright.config.ts` tắt `webServer` và `globalSetup` của `test:e2e`.
+- [ ] Chốt `MEDIA_DIR` của seeder hướng dẫn tính theo cwd và không theo symlink.
+- [ ] Ảnh chụp desktop luôn DPR 1 (mờ trên màn hình độ phân giải cao).
+- [ ] Chú thích đầu `custom.scss` bị lặp hai dòng.
+- [ ] E2E logo trang đăng nhập dựa vào lớp nội bộ `.graphic-logo` của Payload.
+- [ ] Hướng dẫn "Viết một bài": bước "bản nháp và đăng" đọc như ghi chú, không phải một việc cần làm.
+- [ ] Hướng dẫn "Đăng bài": bước 1 ("Trong menu, bấm Bài viết") ngầm cho rằng menu đã mở trên điện thoại.
+- [ ] Kiểm Task 6: nút xem trước gốc của Payload ở 390 chỉ ~17×30px (dưới 44×44), nằm sát trái nút "Lưu bản nháp" đúng như hướng dẫn tả.
+- [ ] Kiểm Task 6: ở 390, mở menu thì trang rộng ~570px (khối nội dung bị đẩy sang phải, cuộn ngang), là hành vi gốc của Payload.
+- [ ] Kiểm Task 6: biên tập viên thấy cả nhóm Quản trị (Người dùng), Nguồn và Trang trong menu và trang đầu (admin gốc, không ẩn); hướng dẫn chỉ đúng nhóm Tư liệu/Nội dung nên không sai, nhưng menu dài hơn cần.
+
 ### Phase 7 (Staging, kiểm tra)
 Mã `Task N` là task trong plan Phase 7.
 - [ ] Phase 7: chạy `npm run dev` một lần trên DB dev cũ trước `npm run build` (2 cột mới `prefix`, `_objectkey` của migration `phase7_sync` được đẩy bằng `push`; nếu không, build lỗi `column archive_assets.prefix does not exist`). Chưa ghi vào README/HANDOFF.
