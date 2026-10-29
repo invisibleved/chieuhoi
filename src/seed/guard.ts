@@ -1,3 +1,5 @@
+import path from 'path'
+
 /** Seed chỉ được chạy ở dev/staging (R22: danh sách cho phép, mọi giá trị khác đều bị chặn). */
 const ALLOWED = new Set(['development', 'staging'])
 
@@ -29,5 +31,21 @@ export function assertGuideDatabase(uri: string | undefined): void {
       `Dữ liệu mẫu hướng dẫn bị chặn: DATABASE_URI phải trỏ vào DB ${GUIDE_DATABASE} (hiện là "${dbName}"). ` +
         'Seeder này xoá sạch DB trước khi tạo dữ liệu mẫu, nên không bao giờ chạy trên DB dev.',
     )
+  }
+}
+
+/**
+ * Seeder hướng dẫn xoá rồi tạo lại ảnh tư liệu, nên file ảnh phải nằm ngoài thư mục media/ của DB dev.
+ * MEDIA_DIR phải được đặt (npm run guide:seed đặt `.superpowers/guide-media`) và không nằm trong `<repo>/media`.
+ */
+export function assertGuideMediaDir(mediaDir: string | undefined, repoRoot: string): void {
+  if (!mediaDir) {
+    throw new Error('Dữ liệu mẫu hướng dẫn bị chặn: MEDIA_DIR chưa được đặt, ảnh sẽ rơi vào media/ của DB dev. Chạy bằng npm run guide:seed.')
+  }
+  const devMedia = path.resolve(repoRoot, 'media')
+  const rel = path.relative(devMedia, path.resolve(repoRoot, mediaDir))
+  const outside = rel === '..' || rel.startsWith(`..${path.sep}`) || path.isAbsolute(rel)
+  if (!outside) {
+    throw new Error('Dữ liệu mẫu hướng dẫn bị chặn: MEDIA_DIR không được là media/ của DB dev hoặc nằm trong đó.')
   }
 }

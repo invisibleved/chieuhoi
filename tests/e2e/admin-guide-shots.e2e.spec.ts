@@ -5,6 +5,7 @@ import sharp from 'sharp'
 
 import { GUIDE_SHOTS } from '../../src/admin/guide/shots'
 import { sampleImage } from '../../src/seed/sampleImage'
+import { forbiddenImageSources, srcsetUrls } from './helpers/guideSafety'
 import { highlight } from './helpers/highlight'
 
 // Ảnh chụp cho trang Hướng dẫn trong admin, trên bản build trỏ vào DB test với dữ liệu mẫu của src/seed/guide.ts.
@@ -176,9 +177,15 @@ const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g
 
 /** Không ảnh tham khảo, không email ngoài tài khoản mẫu @example.com trên trang sắp chụp. */
 async function assertSafe(page: Page) {
-  await expect(
-    page.locator('img[src*="/images/reference/"], img[srcset*="/images/reference/"], source[srcset*="/images/reference/"]'),
-  ).toHaveCount(0)
+  const images = await page.evaluate(() =>
+    [...document.querySelectorAll('img, source')].map((el) => ({
+      src: (el as HTMLImageElement).getAttribute('src') ?? '',
+      current: (el as HTMLImageElement).currentSrc ?? '',
+      srcset: el.getAttribute('srcset') ?? '',
+    })),
+  )
+  const sources = images.flatMap((i) => [i.src, i.current, ...srcsetUrls(i.srcset)]).filter(Boolean)
+  expect(forbiddenImageSources(sources), 'ảnh tham khảo hoặc ảnh không phải ảnh mẫu trên ảnh chụp').toEqual([])
   const text = await page.evaluate(
     () =>
       document.body.innerText +

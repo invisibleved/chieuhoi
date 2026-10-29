@@ -7,7 +7,7 @@ import { mkdirSync, writeFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
-import { assertGuideDatabase, assertSeedAllowed } from './guard'
+import { assertGuideDatabase, assertGuideMediaDir, assertSeedAllowed } from './guard'
 import { sampleImage } from './sampleImage'
 
 const GUIDE_USERS_FILE = path.resolve(process.cwd(), '.superpowers/guide-users.json')
@@ -170,6 +170,8 @@ async function seedGuide(payload: Payload): Promise<void> {
 
 async function main() {
   assertGuideDatabase(process.env.DATABASE_URI)
+  // Kiểm trước khi nạp payload.config (staticDir đọc MEDIA_DIR lúc nạp): wipe() không được xoá file trong media/ của dev.
+  assertGuideMediaDir(process.env.MEDIA_DIR, process.cwd())
   assertSeedAllowed(process.env)
   const { default: config } = await import('../payload.config')
   const { getPayload } = await import('payload')
