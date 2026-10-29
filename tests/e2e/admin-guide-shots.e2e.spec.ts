@@ -25,10 +25,14 @@ const VIEWPORT = {
 
 /** Đưa trang tới đúng trạng thái và trả về chữ của phần tử được khung đỏ. */
 type Step = (page: Page) => Promise<string>
-type Recipe = { role: Role; step: Step }
+/** `keepToast`: ảnh này chụp chính thông báo của Payload, nên không đòi trang hết thông báo. */
+type Recipe = { role: Role; step: Step; keepToast?: boolean }
 
-const widget = (page: Page, name: string) =>
-  page.locator('section.ch-widget').filter({ has: page.getByRole('heading', { name, exact: true }) })
+/** Thẻ của một loại nội dung ở trang đầu gốc của Payload (có nút dấu cộng để tạo mới). */
+const card = (page: Page, collection: string) => page.locator(`#card-${collection}`)
+/** Một nhóm thẻ ở trang đầu, tìm theo tên nhóm. */
+const group = (page: Page, name: string) =>
+  page.locator('.collections__group').filter({ has: page.locator('.collections__label', { hasText: name }) })
 /** Khối một ô nhập trong form, tìm theo nhãn. */
 const field = (page: Page, label: string) =>
   page.locator('.field-type').filter({ has: page.locator('label.field-label', { hasText: label }) }).first()
@@ -67,11 +71,38 @@ const RECIPES: Record<string, Recipe> = {
       return highlight(page, page.locator('form button[type="submit"]'))
     },
   },
+  'mo-menu': {
+    role: 'editor',
+    step: async (page) => {
+      await page.goto('/admin')
+      await expect(card(page, 'stories')).toBeVisible()
+      return highlight(page, page.locator('.nav-toggler:visible').first())
+    },
+  },
+  'menu-huong-dan': {
+    role: 'editor',
+    step: async (page) => {
+      await page.goto('/admin')
+      await page.locator('.nav-toggler:visible').first().click()
+      const link = page.locator('nav a').filter({ hasText: /^Hướng dẫn$/ })
+      await expect(link).toBeVisible()
+      // Chờ menu trượt ra hẳn rồi mới vẽ khung.
+      await expect.poll(() => link.evaluate((el) => el.getBoundingClientRect().left)).toBeGreaterThanOrEqual(0)
+      return highlight(page, link)
+    },
+  },
   'trang-dau': {
     role: 'editor',
     step: async (page) => {
       await page.goto('/admin')
-      return highlight(page, widget(page, 'Việc thường làm'))
+      return highlight(page, group(page, 'Nội dung'))
+    },
+  },
+  'tai-anh-mo': {
+    role: 'editor',
+    step: async (page) => {
+      await page.goto('/admin')
+      return highlight(page, card(page, 'archive-assets'))
     },
   },
   'tai-anh-chon-file': {
@@ -96,7 +127,7 @@ const RECIPES: Record<string, Recipe> = {
     role: 'editor',
     step: async (page) => {
       await page.goto('/admin')
-      return highlight(page, widget(page, 'Việc thường làm').getByRole('link', { name: 'Viết bài mới' }))
+      return highlight(page, card(page, 'stories'))
     },
   },
   'viet-bai-noi-dung': {
@@ -130,21 +161,36 @@ const RECIPES: Record<string, Recipe> = {
       return highlight(page, page.locator('#action-save-draft'))
     },
   },
-  'menu-dien-thoai': {
+  'loi-o-thieu': {
     role: 'editor',
+    keepToast: true,
     step: async (page) => {
-      await page.goto('/admin')
-      await expect(widget(page, 'Việc thường làm')).toBeVisible()
-      return highlight(page, page.locator('.nav-toggler:visible').first())
+      // Ảnh không có bản nháp: bấm Lưu khi chưa điền Văn bản thay thế thì không lưu được, Payload báo lỗi bằng
+      // thông báo đỏ ở phía dưới màn hình, ghi tên ô đang thiếu. (Viền đỏ ở ô không phải lúc nào cũng hiện, nên chụp thông báo.)
+      await page.goto('/admin/collections/archive-assets/create')
+      const png = await sampleImage('#C3A46C', '#1F1A14')
+      await expect(page.locator('#field-alt')).toBeEditable()
+      await page.locator('input[type="file"]').setInputFiles({ name: 'anh-mau.png', mimeType: 'image/png', buffer: png })
+      await expect(page.locator('#action-save')).toBeEnabled()
+      await page.locator('#action-save').click()
+      const toast = page.locator('.payload-toast-item').filter({ hasText: 'Văn bản thay thế' })
+      await expect(toast).toBeVisible()
+      await expect(page).toHaveURL(/\/archive-assets\/create$/)
+      // Để chuột trên thông báo cho nó không tự tắt trước khi chụp.
+      await toast.hover()
+      return highlight(page, toast)
     },
   },
   'duyet-danh-sach': {
     role: 'reviewer',
     step: async (page) => {
-      await page.goto('/admin')
-      const pending = widget(page, 'Đang chờ duyệt')
-      await expect(pending).toContainText(/Bài viết\s*—\s*1/)
-      return highlight(page, pending)
+      // Các ảnh trước vừa mở bài nháp mẫu nên bài đó đang bị khoá (hiện ổ khoá trong danh sách); gỡ khoá cho ảnh gọn.
+      const unlock = await page.request.delete('/api/payload-locked-documents?where[id][exists]=true')
+      expect(unlock.ok(), await unlock.text()).toBe(true)
+      await page.goto('/admin/collections/stories')
+      const cell = page.locator('td.cell-workflow').filter({ hasText: /^Chờ duyệt$/ })
+      await expect(cell).toHaveCount(1)
+      return highlight(page, cell)
     },
   },
   'duyet-quyen-anh': {
@@ -196,13 +242,13 @@ async function assertSafe(page: Page) {
   expect(foreign, 'email lạ trên ảnh chụp').toEqual([])
 }
 
-async function settle(page: Page) {
+async function settle(page: Page, keepToast = false) {
   // Bỏ viền focus của ô vừa gõ để ảnh chỉ có một khung nổi bật là khung đỏ.
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur())
   await page.evaluate(() => document.fonts.ready)
   await page.waitForLoadState('networkidle')
-  // Toast của Payload (vd. "đã lưu") không được lọt vào ảnh.
-  await expect(page.locator('.payload-toast-item')).toHaveCount(0)
+  // Toast của Payload (vd. "đã lưu") không được lọt vào ảnh, trừ ảnh chụp chính thông báo đó.
+  if (!keepToast) await expect(page.locator('.payload-toast-item')).toHaveCount(0)
 }
 
 /** PNG bảng màu nén, ≤ 400KB. */
@@ -223,7 +269,7 @@ async function shoot(browser: Browser, baseURL: string, users: Users, id: string
     }
     const page = await ctx.newPage()
     const label = await recipe.step(page)
-    await settle(page)
+    await settle(page, recipe.keepToast)
     await assertSafe(page)
     await save(page, kind === 'desktop' ? `${id}.png` : `${id}-mobile.png`)
     return label

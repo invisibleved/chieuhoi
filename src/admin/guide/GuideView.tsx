@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import { formatAdminURL } from 'payload/shared'
 
-import { type GuideSection, guideTextParts, sectionsFor } from './sections'
+import { GUIDE_INTRO, type GuideSection, guideTextParts, sectionsFor } from './sections'
 import { GUIDE_SHOTS } from './shots'
 
 const PARTS: { audience: GuideSection['audience']; title: string }[] = [
@@ -65,6 +65,7 @@ export function GuideView({ initPageResult, params, searchParams }: AdminViewSer
       <SetStepNav nav={[{ label: 'Hướng dẫn' }]} />
       <Gutter className="ch-guide">
         <h1 className="ch-guide__title">Hướng dẫn</h1>
+        <p className="ch-guide__intro">{GUIDE_INTRO}</p>
         <p className="ch-guide__intro">Trang này chỉ cách làm những việc thường gặp. Bấm vào tên một việc để đọc từng bước.</p>
 
         <nav className="ch-guide__toc" aria-labelledby="ch-guide-toc">

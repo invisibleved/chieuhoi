@@ -13,9 +13,13 @@ export type GuideSection = {
   steps: GuideStep[]
 }
 
+/** Câu mở đầu trang: chỉ chỗ mở menu, nơi có link Hướng dẫn. */
+export const GUIDE_INTRO =
+  'Menu nằm sau nút có ba gạch ngang ở góc trên bên trái, và trong menu có mục Hướng dẫn để bạn mở lại trang này.'
+
 /**
- * Nội dung trang Hướng dẫn. Người đọc là người trong làng ít dùng máy tính: câu ngắn, mỗi bước một việc,
- * gọi "bạn", không dùng từ kỹ thuật. Thứ tự mục theo spec admin-de-dung, phần 4.
+ * Nội dung trang Hướng dẫn, viết theo giao diện admin gốc của Payload. Người đọc là người trong làng ít dùng máy tính:
+ * câu ngắn, mỗi bước một việc, gọi "bạn", không dùng từ kỹ thuật. Thứ tự mục theo spec admin-de-dung, phần 4.
  */
 export const GUIDE_SECTIONS: GuideSection[] = [
   {
@@ -28,9 +32,15 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Gõ email của bạn vào ô **Email**.' },
       { text: 'Gõ mật khẩu vào ô **Mật khẩu**.' },
       { text: 'Bấm **Đăng nhập**.', shot: 'dang-nhap' },
-      { text: 'Bạn sẽ thấy trang đầu. Các nút ở mục **Việc thường làm** đưa bạn tới những việc hay làm nhất.', shot: 'trang-dau' },
-      { text: 'Không thấy menu thì bấm nút có ba gạch ngang ở góc trên bên trái để mở menu.', shot: 'menu-dien-thoai' },
-      { text: 'Muốn đọc lại trang này, bấm **Hướng dẫn** trong menu.' },
+      {
+        text: 'Bạn sẽ thấy trang đầu, gồm nhiều thẻ xếp theo nhóm. Việc của bạn nằm ở nhóm **Nội dung**.',
+        shot: 'trang-dau',
+      },
+      {
+        text: 'Bạn chỉ cần các thẻ **Kho tư liệu ảnh**, **Bài viết**, **Con người** và **Sản phẩm**. Các thẻ khác bạn bỏ qua.',
+      },
+      { text: 'Muốn mở menu, bấm nút có ba gạch ngang ở góc trên bên trái.', shot: 'mo-menu' },
+      { text: 'Trong menu, bấm **Hướng dẫn** để đọc lại trang này.', shot: 'menu-huong-dan' },
     ],
   },
   {
@@ -39,8 +49,9 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn có ảnh mới muốn đưa vào kho tư liệu.',
     steps: [
-      { text: 'Ở trang đầu, bấm **Tải ảnh lên**.' },
-      { text: 'Bấm **Chọn một file**, rồi chọn ảnh trong máy hoặc điện thoại của bạn.', shot: 'tai-anh-chon-file' },
+      { text: 'Ở trang đầu, bấm nút tròn có dấu cộng trong thẻ **Kho tư liệu ảnh**.', shot: 'tai-anh-mo' },
+      { text: 'Bấm **Chọn một file**.', shot: 'tai-anh-chon-file' },
+      { text: 'Chọn ảnh trong máy hoặc trong điện thoại của bạn.' },
       { text: 'Ở ô **Văn bản thay thế**, viết một câu tả những gì có trong ảnh, cho người không nhìn thấy ảnh.' },
       { text: 'Biết thì ghi thêm **Tiêu đề** và **Người chụp**. Không biết thì để trống, đừng đoán.' },
       { text: 'Hai ô **Quyền sử dụng** và **Đồng ý của người trong ảnh** do người duyệt chọn. Bạn để nguyên.' },
@@ -53,9 +64,9 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn muốn kể một câu chuyện về làng, về nghề hay về một người.',
     steps: [
-      { text: 'Ở trang đầu, bấm **Viết bài mới**.', shot: 'viet-bai-mo' },
+      { text: 'Ở trang đầu, bấm nút tròn có dấu cộng trong thẻ **Bài viết**.', shot: 'viet-bai-mo' },
       {
-        text: 'Ô đầu tiên có dấu sao đỏ cần một tên ngắn cho bài: viết không dấu, nối các chữ bằng gạch ngang, ví dụ chieu-hoa-ngay-tet. Mỗi bài một tên riêng.',
+        text: 'Ô trên cùng bên trái có dấu sao đỏ cần một tên ngắn cho bài: viết không dấu, nối các chữ bằng gạch ngang, ví dụ chieu-hoa-ngay-tet. Mỗi bài một tên riêng.',
       },
       { text: 'Gõ tên bài vào ô **Tiêu đề**.' },
       { text: 'Viết bài vào ô lớn **Nội dung**.', shot: 'viet-bai-noi-dung' },
@@ -71,9 +82,10 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn muốn giới thiệu một người làm nghề hoặc một chiếc chiếu.',
     steps: [
-      { text: 'Ở trang đầu, bấm **Thêm người** hoặc **Thêm sản phẩm**.', shot: 'trang-dau' },
+      { text: 'Ở trang đầu, nhóm **Nội dung**, tìm thẻ **Con người** hoặc thẻ **Sản phẩm**.', shot: 'trang-dau' },
+      { text: 'Bấm nút tròn có dấu cộng trong thẻ đó.' },
       {
-        text: 'Ô đầu tiên có dấu sao đỏ cần một tên ngắn, viết không dấu, nối bằng gạch ngang. Với người, tên ngắn này không được có tên của người đó.',
+        text: 'Ô trên cùng bên trái có dấu sao đỏ cần một tên ngắn, viết không dấu, nối bằng gạch ngang. Với người, tên ngắn này không được có tên của người đó.',
       },
       { text: 'Gõ tên vào ô **Tên**.' },
       { text: 'Điền những ô bạn biết chắc. Ô nào chưa rõ thì để trống, đừng đoán.' },
@@ -107,7 +119,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Bấm vào tên bài của bạn.' },
       { text: 'Ở ô **Quy trình**, chọn **Chờ duyệt**.', shot: 'gui-duyet-quy-trinh' },
       { text: 'Bấm **Lưu bản nháp**.', shot: 'gui-duyet-luu' },
-      { text: 'Xong. Người duyệt sẽ thấy bài ở mục **Đang chờ duyệt** trên trang đầu của họ.' },
+      { text: 'Xong. Trong danh sách **Bài viết**, bài của bạn có chữ **Chờ duyệt** ở cột **Quy trình**. Người duyệt nhìn đó để biết.' },
       { text: 'Đừng bấm **Xuất bản tài liệu**. Nút đó chỉ dành cho người duyệt.' },
     ],
   },
@@ -117,9 +129,11 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn không nhớ mật khẩu để đăng nhập.',
     steps: [
+      { text: 'Đừng bấm **Quên mật khẩu?** ở trang đăng nhập. Trang này chưa gửi thư được, bạn sẽ không nhận được gì.' },
       { text: 'Gọi điện hoặc nhắn tin, nhờ người duyệt đặt lại mật khẩu cho bạn.' },
       { text: 'Người duyệt sẽ đưa bạn mật khẩu mới.' },
-      { text: 'Đăng nhập lại bằng mật khẩu mới đó.' },
+      { text: 'Gõ mật khẩu mới đó vào ô **Mật khẩu**.' },
+      { text: 'Bấm **Đăng nhập**.', shot: 'dang-nhap' },
     ],
   },
   {
@@ -128,8 +142,12 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi trang hiện chữ báo lỗi hoặc không lưu được.',
     steps: [
-      { text: 'Đọc dòng chữ báo lỗi. Nó thường chỉ ra ô nào đang thiếu hoặc sai.' },
-      { text: 'Ô có dấu sao đỏ là ô phải điền. Điền ô đó.' },
+      {
+        text: 'Đọc thông báo màu đỏ hiện ở phía dưới màn hình. Chữ sau dấu hai chấm là tên ô đang thiếu hoặc sai.',
+        shot: 'loi-o-thieu',
+      },
+      { text: 'Tìm ô có tên đó. Ô có dấu sao đỏ là ô phải điền.' },
+      { text: 'Điền ô đó.' },
       { text: 'Bấm lưu lại.' },
       { text: 'Nếu trang báo bạn không có quyền, hãy bấm **Lưu bản nháp** thay cho nút bạn vừa bấm.' },
       { text: 'Nếu trang đứng yên hay trắng trơn, hãy tải lại trang. Những gì đã lưu vẫn còn.' },
@@ -142,9 +160,12 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'reviewer',
     when: 'Dùng khi bạn muốn biết có bài nào đang đợi bạn xem.',
     steps: [
-      { text: 'Ở trang đầu, xem mục **Đang chờ duyệt**. Mỗi dòng cho biết một loại có mấy bài đang đợi.' },
-      { text: 'Bấm vào một dòng, ví dụ **Bài viết — 1**, để thấy các bài đang đợi.', shot: 'duyet-danh-sach' },
+      { text: 'Trong menu, bấm **Bài viết**.' },
+      { text: 'Nhìn cột **Quy trình** trong danh sách.' },
+      { text: 'Bài có chữ **Chờ duyệt** ở cột đó là bài đang đợi bạn.', shot: 'duyet-danh-sach' },
+      { text: 'Trên điện thoại, cột **Quy trình** nằm bên phải. Vuốt bảng sang trái để thấy.' },
       { text: 'Bấm vào tên bài để mở và đọc.' },
+      { text: 'Làm giống vậy với **Con người** và **Sản phẩm** để xem người và sản phẩm đang chờ duyệt.' },
       { text: 'Nếu bài cần sửa thêm, ở ô **Quy trình**, chọn **Bản nháp**.' },
       { text: 'Bấm **Lưu bản nháp**.' },
       { text: 'Báo cho người viết biết bài cần sửa chỗ nào.' },
@@ -175,7 +196,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'reviewer',
     when: 'Dùng khi bạn đã đọc bài chờ duyệt và thấy bài đúng, đủ.',
     steps: [
-      { text: 'Mở bài từ mục **Đang chờ duyệt** trên trang đầu.' },
+      { text: 'Trong danh sách **Bài viết**, bấm vào bài có chữ **Chờ duyệt** ở cột **Quy trình**.' },
       { text: 'Xem lại: ảnh trong bài đã được phép dùng, người trong bài đã đồng ý.' },
       { text: 'Bấm **Xuất bản tài liệu**.', shot: 'duyet-dang' },
       { text: 'Bài hiện lên trang web. Ô **Quy trình** tự chuyển sang **Đã đăng**.' },

@@ -90,7 +90,10 @@ describe('assertGuideDatabase', () => {
 describe('GUIDE_SHOTS', () => {
   const REQUIRED = [
     'dang-nhap',
+    'mo-menu',
+    'menu-huong-dan',
     'trang-dau',
+    'tai-anh-mo',
     'tai-anh-chon-file',
     'tai-anh-luu',
     'viet-bai-mo',
@@ -98,7 +101,7 @@ describe('GUIDE_SHOTS', () => {
     'gui-duyet-quy-trinh',
     'gui-duyet-luu',
     'xem-truoc',
-    'menu-dien-thoai',
+    'loi-o-thieu',
     'duyet-danh-sach',
     'duyet-quyen-anh',
     'duyet-dang',
@@ -109,8 +112,8 @@ describe('GUIDE_SHOTS', () => {
     expect(new Set(ids).size).toBe(ids.length)
     for (const id of REQUIRED) expect(ids).toContain(id)
   })
-  it('menu-dien-thoai có ảnh điện thoại; mọi ảnh có alt tiếng Việt', () => {
-    expect(GUIDE_SHOTS.find((s) => s.id === 'menu-dien-thoai')?.mobile).toBe(true)
+  it('mo-menu có ảnh điện thoại; mọi ảnh có alt tiếng Việt', () => {
+    expect(GUIDE_SHOTS.find((s) => s.id === 'mo-menu')?.mobile).toBe(true)
     for (const s of GUIDE_SHOTS) {
       expect(s.id).toMatch(/^[a-z0-9-]+$/)
       expect(s.alt.trim().length).toBeGreaterThan(10)

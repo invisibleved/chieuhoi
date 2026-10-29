@@ -60,6 +60,8 @@ test.describe('hướng dẫn', () => {
     await editorPage.locator('nav a').filter({ hasText: /^Hướng dẫn$/ }).click()
     await expect(editorPage).toHaveURL(/\/admin\/huong-dan$/)
     await expect(editorPage.getByRole('heading', { level: 1, name: 'Hướng dẫn' })).toBeVisible()
+    // câu mở đầu chỉ chỗ mở menu
+    await expect(editorPage.locator('.ch-guide__intro').first()).toContainText('ba gạch ngang ở góc trên bên trái')
     await expect(sectionTitles(editorPage)).toHaveCount(8)
     // exact: bước "Nút đó chỉ dành cho người duyệt." có cụm chữ này nhưng không phải tiêu đề phần
     await expect(editorPage.getByText('Dành cho người duyệt', { exact: true })).toHaveCount(0)
@@ -99,10 +101,10 @@ test.describe('hướng dẫn', () => {
     await reviewerPage.goto('/admin/huong-dan')
     await expect(sectionTitles(reviewerPage)).toHaveCount(12)
     expect(await reviewerPage.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
-    const mobile = reviewerPage.locator('.ch-guide img[src="/admin-guide/menu-dien-thoai.png"]')
+    const mobile = reviewerPage.locator('.ch-guide img[src="/admin-guide/mo-menu.png"]')
     await expect
       .poll(() => mobile.evaluate((i) => (i as HTMLImageElement).currentSrc))
-      .toMatch(/menu-dien-thoai-mobile\.png$/)
+      .toMatch(/mo-menu-mobile\.png$/)
     expect(await smallTargets(reviewerPage, '.ch-guide__toc')).toEqual([])
   })
 

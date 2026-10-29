@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-import { GUIDE_SECTIONS, guideTextParts, sectionsFor } from '@/admin/guide/sections'
+import { GUIDE_INTRO, GUIDE_SECTIONS, guideTextParts, sectionsFor } from '@/admin/guide/sections'
 import { GUIDE_SHOTS } from '@/admin/guide/shots'
 
 const labels = JSON.parse(readFileSync(path.resolve('public/admin-guide/labels.json'), 'utf8')) as Record<string, string>
@@ -83,8 +83,34 @@ describe('GUIDE_SECTIONS', () => {
     expect(text).toContain('**Lưu bản nháp**')
   })
 
+  it('mục nào cũng có ít nhất một ảnh chụp', () => {
+    for (const s of GUIDE_SECTIONS) expect(s.steps.some((st) => st.shot), s.id).toBe(true)
+  })
+
+  it('không bảo người đọc tìm "Việc thường làm" hay "Đang chờ duyệt" của giao diện cũ', () => {
+    const all = GUIDE_SECTIONS.flatMap((s) => s.steps.map((st) => st.text)).join(' ')
+    expect(all).not.toContain('Việc thường làm')
+    expect(all).not.toContain('Đang chờ duyệt')
+  })
+
+  it('người duyệt tìm bài chờ duyệt bằng cột Quy trình trong danh sách', () => {
+    const text = GUIDE_SECTIONS.find((x) => x.id === 'xem-bai-cho-duyet')!.steps.map((st) => st.text).join(' ')
+    expect(text).toContain('**Quy trình**')
+    expect(text).toContain('**Chờ duyệt**')
+  })
+
   it('dấu ** luôn đi thành cặp', () => {
     for (const s of GUIDE_SECTIONS) for (const st of s.steps) expect(st.text.split('**').length % 2, st.text).toBe(1)
+  })
+})
+
+describe('GUIDE_INTRO', () => {
+  it('là một câu, chỉ nút ba gạch ở góc trên bên trái và mục Hướng dẫn trong menu', () => {
+    expect(GUIDE_INTRO).toContain('ba gạch')
+    expect(GUIDE_INTRO).toContain('góc trên bên trái')
+    expect(GUIDE_INTRO).toContain('Hướng dẫn')
+    expect(GUIDE_INTRO.match(/[.!?]/g)).toHaveLength(1)
+    for (const w of FORBIDDEN) expect(GUIDE_INTRO.toLowerCase()).not.toContain(w)
   })
 })
 
