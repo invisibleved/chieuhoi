@@ -19,6 +19,8 @@
     "test:unit": "cross-env NODE_OPTIONS=--no-deprecation vitest run tests/unit --config ./vitest.config.mts",
     "audit:lighthouse": "node --import tsx/esm tools/lighthouse.mjs",
     "seed": "payload run src/seed/index.ts",
+    "guide:seed": "node --import tsx/esm tools/guide.mjs seed",
+    "guide:shots": "node --import tsx/esm tools/guide.mjs shots",
     "create-reviewer": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/create-reviewer.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create"

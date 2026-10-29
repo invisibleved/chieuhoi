@@ -18,6 +18,9 @@ function selectedProjects(argv: string[]): string[] {
 // Chỉ chạy project staging (site đã deploy hoặc :3200 diễn tập): không cần máy chủ :3000/:3100 và phiên người duyệt seed.
 const selected = selectedProjects(process.argv)
 const stagingOnly = selected.length > 0 && selected.every((name) => name === 'staging')
+// Ảnh hướng dẫn admin: `npm run guide:shots` tự build và chạy máy chủ :3300 trên DB test, không cần máy chủ nào khác.
+const guideShots = process.env.GUIDE_SHOTS === '1'
+const noLocalServers = stagingOnly || guideShots
 
 // STAGING_AUTH dạng user:password, tách ở dấu ':' đầu tiên (mật khẩu được phép chứa ':').
 const stagingAuth = process.env.STAGING_AUTH ?? ''
@@ -30,7 +33,7 @@ const stagingCredentials =
  */
 export default defineConfig({
   testDir: './tests/e2e',
-  globalSetup: stagingOnly ? undefined : './tests/e2e/global-setup.ts',
+  globalSetup: noLocalServers ? undefined : './tests/e2e/global-setup.ts',
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -38,7 +41,8 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  // guide:shots tự tắt máy chủ khi xong, nên không mở báo cáo HTML (nó chờ Ctrl+C khi có lỗi).
+  reporter: guideShots ? 'list' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -50,7 +54,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e|cls\.e2e|staging\.e2e/,
+      testIgnore: /public-pages\.e2e|images\.e2e|workflow\.e2e|cls\.e2e|staging\.e2e|admin-guide-shots\.e2e/,
       // Chạy sau workflow: story tạm của workflow nằm chung DB nên sẽ hiện trong bản xem trước ở cổng 3000 nếu chạy song song.
       dependencies: ['workflow'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium' },
@@ -88,8 +92,18 @@ export default defineConfig({
         httpCredentials: stagingCredentials,
       },
     },
+    // Ảnh chụp cho trang Hướng dẫn trong admin (DB test, dữ liệu mẫu). Chỉ có khi GUIDE_SHOTS=1: `npm run guide:shots`.
+    ...(guideShots
+      ? [
+          {
+            name: 'guide-shots',
+            testMatch: /admin-guide-shots\.e2e/,
+            use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3300' },
+          },
+        ]
+      : []),
   ],
-  webServer: stagingOnly ? undefined : [
+  webServer: noLocalServers ? undefined : [
     {
       command: 'npm run dev',
       reuseExistingServer: true,
