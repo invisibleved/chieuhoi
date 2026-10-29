@@ -59,16 +59,16 @@ export async function shootFullPage(page: Page, open: (p: Page) => Promise<void>
   await page.screenshot({ path: `${SHOTS}/${name}-${vp.name}.png`, fullPage: true })
 }
 
-/** Nút/link nhỏ hơn 44x44 trong main (trừ chú thích nguồn và link trong đoạn văn). Trả danh sách để so với []. */
-export async function smallTargets(page: Page) {
-  return page.evaluate(() => {
+/** Nút/link nhỏ hơn 44x44 trong main (`scope` mặc định `main`; admin không có <main> nên truyền selector khác) (trừ chú thích nguồn và link trong đoạn văn). Trả danh sách để so với []. */
+export async function smallTargets(page: Page, scope = 'main') {
+  return page.evaluate((scope) => {
     const out: string[] = []
-    document.querySelectorAll('main a, main button').forEach((el) => {
+    document.querySelectorAll(`${scope} a, ${scope} button`).forEach((el) => {
       if (el.matches('.fn, [id^="nguon-"] a') || (el.closest('p') && el.tagName === 'A')) return
       const r = el.getBoundingClientRect()
       if (r.width === 0 || r.height === 0) return
       if (r.height < 43.5 || r.width < 43.5) out.push(`${el.tagName} "${(el.textContent ?? '').trim().slice(0, 30)}" ${r.width}x${r.height}`)
     })
     return out
-  })
+  }, scope)
 }

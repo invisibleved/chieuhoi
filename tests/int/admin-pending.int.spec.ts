@@ -16,6 +16,7 @@ const story = (data: Record<string, unknown>) =>
   payload.create({
     collection: 'stories',
     data: { title: 'Bài thử', slug: `bai-thu-${(seq += 1)}`, category: 'history', ...data },
+    user: asUser(reviewer),
     overrideAccess: true,
   } as never)
 
@@ -25,15 +26,22 @@ describe('countPending', () => {
     await resetDb(payload)
     reviewer = await makeUser(payload, 'reviewer')
     editor = await makeUser(payload, 'editor')
+    // 1) chưa từng đăng, đang chờ duyệt
     await story({ workflow: 'in_review', _status: 'draft' })
-    await story({ workflow: 'in_review', _status: 'draft' })
+    // 2) đã đăng; bản nháp mới nhất đang chờ duyệt (hàng chính vẫn là published)
+    const live = (await story({ workflow: 'published', _status: 'published' })) as { id: number }
+    await payload.update({ collection: 'stories', id: live.id, draft: true, data: { workflow: 'in_review' }, user: asUser(reviewer), overrideAccess: true } as never)
+    // 3) bản nháp thường
     await story({ workflow: 'draft', _status: 'draft' })
+    // 4) từng chờ duyệt, bản nháp mới nhất đã quay về draft: không tính
+    const back = (await story({ workflow: 'in_review', _status: 'draft' })) as { id: number }
+    await payload.update({ collection: 'stories', id: back.id, draft: true, data: { workflow: 'draft' }, user: asUser(reviewer), overrideAccess: true } as never)
   }, 120_000)
   afterAll(async () => {
     await resetDb(payload)
   })
 
-  it('người duyệt nhận số bài chờ duyệt, kể cả bản nháp chưa từng đăng', async () => {
+  it('người duyệt nhận số bài chờ duyệt, tính cả bản nháp chưa từng đăng và bản sửa của bài đã đăng, không tính bài đã quay về nháp', async () => {
     const rows = await countPending(payload, asUser(reviewer))
     const stories = rows.find((r) => r.collection === 'stories')
     expect(stories).toMatchObject({

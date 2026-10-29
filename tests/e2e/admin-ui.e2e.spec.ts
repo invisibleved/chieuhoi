@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test'
 
-import { loginReviewer, VIEWPORTS } from './helpers'
+import { loginReviewer, smallTargets, VIEWPORTS } from './helpers'
 
 test.describe('nhận diện', () => {
   test('trang đăng nhập có logo Chiếu Hới và hướng dẫn quên mật khẩu', async ({ page }) => {
@@ -134,6 +134,7 @@ test.describe('trang đầu', () => {
   let reviewerPage: Page
   let editorPage: Page
   let userId: number | string | undefined
+  let storyId: number | string | undefined
 
   test.beforeAll(async ({ browser, baseURL }) => {
     reviewerCtx = await browser.newContext({ baseURL })
@@ -144,6 +145,12 @@ test.describe('trang đầu', () => {
     })
     expect(created.ok(), await created.text()).toBe(true)
     userId = (await created.json()).doc.id
+    // một bài đang chờ duyệt để widget Đang chờ duyệt có nội dung xác định
+    const story = await reviewerCtx.request.post('/api/stories?draft=true', {
+      data: { title: `Bài e2e trang đầu ${rand}`, slug: `e2e-trang-dau-${rand}`, category: 'history', workflow: 'in_review', _status: 'draft' },
+    })
+    expect(story.ok(), await story.text()).toBe(true)
+    storyId = (await story.json()).doc.id
     editorCtx = await browser.newContext({ baseURL })
     const login = await editorCtx.request.post('/api/users/login', {
       data: { email: editorEmail, password: editorPassword },
@@ -154,10 +161,14 @@ test.describe('trang đầu', () => {
 
   test.afterAll(async () => {
     try {
-      if (userId !== undefined) await reviewerCtx.request.delete(`/api/users/${userId}`)
+      if (storyId !== undefined) await reviewerCtx.request.delete(`/api/stories/${storyId}`)
     } finally {
-      await editorCtx?.close()
-      await reviewerCtx?.close()
+      try {
+        if (userId !== undefined) await reviewerCtx.request.delete(`/api/users/${userId}`)
+      } finally {
+        await editorCtx?.close()
+        await reviewerCtx?.close()
+      }
     }
   })
 
@@ -193,7 +204,7 @@ test.describe('trang đầu', () => {
     await reviewerPage.goto('/admin')
     const pending = widget(reviewerPage, 'Đang chờ duyệt')
     await expect(pending).toBeVisible()
-    await expect(pending.locator('a, p').first()).toBeVisible()
+    await expect(pending.getByRole('link', { name: /^Bài viết — [1-9]\d*$/ })).toBeVisible()
     await expect(
       widget(reviewerPage, 'Tất cả mục').getByRole('heading', { name: 'Người dùng' }),
     ).toBeVisible()
@@ -203,13 +214,13 @@ test.describe('trang đầu', () => {
     await editorPage.setViewportSize({ width: 390, height: 844 })
     await editorPage.goto('/admin')
     const links = widget(editorPage, 'Việc thường làm').getByRole('link')
-    await expect(links).toHaveCount(5)
     const boxes = await links.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()))
+    expect(boxes).toHaveLength(5)
     expect(new Set(boxes.map((b) => Math.round(b.x))).size).toBe(1)
-    for (const b of boxes) expect(b.height).toBeGreaterThanOrEqual(44)
-    expect(
-      await editorPage.evaluate(() => document.querySelectorAll('.ch-tasks__btn').length),
-    ).toBe(5)
+    // admin không có <main>: quét trong widget, và bảo đảm phạm vi quét có đủ 5 nút việc
+    const scope = 'section.ch-widget'
+    expect(await editorPage.locator(`${scope} .ch-tasks__btn`).count()).toBe(5)
+    expect(await smallTargets(editorPage, scope)).toEqual([])
   })
 
   for (const role of ['biên tập viên', 'người duyệt'] as const) {
