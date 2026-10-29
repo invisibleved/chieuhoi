@@ -48,11 +48,12 @@ describe('GUIDE_SECTIONS', () => {
     expect(new Set(used)).toEqual(ids)
   })
 
-  it('chữ in đậm ở bước có ảnh khớp đúng chữ trên ảnh chụp (labels.json)', () => {
+  it('chữ in đậm ở bước có ảnh khớp trọn một dòng chữ trên ảnh chụp (labels.json)', () => {
     for (const s of GUIDE_SECTIONS) {
       for (const st of s.steps) {
         if (!st.shot) continue
-        for (const b of bolds(st.text)) expect(labels[st.shot], `${s.id}/${st.shot}: ${b}`).toContain(b)
+        const lines = (labels[st.shot] ?? '').split('\n').map((l) => l.trim())
+        for (const b of bolds(st.text)) expect(lines, `${s.id}/${st.shot}: ${b}`).toContain(b)
       }
     }
   })
