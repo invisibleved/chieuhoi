@@ -16,13 +16,14 @@ import { Sources } from './collections/Sources'
 import { TimelineEvents } from './collections/TimelineEvents'
 import { Users } from './collections/Users'
 import { storagePlugins } from './storage'
+import { defaultLayout, dashboardWidgets } from './admin/dashboard/layout'
 import { PageIntros } from './globals/PageIntros'
 import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-export default buildConfig({
+const config = buildConfig({
   admin: {
     user: Users.slug,
     meta: { titleSuffix: ' — Chiếu Hới' },
@@ -33,6 +34,7 @@ export default buildConfig({
       providers: ['/admin/AdminFonts#AdminFonts'],
       afterLogin: ['/admin/LoginHelp#LoginHelp'],
     },
+    dashboard: { widgets: dashboardWidgets, defaultLayout },
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -57,4 +59,11 @@ export default buildConfig({
   }),
   sharp,
   plugins: storagePlugins(process.env),
+})
+
+// Payload tự thêm widget `collections` (liệt kê mọi mục, kể cả Người dùng) sau khi chuẩn hoá cấu hình; gỡ để
+// thay bằng widget `tat-ca-muc` đã lọc theo vai trò, kẻo người dùng thêm lại được từ chế độ sửa trang đầu.
+export default config.then((c) => {
+  if (c.admin.dashboard) c.admin.dashboard.widgets = c.admin.dashboard.widgets.filter((w) => w.slug !== 'collections')
+  return c
 })

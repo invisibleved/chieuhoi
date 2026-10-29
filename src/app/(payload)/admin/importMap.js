@@ -25,7 +25,9 @@ import { Icon as Icon_ecb2d425e0c47f2704e0f6c0188b49d0 } from '../../../admin/Ic
 import { Logo as Logo_8c3bf6d9c8d24e4e81ab6192a4938147 } from '../../../admin/Logo'
 import { LoginHelp as LoginHelp_16a516c267fedcc9778576830c04db4a } from '../../../admin/LoginHelp'
 import { AdminFonts as AdminFonts_ac187d83d20da28b5b6a40a61611c6bd } from '../../../admin/AdminFonts'
-import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { TasksWidget as TasksWidget_6fcffc26e17d190198a10bd18345f81f } from '../../../admin/dashboard/TasksWidget'
+import { PendingWidget as PendingWidget_95fda027e9da010f3cb2a3defe2b49c7 } from '../../../admin/dashboard/PendingWidget'
+import { EntitiesWidget as EntitiesWidget_0c1ffd7261f49a1ff86afdb9be6c3661 } from '../../../admin/dashboard/EntitiesWidget'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 /** @type import('payload').ImportMap */
@@ -57,6 +59,8 @@ export const importMap = {
   "/admin/Logo#Logo": Logo_8c3bf6d9c8d24e4e81ab6192a4938147,
   "/admin/LoginHelp#LoginHelp": LoginHelp_16a516c267fedcc9778576830c04db4a,
   "/admin/AdminFonts#AdminFonts": AdminFonts_ac187d83d20da28b5b6a40a61611c6bd,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "/admin/dashboard/TasksWidget#TasksWidget": TasksWidget_6fcffc26e17d190198a10bd18345f81f,
+  "/admin/dashboard/PendingWidget#PendingWidget": PendingWidget_95fda027e9da010f3cb2a3defe2b49c7,
+  "/admin/dashboard/EntitiesWidget#EntitiesWidget": EntitiesWidget_0c1ffd7261f49a1ff86afdb9be6c3661,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

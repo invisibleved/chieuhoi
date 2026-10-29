@@ -120,3 +120,114 @@ test.describe('menu theo vai trò', () => {
     await expect(field).toContainText(sourceTitle)
   })
 })
+
+test.describe('trang đầu', () => {
+  test.describe.configure({ mode: 'serial' })
+
+  const rand = Math.random().toString(36).slice(2, 8)
+  const editorEmail = `editor-home-${rand}@example.com`
+  const editorPassword = `E2e-${rand}-Passw0rd!`
+  const BUTTONS = ['Tải ảnh lên', 'Viết bài mới', 'Thêm người', 'Thêm sản phẩm', 'Xem hướng dẫn']
+
+  let reviewerCtx: BrowserContext
+  let editorCtx: BrowserContext
+  let reviewerPage: Page
+  let editorPage: Page
+  let userId: number | string | undefined
+
+  test.beforeAll(async ({ browser, baseURL }) => {
+    reviewerCtx = await browser.newContext({ baseURL })
+    reviewerPage = await reviewerCtx.newPage()
+    await loginReviewer(reviewerPage)
+    const created = await reviewerCtx.request.post('/api/users', {
+      data: { email: editorEmail, password: editorPassword, role: 'editor' },
+    })
+    expect(created.ok(), await created.text()).toBe(true)
+    userId = (await created.json()).doc.id
+    editorCtx = await browser.newContext({ baseURL })
+    const login = await editorCtx.request.post('/api/users/login', {
+      data: { email: editorEmail, password: editorPassword },
+    })
+    expect(login.ok(), await login.text()).toBe(true)
+    editorPage = await editorCtx.newPage()
+  })
+
+  test.afterAll(async () => {
+    try {
+      if (userId !== undefined) await reviewerCtx.request.delete(`/api/users/${userId}`)
+    } finally {
+      await editorCtx?.close()
+      await reviewerCtx?.close()
+    }
+  })
+
+  const widget = (page: Page, name: string) =>
+    page
+      .locator('section.ch-widget')
+      .filter({ has: page.getByRole('heading', { name, exact: true }) })
+
+  test('biên tập viên thấy 5 nút việc thường làm, Tất cả mục không có Người dùng', async () => {
+    await editorPage.goto('/admin')
+    const tasks = widget(editorPage, 'Việc thường làm')
+    await expect(tasks).toBeVisible()
+    await expect(tasks.getByRole('link')).toHaveText(BUTTONS)
+    await expect(
+      editorPage.getByRole('heading', { name: 'Đang chờ duyệt', exact: true }),
+    ).toHaveCount(0)
+    const all = widget(editorPage, 'Tất cả mục')
+    await expect(all).toBeVisible()
+    await expect(all.getByRole('heading', { name: 'Bài viết' })).toBeVisible()
+    await expect(all.getByRole('heading', { name: 'Người dùng' })).toHaveCount(0)
+    await expect(all.getByRole('heading', { name: 'Nguồn', exact: true })).toHaveCount(0)
+    // widget `collections` mặc định của Payload đã được gỡ: chỉ có một lưới mục
+    await expect(editorPage.locator('.collections')).toHaveCount(0)
+  })
+
+  test('bấm Viết bài mới mở trang tạo bài viết', async () => {
+    await editorPage.goto('/admin')
+    await widget(editorPage, 'Việc thường làm').getByRole('link', { name: 'Viết bài mới' }).click()
+    await expect(editorPage).toHaveURL(/\/admin\/collections\/stories\/create$/)
+  })
+
+  test('người duyệt thấy Đang chờ duyệt và Người dùng trong Tất cả mục', async () => {
+    await reviewerPage.goto('/admin')
+    const pending = widget(reviewerPage, 'Đang chờ duyệt')
+    await expect(pending).toBeVisible()
+    await expect(pending.locator('a, p').first()).toBeVisible()
+    await expect(
+      widget(reviewerPage, 'Tất cả mục').getByRole('heading', { name: 'Người dùng' }),
+    ).toBeVisible()
+  })
+
+  test('ở 390px các nút xếp một cột và đủ lớn', async () => {
+    await editorPage.setViewportSize({ width: 390, height: 844 })
+    await editorPage.goto('/admin')
+    const links = widget(editorPage, 'Việc thường làm').getByRole('link')
+    await expect(links).toHaveCount(5)
+    const boxes = await links.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()))
+    expect(new Set(boxes.map((b) => Math.round(b.x))).size).toBe(1)
+    for (const b of boxes) expect(b.height).toBeGreaterThanOrEqual(44)
+    expect(
+      await editorPage.evaluate(() => document.querySelectorAll('.ch-tasks__btn').length),
+    ).toBe(5)
+  })
+
+  for (const role of ['biên tập viên', 'người duyệt'] as const) {
+    for (const vp of VIEWPORTS) {
+      test(`trang đầu của ${role} không vi phạm axe ở ${vp.name}`, async () => {
+        const page = role === 'người duyệt' ? reviewerPage : editorPage
+        await page.setViewportSize({ width: vp.width, height: vp.height })
+        await page.goto('/admin')
+        await expect(widget(page, 'Tất cả mục')).toBeVisible()
+        const res = await new AxeBuilder({ page })
+          .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+          .analyze()
+        expect(
+          res.violations.map(
+            (v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`,
+          ),
+        ).toEqual([])
+      })
+    }
+  }
+})
