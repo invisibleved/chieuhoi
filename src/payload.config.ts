@@ -33,6 +33,10 @@ const config = buildConfig({
       Nav: '/admin/Nav#Nav',
       providers: ['/admin/AdminFonts#AdminFonts'],
       afterLogin: ['/admin/LoginHelp#LoginHelp'],
+      afterNavLinks: ['/admin/guide/GuideNavLink#GuideNavLink'],
+      views: {
+        huongDan: { Component: '/admin/guide/GuideView#GuideView', path: '/huong-dan', exact: true },
+      },
     },
     dashboard: { widgets: dashboardWidgets, defaultLayout },
     importMap: {
