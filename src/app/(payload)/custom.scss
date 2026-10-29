@@ -1,0 +1,116 @@
+// Nhận diện Chiếu Hới cho Payload admin. Màu lấy từ design/tokens/tokens.css, khai báo một lần ở đây.
+$bg-raised: #fbf6ee; // --bg-raised
+$bg-inverse: #344b3d; // --bg-inverse (xanh làng)
+$bg-ink: #282724; // --bg-ink
+$text-primary: #282724; // --text-primary
+$text-secondary: #4a4741; // --text-secondary
+$text-on-dark: #f3ebdd; // --text-on-dark
+$focus-light: #344b3d; // --focus-light
+
+// Payload đặt style trong @layer; style ngoài layer này luôn thắng.
+:root,
+html[data-theme='light'] {
+  --theme-bg: #{$bg-raised};
+  --theme-input-bg: #{$bg-raised};
+  --theme-text: #{$text-primary};
+  --style-radius-s: 0;
+  --style-radius-m: 0;
+  --style-radius-l: 0;
+  --accessibility-outline: 2px solid #{$focus-light};
+}
+
+// --admin-font-* chỉ có bên trong AdminFonts (.ch-admin-fonts), nên --font-body đặt tại đó.
+.ch-admin-fonts {
+  --font-body: var(--admin-font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-body);
+}
+
+*,
+*::before,
+*::after {
+  box-shadow: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid $focus-light;
+  outline-offset: 2px;
+}
+
+// Nút chính: xanh làng, chữ sáng (không đổi --theme-success-*).
+.btn--style-primary {
+  --color: #{$text-on-dark};
+  --bg-color: #{$bg-inverse};
+  --hover-bg: #{$bg-ink};
+  --hover-color: #{$text-on-dark};
+}
+
+// Logo và biểu tượng
+.ch-admin-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: $text-primary;
+
+  &__name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    font-size: 0.875rem;
+    color: $text-secondary;
+    line-height: 1.3;
+  }
+}
+
+// Trang đăng nhập đủ lớn để dùng Noto Serif Display (>= 20px).
+.template-minimal .ch-admin-logo__name {
+  font-family: var(--admin-font-display), serif;
+  font-weight: 400;
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+}
+
+.ch-admin-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: $bg-inverse;
+  color: $text-on-dark;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.step-nav__home {
+  // Payload cố định 18×18px, quá nhỏ cho biểu tượng CH.
+  width: auto;
+  height: auto;
+}
+
+.ch-admin-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// Trang đăng nhập: thay link "Quên mật khẩu?" mặc định bằng LoginHelp.
+// Selector thật (DOM /admin/login): form.login__form > a[href$='/forgot'].
+.login__form a[href$='/forgot'] {
+  display: none;
+}
+
+.ch-admin-login-help {
+  margin: 0;
+  color: $text-secondary;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}

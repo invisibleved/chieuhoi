@@ -49,4 +49,15 @@ describe('lint kiến trúc', () => {
     expect(await rulesFor('src/lib/basicAuth.ts', "import { x } from '@/lib/env'\nexport const a = x\n")).toContain(RULE)
     expect(await rulesFor('src/lib/basicAuth.ts', "import { createHash } from 'node:crypto'\nexport const a = createHash\n")).toEqual([])
   })
+  it('admin không được import component của site', async () => {
+    expect(await rulesFor('src/admin/Bad.tsx', "import { Button } from '@/components/ui/Button'\nexport default Button\n")).toContain(RULE)
+  })
+  it('admin không được import @/lib/content', async () => {
+    expect(await rulesFor('src/admin/Bad.tsx', "import { getMode } from '@/lib/content'\nexport default getMode\n")).toContain(RULE)
+    expect(await rulesFor('src/admin/Bad.tsx', "import { showText } from '@/lib/content/visibility'\nexport default showText\n")).toContain(RULE)
+  })
+  it('admin được import @payloadcms/ui và @/access', async () => {
+    const code = "import { Link } from '@payloadcms/ui'\nimport { isReviewer } from '@/access/roles'\nexport const a = [Link, isReviewer]\n"
+    expect(await rulesFor('src/admin/Ok.tsx', code)).toEqual([])
+  })
 })

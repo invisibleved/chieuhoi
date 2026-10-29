@@ -26,6 +26,12 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     meta: { titleSuffix: ' — Chiếu Hới' },
+    theme: 'light',
+    components: {
+      graphics: { Logo: '/admin/Logo#Logo', Icon: '/admin/Icon#Icon' },
+      providers: ['/admin/AdminFonts#AdminFonts'],
+      afterLogin: ['/admin/LoginHelp#LoginHelp'],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

@@ -70,6 +70,25 @@ const eslintConfig = [
     },
   },
   {
+    files: ['src/admin/**'],
+    rules: {
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: '@/lib/content', message: 'Admin không dùng component/dữ liệu của site. Xem CLAUDE.md#Kiến trúc.' },
+          ],
+          patterns: [
+            {
+              group: ['@/components/*', '@/app/*', '@/lib/content/*'],
+              message: 'Admin không dùng component/dữ liệu của site. Xem CLAUDE.md#Kiến trúc.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['src/proxy.ts'],
     rules: {
       '@typescript-eslint/no-restricted-imports': [
