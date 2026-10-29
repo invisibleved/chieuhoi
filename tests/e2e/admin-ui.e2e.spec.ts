@@ -28,9 +28,8 @@ test.describe('nhận diện', () => {
   test('thanh trên của /admin có biểu tượng CH', async ({ page }) => {
     await loginReviewer(page)
     await page.goto('/admin')
-    const icon = page.locator('.step-nav__home .ch-admin-icon')
+    const icon = page.locator('.step-nav__home .ch-admin-icon:visible').first()
     await expect(icon).toContainText('CH')
-    const box = await icon.boundingBox()
-    expect(box?.width).toBeGreaterThanOrEqual(24)
+    await expect.poll(async () => (await icon.boundingBox())?.width ?? 0).toBeGreaterThanOrEqual(24)
   })
 })
