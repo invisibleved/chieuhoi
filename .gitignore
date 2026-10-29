@@ -25,3 +25,7 @@ npm-debug.log*
 .vercel
 /media/
 /playwright/.auth/
+
+# Ảnh không có quyền đăng: chỉ giữ ở máy, không commit (xem design/reference-images/RIGHTS.md).
+design/reference-images/*.webp
+design/screens/*.jpg

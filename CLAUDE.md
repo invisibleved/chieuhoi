@@ -5,7 +5,7 @@ Thiết kế đã hoàn tất. Việc của bạn là **triển khai đúng thi�
 
 ## Tài liệu phải đọc trước
 1. `docs/HANDOFF.md`: bảng route, token, component, đặc tả tương tác, mô hình CMS, checklist khả năng truy cập.
-2. `design/screens/*.jpg`: ảnh chụp toàn trang của từng màn hình (desktop 1440, mobile 390). **Đây là nguồn chuẩn về giao diện.**
+2. `design/screens/*.jpg`: ảnh chụp toàn trang của từng màn hình (desktop 1440, mobile 390). **Đây là nguồn chuẩn về giao diện.** Ảnh này và `design/reference-images/*.webp` chứa ảnh chưa có quyền đăng nên không nằm trong git; lấy từ bộ bàn giao thiết kế và chép vào đúng thư mục.
 3. `design/source/*.dc.html`: mã nguồn artboard. Tra ở đây copy, khoảng cách, cỡ chữ, ARIA và logic trạng thái chính xác. Định dạng file xem `design/source/README.md`.
 4. `design/tokens/`: `tokens.css` và `tailwind.preset.ts`.
 5. `content/seed/*.json`: dữ liệu mẫu (timeline, công đoạn, sản phẩm, bài viết, nguồn).
