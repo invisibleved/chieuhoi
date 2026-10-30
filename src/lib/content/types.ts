@@ -385,10 +385,10 @@ export interface CraftPageView {
   intro: PageIntroView
   hero: MediaView | null
   steps: CraftStepView[]
-  tools: { n: number; name: string; note: Variant; image: ImageView | null }[]
+  tools: { n: number; name: string; note: Variant; cite: string[]; image: ImageView | null }[]
   compare: {
-    hand: { title: string; image: ImageView | null; text: Variant; note: Variant }
-    machine: { title: string; image: ImageView | null; text: Variant; note: Variant }
+    hand: { title: string | null; image: ImageView | null; text: Variant; note: Variant; cite: string[] }
+    machine: { title: string | null; image: ImageView | null; text: Variant; note: Variant; cite: string[] }
     /** Ô desktop bị ẩn để null; hàng cả hai ô null đã bị bỏ. `mobile`: các dòng mobile còn hiện được. */
     rows: {
       aspect: string
@@ -397,9 +397,12 @@ export interface CraftPageView {
       mobile: string[]
       /** Ô/dòng còn chờ xác minh (hiện mờ ở preview); `mobile` song song với `mobile` ở trên. */
       muted: { hand: boolean; machine: boolean; mobile: boolean[] }
+      cite: string[]
     }[]
   }
   readNext: ReadNextItem[]
+  /** Nguồn mà trang trích, theo thứ tự đánh số, đã lọc theo mode. */
+  sources: SourceView[]
   copy: CraftCopyView
 }
 

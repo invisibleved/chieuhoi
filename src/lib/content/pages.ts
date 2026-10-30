@@ -7,14 +7,16 @@ import { PAGE_MEDIA_SLOTS, type PageMediaRoute, type PageMediaSlot } from '@/glo
 
 import { applyMode } from './copy/applyMode'
 import { connectCopy } from './copy/connect'
-import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft'
+import { craftCopy, craftReadNext } from './copy/craft'
 import { villageCopy, villageTimelineAdd } from './copy/village'
-import { villageFactsFrom } from './pageFacts'
+import { craftCompareRows } from './craftMerge'
+import { craftFactsFrom, villageFactsFrom, type CraftFacts } from './pageFacts'
+import { pageSourcesInOrder } from './pageSources'
 import { mergeVillageCopy, villageFactRows } from './villageMerge'
-import { formatDate, readGlobalDoc, type createContent } from './queries'
+import { readGlobalDoc, type createContent } from './queries'
 import { buildConnectContact } from './connectContact'
-import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
-import { isUnverified, optionalText, showText, toImageView } from './visibility'
+import type { ConnectPageView, CraftPageView, MediaView, Mode, VillagePageView } from './types'
+import { optionalText, showText, toImageView } from './visibility'
 
 type Content = ReturnType<typeof createContent>
 type MediaRow = { slot?: string; image?: unknown; caption?: string | null }
@@ -35,39 +37,34 @@ export function createPages(payload: Payload, content: Content) {
   }
 
   async function getCraftPage(mode: Mode): Promise<CraftPageView> {
-    const [intro, media, steps] = await Promise.all([
+    const [intro, media, steps, allSources, intros] = await Promise.all([
       content.getPageIntro('nghe-det-chieu', mode),
       getPageMedia('nghe-det-chieu', mode),
       content.getCraftSteps(mode),
+      content.getSources(mode),
+      readGlobalDoc(payload, 'page-intros', mode, 1),
     ])
-    const rows: CraftPageView['compare']['rows'] = []
-    for (const r of craftCompare.rows) {
-      const hand = showText(r.hand, mode)
-      const machine = showText(r.machine, mode)
-      const lines = r.mobile.map((l) => ({ text: showText(l, mode), muted: isUnverified(l) })).filter((l): l is { text: string; muted: boolean } => l.text !== null)
-      if (hand !== null || machine !== null) {
-        rows.push({
-          aspect: r.aspect, hand, machine, mobile: lines.map((l) => l.text),
-          muted: { hand: isUnverified(r.hand), machine: isUnverified(r.machine), mobile: lines.map((l) => l.muted) },
-        })
-      }
+    const f = craftFactsFrom(intros['nghe-det-chieu'] as Record<string, unknown> | undefined)
+    const sources = pageSourcesInOrder(allSources, f.sourceOrder)
+    const visible = new Set(sources.map((s) => s.id))
+    const opts = { cites: visible }
+    const card = (c: CraftFacts['hand'], slot: 'hand' | 'machine') => {
+      const m = applyMode({ text: c.text, note: c.note, cite: c.cite }, mode, opts)
+      return { title: showText(c.title, mode), image: media[slot]?.image ?? null, text: m.text, note: m.note, cite: m.cite }
     }
-    const card = (c: typeof craftCompare.hand, slot: 'hand' | 'machine') => ({
-      title: c.title, image: media[slot]?.image ?? null,
-      text: applyMode(c.text, mode), note: applyMode(c.note, mode),
-    })
     return {
       intro,
       hero: media.hero ?? null,
       steps,
-      tools: craftTools.map((t) => ({
-        n: t.n, name: t.name, note: applyMode(t.note, mode),
-        image: media[`tool-${t.n}` as 'tool-1']?.image ?? null,
-      })),
-      compare: { hand: card(craftCompare.hand, 'hand'), machine: card(craftCompare.machine, 'machine'), rows },
+      tools: f.tools.map((t) => {
+        const m = applyMode({ note: t.note, cite: t.cite }, mode, opts)
+        return { n: t.n, name: t.name, note: m.note, cite: m.cite, image: media[`tool-${t.n}` as 'tool-1']?.image ?? null }
+      }),
+      compare: { hand: card(f.hand, 'hand'), machine: card(f.machine, 'machine'), rows: craftCompareRows(f.rows, mode, visible) },
       readNext: craftReadNext.map((r) => ({
         href: r.href, eyebrow: r.eyebrow, title: r.title, cta: r.cta, image: media[r.slot]?.image ?? null,
       })),
+      sources,
       copy: applyMode(craftCopy, mode),
     }
   }
@@ -81,12 +78,7 @@ export function createPages(payload: Payload, content: Content) {
       readGlobalDoc(payload, 'page-intros', mode, 1),
     ])
     const f = villageFactsFrom(intros['lang-hoi'] as Record<string, unknown> | undefined)
-    // Chỉ các nguồn trang trích, theo thứ tự đánh số (R9); nguồn bị ẩn thì cite tương ứng cũng bị bỏ.
-    const byId = new Map(allSources.map((s) => [s.id, s]))
-    const sources = f.sourceOrder
-      .map((id) => byId.get(id))
-      .filter((s): s is SourceView => s !== undefined)
-      .map((s) => ({ ...s, date: formatDate(s.date) }))
+    const sources = pageSourcesInOrder(allSources, f.sourceOrder)
     const visible = new Set(sources.map((s) => s.id))
 
     const add = applyMode(villageTimelineAdd, mode)

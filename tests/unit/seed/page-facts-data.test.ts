@@ -7,7 +7,6 @@ import { craftFactsSeed, PAGE_FACT_SOURCE_IDS, villageFactsSeed } from '@/seed/d
 import { isEmptyGroup, mapSourceRefs } from '@/seed/pageFacts'
 import { craftFactsFrom, villageFactsFrom } from '@/lib/content/pageFacts'
 // Làng Hới: so với chữ cố định (chép từ artboard). Nghề dệt: đối chiếu với chữ đang có trong code (Task 5 đổi sang giá trị cố định).
-import { craftCompare, craftTools } from '@/lib/content/copy/craft'
 
 const sourceJson = JSON.parse(
   readFileSync(path.resolve(process.cwd(), 'content/seed/sources.json'), 'utf8'),
@@ -139,11 +138,47 @@ describe('dữ liệu seed dữ kiện trang', () => {
   })
 
   it('Nghề dệt: qua craftFactsFrom ra đúng chữ hiện tại', () => {
+    // Chữ chép nguyên văn từ copy/craft.ts trước khi chuyển sang CMS.
     const c = craftFactsFrom(populated(craftFactsSeed))
-    expect(c.tools).toEqual(craftTools.map((t) => ({ ...t, cite: [] })))
-    expect(c.hand).toEqual({ ...craftCompare.hand, cite: [] })
-    expect(c.machine).toEqual({ ...craftCompare.machine, cite: [] })
-    expect(c.rows).toEqual(craftCompare.rows.map((r) => ({ ...r, cite: [] })))
+    expect(c.tools).toEqual([
+      { n: 1, name: 'Khung dệt', note: { desktop: 'Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].', mobile: 'Tên bộ phận: [cần xác minh]' }, cite: [] },
+      { n: 2, name: 'Khuôn in hoa văn', note: { desktop: 'Chất liệu khuôn và cách làm khuôn: [cần xác minh].', mobile: 'Chất liệu: [cần xác minh]' }, cite: [] },
+      { n: 3, name: 'Bàn chải quét màu', note: { desktop: 'Loại màu dùng để in và cách pha: [cần xác minh].', mobile: 'Loại màu: [cần xác minh]' }, cite: [] },
+    ])
+    expect(c.hand).toEqual({
+      title: 'Dệt thủ công',
+      text: {
+        desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
+        mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
+      },
+      note: {
+        desktop: 'Số người cần cho một khung, thời gian một tấm, cách chia việc trong gia đình: [cần xác minh].',
+        mobile: 'Thời gian một tấm, cách chia việc: [cần xác minh].',
+      },
+      cite: [],
+    })
+    expect(c.machine).toEqual({
+      title: 'Dệt bằng máy',
+      text: {
+        desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
+        mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
+      },
+      note: {
+        desktop: 'Thời điểm máy dệt xuất hiện ở làng, loại máy và công suất: [cần xác minh].',
+        mobile: 'Thời điểm máy dệt xuất hiện ở làng: [cần xác minh].',
+      },
+      cite: [],
+    })
+    const pending = ['Thủ công: [cần xác minh] · Máy: [cần xác minh]']
+    expect(c.rows).toEqual([
+      {
+        aspect: 'Việc của đôi tay', hand: 'Đưa sợi và dệt trên khung', machine: 'Nạp cói vào máy',
+        mobile: ['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'], cite: [],
+      },
+      { aspect: 'Thời gian một tấm', hand: '[cần xác minh]', machine: '[cần xác minh]', mobile: pending, cite: [] },
+      { aspect: 'Hoa văn', hand: '[cần xác minh]', machine: '[cần xác minh]', mobile: pending, cite: [] },
+      { aspect: 'Khâu vẫn làm tay', hand: '[cần xác minh]', machine: '[cần xác minh]', mobile: pending, cite: [] },
+    ])
     expect(c.sourceOrder).toEqual([])
   })
 })

@@ -65,66 +65,6 @@ export const craftCopy = {
 
 export type CraftCopyView = ApplyMode<typeof craftCopy>
 
-// Dụng cụ: tên cố định, ghi chú còn chờ xác minh (ẩn ở public). Ảnh lấy từ ô tool-<n>.
-export const craftTools = [
-  {
-    n: 1, name: 'Khung dệt',
-    note: { desktop: 'Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].', mobile: 'Tên bộ phận: [cần xác minh]' },
-  },
-  {
-    n: 2, name: 'Khuôn in hoa văn',
-    note: { desktop: 'Chất liệu khuôn và cách làm khuôn: [cần xác minh].', mobile: 'Chất liệu: [cần xác minh]' },
-  },
-  {
-    n: 3, name: 'Bàn chải quét màu',
-    note: { desktop: 'Loại màu dùng để in và cách pha: [cần xác minh].', mobile: 'Loại màu: [cần xác minh]' },
-  },
-]
-
-// Mỗi hàng: ô desktop (hand/machine) và các dòng mobile (nguyên văn CraftMobile).
-export const craftCompare = {
-  hand: {
-    title: 'Dệt thủ công',
-    text: {
-      desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
-      mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
-    },
-    note: {
-      desktop: 'Số người cần cho một khung, thời gian một tấm, cách chia việc trong gia đình: [cần xác minh].',
-      mobile: 'Thời gian một tấm, cách chia việc: [cần xác minh].',
-    },
-  },
-  machine: {
-    title: 'Dệt bằng máy',
-    text: {
-      desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
-      mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
-    },
-    note: {
-      desktop: 'Thời điểm máy dệt xuất hiện ở làng, loại máy và công suất: [cần xác minh].',
-      mobile: 'Thời điểm máy dệt xuất hiện ở làng: [cần xác minh].',
-    },
-  },
-  rows: [
-    {
-      aspect: 'Việc của đôi tay', hand: 'Đưa sợi và dệt trên khung', machine: 'Nạp cói vào máy',
-      mobile: ['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'],
-    },
-    {
-      aspect: 'Thời gian một tấm', hand: '[cần xác minh]', machine: '[cần xác minh]',
-      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
-    },
-    {
-      aspect: 'Hoa văn', hand: '[cần xác minh]', machine: '[cần xác minh]',
-      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
-    },
-    {
-      aspect: 'Khâu vẫn làm tay', hand: '[cần xác minh]', machine: '[cần xác minh]',
-      mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
-    },
-  ],
-}
-
 // Thẻ "Đọc tiếp": ảnh lấy từ ô `slot`.
 export const craftReadNext = [
   { href: '/con-nguoi', slot: 'next-people', eyebrow: 'CON NGƯỜI', title: 'Gặp những người dệt', cta: 'Xem chân dung →' },

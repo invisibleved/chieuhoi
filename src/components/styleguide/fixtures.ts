@@ -156,13 +156,45 @@ export const compareRows: CraftPageView['compare']['rows'] = [
     aspect: 'Việc của đôi tay', hand: 'Đưa sợi và dệt trên khung', machine: 'Nạp cói vào máy',
     mobile: ['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'],
     muted: { hand: false, machine: false, mobile: [false, false] },
+    cite: ['vietnamplus-2026'],
   },
   {
     aspect: 'Thời gian một tấm', hand: '[cần xác minh]', machine: '[cần xác minh]',
     mobile: ['Thủ công: [cần xác minh] · Máy: [cần xác minh]'],
     muted: { hand: true, machine: true, mobile: [true] },
+    cite: [],
   },
 ]
+
+// Dụng cụ và hai cách dệt mẫu (chữ giống seed), một mục có chú thích nguồn để minh hoạ.
+export const craftToolSamples = [
+  { name: 'Khung dệt', note: { desktop: 'Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].', mobile: 'Tên bộ phận: [cần xác minh]' }, cite: ['vietnamplus-2026'] },
+  { name: 'Khuôn in hoa văn', note: { desktop: 'Chất liệu khuôn và cách làm khuôn: [cần xác minh].', mobile: 'Chất liệu: [cần xác minh]' }, cite: [] },
+]
+export const craftWaySamples: { hand: CraftPageView['compare']['hand']; machine: CraftPageView['compare']['machine'] } = {
+  hand: {
+    title: 'Dệt thủ công', image: null, cite: ['vietnamplus-2026'],
+    text: {
+      desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
+      mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
+    },
+    note: {
+      desktop: 'Số người cần cho một khung, thời gian một tấm, cách chia việc trong gia đình: [cần xác minh].',
+      mobile: 'Thời gian một tấm, cách chia việc: [cần xác minh].',
+    },
+  },
+  machine: {
+    title: 'Dệt bằng máy', image: null, cite: [],
+    text: {
+      desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
+      mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
+    },
+    note: {
+      desktop: 'Thời điểm máy dệt xuất hiện ở làng, loại máy và công suất: [cần xác minh].',
+      mobile: 'Thời điểm máy dệt xuất hiện ở làng: [cần xác minh].',
+    },
+  },
+}
 
 // Bài đọc và chân dung: rich text đã lọc (dạng sanitizeRich trả về), thư viện ảnh, copy đồng ý.
 export const imgHands = img('nkc14.webp', 'Đôi tay ấn go trên khung dệt chiếu, nhìn từ trên xuống', 840, 560)

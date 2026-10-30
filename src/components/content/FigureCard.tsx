@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { ImageView, Variant } from '@/lib/content'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { hasVariant, VariantText } from '@/components/ui/VariantText'
@@ -10,12 +11,14 @@ type FigureCardProps = {
   title: string
   caption: Variant
   image: ImageView | null
+  /** Chú thích nguồn đặt ngay sau chú thích (ví dụ <Cite />). */
+  cite?: ReactNode
   /** Chiều cao ảnh; mặc định 200px mobile, 320px desktop. */
   imageClassName?: string
 }
 
 // Thẻ hình + tiêu đề + chú thích. Mobile: thẻ 240px trong dải vuốt; desktop: một ô của lưới. Chưa có ảnh: khung "ẢNH CẦN CHỤP".
-export function FigureCard({ label, title, caption, image, imageClassName = 'h-[200px] md:h-[320px]' }: FigureCardProps) {
+export function FigureCard({ label, title, caption, image, cite, imageClassName = 'h-[200px] md:h-[320px]' }: FigureCardProps) {
   return (
     <figure className="m-0 flex shrink-0 flex-[0_0_240px] flex-col gap-2 md:flex-auto md:gap-3.5">
       {image ? (
@@ -30,6 +33,7 @@ export function FigureCard({ label, title, caption, image, imageClassName = 'h-[
       {hasVariant(caption) ? (
         <figcaption className="text-[13px] text-text-muted md:text-[15px] md:leading-[1.6] md:text-text-secondary">
           <VariantText value={caption} />
+          {cite}
         </figcaption>
       ) : null}
     </figure>

@@ -2,8 +2,11 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import type { CraftPageView, ImageView } from '@/lib/content'
 import { applyMode } from '@/lib/content/copy/applyMode'
-import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
+import { craftCopy, craftReadNext } from '@/lib/content/copy/craft'
 import { CraftView } from '@/components/craft/CraftView'
+import { craftToolSamples, craftWaySamples, compareRows as sampleRows, sources as sampleSources } from '@/components/styleguide/fixtures'
+import { ComparisonTabs } from '@/components/content/ComparisonTabs'
+import { Cite, sourceNumbers } from '@/components/content/Sources'
 import { FigureCard } from '@/components/content/FigureCard'
 import { ReadNext } from '@/components/content/ReadNext'
 import { Tabs } from '@/components/ui/Tabs'
@@ -15,8 +18,8 @@ const intro = { eyebrow: '03 — NGHỀ DỆT CHIẾU', title: 'Một tấm chi�
 function view(mode: 'public' | 'preview'): CraftPageView {
   const pub = mode === 'public'
   const copy = applyMode(craftCopy, mode)
-  const way = (c: typeof craftCompare.hand) => ({
-    title: c.title, image: pub ? null : img(c.title), text: applyMode(c.text, mode), note: applyMode(c.note, mode),
+  const way = (c: typeof craftWaySamples.hand) => ({
+    ...c, image: pub ? null : img(c.title ?? ''), cite: [], text: applyMode(c.text, mode), note: applyMode(c.note, mode),
   })
   return {
     intro, hero: pub ? null : { image: img('hero'), caption: 'Chú thích' },
@@ -24,14 +27,15 @@ function view(mode: 'public' | 'preview'): CraftPageView {
       n: 1, title: 'Nguyên liệu', shortTitle: 'NL', subtitle: null, body: 'Mô tả', tools: null, toRecord: null,
       image: img('s1'), shotNeeded: null, focus: [50, 50], flags: [],
     }],
-    tools: craftTools.map((t) => ({ n: t.n, name: t.name, note: applyMode(t.note, mode), image: pub ? null : img(`t${t.n}`) })),
+    tools: craftToolSamples.map((t, i) => ({ n: i + 1, name: t.name, note: applyMode(t.note, mode), cite: [], image: pub ? null : img(`t${i + 1}`) })),
     compare: {
-      hand: way(craftCompare.hand), machine: way(craftCompare.machine),
+      hand: way(craftWaySamples.hand), machine: way(craftWaySamples.machine),
       rows: pub
-        ? [{ aspect: 'Việc của đôi tay', hand: 'Đưa sợi', machine: 'Nạp cói', mobile: ['Thủ công: đưa sợi', 'Bằng máy: nạp cói'], muted: { hand: false, machine: false, mobile: [false, false] } }]
-        : craftCompare.rows.map((r) => ({ ...r, mobile: [...r.mobile], muted: { hand: true, machine: true, mobile: r.mobile.map(() => true) } })),
+        ? [{ aspect: 'Việc của đôi tay', hand: 'Đưa sợi', machine: 'Nạp cói', mobile: ['Thủ công: đưa sợi', 'Bằng máy: nạp cói'], muted: { hand: false, machine: false, mobile: [false, false] }, cite: [] }]
+        : [...sampleRows, ...sampleRows.map((r) => ({ ...r, aspect: `${r.aspect} 2` }))].map((r) => ({ ...r, cite: [], muted: { hand: true, machine: true, mobile: r.mobile.map(() => true) } })),
     },
     readNext: craftReadNext.map((r) => ({ href: r.href, eyebrow: r.eyebrow, title: r.title, cta: r.cta, image: pub ? null : img(r.slot) })),
+    sources: [],
     copy,
   }
 }
@@ -135,5 +139,34 @@ describe('So sánh: dòng mobile', () => {
     fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
     const muted = screen.getAllByText('Thủ công: [cần xác minh] · Máy: [cần xác minh]')
     expect(muted.every((el) => el.className.includes('text-text-muted'))).toBe(true)
+  })
+})
+
+describe('Chú thích nguồn', () => {
+  it('CraftView: không nguồn thì không có "Nguồn tham khảo"; có nguồn thì có', () => {
+    const { rerender } = render(<CraftView page={view('public')} />)
+    expect(screen.queryByRole('heading', { name: 'Nguồn tham khảo' })).toBeNull()
+    rerender(<CraftView page={{ ...view('public'), sources: sampleSources.slice(0, 1) }} />)
+    expect(screen.getByRole('heading', { name: 'Nguồn tham khảo' })).toBeTruthy()
+  })
+
+  it('FigureCard: có cite thì render trong figcaption, không có thì như cũ', () => {
+    const numbers = sourceNumbers(sampleSources)
+    const { container, rerender } = render(
+      <FigureCard label="x" title="T" caption={{ desktop: 'D', mobile: null }} image={null} cite={<Cite ids={[sampleSources[0].id]} numbers={numbers} variant="bracket" />} />,
+    )
+    expect(container.querySelector('figcaption')?.textContent).toContain('[1]')
+    rerender(<FigureCard label="x" title="T" caption={{ desktop: 'D', mobile: null }} image={null} />)
+    expect(container.querySelector('figcaption')?.textContent).toBe('D')
+  })
+
+  it('ComparisonTabs: có numbers thì hiện [1] ở ô máy và đoạn mô tả; không có numbers thì không', () => {
+    const rows = [{ ...sampleRows[0], cite: [sampleSources[0].id] }]
+    const props = { hand: { ...craftWaySamples.hand, cite: [] }, machine: craftWaySamples.machine, rows, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare }
+    const { container, rerender } = render(<ComparisonTabs {...props} numbers={sourceNumbers(sampleSources)} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    expect(container.textContent).toContain('[1]')
+    rerender(<ComparisonTabs {...props} />)
+    expect(container.textContent).not.toContain('[')
   })
 })

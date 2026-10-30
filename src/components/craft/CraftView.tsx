@@ -5,6 +5,7 @@ import { CraftJourney } from '@/components/content/CraftJourney'
 import { FigureCard } from '@/components/content/FigureCard'
 import { PageHeader } from '@/components/content/PageHeader'
 import { ReadNext } from '@/components/content/ReadNext'
+import { Cite, SourceList, sourceNumbers } from '@/components/content/Sources'
 import { VerifyNote } from '@/components/content/VerifyNote'
 import { Eyebrow } from '@/components/ui/Eyebrow'
 import { ScrollStrip } from '@/components/ui/ScrollStrip'
@@ -17,6 +18,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
 // Trang Nghề dệt chiếu: đầu trang, hành trình, dụng cụ, hai cách dệt, đọc tiếp. Phần không có dữ liệu ở public thì không dựng.
 export function CraftView({ page }: { page: CraftPageView }) {
   const { copy, intro, hero, tools, compare } = page
+  const numbers = sourceNumbers(page.sources)
   const verify = copy.intro.preview?.verifyNote ?? null
   const crumbs = [{ label: copy.breadcrumb.home ?? '', href: '/' }, { label: copy.breadcrumb.current ?? '' }]
 
@@ -62,7 +64,7 @@ export function CraftView({ page }: { page: CraftPageView }) {
           />
           <ScrollStrip focusable label={copy.tools.title ?? undefined} className="gap-3 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
             {tools.map((t) => (
-              <FigureCard key={t.n} label={`${copy.tools.itemLabel} · ${pad(t.n)}`} title={t.name} caption={t.note} image={t.image} />
+              <FigureCard key={t.n} label={`${copy.tools.itemLabel} · ${pad(t.n)}`} title={t.name} caption={t.note} image={t.image} cite={<Cite ids={t.cite} numbers={numbers} variant="bracket" />} />
             ))}
           </ScrollStrip>
         </section>
@@ -82,8 +84,10 @@ export function CraftView({ page }: { page: CraftPageView }) {
             </p>
           ) : null}
         </div>
-        <ComparisonTabs hand={compare.hand} machine={compare.machine} rows={compare.rows} rowsNote={copy.compare.preview?.note ?? null} labels={copy.compare} />
+        <ComparisonTabs hand={compare.hand} machine={compare.machine} rows={compare.rows} rowsNote={copy.compare.preview?.note ?? null} labels={copy.compare} numbers={numbers} />
       </section>
+
+      {page.sources.length > 0 ? <SourceList sources={page.sources} /> : null}
 
       <ReadNext items={page.readNext} eyebrow={copy.readNext.eyebrow} />
     </>

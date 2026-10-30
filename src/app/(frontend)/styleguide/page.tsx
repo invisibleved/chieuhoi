@@ -15,13 +15,13 @@ import { Timeline } from '@/components/content/Timeline'
 import { ExhibitCard } from '@/components/content/ExhibitCard'
 import { PortraitCard } from '@/components/content/PortraitCard'
 import { ProductCard } from '@/components/content/ProductCard'
-import { FootnoteRef, SourceList } from '@/components/content/Sources'
+import { Cite, FootnoteRef, SourceList, sourceNumbers } from '@/components/content/Sources'
 import { StoryCard } from '@/components/content/StoryCard'
 import { VerifyNote } from '@/components/content/VerifyNote'
 import { applyMode } from '@/lib/content/copy/applyMode'
 import { peopleCopy } from '@/lib/content/copy/people'
 import { storiesCopy } from '@/lib/content/copy/stories'
-import { craftCompare, craftCopy, craftReadNext, craftTools } from '@/lib/content/copy/craft'
+import { craftCopy, craftReadNext } from '@/lib/content/copy/craft'
 import { productsCopy } from '@/lib/content/copy/products'
 import { archiveCopy } from '@/lib/content/copy/archive'
 import { docLabel } from '@/lib/content/copy/docLabel'
@@ -390,18 +390,19 @@ export default function StyleguidePage() {
         <div className="flex flex-col gap-3">
           <Lab>THẺ HÌNH · CÓ ẢNH VÀ ẢNH CẦN CHỤP</Lab>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <FigureCard label={`${craftCopy.tools.itemLabel} · 01`} title={craftTools[0].name} caption={craftTools[0].note} image={fx.imgStep1} />
-            <FigureCard label={`${craftCopy.tools.itemLabel} · 02`} title={craftTools[1].name} caption={craftTools[1].note} image={null} />
+            <FigureCard label={`${craftCopy.tools.itemLabel} · 01`} title={fx.craftToolSamples[0].name} caption={fx.craftToolSamples[0].note} image={fx.imgStep1} cite={<Cite ids={fx.craftToolSamples[0].cite} numbers={sourceNumbers(fx.sources)} variant="bracket" />} />
+            <FigureCard label={`${craftCopy.tools.itemLabel} · 02`} title={fx.craftToolSamples[1].name} caption={fx.craftToolSamples[1].note} image={null} />
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <Lab>HAI CÁCH DỆT · TAB</Lab>
           <ComparisonTabs
-            hand={{ ...craftCompare.hand, image: fx.imgHand }}
-            machine={{ ...craftCompare.machine, image: null }}
+            hand={{ ...fx.craftWaySamples.hand, image: fx.imgHand }}
+            machine={fx.craftWaySamples.machine}
             rows={fx.compareRows}
             rowsNote={craftCopy.compare.preview.note}
             labels={craftCopy.compare}
+            numbers={sourceNumbers(fx.sources)}
           />
         </div>
         <div className="flex flex-col gap-3">

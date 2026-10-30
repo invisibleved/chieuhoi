@@ -7,6 +7,7 @@ import { Tabs } from '@/components/ui/Tabs'
 import { hasVariant, VariantText } from '@/components/ui/VariantText'
 import { ContentImage } from './ContentImage'
 import { ShotNeeded } from './ShotNeeded'
+import { Cite } from './Sources'
 
 type Way = CraftPageView['compare']['hand']
 type TabKey = 'hand' | 'machine' | 'compare'
@@ -18,10 +19,14 @@ type ComparisonTabsProps = {
   /** Ghi chú dưới bảng (chỉ preview). */
   rowsNote: Variant | null
   labels: CraftPageView['copy']['compare']
+  /** Số thứ tự nguồn (từ sourceNumbers). Không có thì không hiện chú thích. */
+  numbers?: Map<string, number>
 }
 
+const noNumbers = new Map<string, number>()
+
 // Panel "một cách dệt": ảnh 7 cột + chữ 4 cột trên desktop; mobile xếp dọc, ảnh 230px.
-function WayPanel({ way }: { way: Way }) {
+function WayPanel({ way, numbers }: { way: Way; numbers: Map<string, number> }) {
   return (
     <div className="flex flex-col gap-3 pt-4 md:grid md:grid-cols-12 md:items-center md:gap-x-6 md:gap-y-0 md:pt-10">
       <div className="md:col-span-7">
@@ -32,10 +37,11 @@ function WayPanel({ way }: { way: Way }) {
         )}
       </div>
       <div className="flex flex-col gap-3 md:col-span-4 md:col-start-9 md:gap-4">
-        <h3 className="font-display text-[34px] leading-[1.2] font-normal max-md:hidden">{way.title}</h3>
+        {way.title ? <h3 className="font-display text-[34px] leading-[1.2] font-normal max-md:hidden">{way.title}</h3> : null}
         {hasVariant(way.text) ? (
           <p className="text-[16px] leading-[1.65] md:text-[17px] md:leading-[1.7]">
             <VariantText value={way.text} />
+            <Cite ids={way.cite} numbers={numbers} variant="bracket" />
           </p>
         ) : null}
         {hasVariant(way.note) ? (
@@ -52,7 +58,7 @@ const th = 'text-left text-[12px] font-semibold tracking-label text-text-muted m
 const td = 'md:border-b md:border-border-subtle md:py-4 md:pr-8 max-md:hidden'
 
 // Bảng so sánh: một <table> thật; dưới md mỗi hàng thành khối (tiêu đề + các dòng mobile nguyên văn).
-function CompareTable({ rows, note, labels }: { rows: ComparisonTabsProps['rows']; note: Variant | null; labels: ComparisonTabsProps['labels'] }) {
+function CompareTable({ rows, note, labels, numbers }: { rows: ComparisonTabsProps['rows']; note: Variant | null; labels: ComparisonTabsProps['labels']; numbers: Map<string, number> }) {
   return (
     <div className="flex flex-col gap-6 pt-4 md:pt-10">
       <table className="w-full text-[15px] leading-[1.6] max-md:block">
@@ -70,10 +76,11 @@ function CompareTable({ rows, note, labels }: { rows: ComparisonTabsProps['rows'
                 {r.aspect}
               </th>
               <td className={`${td} ${r.muted.hand ? 'text-text-muted' : ''}`}>{r.hand}</td>
-              <td className={`${td} ${r.muted.machine ? 'text-text-muted' : ''}`}>{r.machine}</td>
+              <td className={`${td} ${r.muted.machine ? 'text-text-muted' : ''}`}>{r.machine}<Cite ids={r.cite} numbers={numbers} variant="bracket" /></td>
               {r.mobile.map((line, i) => (
                 <td key={i} className={`text-[14px] leading-[1.55] md:hidden ${r.muted.mobile[i] ? 'text-text-muted' : ''}`}>
                   {line}
+                  {i === r.mobile.length - 1 ? <Cite ids={r.cite} numbers={numbers} variant="bracket" /> : null}
                 </td>
               ))}
             </tr>
@@ -90,14 +97,14 @@ function CompareTable({ rows, note, labels }: { rows: ComparisonTabsProps['rows'
 }
 
 // Ba tab "Dệt thủ công / Dệt bằng máy / So sánh" (mobile: "Thủ công / Bằng máy / So sánh"). Không có hàng so sánh thì bỏ tab thứ ba (R7).
-export function ComparisonTabs({ hand, machine, rows, rowsNote, labels }: ComparisonTabsProps) {
+export function ComparisonTabs({ hand, machine, rows, rowsNote, labels, numbers = noNumbers }: ComparisonTabsProps) {
   const [tab, setTab] = useState<TabKey>('hand')
   const tabs: { key: TabKey; label: ReactNode; panel: ReactNode }[] = [
-    { key: 'hand', label: <VariantText value={{ desktop: labels.tabs.hand, mobile: labels.panels.hand.mobile }} />, panel: <WayPanel way={hand} /> },
-    { key: 'machine', label: <VariantText value={{ desktop: labels.tabs.machine, mobile: labels.panels.machine.mobile }} />, panel: <WayPanel way={machine} /> },
+    { key: 'hand', label: <VariantText value={{ desktop: labels.tabs.hand, mobile: labels.panels.hand.mobile }} />, panel: <WayPanel way={hand} numbers={numbers} /> },
+    { key: 'machine', label: <VariantText value={{ desktop: labels.tabs.machine, mobile: labels.panels.machine.mobile }} />, panel: <WayPanel way={machine} numbers={numbers} /> },
   ]
   if (rows.length > 0) {
-    tabs.push({ key: 'compare', label: labels.tabs.compare, panel: <CompareTable rows={rows} note={rowsNote} labels={labels} /> })
+    tabs.push({ key: 'compare', label: labels.tabs.compare, panel: <CompareTable rows={rows} note={rowsNote} labels={labels} numbers={numbers} /> })
   }
   return <Tabs label={labels.tablistLabel ?? undefined} tabs={tabs} value={tab} onChange={setTab} variant="responsive" />
 }

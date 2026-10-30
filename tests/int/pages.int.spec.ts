@@ -55,6 +55,39 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.compare.rows[0].mobile).toEqual(['Thủ công: đưa sợi và dệt trên khung', 'Bằng máy: nạp cói vào máy'])
       expect(v.compare.rows[0].muted).toEqual({ hand: false, machine: false, mobile: [false, false] })
       expect(JSON.stringify(v.copy)).not.toContain('CẦN GHI LẠI')
+      expect(v.tools.map((t) => t.name)).toEqual(['Khung dệt', 'Khuôn in hoa văn', 'Bàn chải quét màu'])
+      expect(v.tools.every((t) => t.cite.length === 0)).toBe(true)
+      expect(v.compare.hand.title).toBe('Dệt thủ công')
+      expect(v.compare.rows.every((r) => r.cite.length === 0)).toBe(true)
+      expect(v.sources).toEqual([])
+    })
+    it('gắn nguồn cho hàng so sánh: public có sources và cite; nguồn bị ẩn thì cite bị bỏ', async () => {
+      const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
+        'nghe-det-chieu': { compareRows: Record<string, unknown>[] }
+      }
+      const original = g['nghe-det-chieu'].compareRows
+      const user = await reviewer()
+      const save = (compareRows: unknown) =>
+        payload.updateGlobal({
+          slug: 'page-intros', data: { 'nghe-det-chieu': { compareRows }, _status: 'published' } as never, user, overrideAccess: true,
+        } as never)
+      const src = await sourceDoc('vietnamplus-2026')
+      try {
+        await save(original.map((r, i) => (i === 1 ? { ...r, hand: '2 lá/ngày', sources: [src.id] } : r)))
+        const v = await pages.getCraftPage('public')
+        expect(v.sources[0].id).toBe('vietnamplus-2026')
+        expect(v.compare.rows.map((r) => r.aspect)).toEqual(['Việc của đôi tay', 'Thời gian một tấm'])
+        expect(v.compare.rows[1].cite).toEqual(['vietnamplus-2026'])
+        await payload.update({ collection: 'sources', id: src.id, data: { title: '[cần xác minh]' }, overrideAccess: true })
+        const hidden = await pages.getCraftPage('public')
+        expect(hidden.sources).toEqual([])
+        expect(hidden.compare.rows[1].cite).toEqual([])
+      } finally {
+        await payload.update({ collection: 'sources', id: src.id, data: { title: src.title }, overrideAccess: true })
+        process.env.SEED_FORCE_GLOBALS = 'true'
+        await seed(payload)
+        delete process.env.SEED_FORCE_GLOBALS
+      }
     })
     it('preview: đủ 7 công đoạn, công đoạn thiếu ảnh có shotNeeded, toRecord hiện', async () => {
       const v = await pages.getCraftPage('preview')
