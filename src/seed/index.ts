@@ -1,18 +1,15 @@
 // Seed dữ liệu khởi đầu từ gói bàn giao. Chạy bằng `npm run seed`.
 // `payload run` chỉ đợi top-level await nên main() phải được await ở cuối file.
-import { readFileSync, readdirSync } from 'fs'
+import { readdirSync } from 'fs'
 import path from 'path'
-import {
-  convertMarkdownToLexical,
-  editorConfigFactory,
-} from '@payloadcms/richtext-lexical'
-import type { Payload, RichTextField, TypedUser } from 'payload'
+import type { Payload, TypedUser } from 'payload'
 
-import { injectCitations, injectFigures } from './citations'
+import {
+  craftStepDocs, isDraft, productDocs, readSeedJson, storyDocs, timelineDocs,
+  type SourceIdMap,
+} from './content'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
-import { peopleSamples, productSummary, storyCategory, storyExtras } from './data/extras'
-import { timelineCopy } from './data/timeline'
-import { craftCopy } from './data/craft'
+import { peopleSamples } from './data/extras'
 import { homeMedia, pageIntros, pageMedia, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
 import { importPageFacts } from './pageFacts'
@@ -21,10 +18,6 @@ export { assertSeedAllowed } from './guard'
 export { injectCitations, injectFigures } from './citations'
 
 const root = process.cwd()
-const readJson = <T>(p: string): T => JSON.parse(readFileSync(path.resolve(root, p), 'utf8')) as T
-
-type Status = 'idea' | 'draft' | 'pending' | undefined
-const isDraft = (s: Status) => s === 'draft' || s === 'pending'
 
 const imageFile = (p: string | null | undefined) => (p ? path.basename(p) : null)
 
@@ -149,8 +142,8 @@ export async function seed(payload: Payload): Promise<void> {
 
   // Nguồn
   type SourceJson = { id: string; publisher?: string; title: string; url?: string; date?: string }
-  const sourceIds: Record<string, number> = {}
-  for (const s of readJson<SourceJson[]>('content/seed/sources.json')) {
+  const sourceIds: SourceIdMap = {}
+  for (const s of readSeedJson<SourceJson[]>('sources.json')) {
     sourceIds[s.id] = await upsert(
       payload, user, 'sources', { field: 'sourceId', value: s.id },
       { sourceId: s.id, publisher: s.publisher, title: s.title, url: s.url, date: s.date },
@@ -159,62 +152,22 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Dòng thời gian
-  type TimelineJson = { label: string; title: string; body: string; confidence: string; sources: string[] }
-  const timeline = readJson<TimelineJson[]>('content/seed/timeline.json')
-  if (timeline.length !== timelineCopy.length) throw new Error('timeline.json lệch số mốc so với artboard.')
-  for (const [i, t] of timeline.entries()) {
-    const copy = timelineCopy[i]
-    await upsert(
-      payload, user, 'timeline-events', { field: 'order', value: i + 1 },
-      {
-        label: copy.label, title: copy.title, body: copy.body, order: i + 1, confidence: t.confidence,
-        sources: t.sources.map((s) => sourceIds[s]), workflow: 'published',
-      },
-      'published',
-    )
+  for (const t of timelineDocs(sourceIds, 'published')) {
+    await upsert(payload, user, 'timeline-events', { field: 'order', value: t.key }, t.data, 'published')
   }
 
   // Công đoạn
-  type StepJson = {
-    n: number; title: string; subtitle: string; image: string | null; shotNeeded?: string
-    focus: [number, number]; body: string | null; tools: string | null; status?: Status
-  }
-  for (const s of readJson<StepJson[]>('content/seed/craftSteps.json')) {
+  for (const s of craftStepDocs(asset, 'draft')) {
     await upsert(
-      payload, user, 'craft-steps', { field: 'n', value: s.n },
-      {
-        n: s.n, title: s.title, subtitle: s.subtitle, ...craftCopy[s.n], body: s.body ?? undefined, tools: s.tools ?? undefined,
-        image: asset(s.image), shotNeeded: s.shotNeeded, focusX: s.focus[0], focusY: s.focus[1],
-        workflow: 'draft',
-      },
+      payload, user, 'craft-steps', { field: 'n', value: s.key }, s.data,
       isDraft(s.status) ? 'draft' : 'published',
     )
   }
 
   // Sản phẩm
-  type ProductJson = {
-    slug: string; code: string; name: string; group: string; images: string[]; typeConfirmed: boolean
-    status?: Status
-    context?: string; material?: string; technique?: string; pattern?: string
-    annotations?: {
-      n: number; title: string; shortTitle?: string; x: number; y: number; body: string; source: string | null
-      sourceNote?: string
-    }[]
-  }
-  for (const p of readJson<ProductJson[]>('content/seed/products.json')) {
+  for (const p of productDocs(sourceIds, asset, 'published')) {
     await upsert(
-      payload, user, 'products', { field: 'slug', value: p.slug },
-      {
-        slug: p.slug, code: p.code, name: p.name, group: p.group, summary: productSummary[p.slug],
-        images: p.images.map((i) => asset(i)),
-        typeConfirmed: p.typeConfirmed,
-        context: p.context, material: p.material, technique: p.technique, pattern: p.pattern,
-        annotations: (p.annotations ?? []).map((a) => ({
-          n: a.n, title: a.title, shortTitle: a.shortTitle, x: a.x, y: a.y, body: a.body,
-          source: a.source ? sourceIds[a.source] : null, sourceNote: a.sourceNote,
-        })),
-        workflow: 'published',
-      },
+      payload, user, 'products', { field: 'slug', value: p.key }, p.data,
       isDraft(p.status) ? 'draft' : 'published',
     )
   }
@@ -242,30 +195,9 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Bài viết
-  const bodyField = payload.collections.stories.config.fields.find(
-    (f) => 'name' in f && f.name === 'body',
-  ) as RichTextField
-  const editorConfig = editorConfigFactory.fromField({ field: bodyField })
-  const markdown = readFileSync(path.resolve(root, 'src/seed/data/chuyen-ve-trang-chieu.md'), 'utf8')
-  const trangChieuBody = injectFigures(
-    injectCitations(convertMarkdownToLexical({ editorConfig, markdown }) as never, sourceIds),
-    assets,
-  )
-  type StoryJson = { slug: string; title: string; category: string; status?: Status; sources?: string[] }
-  for (const s of readJson<StoryJson[]>('content/seed/stories.json')) {
-    const extra = storyExtras[s.slug]
-    if (!extra) throw new Error(`Thiếu dữ liệu bổ sung cho bài ${s.slug}`)
-    const idea = s.status === 'idea'
+  for (const s of storyDocs(payload, sourceIds, { asset, assets, workflow: 'seed' })) {
     await upsert(
-      payload, user, 'stories', { field: 'slug', value: s.slug },
-      {
-        slug: s.slug, title: s.title, sapo: extra.sapo, category: storyCategory[s.category],
-        cover: asset(extra.cover), readingMinutes: extra.readingMinutes, coverCaption: extra.coverCaption,
-        reviewChecklist: (extra.reviewChecklist ?? []).map((item) => ({ item })),
-        sources: (s.sources ?? []).map((x) => sourceIds[x]),
-        ...(s.slug === 'chuyen-ve-trang-chieu' ? { body: trangChieuBody } : {}),
-        workflow: idea ? 'idea' : isDraft(s.status) ? 'draft' : 'published',
-      },
+      payload, user, 'stories', { field: 'slug', value: s.key }, s.data,
       isDraft(s.status) ? 'draft' : 'published',
     )
   }

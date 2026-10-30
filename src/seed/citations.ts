@@ -39,7 +39,7 @@ export function injectCitations(
   return clone as unknown as SerializedEditorState
 }
 
-const FIGURE = /^\[\[figure:([^|\]]+)\|([\s\S]*)\]\]$/
+export const FIGURE = /^\[\[figure:([^|\]]+)\|([\s\S]*)\]\]$/
 
 /**
  * Thay paragraph chỉ chứa token `[[figure:<file>|<chú thích>]]` bằng block `figure` (R3).
