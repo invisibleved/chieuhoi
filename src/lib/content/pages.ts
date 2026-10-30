@@ -8,7 +8,8 @@ import { PAGE_MEDIA_SLOTS, type PageMediaRoute, type PageMediaSlot } from '@/glo
 import { applyMode } from './copy/applyMode'
 import { connectCopy } from './copy/connect'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft'
-import { villageCopy, villageFacts, villageSourceOrder, villageTimelineAdd } from './copy/village'
+import { villageCopy, villageTimelineAdd } from './copy/village'
+import { villageFactsFrom } from './pageFacts'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
 import { buildConnectContact } from './connectContact'
 import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
@@ -71,37 +72,50 @@ export function createPages(payload: Payload, content: Content) {
   }
 
   async function getVillagePage(mode: Mode): Promise<VillagePageView> {
-    const [intro, media, events, allSources] = await Promise.all([
+    const [intro, media, events, allSources, intros] = await Promise.all([
       content.getPageIntro('lang-hoi', mode),
       getPageMedia('lang-hoi', mode),
       content.getTimeline(mode),
       content.getSources(mode),
+      readGlobalDoc(payload, 'page-intros', mode, 1),
     ])
+    const f = villageFactsFrom(intros['lang-hoi'] as Record<string, unknown> | undefined)
     // Chỉ các nguồn trang trích, theo thứ tự đánh số (R9); nguồn bị ẩn thì cite tương ứng cũng bị bỏ.
     const byId = new Map(allSources.map((s) => [s.id, s]))
-    const sources = villageSourceOrder
+    const sources = f.sourceOrder
       .map((id) => byId.get(id))
       .filter((s): s is SourceView => s !== undefined)
       .map((s) => ({ ...s, date: formatDate(s.date) }))
     const visible = new Set(sources.map((s) => s.id))
 
     const add = applyMode(villageTimelineAdd, mode)
-    // Ghi chú "· cần đối chiếu…" chỉ ở preview (R4).
-    const noteOf = (f: (typeof villageFacts)[number], k: 'desktop' | 'mobile') => {
-      const note = f.note[k]
-      return note && mode === 'preview' && f.notePreview[k] ? `${note} · ${f.notePreview[k]}` : note
+    // Ghi chú biên tập nối sau dấu "·" chỉ ở preview (R4).
+    const noteOf = (fact: (typeof f.facts)[number], k: 'desktop' | 'mobile') => {
+      const note = fact.note[k]
+      return note && mode === 'preview' && fact.editorNote ? `${note} · ${fact.editorNote}` : note
     }
-    const facts = villageFacts.flatMap((f) => {
-      const cite = f.cite.filter((id) => visible.has(id))
+    const facts = f.facts.flatMap((fact) => {
+      const cite = fact.cite.filter((id) => visible.has(id))
       // Thông tin có nguồn mà mọi nguồn bị ẩn thì không hiện ở public.
       if (mode === 'public' && cite.length === 0) return []
       return [{
-        term: f.term,
-        detail: applyMode(f.detail, mode),
-        note: applyMode({ desktop: noteOf(f, 'desktop'), mobile: noteOf(f, 'mobile') }, mode),
+        term: fact.term,
+        detail: applyMode(fact.detail, mode),
+        note: applyMode({ desktop: noteOf(fact, 'desktop'), mobile: noteOf(fact, 'mobile') }, mode),
         cite,
       }]
     })
+    const merged = {
+      ...villageCopy,
+      founder: {
+        ...villageCopy.founder,
+        paragraphs: f.founder.paragraphs,
+        conflict: { ...villageCopy.founder.conflict, parts: f.founder.conflict.parts, preview: { closing: f.founder.conflict.closing } },
+        noPortrait: f.founder.noPortrait,
+      },
+      location: { ...villageCopy.location, body: f.location.body, preview: { ...villageCopy.location.preview, note: f.location.note } },
+      heritage: { ...villageCopy.heritage, paragraphs: f.heritage.paragraphs, preview: { note: f.heritage.note } },
+    }
 
     return {
       intro,
@@ -116,7 +130,7 @@ export function createPages(payload: Payload, content: Content) {
       ],
       life: (['life-1', 'life-2', 'life-3'] as const).flatMap((s) => (media[s] ? [media[s]] : [])),
       sources,
-      copy: applyMode(villageCopy, mode, { cites: visible }),
+      copy: applyMode(merged, mode, { cites: visible }),
     }
   }
 

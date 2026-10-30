@@ -6,8 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { craftFactsSeed, PAGE_FACT_SOURCE_IDS, villageFactsSeed } from '@/seed/data/pageFacts'
 import { isEmptyGroup, mapSourceRefs } from '@/seed/pageFacts'
 import { craftFactsFrom, villageFactsFrom } from '@/lib/content/pageFacts'
-// Đối chiếu với chữ đang có trong code. Task 4/5 xoá các export này thì phải đổi test sang giá trị cố định.
-import { villageCopy, villageFacts } from '@/lib/content/copy/village'
+// Làng Hới: so với chữ cố định (chép từ artboard). Nghề dệt: đối chiếu với chữ đang có trong code (Task 5 đổi sang giá trị cố định).
 import { craftCompare, craftTools } from '@/lib/content/copy/craft'
 
 const sourceJson = JSON.parse(
@@ -47,17 +46,95 @@ describe('dữ liệu seed dữ kiện trang', () => {
 
   it('Làng Hới: qua villageFactsFrom ra đúng chữ hiện tại', () => {
     const v = villageFactsFrom(populated(villageFactsSeed))
-    expect(v.facts).toEqual(
-      villageFacts.map((f) => ({ term: f.term, detail: f.detail, note: f.note, editorNote: null, cite: f.cite })),
-    )
-    expect(v.founder.paragraphs).toEqual(villageCopy.founder.paragraphs)
-    expect(v.founder.conflict.parts).toEqual(villageCopy.founder.conflict.parts)
-    expect(v.founder.conflict.closing).toEqual(villageCopy.founder.conflict.preview.closing)
-    expect(v.founder.noPortrait).toEqual(villageCopy.founder.noPortrait)
-    expect(v.location.body).toEqual(villageCopy.location.body)
-    expect(v.location.note).toEqual(villageCopy.location.preview.note)
-    expect(v.heritage.paragraphs).toEqual(villageCopy.heritage.paragraphs)
-    expect(v.heritage.note).toEqual(villageCopy.heritage.preview.note)
+    const none = { desktop: null, mobile: null }
+    expect(v.facts).toEqual([
+      {
+        term: 'TÊN GỌI',
+        detail: { desktop: 'Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ', mobile: 'Làng Hới, tên chữ Hải Triều; tên cũ Hải Hồ' },
+        note: none, editorNote: null, cite: ['vietnamplus-2026', 'daidoanket-2021'],
+      },
+      {
+        term: 'ĐỊA GIỚI HIỆN NAY',
+        detail: { desktop: 'Xã Long Hưng, tỉnh Hưng Yên', mobile: 'Xã Long Hưng, tỉnh Hưng Yên' },
+        note: { desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình', mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình' },
+        editorNote: null, cite: ['vietnamplus-2026', 'nq-1666-2025', 'nq-202-2025'],
+      },
+      {
+        term: 'TỔ NGHỀ',
+        detail: { desktop: 'Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"', mobile: 'Phạm Đôn Lễ, "Trạng Chiếu"' },
+        note: none, editorNote: null, cite: ['vietnamplus-2026', 'danviet-2024'],
+      },
+    ])
+    expect(v.founder.paragraphs).toEqual([
+      {
+        parts: [
+          {
+            text: {
+              desktop:
+                'Theo báo chí, Phạm Đôn Lễ sinh năm 1457 tại làng Hải Triều, mất năm 1531. Năm 1481, dưới triều Lê Thánh Tông, ông đỗ đầu cả ba kỳ thi Hương, Hội và Đình, tức Tam nguyên.',
+              mobile: 'Theo báo chí, ông sinh năm 1457 tại làng Hải Triều, mất năm 1531, đỗ Tam nguyên năm 1481 dưới triều Lê Thánh Tông.',
+            },
+            cite: ['danviet-2024', 'daidoanket-2021'],
+          },
+        ],
+      },
+      {
+        parts: [
+          {
+            text: {
+              desktop:
+                'Lời kể trong làng cho rằng khi đi sứ nhà Minh, ông thấy người dân dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng cách dệt.',
+              mobile: 'Lời kể trong làng cho rằng khi đi sứ nhà Minh, ông mang khung dệt về, cải tiến và dạy dân làng.',
+            },
+            cite: ['danviet-2024', 'daidoanket-2021'],
+          },
+          { text: { desktop: 'Sau khi ông mất, dân làng tôn ông làm Phúc thần.', mobile: null }, cite: ['daidoanket-2021'] },
+        ],
+      },
+    ])
+    expect(v.founder.conflict.parts).toEqual([
+      {
+        text: {
+          desktop: 'Vietnam+ đặt câu chuyện mang nghề về làng vào đầu thế kỷ XVI và nhắc đến hai lần đi sứ.',
+          mobile: 'Vietnam+ đặt câu chuyện vào đầu thế kỷ XVI.',
+        },
+        cite: ['vietnamplus-2026'],
+      },
+      {
+        text: {
+          desktop: 'Dân Việt ghi rằng phần lớn tiểu sử của ông dựa vào truyền khẩu, chưa có hồ sơ lưu trữ địa phương.',
+          mobile: 'Tiểu sử phần lớn dựa vào truyền khẩu.',
+        },
+        cite: ['danviet-2024'],
+      },
+    ])
+    expect(v.founder.conflict.closing).toEqual({ desktop: 'Cần đối chiếu với sử liệu khoa bảng trước khi đăng chính thức.', mobile: null })
+    expect(v.founder.noPortrait).toEqual({
+      desktop: 'Không có chân dung lịch sử của Phạm Đôn Lễ. Trang này không dùng ảnh minh hoạ cho nhân vật.',
+      mobile: null,
+    })
+    expect(v.location.body).toEqual({
+      text: 'Sông Luộc bao quanh làng rồi đổ ra sông Hồng; bên kia sông là thành phố Hưng Yên.',
+      cite: ['daidoanket-2021'],
+    })
+    expect(v.location.note).toEqual({
+      desktop: 'Mô tả này theo bài báo năm 2021, trước khi địa giới thay đổi. Cần cập nhật theo đơn vị hành chính hiện hành.',
+      mobile: null,
+    })
+    expect(v.heritage.paragraphs).toEqual([
+      {
+        text: {
+          desktop: 'Máy dệt bắt đầu được đưa vào làng khoảng năm 2005. Theo Vietnam+, nhiều khâu như chọn cói, viền mép và in hoa văn vẫn làm bằng tay.',
+          mobile: 'Máy dệt bắt đầu về làng khoảng năm 2005; chọn cói, viền mép và in hoa văn vẫn làm bằng tay.',
+        },
+        cite: ['vietnamplus-2026'],
+      },
+      { text: { desktop: 'Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu nylon và chiếu giả mây.', mobile: null }, cite: ['vietnamplus-2026'] },
+    ])
+    expect(v.heritage.note).toEqual({
+      desktop: 'Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.',
+      mobile: null,
+    })
     expect(v.sourceOrder).toEqual([...PAGE_FACT_SOURCE_IDS])
   })
 

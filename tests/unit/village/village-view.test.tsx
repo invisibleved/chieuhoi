@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import type { ImageView, SourceView, VillagePageView } from '@/lib/content'
 import { applyMode } from '@/lib/content/copy/applyMode'
-import { villageCopy, villageFacts, villageTimelineAdd } from '@/lib/content/copy/village'
+import { villageTimelineAdd } from '@/lib/content/copy/village'
+import { mergeVillageCopy, seedVillageFacts } from './village-fixture'
+import { villageFactsFrom } from '@/lib/content/pageFacts'
 import { VillageView } from '@/components/village/VillageView'
 
 const img = (name: string, docNumber: string | null = null): ImageView => ({ url: `/${name}.webp`, alt: name, width: 800, height: 600, sizes: {}, photographer: null, code: null, docNumber, flags: [] })
@@ -14,9 +16,9 @@ function view(mode: 'public' | 'preview'): VillagePageView {
   const pub = mode === 'public'
   const sources = pub ? [all[0], all[2]] : all
   const visible = new Set(sources.map((s) => s.id))
-  const facts = villageFacts.flatMap((f) => {
+  const facts = seedVillageFacts.facts.flatMap((f) => {
     const cite = f.cite.filter((id) => visible.has(id))
-    const note = (k: 'desktop' | 'mobile') => (f.note[k] && !pub && f.notePreview[k] ? `${f.note[k]} · ${f.notePreview[k]}` : f.note[k])
+    const note = (k: 'desktop' | 'mobile') => (f.note[k] && !pub && f.editorNote ? `${f.note[k]} · ${f.editorNote}` : f.note[k])
     return [{ term: f.term, detail: applyMode(f.detail, mode), note: applyMode({ desktop: note('desktop'), mobile: note('mobile') }, mode), cite }]
   })
   const add = applyMode(villageTimelineAdd, mode)
@@ -30,7 +32,7 @@ function view(mode: 'public' | 'preview'): VillagePageView {
     ],
     life: pub ? [] : [{ image: img('l1'), caption: 'Một' }, { image: img('l2'), caption: 'Hai' }, { image: img('l3'), caption: 'Ba' }],
     sources,
-    copy: applyMode(villageCopy, mode),
+    copy: applyMode(mergeVillageCopy(), mode),
   } as VillagePageView
 }
 
@@ -120,5 +122,14 @@ describe('VillageView', () => {
     const { container } = render(<VillageView page={view('preview')} />)
     expect(container.textContent).toContain('TƯ LIỆU · 021')
     expect(container.querySelector('figcaption')!.textContent).toBe('TL · 021 · Chiếu phơi bên ao làng')
+  })
+
+  it('dữ kiện trống (CMS thiếu nhóm): public vẫn render, ẩn bảng thông tin, tổ nghề, vị trí', () => {
+    const empty = villageFactsFrom(undefined)
+    const page = { ...view('public'), facts: [], sources: [], copy: applyMode(mergeVillageCopy(empty), 'public') } as VillagePageView
+    const { container } = render(<VillageView page={page} />)
+    expect(container.querySelector('#founder-h')).toBeNull()
+    expect(container.querySelector('#location-h')).toBeNull()
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Có một làng Hới...')
   })
 })

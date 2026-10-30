@@ -7,6 +7,7 @@ import { craftCopy } from '@/lib/content/copy/craft'
 import { productsCopy } from '@/lib/content/copy/products'
 import { storiesCopy } from '@/lib/content/copy/stories'
 import { villageCopy } from '@/lib/content/copy/village'
+import { mergeVillageCopy } from './village/village-fixture'
 
 describe('applyMode', () => {
   it('public: copy craft không còn chữ quy trình hay dấu chờ xác minh', () => {
@@ -16,7 +17,7 @@ describe('applyMode', () => {
     }
   })
   it('public: copy village không còn ghi chú quy trình', () => {
-    const json = JSON.stringify(applyMode(villageCopy, 'public'))
+    const json = JSON.stringify(applyMode(mergeVillageCopy(), 'public'))
     for (const banned of ['cần xác minh', 'BẢN ĐỒ VỊ TRÍ', 'Chờ dữ liệu địa lý', 'Số hộ, số khung dệt', 'bài báo năm 2021']) {
       expect(json).not.toContain(banned)
     }
@@ -32,7 +33,7 @@ describe('applyMode', () => {
   })
   it('preview: giữ nguyên văn', () => {
     expect(applyMode(craftCopy, 'preview')).toEqual(craftCopy)
-    expect(applyMode(villageCopy, 'preview')).toEqual(villageCopy)
+    expect(applyMode(mergeVillageCopy(), 'preview')).toEqual(mergeVillageCopy())
   })
   it('nhánh preview thành null ở public, chuỗi thường giữ nguyên', () => {
     expect(applyMode({ preview: { a: 'x' }, b: 'y' }, 'public')).toEqual({ preview: null, b: 'y' })

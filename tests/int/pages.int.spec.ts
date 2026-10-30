@@ -195,6 +195,49 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         await payload.update({ collection: 'sources', id: src.id, data: { title }, overrideAccess: true })
       }
     })
+    it('edits in admin show on page', async () => {
+      const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as unknown as Record<string, Record<string, Record<string, unknown>>>
+      const user = await reviewer()
+      await payload.updateGlobal({
+        slug: 'page-intros', overrideAccess: true, user, draft: false,
+        data: { 'lang-hoi': { ...g['lang-hoi'], location: { ...g['lang-hoi'].location, text: 'Làng nằm ở xã Long Hưng.' } }, _status: 'published' },
+      } as never)
+      try {
+        const v = await pages.getVillagePage('public')
+        expect(v.copy.location.body.text).toBe('Làng nằm ở xã Long Hưng.')
+      } finally {
+        process.env.SEED_FORCE_GLOBALS = 'true'
+        await seed(payload)
+        delete process.env.SEED_FORCE_GLOBALS
+      }
+    })
+    it('hides empty founder/location/heritage when groups are missing', async () => {
+      const user = await reviewer()
+      await payload.updateGlobal({
+        slug: 'page-intros', overrideAccess: true, user, draft: false,
+        data: {
+          'lang-hoi': {
+            eyebrow: '01 — LÀNG HỚI', title: 'Có một làng Hới...', lead: 'Lead',
+            facts: [], pageSources: [],
+            founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
+            location: { text: null, sources: [], editorNote: null },
+            heritage: { sentences: [], editorNote: null },
+          },
+          _status: 'published',
+        },
+      } as never)
+      try {
+        const v = await pages.getVillagePage('public')
+        expect(v.facts).toEqual([])
+        expect(v.copy.founder.paragraphs).toEqual([])
+        expect(v.copy.location.body.text).toBeNull()
+        expect(v.sources).toEqual([])
+      } finally {
+        process.env.SEED_FORCE_GLOBALS = 'true'
+        await seed(payload)
+        delete process.env.SEED_FORCE_GLOBALS
+      }
+    })
     it('mốc thiếu mức tin cậy được trả là pending', async () => {
       const ev = (await payload.find({ collection: 'timeline-events', where: { order: { equals: 1 } }, overrideAccess: true })).docs[0]
       const originalConfidence = ev.confidence
