@@ -258,6 +258,24 @@ Mã `T1`–`T10` là task trong plan Phase 5b.
 - [x] Nền chưa `inert` khi menu mở → giải bằng cách khác: menu mobile dùng vòng focus, `keyboard.e2e.spec.ts` khẳng định Tab/Shift+Tab 16 lần không ra khỏi `#menu-mobile` (Phase 7, ruling P4). Nền vẫn không `inert` với trình đọc màn hình.
 - [ ] Menu mobile vẫn mở (aria-expanded cũ) khi resize qua 1024; `text-[14px]` viết cứng; footer liên hệ hiện `[cần xác minh]` ở preview.
 
+## E. Dữ kiện trang vào CMS (nhánh du-lieu-trang-cms, 2026-10-30)
+
+Phải làm trước khi lên prod:
+- [ ] Commit mục "Nhập dữ kiện trang (lần đầu lên prod)" và dòng "Không chạy `npm run seed`…" trong `docs/DEPLOY.md` (đang ở working tree cùng thay đổi riêng của người dùng).
+- [ ] Prod sau khi nhập chỉ có dữ kiện: tiêu đề/đoạn dẫn đầu trang, ảnh và dòng thời gian phải nhập trong `/admin` (lệnh nhập không làm).
+
+Còn mở (nhỏ):
+- [ ] Preview: dòng so sánh mobile tự ghép có ô trống vẫn hiện nguyên văn `Thủ công: h · Máy: ` và không mờ; nên ghép từ ô đã qua `showText`.
+- [ ] `hasPendingDraft` (`src/seed/pageFacts.ts`) sắp theo `-updatedAt` thay vì `where: { latest: { equals: true } }` như Payload.
+- [ ] Int test "keeps pending draft" (`tests/int/seed.int.spec.ts`) phụ thuộc thứ tự test trước; `seed()` in report làm ồn output int test.
+- [ ] `getVillagePage` đọc `page-intros` 3 lần mỗi request.
+- [ ] Int "hides empty" chưa kiểm heritage, `noPortrait`, ghi chú preview là null ở public; re-seed trong `finally` có thể che lỗi gốc.
+- [ ] Unit test schema chưa khoá `hasMany`/`localized`/`required` của `citedSentenceFields`/`pageSourcesField`; int rejection test dùng `.rejects.toThrow()` trần.
+- [ ] `import-page-facts.ts`: `payload.destroy()` không nằm trong `finally`; nhánh `'published'` của `formatReport` không bao giờ chạy.
+- [ ] Hướng dẫn admin: bước "Báo người duyệt biết" chưa chỉ cách báo cho global; `labels.json` gắn với tiêu đề nguồn seed.
+- [ ] Fixtures `/styleguide` lặp chữ seed; ô mobile của `ComparisonTabs` lặp markup `Cite` inline; tên test "có numbers thì hiện [1] ở ô máy và đoạn mô tả" đã lỗi thời.
+- [ ] `isEmptyGroup` coi nhóm admin cố ý xoá trống là trống → chạy lại lệnh nhập sẽ điền lại (đã ghi lưu ý trong DEPLOY.md).
+
 ## D. Quyết định cần biết (không phải lỗi)
 
 - Phase 7 (đủ danh sách R1–R16 trong `docs/superpowers/plans/2026-10-28-phase-7-staging-kiem-tra.md`), thêm các quyết định khi chạy:
