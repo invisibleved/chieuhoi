@@ -169,4 +169,43 @@ describe('Chú thích nguồn', () => {
     rerender(<ComparisonTabs {...props} />)
     expect(container.textContent).not.toContain('[')
   })
+
+  const base = () => ({ hand: { ...craftWaySamples.hand, cite: [] as string[] }, machine: craftWaySamples.machine, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare })
+  const numbers = sourceNumbers(sampleSources)
+  const id = sampleSources[0].id
+
+  it('ComparisonTabs: machine null thì [1] đi sau ô thủ công, không nằm trong ô máy trống', () => {
+    const rows = [{ ...sampleRows[0], machine: null, cite: [id] }]
+    const { container } = render(<ComparisonTabs {...base()} rows={rows} numbers={numbers} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    const [handTd, machineTd] = Array.from(container.querySelectorAll('tbody td')).slice(0, 2)
+    expect(handTd.textContent).toContain('[1]')
+    expect(machineTd.textContent).toBe('')
+  })
+
+  it('ComparisonTabs: bình thường [1] ở ô máy, không ở ô thủ công', () => {
+    const rows = [{ ...sampleRows[0], cite: [id] }]
+    const { container } = render(<ComparisonTabs {...base()} rows={rows} numbers={numbers} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    const [handTd, machineTd] = Array.from(container.querySelectorAll('tbody td')).slice(0, 2)
+    expect(handTd.textContent).not.toContain('[1]')
+    expect(machineTd.textContent).toContain('[1]')
+  })
+
+  it('ComparisonTabs: mobile không có dòng thì không có [n] thừa ở ô mobile; có dòng thì [1] sau dòng cuối', () => {
+    const none = [{ ...sampleRows[0], mobile: [], muted: { hand: false, machine: false, mobile: [] }, cite: [id] }]
+    const { container, rerender } = render(<ComparisonTabs {...base()} rows={none} numbers={numbers} />)
+    fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
+    expect(container.querySelectorAll('td.md\\:hidden')).toHaveLength(0)
+    rerender(<ComparisonTabs {...base()} rows={[{ ...sampleRows[0], cite: [id] }]} numbers={numbers} />)
+    const lines = Array.from(container.querySelectorAll('td.md\\:hidden'))
+    expect(lines[0].textContent).not.toContain('[1]')
+    expect(lines[lines.length - 1].textContent).toContain('[1]')
+  })
+
+  it('ComparisonTabs: hand.cite có thì [1] đi sau đoạn mô tả', () => {
+    const { container } = render(<ComparisonTabs {...base()} hand={{ ...craftWaySamples.hand, cite: [id] }} rows={[]} numbers={numbers} />)
+    const p = container.querySelector('p')
+    expect(p?.textContent).toMatch(/\[1\]$/)
+  })
 })

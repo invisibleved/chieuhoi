@@ -59,6 +59,7 @@ const td = 'md:border-b md:border-border-subtle md:py-4 md:pr-8 max-md:hidden'
 
 // Bảng so sánh: một <table> thật; dưới md mỗi hàng thành khối (tiêu đề + các dòng mobile nguyên văn).
 function CompareTable({ rows, note, labels, numbers }: { rows: ComparisonTabsProps['rows']; note: Variant | null; labels: ComparisonTabsProps['labels']; numbers: Map<string, number> }) {
+  const rowCite = (r: ComparisonTabsProps['rows'][number]) => <Cite ids={r.cite} numbers={numbers} variant="bracket" />
   return (
     <div className="flex flex-col gap-6 pt-4 md:pt-10">
       <table className="w-full text-[15px] leading-[1.6] max-md:block">
@@ -75,8 +76,8 @@ function CompareTable({ rows, note, labels, numbers }: { rows: ComparisonTabsPro
               <th scope="row" className="text-left text-[15px] font-semibold md:border-b md:border-border-subtle md:py-4 md:pr-8 md:font-medium">
                 {r.aspect}
               </th>
-              <td className={`${td} ${r.muted.hand ? 'text-text-muted' : ''}`}>{r.hand}</td>
-              <td className={`${td} ${r.muted.machine ? 'text-text-muted' : ''}`}>{r.machine}<Cite ids={r.cite} numbers={numbers} variant="bracket" /></td>
+              <td className={`${td} ${r.muted.hand ? 'text-text-muted' : ''}`}>{r.hand}{r.machine === null ? rowCite(r) : null}</td>
+              <td className={`${td} ${r.muted.machine ? 'text-text-muted' : ''}`}>{r.machine}{r.machine !== null ? rowCite(r) : null}</td>
               {r.mobile.map((line, i) => (
                 <td key={i} className={`text-[14px] leading-[1.55] md:hidden ${r.muted.mobile[i] ? 'text-text-muted' : ''}`}>
                   {line}

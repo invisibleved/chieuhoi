@@ -81,7 +81,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         await payload.update({ collection: 'sources', id: src.id, data: { title: '[cần xác minh]' }, overrideAccess: true })
         const hidden = await pages.getCraftPage('public')
         expect(hidden.sources).toEqual([])
-        expect(hidden.compare.rows[1].cite).toEqual([])
+        expect(hidden.compare.rows.map((r) => r.aspect)).toEqual(['Việc của đôi tay'])
       } finally {
         await payload.update({ collection: 'sources', id: src.id, data: { title: src.title }, overrideAccess: true })
         process.env.SEED_FORCE_GLOBALS = 'true'

@@ -13,10 +13,13 @@ export function craftCompareRows(rows: CraftFacts['rows'], mode: Mode, visible: 
     const lines = r.mobile
       .map((l) => ({ text: showText(l, mode), muted: isUnverified(l) }))
       .filter((l): l is { text: string; muted: boolean } => l.text !== null)
+    const cite = r.cite.filter((id) => visible.has(id))
+    // Dữ kiện có nguồn mà mọi nguồn bị ẩn thì không hiện ở public.
+    if (mode === 'public' && r.cite.length > 0 && cite.length === 0) continue
     out.push({
       aspect: r.aspect, hand, machine, mobile: lines.map((l) => l.text),
       muted: { hand: isUnverified(r.hand), machine: isUnverified(r.machine), mobile: lines.map((l) => l.muted) },
-      cite: r.cite.filter((id) => visible.has(id)),
+      cite,
     })
   }
   return out
