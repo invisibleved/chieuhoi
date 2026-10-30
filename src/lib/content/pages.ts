@@ -10,6 +10,7 @@ import { connectCopy } from './copy/connect'
 import { craftCompare, craftCopy, craftReadNext, craftTools } from './copy/craft'
 import { villageCopy, villageTimelineAdd } from './copy/village'
 import { villageFactsFrom } from './pageFacts'
+import { mergeVillageCopy, villageFactRows } from './villageMerge'
 import { formatDate, readGlobalDoc, type createContent } from './queries'
 import { buildConnectContact } from './connectContact'
 import type { ConnectPageView, CraftPageView, MediaView, Mode, SourceView, VillagePageView } from './types'
@@ -89,33 +90,8 @@ export function createPages(payload: Payload, content: Content) {
     const visible = new Set(sources.map((s) => s.id))
 
     const add = applyMode(villageTimelineAdd, mode)
-    // Ghi chú biên tập nối sau dấu "·" chỉ ở preview (R4).
-    const noteOf = (fact: (typeof f.facts)[number], k: 'desktop' | 'mobile') => {
-      const note = fact.note[k]
-      return note && mode === 'preview' && fact.editorNote ? `${note} · ${fact.editorNote}` : note
-    }
-    const facts = f.facts.flatMap((fact) => {
-      const cite = fact.cite.filter((id) => visible.has(id))
-      // Thông tin có nguồn mà mọi nguồn bị ẩn thì không hiện ở public.
-      if (mode === 'public' && cite.length === 0) return []
-      return [{
-        term: fact.term,
-        detail: applyMode(fact.detail, mode),
-        note: applyMode({ desktop: noteOf(fact, 'desktop'), mobile: noteOf(fact, 'mobile') }, mode),
-        cite,
-      }]
-    })
-    const merged = {
-      ...villageCopy,
-      founder: {
-        ...villageCopy.founder,
-        paragraphs: f.founder.paragraphs,
-        conflict: { ...villageCopy.founder.conflict, parts: f.founder.conflict.parts, preview: { closing: f.founder.conflict.closing } },
-        noPortrait: f.founder.noPortrait,
-      },
-      location: { ...villageCopy.location, body: f.location.body, preview: { ...villageCopy.location.preview, note: f.location.note } },
-      heritage: { ...villageCopy.heritage, paragraphs: f.heritage.paragraphs, preview: { note: f.heritage.note } },
-    }
+    const facts = villageFactRows(f.facts, mode, visible)
+    const merged = mergeVillageCopy(villageCopy, f)
 
     return {
       intro,

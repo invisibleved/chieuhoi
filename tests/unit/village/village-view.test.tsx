@@ -5,6 +5,7 @@ import { applyMode } from '@/lib/content/copy/applyMode'
 import { villageTimelineAdd } from '@/lib/content/copy/village'
 import { mergeVillageCopy, seedVillageFacts } from './village-fixture'
 import { villageFactsFrom } from '@/lib/content/pageFacts'
+import { villageFactRows } from '@/lib/content/villageMerge'
 import { VillageView } from '@/components/village/VillageView'
 
 const img = (name: string, docNumber: string | null = null): ImageView => ({ url: `/${name}.webp`, alt: name, width: 800, height: 600, sizes: {}, photographer: null, code: null, docNumber, flags: [] })
@@ -16,11 +17,7 @@ function view(mode: 'public' | 'preview'): VillagePageView {
   const pub = mode === 'public'
   const sources = pub ? [all[0], all[2]] : all
   const visible = new Set(sources.map((s) => s.id))
-  const facts = seedVillageFacts.facts.flatMap((f) => {
-    const cite = f.cite.filter((id) => visible.has(id))
-    const note = (k: 'desktop' | 'mobile') => (f.note[k] && !pub && f.editorNote ? `${f.note[k]} · ${f.editorNote}` : f.note[k])
-    return [{ term: f.term, detail: applyMode(f.detail, mode), note: applyMode({ desktop: note('desktop'), mobile: note('mobile') }, mode), cite }]
-  })
+  const facts = villageFactRows(seedVillageFacts.facts, mode, visible)
   const add = applyMode(villageTimelineAdd, mode)
   return {
     intro: { eyebrow: '01 — LÀNG HỚI', title: 'Có một làng Hới...', lead: 'Lead', heroTitle: null },
