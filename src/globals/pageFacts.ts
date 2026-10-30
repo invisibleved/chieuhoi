@@ -47,7 +47,7 @@ export const villageFactsFields = (): Field[] => [
         fields: [{ name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_founder_sents', fields: citedSentenceFields() }],
       },
       { name: 'conflict', type: 'array', label: 'Hộp Các nguồn chưa thống nhất', labels: { singular: 'Câu', plural: 'Các câu' }, fields: citedSentenceFields() },
-      { name: 'conflictEditorNote', type: 'textarea', label: 'Ghi chú biên tập cuối hộp', localized: true },
+      { name: 'conflictEditorNote', type: 'textarea', label: 'Ghi chú biên tập cuối hộp (chỉ hiện ở bản xem trước)', localized: true },
       { name: 'noPortrait', type: 'text', label: 'Dòng không có chân dung', localized: true },
     ],
   },
@@ -56,14 +56,14 @@ export const villageFactsFields = (): Field[] => [
     fields: [
       { name: 'text', type: 'textarea', label: 'Câu mô tả', localized: true },
       sourcesField(),
-      { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập', localized: true },
+      { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập (chỉ hiện ở bản xem trước)', localized: true },
     ],
   },
   {
     name: 'heritage', type: 'group', label: 'Di sản hôm nay',
     fields: [
       { name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_heritage_sents', fields: citedSentenceFields() },
-      { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập', localized: true },
+      { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập (chỉ hiện ở bản xem trước)', localized: true },
     ],
   },
   pageSourcesField(),
