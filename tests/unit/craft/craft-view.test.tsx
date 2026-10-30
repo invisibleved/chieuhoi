@@ -19,7 +19,7 @@ function view(mode: 'public' | 'preview'): CraftPageView {
   const pub = mode === 'public'
   const copy = applyMode(craftCopy, mode)
   const way = (c: typeof craftWaySamples.hand) => ({
-    ...c, image: pub ? null : img(c.title ?? ''), cite: [], text: applyMode(c.text, mode), note: applyMode(c.note, mode),
+    ...c, image: pub ? null : img(c.title ?? ''), textCite: [], noteCite: [], text: applyMode(c.text, mode), note: applyMode(c.note, mode),
   })
   return {
     intro, hero: pub ? null : { image: img('hero'), caption: 'Chú thích' },
@@ -162,7 +162,7 @@ describe('Chú thích nguồn', () => {
 
   it('ComparisonTabs: có numbers thì hiện [1] ở ô máy và đoạn mô tả; không có numbers thì không', () => {
     const rows = [{ ...sampleRows[0], cite: [sampleSources[0].id] }]
-    const props = { hand: { ...craftWaySamples.hand, cite: [] }, machine: craftWaySamples.machine, rows, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare }
+    const props = { hand: { ...craftWaySamples.hand, textCite: [], noteCite: [] }, machine: craftWaySamples.machine, rows, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare }
     const { container, rerender } = render(<ComparisonTabs {...props} numbers={sourceNumbers(sampleSources)} />)
     fireEvent.click(screen.getByRole('tab', { name: /So sánh/ }))
     expect(container.textContent).toContain('[1]')
@@ -170,7 +170,7 @@ describe('Chú thích nguồn', () => {
     expect(container.textContent).not.toContain('[')
   })
 
-  const base = () => ({ hand: { ...craftWaySamples.hand, cite: [] as string[] }, machine: craftWaySamples.machine, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare })
+  const base = () => ({ hand: { ...craftWaySamples.hand, textCite: [] as string[], noteCite: [] as string[] }, machine: craftWaySamples.machine, rowsNote: null, labels: applyMode(craftCopy, 'preview').compare })
   const numbers = sourceNumbers(sampleSources)
   const id = sampleSources[0].id
 
@@ -203,9 +203,25 @@ describe('Chú thích nguồn', () => {
     expect(lines[lines.length - 1].textContent).toContain('[1]')
   })
 
-  it('ComparisonTabs: hand.cite có thì [1] đi sau đoạn mô tả', () => {
-    const { container } = render(<ComparisonTabs {...base()} hand={{ ...craftWaySamples.hand, cite: [id] }} rows={[]} numbers={numbers} />)
-    const p = container.querySelector('p')
-    expect(p?.textContent).toMatch(/\[1\]$/)
+  it('ComparisonTabs: textCite có thì [1] đi sau đoạn mô tả', () => {
+    const { container } = render(<ComparisonTabs {...base()} hand={{ ...craftWaySamples.hand, textCite: [id], noteCite: [] }} rows={[]} numbers={numbers} />)
+    const [text, note] = Array.from(container.querySelectorAll('p'))
+    expect(text.textContent).toMatch(/\[1\]$/)
+    expect(note.textContent).not.toContain('[1]')
+  })
+
+  it('ComparisonTabs: chỉ ghi chú có nguồn thì [1] đi sau ghi chú, không sau mô tả', () => {
+    const { container } = render(<ComparisonTabs {...base()} hand={{ ...craftWaySamples.hand, textCite: [], noteCite: [id] }} rows={[]} numbers={numbers} />)
+    const [text, note] = Array.from(container.querySelectorAll('p'))
+    expect(text.textContent).not.toContain('[1]')
+    expect(note.textContent).toMatch(/\[1\]$/)
+  })
+
+  it('ComparisonTabs: mô tả bị ẩn, ghi chú có nguồn vẫn hiện kèm [1]', () => {
+    const hand = { ...craftWaySamples.hand, text: { desktop: null, mobile: null }, textCite: [], note: { desktop: '2 lá/ngày', mobile: '2 lá/ngày' }, noteCite: [id] }
+    const { container } = render(<ComparisonTabs {...base()} hand={hand} rows={[]} numbers={numbers} />)
+    const ps = Array.from(container.querySelectorAll('p'))
+    expect(ps).toHaveLength(1)
+    expect(ps[0].textContent).toMatch(/2 lá\/ngày.*\[1\]$/)
   })
 })

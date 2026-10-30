@@ -41,12 +41,13 @@ function WayPanel({ way, numbers }: { way: Way; numbers: Map<string, number> }) 
         {hasVariant(way.text) ? (
           <p className="text-[16px] leading-[1.65] md:text-[17px] md:leading-[1.7]">
             <VariantText value={way.text} />
-            <Cite ids={way.cite} numbers={numbers} variant="bracket" />
+            <Cite ids={way.textCite} numbers={numbers} variant="bracket" />
           </p>
         ) : null}
         {hasVariant(way.note) ? (
           <p className="text-[14px] leading-[1.6] text-text-secondary md:text-[15px]">
             <VariantText value={way.note} />
+            <Cite ids={way.noteCite} numbers={numbers} variant="bracket" />
           </p>
         ) : null}
       </div>

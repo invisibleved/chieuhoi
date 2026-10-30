@@ -9,8 +9,8 @@ import { applyMode } from './copy/applyMode'
 import { connectCopy } from './copy/connect'
 import { craftCopy, craftReadNext } from './copy/craft'
 import { villageCopy, villageTimelineAdd } from './copy/village'
-import { craftCompareRows } from './craftMerge'
-import { craftFactsFrom, villageFactsFrom, type CraftFacts } from './pageFacts'
+import { craftCompareRows, craftToolCards, craftWayCard } from './craftMerge'
+import { craftFactsFrom, villageFactsFrom } from './pageFacts'
 import { pageSourcesInOrder } from './pageSources'
 import { mergeVillageCopy, villageFactRows } from './villageMerge'
 import { readGlobalDoc, type createContent } from './queries'
@@ -47,20 +47,16 @@ export function createPages(payload: Payload, content: Content) {
     const f = craftFactsFrom(intros['nghe-det-chieu'] as Record<string, unknown> | undefined)
     const sources = pageSourcesInOrder(allSources, f.sourceOrder)
     const visible = new Set(sources.map((s) => s.id))
-    const opts = { cites: visible }
-    const card = (c: CraftFacts['hand'], slot: 'hand' | 'machine') => {
-      const m = applyMode({ text: c.text, note: c.note, cite: c.cite }, mode, opts)
-      return { title: showText(c.title, mode), image: media[slot]?.image ?? null, text: m.text, note: m.note, cite: m.cite }
-    }
     return {
       intro,
       hero: media.hero ?? null,
       steps,
-      tools: f.tools.map((t) => {
-        const m = applyMode({ note: t.note, cite: t.cite }, mode, opts)
-        return { n: t.n, name: t.name, note: m.note, cite: m.cite, image: media[`tool-${t.n}` as 'tool-1']?.image ?? null }
-      }),
-      compare: { hand: card(f.hand, 'hand'), machine: card(f.machine, 'machine'), rows: craftCompareRows(f.rows, mode, visible) },
+      tools: craftToolCards(f.tools, mode, visible, (n) => media[`tool-${n}` as 'tool-1']?.image ?? null),
+      compare: {
+        hand: craftWayCard(f.hand, mode, visible, media.hand?.image ?? null),
+        machine: craftWayCard(f.machine, mode, visible, media.machine?.image ?? null),
+        rows: craftCompareRows(f.rows, mode, visible),
+      },
       readNext: craftReadNext.map((r) => ({
         href: r.href, eyebrow: r.eyebrow, title: r.title, cta: r.cta, image: media[r.slot]?.image ?? null,
       })),

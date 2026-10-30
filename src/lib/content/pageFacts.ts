@@ -11,7 +11,8 @@ export type SentenceRow = {
   sources?: unknown
 }
 
-export type Way = { title: string; text: Variant; note: Variant; cite: string[] }
+/** Thẻ một cách dệt: mô tả và ghi chú giữ nguồn riêng, áp mode theo từng câu. */
+export type Way = { title: string; text: CitedText; note: CitedText }
 
 export type VillageFacts = {
   facts: { term: string; detail: Variant; note: Variant; editorNote: string | null; cite: string[] }[]
@@ -29,7 +30,8 @@ export type CraftFacts = {
   tools: { n: number; name: string; note: Variant; cite: string[] }[]
   hand: Way
   machine: Way
-  rows: { aspect: string; hand: string; machine: string; mobile: string[]; cite: string[] }[]
+  /** `mobileAuto`: dòng điện thoại tự ghép từ hai ô (biên tập viên để trống), dựng lại sau khi áp mode. */
+  rows: { aspect: string; hand: string; machine: string; mobile: string[]; mobileAuto: boolean; cite: string[] }[]
   sourceOrder: string[]
 }
 
@@ -62,9 +64,19 @@ export function orderSources(listed: string[], cited: string[]): string[] {
   return dedupe([...listed, ...cited])
 }
 
+const editorLines = (mobile: string | null | undefined): string[] =>
+  (mobile ?? '').split('\n').map((l) => l.trim()).filter(Boolean)
+
+/** Ghép dòng điện thoại tự động từ hai ô; ô nào null thì bỏ phần đó. */
+export function composeMobileLine(hand: string | null, machine: string | null): string {
+  return [hand !== null ? `Thủ công: ${hand}` : null, machine !== null ? `Máy: ${machine}` : null]
+    .filter((x): x is string => x !== null)
+    .join(' · ')
+}
+
 export function compareMobileLines(r: { hand?: string | null; machine?: string | null; mobile?: string | null }): string[] {
-  const lines = (r.mobile ?? '').split('\n').map((l) => l.trim()).filter(Boolean)
-  return lines.length ? lines : [`Thủ công: ${r.hand ?? ''} · Máy: ${r.machine ?? ''}`]
+  const lines = editorLines(r.mobile)
+  return lines.length ? lines : [composeMobileLine(r.hand ?? '', r.machine ?? '')]
 }
 
 export function villageFactsFrom(g: Record<string, unknown> | undefined): VillageFacts {
@@ -107,10 +119,10 @@ export function villageFactsFrom(g: Record<string, unknown> | undefined): Villag
 
 function wayFrom(v: unknown): Way {
   const w = rec(v)
-  const text = toCited(rec(w.text))
-  const note = toCited(rec(w.note))
-  return { title: str(w.title), text: text.text, note: note.text, cite: dedupe([...text.cite, ...note.cite]) }
+  return { title: str(w.title), text: toCited(rec(w.text)), note: toCited(rec(w.note)) }
 }
+
+const wayCite = (w: Way): string[] => [...w.text.cite, ...w.note.cite]
 
 export function craftFactsFrom(g: Record<string, unknown> | undefined): CraftFacts {
   const src = rec(g)
@@ -125,8 +137,9 @@ export function craftFactsFrom(g: Record<string, unknown> | undefined): CraftFac
     hand: str(r.hand),
     machine: str(r.machine),
     mobile: compareMobileLines({ hand: str(r.hand), machine: str(r.machine), mobile: str(r.mobile) }),
+    mobileAuto: editorLines(str(r.mobile)).length === 0,
     cite: sourceIdsOf(r.sources),
   }))
-  const cited = [...tools.flatMap((t) => t.cite), ...hand.cite, ...machine.cite, ...rows.flatMap((r) => r.cite)]
+  const cited = [...tools.flatMap((t) => t.cite), ...wayCite(hand), ...wayCite(machine), ...rows.flatMap((r) => r.cite)]
   return { tools, hand, machine, rows, sourceOrder: orderSources(sourceIdsOf(src.pageSources), cited) }
 }

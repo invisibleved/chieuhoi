@@ -89,6 +89,38 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         delete process.env.SEED_FORCE_GLOBALS
       }
     })
+    it('ví dụ Vietnam+: ghi chú thẻ thủ công và hàng "Thời gian một tấm" có nguồn, ô máy còn chờ xác minh', async () => {
+      const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
+        'nghe-det-chieu': { hand: Record<string, Record<string, unknown>>; compareRows: Record<string, unknown>[] }
+      }
+      const { hand, compareRows } = g['nghe-det-chieu']
+      const user = await reviewer()
+      const src = await sourceDoc('vietnamplus-2026')
+      try {
+        await payload.updateGlobal({
+          slug: 'page-intros', user, overrideAccess: true,
+          data: {
+            'nghe-det-chieu': {
+              hand: { ...hand, note: { ...hand.note, text: 'Dệt tay khoảng 2 lá/ngày.', mobileText: null, sources: [src.id] } },
+              compareRows: compareRows.map((r) => (r.aspect === 'Thời gian một tấm' ? { ...r, hand: '2 lá/ngày', machine: '[cần xác minh]', sources: [src.id] } : r)),
+            },
+            _status: 'published',
+          } as never,
+        } as never)
+        const v = await pages.getCraftPage('public')
+        expect(v.compare.hand.note).toEqual({ desktop: 'Dệt tay khoảng 2 lá/ngày.', mobile: 'Dệt tay khoảng 2 lá/ngày.' })
+        expect(v.compare.hand.noteCite).toEqual(['vietnamplus-2026'])
+        expect(v.compare.hand.textCite).toEqual([])
+        expect(v.compare.hand.text.desktop).toBeTruthy()
+        const row = v.compare.rows.find((r) => r.aspect === 'Thời gian một tấm')
+        expect(row).toMatchObject({ hand: '2 lá/ngày', machine: null, mobile: ['Thủ công: 2 lá/ngày'], cite: ['vietnamplus-2026'] })
+        expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026'])
+      } finally {
+        process.env.SEED_FORCE_GLOBALS = 'true'
+        await seed(payload)
+        delete process.env.SEED_FORCE_GLOBALS
+      }
+    })
     it('preview: đủ 7 công đoạn, công đoạn thiếu ảnh có shotNeeded, toRecord hiện', async () => {
       const v = await pages.getCraftPage('preview')
       expect(v.steps).toHaveLength(7)

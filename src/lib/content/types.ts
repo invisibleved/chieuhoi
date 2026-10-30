@@ -380,6 +380,15 @@ export interface PageIntroView {
 export type MediaView = { image: ImageView; caption: string | null }
 export type Variant = { desktop: string | null; mobile: string | null }
 
+export type CraftWayView = {
+  title: string | null
+  image: ImageView | null
+  text: Variant
+  textCite: string[]
+  note: Variant
+  noteCite: string[]
+}
+
 export interface CraftPageView {
   /** title giữ nguyên '\n' */
   intro: PageIntroView
@@ -387,8 +396,9 @@ export interface CraftPageView {
   steps: CraftStepView[]
   tools: { n: number; name: string; note: Variant; cite: string[]; image: ImageView | null }[]
   compare: {
-    hand: { title: string | null; image: ImageView | null; text: Variant; note: Variant; cite: string[] }
-    machine: { title: string | null; image: ImageView | null; text: Variant; note: Variant; cite: string[] }
+    /** Mô tả và ghi chú có nguồn riêng: `textCite` đi sau mô tả, `noteCite` sau ghi chú. */
+    hand: CraftWayView
+    machine: CraftWayView
     /** Ô desktop bị ẩn để null; hàng cả hai ô null đã bị bỏ. `mobile`: các dòng mobile còn hiện được. */
     rows: {
       aspect: string

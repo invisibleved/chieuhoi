@@ -173,7 +173,7 @@ export const craftToolSamples = [
 ]
 export const craftWaySamples: { hand: CraftPageView['compare']['hand']; machine: CraftPageView['compare']['machine'] } = {
   hand: {
-    title: 'Dệt thủ công', image: null, cite: ['vietnamplus-2026'],
+    title: 'Dệt thủ công', image: null, textCite: ['vietnamplus-2026'], noteCite: [],
     text: {
       desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
       mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
@@ -184,7 +184,7 @@ export const craftWaySamples: { hand: CraftPageView['compare']['hand']; machine:
     },
   },
   machine: {
-    title: 'Dệt bằng máy', image: null, cite: [],
+    title: 'Dệt bằng máy', image: null, textCite: [], noteCite: [],
     text: {
       desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
       mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
