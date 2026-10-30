@@ -1,4 +1,4 @@
-import { expect, test, type Browser, type Page } from '@playwright/test'
+import { expect, test, type Browser, type Locator, type Page } from '@playwright/test'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
@@ -65,6 +65,27 @@ async function chooseWorkflow(page: Page, label: string) {
   // Rời ô chọn để thông báo đọc màn hình ("option …, selected") không lọt vào chữ của khung đỏ.
   await page.keyboard.press('Escape')
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur())
+}
+
+/** Phần mở đầu trang, phần Làng Hới, mở dòng Địa giới hiện nay của Bảng thông tin đầu trang; trả về dòng đó. */
+async function openFactRow(page: Page): Promise<Locator> {
+  // Payload nhớ dòng nào đang đóng hay mở theo từng người dùng; xoá đi để dòng nào cũng mở sẵn như lần đầu vào trang.
+  const cleared = await page.request.delete('/api/payload-preferences?where[key][exists]=true')
+  expect(cleared.ok(), await cleared.text()).toBe(true)
+  await page.goto('/admin/globals/page-intros')
+  // Mỗi dòng của bảng tên "Fact 01", "Fact 02"…; dòng thứ hai là Địa giới hiện nay (xem dữ kiện mẫu).
+  const row = page.locator('.array-field__row').filter({ has: page.locator('.row-label', { hasText: /^Fact 02$/ }) }).first()
+  await expect(row).toBeVisible()
+  await page.waitForLoadState('networkidle')
+  const input = row.locator('input[value="ĐỊA GIỚI HIỆN NAY"]')
+  // Payload lưu và áp lại trạng thái đóng/mở chậm hơn lúc trang hiện ra: mở xong chờ rồi kiểm lại cho chắc dòng còn mở.
+  for (let i = 0; i < 4; i++) {
+    await page.waitForTimeout(700)
+    if (!(await input.isVisible())) await row.locator('.collapsible__toggle').first().click()
+  }
+  await page.waitForTimeout(700)
+  await expect(input).toBeVisible()
+  return row
 }
 
 const RECIPES: Record<string, Recipe> = {
@@ -223,6 +244,24 @@ const RECIPES: Record<string, Recipe> = {
     step: async (page) => {
       await openStory(page, 'bai-cho-duyet-mau')
       return highlight(page, page.locator('#action-save'))
+    },
+  },
+  'du-kien-dia-gioi': {
+    role: 'editor',
+    step: async (page) => {
+      const row = await openFactRow(page)
+      return highlight(page, row)
+    },
+  },
+  'du-kien-nguon': {
+    role: 'editor',
+    step: async (page) => {
+      const row = await openFactRow(page)
+      const sources = row
+        .locator('.field-type')
+        .filter({ has: page.locator('label.field-label', { hasText: /^Nguồn$/ }) })
+        .first()
+      return highlight(page, sources)
     },
   },
   'tao-tai-khoan': {

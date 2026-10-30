@@ -12,6 +12,7 @@ const ALL = [
   'Tải ảnh lên',
   'Viết một bài',
   'Thêm người hoặc sản phẩm',
+  'Sửa dữ kiện trang Làng Hới và Nghề dệt',
   'Xem trước bài trên trang',
   'Gửi bài cho người duyệt',
   'Quên mật khẩu',
@@ -23,12 +24,12 @@ const FORBIDDEN = ['slug', 'collection', 'cms', 'đường dẫn', 'field']
 const bolds = (text: string) => [...text.matchAll(/\*\*(.+?)\*\*/g)].map((m) => m[1])
 
 describe('GUIDE_SECTIONS', () => {
-  it('có 12 mục, id duy nhất', () => {
-    expect(GUIDE_SECTIONS).toHaveLength(12)
-    expect(new Set(GUIDE_SECTIONS.map((s) => s.id)).size).toBe(12)
+  it('có 13 mục, id duy nhất', () => {
+    expect(GUIDE_SECTIONS).toHaveLength(13)
+    expect(new Set(GUIDE_SECTIONS.map((s) => s.id)).size).toBe(13)
   })
 
-  it('8 mục cho mọi người rồi 4 mục cho người duyệt, đúng thứ tự spec', () => {
+  it('9 mục cho mọi người rồi 4 mục cho người duyệt, đúng thứ tự spec', () => {
     expect(GUIDE_SECTIONS.filter((s) => s.audience === 'all').map((s) => s.title)).toEqual(ALL)
     expect(GUIDE_SECTIONS.filter((s) => s.audience === 'reviewer').map((s) => s.title)).toEqual(REVIEWER)
     expect(GUIDE_SECTIONS.map((s) => s.title)).toEqual([...ALL, ...REVIEWER])
@@ -115,13 +116,13 @@ describe('GUIDE_INTRO', () => {
 })
 
 describe('sectionsFor', () => {
-  it('biên tập viên chỉ thấy 8 mục cho mọi người', () => {
+  it('biên tập viên chỉ thấy 9 mục cho mọi người', () => {
     expect(sectionsFor({ role: 'editor' }).map((s) => s.title)).toEqual(ALL)
     expect(sectionsFor(null).map((s) => s.title)).toEqual(ALL)
   })
 
-  it('người duyệt thấy đủ 12 mục', () => {
-    expect(sectionsFor({ role: 'reviewer' })).toHaveLength(12)
+  it('người duyệt thấy đủ 13 mục', () => {
+    expect(sectionsFor({ role: 'reviewer' })).toHaveLength(13)
   })
 })
 

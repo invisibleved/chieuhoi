@@ -41,5 +41,11 @@ export const GUIDE_SHOTS: GuideShot[] = [
   { id: 'duyet-quyen-anh', alt: 'Trang sửa ảnh tư liệu, khung đỏ quanh ô Quyền sử dụng đang chọn Được phép.', mobile: false },
   { id: 'dang-bai-mo', alt: 'Danh sách Bài viết, khung đỏ ở tên bài đang chờ duyệt trong cột đầu.', mobile: false },
   { id: 'duyet-dang', alt: 'Bài viết đang chờ duyệt, khung đỏ ở nút Xuất bản tài liệu.', mobile: false },
+  {
+    id: 'du-kien-dia-gioi',
+    alt: 'Phần mở đầu trang, phần Làng Hới, khung đỏ quanh dòng Fact 02 (Địa giới hiện nay) trong Bảng thông tin đầu trang, đã mở ra, có các ô Mục, Nội dung và Nguồn.',
+    mobile: false,
+  },
+  { id: 'du-kien-nguon', alt: 'Dòng Địa giới hiện nay đã mở, khung đỏ quanh ô Nguồn có các nguồn đã chọn.', mobile: false },
   { id: 'tao-tai-khoan', alt: 'Trang tạo người dùng mới, khung đỏ quanh ô Vai trò.', mobile: false },
 ]
