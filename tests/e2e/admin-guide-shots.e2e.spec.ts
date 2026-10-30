@@ -73,17 +73,16 @@ async function openFactRow(page: Page): Promise<Locator> {
   const cleared = await page.request.delete('/api/payload-preferences?where[key][exists]=true')
   expect(cleared.ok(), await cleared.text()).toBe(true)
   await page.goto('/admin/globals/page-intros')
-  // Mỗi dòng của bảng tên "Fact 01", "Fact 02"…; dòng thứ hai là Địa giới hiện nay (xem dữ kiện mẫu).
-  const row = page.locator('.array-field__row').filter({ has: page.locator('.row-label', { hasText: /^Fact 02$/ }) }).first()
+  // Tên dòng là chữ ở ô Mục.
+  const row = page.locator('.array-field__row').filter({ has: page.locator('.array-field__row-header', { hasText: /^ĐỊA GIỚI HIỆN NAY$/ }) }).first()
   await expect(row).toBeVisible()
   await page.waitForLoadState('networkidle')
   const input = row.locator('input[value="ĐỊA GIỚI HIỆN NAY"]')
-  // Payload lưu và áp lại trạng thái đóng/mở chậm hơn lúc trang hiện ra: mở xong chờ rồi kiểm lại cho chắc dòng còn mở.
-  for (let i = 0; i < 4; i++) {
-    await page.waitForTimeout(700)
-    if (!(await input.isVisible())) await row.locator('.collapsible__toggle').first().click()
-  }
-  await page.waitForTimeout(700)
+  // "Hiển thị toàn bộ" luôn mở mọi dòng (không đảo trạng thái như nút của từng dòng, vốn bị Payload đóng lại khi lưu lựa chọn).
+  await page.waitForLoadState('networkidle')
+  await page.locator('.array-field').filter({ has: row }).last().getByRole('button', { name: 'Hiển thị toàn bộ' }).click()
+  await expect(input).toBeVisible()
+  await page.waitForLoadState('networkidle')
   await expect(input).toBeVisible()
   return row
 }

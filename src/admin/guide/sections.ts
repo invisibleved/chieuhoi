@@ -101,8 +101,8 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     steps: [
       { text: 'Mở menu bên trái, bấm **Phần mở đầu trang**.' },
       { text: 'Kéo xuống tới phần **Làng Hới**. Tên phần là chữ to, in đậm.' },
-      { text: 'Tìm tiếp phần **Bảng thông tin đầu trang**. Mỗi dòng trong bảng là một dữ kiện, tên dòng là Fact 01, Fact 02, Fact 03.' },
-      { text: 'Dòng địa giới là dòng thứ hai, **Fact 02**. Bấm vào tên dòng để mở ra. Ô **Mục** của dòng này ghi ĐỊA GIỚI HIỆN NAY.', shot: 'du-kien-dia-gioi' },
+      { text: 'Tìm tiếp phần **Bảng thông tin đầu trang**. Mỗi dòng trong bảng là một dữ kiện, tên dòng là chữ ở ô **Mục**.' },
+      { text: 'Nếu dòng đang đóng, bấm vào dòng **ĐỊA GIỚI HIỆN NAY** để mở ra.', shot: 'du-kien-dia-gioi' },
       { text: 'Sửa câu trong ô **Nội dung**. Chỉ viết điều bạn biết chắc.' },
       { text: 'Muốn ghi nguồn, bấm vào ô **Nguồn** của dòng đó rồi chọn nguồn trong danh sách.', shot: 'du-kien-nguon' },
       { text: 'Chưa có nguồn trong danh sách thì ra menu, vào mục **Nguồn**, thêm nguồn mới trước. Rồi quay lại chọn.' },

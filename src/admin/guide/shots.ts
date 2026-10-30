@@ -43,7 +43,7 @@ export const GUIDE_SHOTS: GuideShot[] = [
   { id: 'duyet-dang', alt: 'Bài viết đang chờ duyệt, khung đỏ ở nút Xuất bản tài liệu.', mobile: false },
   {
     id: 'du-kien-dia-gioi',
-    alt: 'Phần mở đầu trang, phần Làng Hới, khung đỏ quanh dòng Fact 02 (Địa giới hiện nay) trong Bảng thông tin đầu trang, đã mở ra, có các ô Mục, Nội dung và Nguồn.',
+    alt: 'Phần mở đầu trang, phần Làng Hới, khung đỏ quanh dòng ĐỊA GIỚI HIỆN NAY trong Bảng thông tin đầu trang, đã mở ra, có các ô Mục, Nội dung và Nguồn.',
     mobile: false,
   },
   { id: 'du-kien-nguon', alt: 'Dòng Địa giới hiện nay đã mở, khung đỏ quanh ô Nguồn có các nguồn đã chọn.', mobile: false },

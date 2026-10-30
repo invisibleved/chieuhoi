@@ -27,7 +27,8 @@ const citedGroup = (name: string, label: string, required: boolean): Field => ({
 
 export const villageFactsFields = (): Field[] => [
   {
-    name: 'facts', type: 'array', label: 'Bảng thông tin đầu trang',
+    name: 'facts', type: 'array', label: 'Bảng thông tin đầu trang', labels: { singular: 'Dòng', plural: 'Các dòng' },
+    admin: { components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'term', fallback: 'Dòng' } } } },
     fields: [
       { name: 'term', type: 'text', label: 'Mục', required: true, localized: true },
       { name: 'detail', type: 'textarea', label: 'Nội dung', required: true, localized: true },
@@ -42,10 +43,10 @@ export const villageFactsFields = (): Field[] => [
     name: 'founder', type: 'group', label: 'Tổ nghề',
     fields: [
       {
-        name: 'paragraphs', type: 'array', label: 'Đoạn', dbName: 'lh_founder_paras',
-        fields: [{ name: 'sentences', type: 'array', label: 'Câu', dbName: 'lh_founder_sents', fields: citedSentenceFields() }],
+        name: 'paragraphs', type: 'array', label: 'Đoạn', labels: { singular: 'Đoạn', plural: 'Các đoạn' }, dbName: 'lh_founder_paras',
+        fields: [{ name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_founder_sents', fields: citedSentenceFields() }],
       },
-      { name: 'conflict', type: 'array', label: 'Hộp Các nguồn chưa thống nhất', fields: citedSentenceFields() },
+      { name: 'conflict', type: 'array', label: 'Hộp Các nguồn chưa thống nhất', labels: { singular: 'Câu', plural: 'Các câu' }, fields: citedSentenceFields() },
       { name: 'conflictEditorNote', type: 'textarea', label: 'Ghi chú biên tập cuối hộp', localized: true },
       { name: 'noPortrait', type: 'text', label: 'Dòng không có chân dung', localized: true },
     ],
@@ -61,7 +62,7 @@ export const villageFactsFields = (): Field[] => [
   {
     name: 'heritage', type: 'group', label: 'Di sản hôm nay',
     fields: [
-      { name: 'sentences', type: 'array', label: 'Câu', dbName: 'lh_heritage_sents', fields: citedSentenceFields() },
+      { name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_heritage_sents', fields: citedSentenceFields() },
       { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập', localized: true },
     ],
   },
@@ -70,8 +71,11 @@ export const villageFactsFields = (): Field[] => [
 
 export const craftFactsFields = (): Field[] => [
   {
-    name: 'tools', type: 'array', label: 'Dụng cụ', maxRows: 3,
-    admin: { description: 'Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.' },
+    name: 'tools', type: 'array', label: 'Dụng cụ', labels: { singular: 'Dụng cụ', plural: 'Các dụng cụ' }, maxRows: 3,
+    admin: {
+      description: 'Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.',
+      components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'name', fallback: 'Dụng cụ' } } },
+    },
     fields: [
       { name: 'name', type: 'text', label: 'Tên dụng cụ', required: true, localized: true },
       citedGroup('note', 'Ghi chú', false),
@@ -94,7 +98,8 @@ export const craftFactsFields = (): Field[] => [
     ],
   },
   {
-    name: 'compareRows', type: 'array', label: 'Bảng so sánh', dbName: 'ndc_compare',
+    name: 'compareRows', type: 'array', label: 'Bảng so sánh', labels: { singular: 'Hàng', plural: 'Các hàng' }, dbName: 'ndc_compare',
+    admin: { components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'aspect', fallback: 'Hàng' } } } },
     fields: [
       { name: 'aspect', type: 'text', label: 'Khía cạnh', required: true, localized: true },
       { name: 'hand', type: 'textarea', label: 'Thủ công', localized: true },
