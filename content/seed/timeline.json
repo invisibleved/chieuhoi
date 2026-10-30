@@ -43,7 +43,7 @@
   {
     "label": "[?]",
     "title": "Đền thờ tổ nghề",
-    "body": "Năm lập đền và cấp xếp hạng chưa xác định. Lễ tế được ghi vào mùng 6 tháng Giêng âm lịch.",
+    "body": "Đại Đoàn Kết gọi là đền Quan Trạng, ở làng Hải Triều. Năm lập đền và cấp xếp hạng di tích chưa xác định. Lễ tế được ghi vào mùng 6 tháng Giêng âm lịch.",
     "confidence": "pending",
     "sources": [
       "daidoanket-2021"
@@ -61,10 +61,12 @@
   {
     "label": "Hôm nay",
     "title": "Xã Long Hưng",
-    "body": "Làng nay thuộc xã Long Hưng, tỉnh Hưng Yên; trước đây là xã Tân Lễ, huyện Hưng Hà, Thái Bình. Cần đối chiếu văn bản hành chính.",
+    "body": "Theo Nghị quyết 1666/NQ-UBTVQH15 ngày 16/6/2025, xã Tân Lễ được sắp xếp cùng thị trấn Hưng Nhân và các xã Thái Hưng, Tiến Đức, Liên Hiệp thành xã Long Hưng. Tỉnh Thái Bình và tỉnh Hưng Yên hợp thành tỉnh Hưng Yên từ 1/7/2025.",
     "confidence": "press",
     "sources": [
-      "vietnamplus-2026"
+      "vietnamplus-2026",
+      "nq-1666-2025",
+      "nq-202-2025"
     ]
   }
 ]

@@ -127,7 +127,7 @@ describe('seed', () => {
     const idea = await payload.find({ collection: 'stories', where: { workflow: { equals: 'idea' } }, overrideAccess: true })
     expect(idea.totalDocs).toBe(5)
     const published = await payload.find({ collection: 'sources', overrideAccess: true })
-    expect(published.totalDocs).toBe(3)
+    expect(published.totalDocs).toBe(5)
   })
 
   it('mốc 1531 khớp nguyên văn artboard', async () => {

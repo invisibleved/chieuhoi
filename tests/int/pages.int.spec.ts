@@ -134,11 +134,13 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(last.confidence).toBe('pending')
       expect(last.sourceHref).toBe('/ket-noi')
       expect(v.timeline[0].sourceLine).toBe('Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021)')
-      expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026', 'danviet-2024', 'daidoanket-2021'])
+      expect(v.sources.map((s) => s.id)).toEqual([
+        'vietnamplus-2026', 'danviet-2024', 'daidoanket-2021', 'nq-1666-2025', 'nq-202-2025',
+      ])
       expect(v.sources[0].date).toBe('14/08/2026')
       expect(v.facts[1].note).toEqual({
-        desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình · cần đối chiếu văn bản hành chính',
-        mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình · cần đối chiếu',
+        desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
+        mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',
       })
       expect(v.facts[2].detail.mobile).toBe('Phạm Đôn Lễ, "Trạng Chiếu"')
       expect(v.copy.location.preview?.map?.label).toBe('BẢN ĐỒ VỊ TRÍ')
@@ -161,7 +163,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       await payload.update({ collection: 'sources', id: src.id, data: { title: '[cần xác minh]' }, overrideAccess: true })
       try {
         const v = await pages.getVillagePage('public')
-        expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026', 'daidoanket-2021'])
+        expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026', 'daidoanket-2021', 'nq-1666-2025', 'nq-202-2025'])
         expect(v.facts.flatMap((f) => f.cite)).not.toContain('danviet-2024')
         expect(JSON.stringify(v.copy)).not.toContain('danviet-2024')
         expect(v.timeline[0].sourceLine).toBe('Đại Đoàn Kết (07/08/2021)')

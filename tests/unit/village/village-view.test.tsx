@@ -47,14 +47,14 @@ describe('VillageView', () => {
     const list = screen.getByRole('heading', { name: 'Nguồn tham khảo' }).closest('section')!
     expect(within(list).getAllByRole('listitem')).toHaveLength(3)
     expect(container.textContent).toContain('Chờ dữ liệu địa lý')
-    expect(container.textContent).toContain('cần đối chiếu')
+    expect(container.textContent).toContain('Cần đối chiếu với sử liệu khoa bảng')
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Có một làng Hới...')
   })
 
   it('public: nguồn bị lọc thì không còn "Nguồn 3", không có chữ chỉ của preview, không có [] rỗng', () => {
     const { container } = render(<VillageView page={view('public')} />)
     expect(screen.queryByRole('link', { name: 'Nguồn 3' })).toBeNull()
-    for (const s of ['cần đối chiếu', 'Chờ dữ liệu địa lý', 'cần xác minh']) expect(container.textContent).not.toContain(s)
+    for (const s of ['cần đối chiếu', 'Cần đối chiếu với sử liệu', 'Chờ dữ liệu địa lý', 'cần xác minh']) expect(container.textContent).not.toContain(s)
     expect(container.textContent).not.toContain('[]')
     const list = screen.getByRole('heading', { name: 'Nguồn tham khảo' }).closest('section')!
     expect(within(list).getAllByRole('listitem')).toHaveLength(2)

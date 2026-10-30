@@ -6,7 +6,7 @@ import type { ApplyMode } from './applyMode'
 import { docLabel } from './docLabel'
 
 /** Thứ tự đánh số nguồn trên trang: [1] [2] [3]. */
-export const villageSourceOrder = ['vietnamplus-2026', 'danviet-2024', 'daidoanket-2021']
+export const villageSourceOrder = ['vietnamplus-2026', 'danviet-2024', 'daidoanket-2021', 'nq-1666-2025', 'nq-202-2025']
 
 export const villageCopy = {
   breadcrumb: { label: 'Đường dẫn', home: 'Trang chủ', current: 'Làng Hới' },
@@ -159,11 +159,8 @@ export const villageFacts = [
       desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
       mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',
     } as { desktop: string | null; mobile: string | null },
-    notePreview: {
-      desktop: 'cần đối chiếu văn bản hành chính',
-      mobile: 'cần đối chiếu',
-    } as { desktop: string | null; mobile: string | null },
-    cite: ['vietnamplus-2026'],
+    notePreview: { desktop: null, mobile: null } as { desktop: string | null; mobile: string | null },
+    cite: ['vietnamplus-2026', 'nq-1666-2025', 'nq-202-2025'],
   },
   {
     term: 'TỔ NGHỀ',
