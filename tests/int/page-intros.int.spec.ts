@@ -61,4 +61,17 @@ describe('page-intros: media theo ô', () => {
     const g = await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })
     expect(g['nghe-det-chieu']?.title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
   })
+
+  it('bảng thông tin thiếu Mục thì bị từ chối', async () => {
+    await expect(save({ 'lang-hoi': { facts: [{ term: '', detail: 'x' }] } })).rejects.toThrow()
+  })
+
+  it('dụng cụ quá 3 dòng thì bị từ chối', async () => {
+    const tools = [1, 2, 3, 4].map((n) => ({ name: `Dụng cụ ${n}` }))
+    await expect(save({ 'nghe-det-chieu': { tools } })).rejects.toThrow()
+  })
+
+  it('dòng so sánh thiếu Khía cạnh thì bị từ chối', async () => {
+    await expect(save({ 'nghe-det-chieu': { compareRows: [{ aspect: '' }] } })).rejects.toThrow()
+  })
 })

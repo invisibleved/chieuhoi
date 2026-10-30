@@ -966,6 +966,66 @@ export interface PageIntro {
           id?: string | null;
         }[]
       | null;
+    facts?:
+      | {
+          term: string;
+          detail: string;
+          detailMobile?: string | null;
+          note?: string | null;
+          noteMobile?: string | null;
+          editorNote?: string | null;
+          sources?: (number | Source)[] | null;
+          id?: string | null;
+        }[]
+      | null;
+    founder?: {
+      paragraphs?:
+        | {
+            sentences?:
+              | {
+                  text: string;
+                  mobileText?: string | null;
+                  hideOnMobile?: boolean | null;
+                  sources?: (number | Source)[] | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+          }[]
+        | null;
+      conflict?:
+        | {
+            text: string;
+            mobileText?: string | null;
+            hideOnMobile?: boolean | null;
+            sources?: (number | Source)[] | null;
+            id?: string | null;
+          }[]
+        | null;
+      conflictEditorNote?: string | null;
+      noPortrait?: string | null;
+    };
+    location?: {
+      text?: string | null;
+      sources?: (number | Source)[] | null;
+      editorNote?: string | null;
+    };
+    heritage?: {
+      sentences?:
+        | {
+            text: string;
+            mobileText?: string | null;
+            hideOnMobile?: boolean | null;
+            sources?: (number | Source)[] | null;
+            id?: string | null;
+          }[]
+        | null;
+      editorNote?: string | null;
+    };
+    /**
+     * Số [1], [2]… trên trang theo đúng thứ tự này.
+     */
+    pageSources?: (number | Source)[] | null;
   };
   'cau-chuyen'?: {
     eyebrow?: string | null;
@@ -1001,6 +1061,68 @@ export interface PageIntro {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.
+     */
+    tools?:
+      | {
+          name: string;
+          note?: {
+            text?: string | null;
+            mobileText?: string | null;
+            hideOnMobile?: boolean | null;
+            sources?: (number | Source)[] | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    hand?: {
+      title?: string | null;
+      text?: {
+        text?: string | null;
+        mobileText?: string | null;
+        hideOnMobile?: boolean | null;
+        sources?: (number | Source)[] | null;
+      };
+      note?: {
+        text?: string | null;
+        mobileText?: string | null;
+        hideOnMobile?: boolean | null;
+        sources?: (number | Source)[] | null;
+      };
+    };
+    machine?: {
+      title?: string | null;
+      text?: {
+        text?: string | null;
+        mobileText?: string | null;
+        hideOnMobile?: boolean | null;
+        sources?: (number | Source)[] | null;
+      };
+      note?: {
+        text?: string | null;
+        mobileText?: string | null;
+        hideOnMobile?: boolean | null;
+        sources?: (number | Source)[] | null;
+      };
+    };
+    compareRows?:
+      | {
+          aspect: string;
+          hand?: string | null;
+          machine?: string | null;
+          /**
+           * Mỗi dòng một ý. Để trống thì tự ghép: Thủ công: … · Máy: …
+           */
+          mobile?: string | null;
+          sources?: (number | Source)[] | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Số [1], [2]… trên trang theo đúng thứ tự này.
+     */
+    pageSources?: (number | Source)[] | null;
   };
   'con-nguoi'?: {
     eyebrow?: string | null;
@@ -1097,6 +1219,69 @@ export interface PageIntrosSelect<T extends boolean = true> {
               caption?: T;
               id?: T;
             };
+        facts?:
+          | T
+          | {
+              term?: T;
+              detail?: T;
+              detailMobile?: T;
+              note?: T;
+              noteMobile?: T;
+              editorNote?: T;
+              sources?: T;
+              id?: T;
+            };
+        founder?:
+          | T
+          | {
+              paragraphs?:
+                | T
+                | {
+                    sentences?:
+                      | T
+                      | {
+                          text?: T;
+                          mobileText?: T;
+                          hideOnMobile?: T;
+                          sources?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              conflict?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                    id?: T;
+                  };
+              conflictEditorNote?: T;
+              noPortrait?: T;
+            };
+        location?:
+          | T
+          | {
+              text?: T;
+              sources?: T;
+              editorNote?: T;
+            };
+        heritage?:
+          | T
+          | {
+              sentences?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                    id?: T;
+                  };
+              editorNote?: T;
+            };
+        pageSources?: T;
       };
   'cau-chuyen'?:
     | T
@@ -1127,6 +1312,73 @@ export interface PageIntrosSelect<T extends boolean = true> {
               caption?: T;
               id?: T;
             };
+        tools?:
+          | T
+          | {
+              name?: T;
+              note?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                  };
+              id?: T;
+            };
+        hand?:
+          | T
+          | {
+              title?: T;
+              text?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                  };
+              note?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                  };
+            };
+        machine?:
+          | T
+          | {
+              title?: T;
+              text?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                  };
+              note?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                  };
+            };
+        compareRows?:
+          | T
+          | {
+              aspect?: T;
+              hand?: T;
+              machine?: T;
+              mobile?: T;
+              sources?: T;
+              id?: T;
+            };
+        pageSources?: T;
       };
   'con-nguoi'?:
     | T

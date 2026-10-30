@@ -5,6 +5,7 @@ import * as migration_20261027_164100_phase5a_stories from './20261027_164100_ph
 import * as migration_20261027_165727_phase5a_people from './20261027_165727_phase5a_people';
 import * as migration_20261027_225417_phase5b_products from './20261027_225417_phase5b_products';
 import * as migration_20261028_191749_phase7_sync from './20261028_191749_phase7_sync';
+import * as migration_20261030_125051_page_facts from './20261030_125051_page_facts';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261028_191749_phase7_sync.up,
     down: migration_20261028_191749_phase7_sync.down,
-    name: '20261028_191749_phase7_sync'
+    name: '20261028_191749_phase7_sync',
+  },
+  {
+    up: migration_20261030_125051_page_facts.up,
+    down: migration_20261030_125051_page_facts.down,
+    name: '20261030_125051_page_facts'
   },
 ];

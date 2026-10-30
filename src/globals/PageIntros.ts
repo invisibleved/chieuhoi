@@ -3,6 +3,7 @@ import type { Field, GlobalConfig } from 'payload'
 import { guardPublish, recordDraftArg, previewFor } from '@/access/publishing'
 import { revalidateGlobalAfterChange } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
+import { craftFactsFields, villageFactsFields } from './pageFacts'
 import { PAGE_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS, isPageMediaRoute } from './pageMedia'
 
 export const ROUTE_KEYS = [
@@ -75,6 +76,8 @@ const routeGroup = (key: RouteKey): Field => ({
         ] as Field[])
       : []),
     ...(isPageMediaRoute(key) ? [pageMediaField(key)] : []),
+    ...(key === 'lang-hoi' ? villageFactsFields() : []),
+    ...(key === 'nghe-det-chieu' ? craftFactsFields() : []),
   ],
 })
 
