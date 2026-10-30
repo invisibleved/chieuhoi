@@ -5,7 +5,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Payload } from 'payload'
 
 import { seed } from '@/seed'
-import { getTestPayload, resetDb } from './helpers'
+import { importPageFacts } from '@/seed/pageFacts'
+import { PAGE_FACT_SOURCE_IDS } from '@/seed/data/pageFacts'
+import { getTestPayload, makeUser, resetDb } from './helpers'
 
 const sources = JSON.parse(
   readFileSync(path.resolve(process.cwd(), 'content/seed/sources.json'), 'utf8'),
@@ -158,4 +160,162 @@ describe('seed', () => {
     expect(p.maker).toBeFalsy()
     expect(p.annotations?.map((a) => a.shortTitle)).toEqual(['Viền', 'Hoa văn', 'Mặt cói'])
   })
+})
+
+describe('importPageFacts', () => {
+  let payload: Payload
+  const savedAppEnv = process.env.APP_ENV
+  beforeAll(async () => {
+    payload = await getTestPayload()
+    process.env.APP_ENV = 'development'
+  }, 60_000)
+  afterAll(() => {
+    if (savedAppEnv === undefined) delete process.env.APP_ENV
+    else process.env.APP_ENV = savedAppEnv
+  })
+
+  type Group = Record<string, unknown>
+  type Intros = { _status?: string | null; 'lang-hoi': Group; 'nghe-det-chieu': Group }
+  const read = async (draft: boolean) =>
+    (await payload.findGlobal({ slug: 'page-intros', draft, depth: 0, overrideAccess: true })) as unknown as Intros
+  const reviewerUser = async () => ({ ...(await makeUser(payload, 'reviewer')), collection: 'users' as const })
+  const count = async (collection: string) =>
+    (await payload.count({ collection: collection as 'sources', overrideAccess: true })).totalDocs
+
+  const EMPTY_VILLAGE = {
+    facts: [],
+    founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
+    location: { text: null, sources: [], editorNote: null },
+    heritage: { sentences: [], editorNote: null },
+    pageSources: [],
+  }
+  const EMPTY_CRAFT = {
+    tools: [],
+    hand: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
+    machine: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
+    compareRows: [],
+    pageSources: [],
+  }
+
+  /** Đăng bản global với mọi nhóm dữ kiện trống (globals không bị resetDb xoá). */
+  async function publishEmptyFacts() {
+    const user = await reviewerUser()
+    const cur = await read(true)
+    await payload.updateGlobal({
+      slug: 'page-intros',
+      data: {
+        'lang-hoi': { ...cur['lang-hoi'], ...EMPTY_VILLAGE },
+        'nghe-det-chieu': { ...cur['nghe-det-chieu'], ...EMPTY_CRAFT },
+        _status: 'published',
+      },
+      overrideAccess: true,
+      user,
+    } as never)
+  }
+
+  it('fills empty groups and publishes on fresh db', async () => {
+    await publishEmptyFacts()
+    await resetDb(payload)
+    await seed(payload)
+    const g = await read(false)
+    expect(g._status).toBe('published')
+    expect((g['lang-hoi'].facts as unknown[]).length).toBe(3)
+    expect((g['nghe-det-chieu'].tools as unknown[]).length).toBe(3)
+    expect((g['lang-hoi'].media as unknown[]).length).toBe(4)
+    expect(g['lang-hoi'].lead).toBeTruthy()
+  }, 240_000)
+
+  it('keeps pending draft and only fills empty groups', async () => {
+    const user = await reviewerUser()
+    const cur = await read(true)
+    const leadBefore = cur['lang-hoi'].lead
+    const mediaBefore = cur['lang-hoi'].media
+    const craftMediaBefore = cur['nghe-det-chieu'].media
+    await payload.updateGlobal({
+      slug: 'page-intros',
+      data: {
+        'lang-hoi': {
+          ...cur['lang-hoi'],
+          location: { ...(cur['lang-hoi'].location as Group), text: 'Đã sửa' },
+          heritage: { sentences: [], editorNote: null },
+        },
+        _status: 'published',
+      },
+      overrideAccess: true,
+      user,
+    } as never)
+    const pub = await read(true)
+    await payload.updateGlobal({
+      slug: 'page-intros',
+      data: { 'lang-hoi': { ...pub['lang-hoi'], lead: 'Nháp' } },
+      draft: true,
+      overrideAccess: true,
+      user,
+    } as never)
+
+    const report = await importPageFacts(payload, { publish: 'when-no-draft', user })
+    expect(report.saved).toBe('draft')
+    expect(report.warning).toBeTruthy()
+    expect(report.filled).toEqual(['lang-hoi.heritage'])
+
+    const published = await read(false)
+    expect(published['lang-hoi'].heritage).toMatchObject({ sentences: [] })
+    expect(published['lang-hoi'].lead).toBe(leadBefore)
+
+    const draft = await read(true)
+    expect((draft['lang-hoi'].heritage as { sentences: unknown[] }).sentences).toHaveLength(2)
+    expect((draft['lang-hoi'].location as Group).text).toBe('Đã sửa')
+    expect(draft['lang-hoi'].lead).toBe('Nháp')
+    // Không mất ô cũ của route hay route khác.
+    expect(draft['lang-hoi'].media).toEqual(mediaBefore)
+    expect(draft['nghe-det-chieu'].media).toEqual(craftMediaBefore)
+    expect((draft['lang-hoi'].facts as unknown[]).length).toBe(3)
+  }, 60_000)
+
+  it('import never publishes and is idempotent', async () => {
+    await publishEmptyFacts()
+    await resetDb(payload)
+    const before = await read(false)
+
+    const first = await importPageFacts(payload, { publish: 'never' })
+    expect([...first.sourcesCreated].sort()).toEqual([...PAGE_FACT_SOURCE_IDS].sort())
+    expect(first.saved).toBe('draft')
+    expect(first.filled).toHaveLength(9)
+    expect(first.skipped).toEqual([{ group: 'nghe-det-chieu.pageSources', reason: 'seed không có dữ liệu' }])
+
+    const after = await read(false)
+    expect(after['lang-hoi']).toEqual(before['lang-hoi'])
+    expect(after['nghe-det-chieu']).toEqual(before['nghe-det-chieu'])
+    const draft = await read(true)
+    expect((draft['lang-hoi'].facts as unknown[]).length).toBe(3)
+    expect((draft['lang-hoi'].pageSources as unknown[]).length).toBe(5)
+
+    const second = await importPageFacts(payload, { publish: 'never' })
+    expect(second.sourcesCreated).toEqual([])
+    expect([...second.sourcesSkipped].sort()).toEqual([...PAGE_FACT_SOURCE_IDS].sort())
+    expect(second.saved).toBe('none')
+    expect(second.skipped).toHaveLength(10)
+    expect(second.skipped.filter((s) => s.reason === 'đã có dữ liệu')).toHaveLength(9)
+
+    for (const c of ['people', 'products', 'stories', 'archive-assets', 'timeline-events']) {
+      expect(await count(c)).toBe(0)
+    }
+  }, 60_000)
+
+  it('does not edit existing sources', async () => {
+    await resetDb(payload)
+    await payload.create({
+      collection: 'sources',
+      data: { sourceId: 'vietnamplus-2026', title: 'Cũ' },
+      overrideAccess: true,
+    })
+    const report = await importPageFacts(payload, { publish: 'never' })
+    expect(report.sourcesSkipped).toContain('vietnamplus-2026')
+    expect(report.sourcesCreated).not.toContain('vietnamplus-2026')
+    const [s] = (await payload.find({
+      collection: 'sources', where: { sourceId: { equals: 'vietnamplus-2026' } }, overrideAccess: true,
+    })).docs
+    expect(s.title).toBe('Cũ')
+    expect(await count('sources')).toBe(PAGE_FACT_SOURCE_IDS.length)
+  }, 60_000)
 })

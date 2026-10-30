@@ -15,6 +15,7 @@ import { timelineCopy } from './data/timeline'
 import { craftCopy } from './data/craft'
 import { homeMedia, pageIntros, pageMedia, siteSettings } from './data/site'
 import { assertSeedAllowed } from './guard'
+import { importPageFacts } from './pageFacts'
 
 export { assertSeedAllowed } from './guard'
 export { injectCitations, injectFigures } from './citations'
@@ -307,6 +308,10 @@ export async function seed(payload: Payload): Promise<void> {
       slug, data: { ...data, _status: 'published' } as never, overrideAccess: true, user,
     })
   }
+
+  // Dữ kiện trang Làng Hới / Nghề dệt: chỉ điền nhóm trống (hoặc mọi nhóm khi force).
+  const factsReport = await importPageFacts(payload, { publish: 'when-no-draft', force, user })
+  console.log('Dữ kiện trang:', factsReport)
 }
 
 async function main() {
