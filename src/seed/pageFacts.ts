@@ -52,15 +52,19 @@ type Route = keyof typeof ROUTE_GROUPS
 
 type SourceJson = { id: string; publisher?: string; title: string; url?: string; date?: string }
 
-async function ensureSources(
+export type SourceReport = { sourcesCreated: string[]; sourcesSkipped: string[] }
+
+/** Tạo các nguồn trong `wanted` còn thiếu (lấy từ content/seed/sources.json), không sửa nguồn đã có. */
+export async function ensureSources(
   payload: Payload,
+  wanted: readonly string[],
   user: TypedUser | undefined,
-  report: ImportReport,
+  report: SourceReport,
 ): Promise<Record<string, number>> {
   const ids: Record<string, number> = {}
   const found = await payload.find({
     collection: 'sources',
-    where: { sourceId: { in: [...PAGE_FACT_SOURCE_IDS] } },
+    where: { sourceId: { in: [...wanted] } },
     pagination: false,
     depth: 0,
     overrideAccess: true,
@@ -69,7 +73,7 @@ async function ensureSources(
   const json = JSON.parse(
     readFileSync(path.resolve(process.cwd(), 'content/seed/sources.json'), 'utf8'),
   ) as SourceJson[]
-  for (const id of PAGE_FACT_SOURCE_IDS) {
+  for (const id of wanted) {
     if (ids[id] !== undefined) {
       report.sourcesSkipped.push(id)
       continue
@@ -98,9 +102,9 @@ async function ensureSources(
  * (không đăng thay người duyệt nội dung chưa ai duyệt). Seed đăng global trước khi gọi hàm này.
  * Test int "keeps pending draft and only fills empty groups" kiểm cách này.
  */
-async function hasPendingDraft(payload: Payload): Promise<boolean> {
+export async function hasPendingDraft(payload: Payload, slug: 'page-intros' | 'site-settings'): Promise<boolean> {
   const res = await payload.findGlobalVersions({
-    slug: 'page-intros',
+    slug,
     sort: '-updatedAt',
     limit: 1,
     depth: 0,
@@ -110,13 +114,53 @@ async function hasPendingDraft(payload: Payload): Promise<boolean> {
   return latest?.version?._status === 'draft'
 }
 
+/** Lời báo khi global đang có bản nháp chờ duyệt, `label` là tên global trong admin. */
+export const pendingDraftWarning = (label: string) =>
+  `${label} đang có bản nháp chưa đăng: chỉ lưu nháp, người duyệt cần đăng trong /admin.`
+
+export type PageFactsFill = {
+  /** Theo route: chỉ các nhóm cần điền (đã đổi sourceId sang id), chưa gộp với ô cũ. */
+  fill: Partial<Record<Route, Rec>>
+  filled: string[]
+  skipped: { group: string; reason: string }[]
+}
+
+/** Tính các nhóm dữ kiện trang cần điền trên bản `current` (bản mới nhất của `page-intros`). */
+export function pageFactsFill(
+  current: Partial<Record<string, Rec | undefined>>,
+  toId: (sourceId: string) => number,
+  force = false,
+): PageFactsFill {
+  const out: PageFactsFill = { fill: {}, filled: [], skipped: [] }
+  for (const route of Object.keys(ROUTE_GROUPS) as Route[]) {
+    const seedGroups = ROUTE_GROUPS[route] as Rec
+    const existing = current[route] ?? {}
+    const fill: Rec = {}
+    for (const [name, value] of Object.entries(seedGroups)) {
+      const group = `${route}.${name}`
+      if (!force && isEmptyGroup(value)) {
+        // Seed không có gì để điền (vd. nguồn trang Nghề dệt): ghi [] lên [] chỉ tạo version thừa.
+        out.skipped.push({ group, reason: 'seed không có dữ liệu' })
+      } else if (force || isEmptyGroup(existing[name])) {
+        // Bọc theo tên nhóm để `pageSources` (mảng chuỗi ở ngay gốc nhóm) cũng được đổi.
+        fill[name] = (mapSourceRefs({ [name]: value }, toId) as Rec)[name]
+        out.filled.push(group)
+      } else {
+        out.skipped.push({ group, reason: 'đã có dữ liệu' })
+      }
+    }
+    if (Object.keys(fill).length) out.fill[route] = fill
+  }
+  return out
+}
+
 export async function importPageFacts(
   payload: Payload,
   opts: { publish: 'never' | 'when-no-draft'; force?: boolean; user?: TypedUser },
 ): Promise<ImportReport> {
   const { publish, force = false, user } = opts
   const report: ImportReport = { sourcesCreated: [], sourcesSkipped: [], filled: [], skipped: [], saved: 'none' }
-  const sourceIds = await ensureSources(payload, user, report)
+  const sourceIds = await ensureSources(payload, PAGE_FACT_SOURCE_IDS, user, report)
   const toId = (sourceId: string) => {
     const id = sourceIds[sourceId]
     if (id === undefined) throw new Error(`Không có nguồn ${sourceId}.`)
@@ -127,34 +171,21 @@ export async function importPageFacts(
     slug: 'page-intros', draft: true, depth: 0, overrideAccess: true,
   })) as unknown as Record<Route, Rec | undefined>
 
+  const facts = pageFactsFill(current, toId, force)
+  report.filled.push(...facts.filled)
+  report.skipped.push(...facts.skipped)
   const data: Rec = {}
-  for (const route of Object.keys(ROUTE_GROUPS) as Route[]) {
-    const seedGroups = ROUTE_GROUPS[route] as Rec
-    const existing = current[route] ?? {}
-    const fill: Rec = {}
-    for (const [name, value] of Object.entries(seedGroups)) {
-      const group = `${route}.${name}`
-      if (!force && isEmptyGroup(value)) {
-        // Seed không có gì để điền (vd. nguồn trang Nghề dệt): ghi [] lên [] chỉ tạo version thừa.
-        report.skipped.push({ group, reason: 'seed không có dữ liệu' })
-      } else if (force || isEmptyGroup(existing[name])) {
-        // Bọc theo tên nhóm để `pageSources` (mảng chuỗi ở ngay gốc nhóm) cũng được đổi.
-        fill[name] = (mapSourceRefs({ [name]: value }, toId) as Rec)[name]
-        report.filled.push(group)
-      } else {
-        report.skipped.push({ group, reason: 'đã có dữ liệu' })
-      }
-    }
+  for (const [route, fill] of Object.entries(facts.fill)) {
     // Ghi cả đối tượng route để không mất ô cũ (tiêu đề, đoạn dẫn, ảnh…).
-    if (Object.keys(fill).length) data[route] = { ...existing, ...fill }
+    data[route] = { ...(current[route as Route] ?? {}), ...fill }
   }
 
   if (!Object.keys(data).length) return report
 
-  const pending = publish === 'when-no-draft' && (await hasPendingDraft(payload))
+  const pending = publish === 'when-no-draft' && (await hasPendingDraft(payload, 'page-intros'))
   if (publish === 'never' || pending) {
     if (pending) {
-      report.warning = 'Phần mở đầu trang đang có bản nháp chưa đăng: chỉ lưu nháp, người duyệt cần đăng trong /admin.'
+      report.warning = pendingDraftWarning('Phần mở đầu trang')
     }
     await payload.updateGlobal({
       slug: 'page-intros',
