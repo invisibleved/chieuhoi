@@ -28,12 +28,13 @@ for (const vp of [
       await axe(page)
     })
 
-    test('danh sách nguồn có 3 liên kết https', async ({ page }) => {
+    test('danh sách nguồn có 5 liên kết https mở tab mới', async ({ page }) => {
       await open(page)
       const links = page.getByRole('region', { name: 'Nguồn tham khảo' }).getByRole('link')
-      await expect(links).toHaveCount(3)
+      await expect(links).toHaveCount(5)
       const hrefs = await links.evaluateAll((els) => els.map((e) => e.getAttribute('href') ?? ''))
       for (const h of hrefs) expect(h).toMatch(/^https:\/\//)
+      for (const t of await links.evaluateAll((els) => els.map((e) => e.getAttribute('target')))) expect(t).toBe('_blank')
     })
 
     test('chú thích "Nguồn 1" dẫn tới mục nguồn 1', async ({ page }) => {

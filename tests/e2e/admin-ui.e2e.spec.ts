@@ -51,7 +51,7 @@ test.describe('hướng dẫn', () => {
 
   const sectionTitles = (page: Page) => page.locator('.ch-guide__section-title')
 
-  test('biên tập viên mở Hướng dẫn từ menu, thấy 8 mục, không có phần người duyệt', async () => {
+  test('biên tập viên mở Hướng dẫn từ menu, thấy 9 mục, không có phần người duyệt', async () => {
     await editorPage.setViewportSize({ width: 1440, height: 900 })
     await editorPage.goto('/admin')
     // ở 1440 Payload thu gọn menu: người dùng mới phải bấm nút ba gạch trước
@@ -61,20 +61,20 @@ test.describe('hướng dẫn', () => {
     await expect(editorPage.getByRole('heading', { level: 1, name: 'Hướng dẫn' })).toBeVisible()
     // câu mở đầu chỉ chỗ mở menu
     await expect(editorPage.locator('.ch-guide__intro').first()).toContainText('ba gạch ngang ở góc trên bên trái')
-    await expect(sectionTitles(editorPage)).toHaveCount(8)
+    await expect(sectionTitles(editorPage)).toHaveCount(9)
     // exact: bước "Nút đó chỉ dành cho người duyệt." có cụm chữ này nhưng không phải tiêu đề phần
     await expect(editorPage.getByText('Dành cho người duyệt', { exact: true })).toHaveCount(0)
     await expect(editorPage.getByText('Dành cho mọi người', { exact: true })).toHaveCount(2)
     // mục lục là danh sách link neo tới từng mục
     const toc = editorPage.getByRole('navigation', { name: 'Mục lục' }).getByRole('link')
-    await expect(toc).toHaveCount(8)
+    await expect(toc).toHaveCount(9)
     await expect(toc.first()).toHaveAttribute('href', '#dang-nhap')
   })
 
-  test('người duyệt thấy đủ 12 mục, chia hai phần', async () => {
+  test('người duyệt thấy đủ 13 mục, chia hai phần', async () => {
     await reviewerPage.setViewportSize({ width: 1440, height: 900 })
     await reviewerPage.goto('/admin/huong-dan')
-    await expect(sectionTitles(reviewerPage)).toHaveCount(12)
+    await expect(sectionTitles(reviewerPage)).toHaveCount(13)
     await expect(reviewerPage.getByRole('heading', { level: 2, name: 'Dành cho mọi người' })).toBeVisible()
     await expect(reviewerPage.getByRole('heading', { level: 2, name: 'Dành cho người duyệt' })).toBeVisible()
   })
@@ -98,7 +98,7 @@ test.describe('hướng dẫn', () => {
   test('ở 390px trang không cuộn ngang, ảnh có bản điện thoại thì dùng bản đó', async () => {
     await reviewerPage.setViewportSize({ width: 390, height: 844 })
     await reviewerPage.goto('/admin/huong-dan')
-    await expect(sectionTitles(reviewerPage)).toHaveCount(12)
+    await expect(sectionTitles(reviewerPage)).toHaveCount(13)
     expect(await reviewerPage.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
     const mobile = reviewerPage.locator('.ch-guide img[src="/admin-guide/mo-menu.png"]')
     await expect
@@ -113,7 +113,7 @@ test.describe('hướng dẫn', () => {
         const page = role === 'người duyệt' ? reviewerPage : editorPage
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await page.goto('/admin/huong-dan')
-        await expect(sectionTitles(page)).toHaveCount(role === 'người duyệt' ? 12 : 8)
+        await expect(sectionTitles(page)).toHaveCount(role === 'người duyệt' ? 13 : 9)
         // Chỉ quét nội dung trang hướng dẫn: khung admin gốc của Payload (bộ chọn ngôn ngữ...) không thuộc phần mình viết.
         const res = await new AxeBuilder({ page })
           .include('.ch-guide')
