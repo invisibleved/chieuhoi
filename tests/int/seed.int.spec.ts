@@ -139,7 +139,7 @@ describe('seed', () => {
       overrideAccess: true,
       limit: 1,
     })
-    expect(res.docs[0]?.body).toBe('Dân làng tôn ông làm Phúc thần và gọi là "Trạng Chiếu".')
+    expect(res.docs[0]?.body).toBe('Dân làng tôn ông làm Phúc thần và gọi là “Trạng Chiếu”.')
     expect(res.docs[0]?.confidence).toBe('press')
   })
 

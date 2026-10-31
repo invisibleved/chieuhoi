@@ -12,9 +12,12 @@ describe('Sources', () => {
   it('SourceList đánh số và id neo', () => {
     const { container } = render(<SourceList sources={S} />)
     expect(screen.getByRole('heading', { level: 2, name: 'Nguồn tham khảo' })).toBeTruthy()
-    expect(container.querySelector('#nguon-1')?.textContent).toBe('[1]Vietnam+ · Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại · 14/08/2026')
+    expect(container.querySelector('#nguon-1')?.textContent).toBe('[1]Vietnam+ · Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại (mở tab mới) · 14/08/2026')
     expect(container.querySelector('#nguon-2')?.textContent).toBe('[2]Lời kể người làng')
     expect(screen.queryAllByRole('link')).toHaveLength(1)
+    const a = screen.getByRole('link', { name: /mở tab mới/ })
+    expect(a.getAttribute('target')).toBe('_blank')
+    expect(a.getAttribute('rel')).toBe('noopener noreferrer')
   })
   it('SourceList nhận title và headingId tuỳ chọn', () => {
     const { container } = render(<SourceList sources={S} title="Nguồn" headingId="x-h" />)
@@ -23,7 +26,7 @@ describe('Sources', () => {
   })
   it('SourceList variant notes: số "n.", ngăn bằng dấu phẩy, kết thúc bằng dấu chấm', () => {
     const { container } = render(<SourceList sources={S} variant="notes" title="Ghi chú nguồn" />)
-    expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại, 14/08/2026.')
+    expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại (mở tab mới), 14/08/2026.')
     expect(container.querySelector('#nguon-2')?.textContent).toBe('2. Lời kể người làng.')
   })
   it('SourceList idPrefix đổi tiền tố id', () => {

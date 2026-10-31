@@ -198,7 +198,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(last.title).toBe('Mốc của bạn')
       expect(last.confidence).toBe('pending')
       expect(last.sourceHref).toBe('/ket-noi')
-      expect(v.timeline[0].sourceLine).toBe('Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021)')
+      expect(v.timeline[0].sourceLine).toBe('Dân Việt, dẫn Báo Hải Dương (13/06/2024); Đại Đoàn Kết (07/08/2021)')
       expect(v.sources.map((s) => s.id)).toEqual([
         'vietnamplus-2026', 'danviet-2024', 'daidoanket-2021', 'nq-1666-2025', 'nq-202-2025',
       ])
@@ -207,7 +207,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
         mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',
       })
-      expect(v.facts[2].detail.mobile).toBe('Phạm Đôn Lễ, "Trạng Chiếu"')
+      expect(v.facts[2].detail.mobile).toBe('Phạm Đôn Lễ, “Trạng Chiếu”')
       expect(v.copy.location.preview?.map?.label).toBe('BẢN ĐỒ VỊ TRÍ')
       expect(v.life).toHaveLength(3)
     })

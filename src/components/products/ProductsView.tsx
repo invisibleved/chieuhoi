@@ -38,7 +38,7 @@ export function ProductsView({ page }: { page: ProductsPageView }) {
           <Callout tone="outline" title={catalog.title ?? ''}>
             <div className="flex flex-col gap-2.5">
               <p className="m-0">{catalog.body}</p>
-              {catalogSourceUrl ? <LinkArrow href={catalogSourceUrl}>{catalog.link}</LinkArrow> : null}
+              {catalogSourceUrl ? <LinkArrow href={catalogSourceUrl} newTab>{catalog.link}</LinkArrow> : null}
             </div>
           </Callout>
         }

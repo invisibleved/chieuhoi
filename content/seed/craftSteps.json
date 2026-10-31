@@ -61,7 +61,7 @@
       35,
       60
     ],
-    "body": "Ảnh ghi lại hai người cùng làm trên một khung dệt.",
+    "body": null,
     "tools": "Khung dệt",
     "status": "pending"
   },
@@ -74,7 +74,7 @@
       60,
       85
     ],
-    "body": "Hoa văn in bằng khuôn và bàn chải; viền may bằng máy khâu (quan sát từ ảnh).",
+    "body": "Hoa văn in bằng khuôn và bàn chải; viền may bằng máy khâu.",
     "tools": "Khuôn in, bàn chải, máy khâu",
     "status": "pending"
   },

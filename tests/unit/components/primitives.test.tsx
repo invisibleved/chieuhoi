@@ -35,6 +35,16 @@ describe('primitives', () => {
     render(<LinkArrow href="/lang-hoi">Đọc về làng Hới</LinkArrow>)
     expect(screen.getByRole('link').textContent).toBe('Đọc về làng Hới →')
   })
+  it('LinkArrow newTab mở tab mới, có lời báo cho trình đọc màn hình', () => {
+    render(<LinkArrow href="https://www.vietnamplus.vn/x" newTab>Xem nguồn</LinkArrow>)
+    const a = screen.getByRole('link', { name: 'Xem nguồn (mở tab mới)' })
+    expect(a.getAttribute('target')).toBe('_blank')
+    expect(a.getAttribute('rel')).toBe('noopener noreferrer')
+  })
+  it('LinkArrow mặc định không mở tab mới', () => {
+    render(<LinkArrow href="/lang-hoi">Đọc về làng Hới</LinkArrow>)
+    expect(screen.getByRole('link').getAttribute('target')).toBeNull()
+  })
   it('SectionHeading: eyebrow, h2, ghi chú', () => {
     render(<SectionHeading eyebrow="LÀNG HỚI" title="Có một làng Hới..." note="Ghi chú" />)
     expect(screen.getByRole('heading', { level: 2, name: 'Có một làng Hới...' })).toBeTruthy()

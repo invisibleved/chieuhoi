@@ -81,7 +81,7 @@ describe('RichText', () => {
     expect(container.querySelector('strong')?.textContent).toBe('đậm')
     expect(container.querySelector('em')?.textContent).toBe('nghiêng')
     expect(container.querySelector('br')).not.toBeNull()
-    const a = screen.getByRole('link', { name: 'liên kết' })
+    const a = screen.getByRole('link', { name: /^liên kết ?\(mở tab mới\)$/ })
     expect(a.getAttribute('href')).toBe('https://example.com')
     expect(a.getAttribute('target')).toBe('_blank')
     expect(a.getAttribute('rel')).toContain('noopener')

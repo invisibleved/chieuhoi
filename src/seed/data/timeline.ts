@@ -8,9 +8,9 @@ export const timelineCopy: { label: string; title: string; body: string }[] = [
     title: 'Khung dệt về làng',
     body: 'Theo lời kể, khi đi sứ nhà Minh ông học kỹ thuật dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng. Các nguồn chưa thống nhất về thời điểm: Vietnam+ đặt vào đầu thế kỷ XVI.',
   },
-  { label: '1531', title: 'Ông Trạng mất', body: 'Dân làng tôn ông làm Phúc thần và gọi là "Trạng Chiếu".' },
+  { label: '1531', title: 'Ông Trạng mất', body: 'Dân làng tôn ông làm Phúc thần và gọi là “Trạng Chiếu”.' },
   {
-    label: '[?]',
+    label: 'Chưa rõ năm',
     title: 'Đền thờ tổ nghề',
     body: 'Đại Đoàn Kết gọi là đền Quan Trạng, ở làng Hải Triều. Năm lập đền và cấp xếp hạng di tích chưa xác định. Báo chí ghi lễ tế tổ nghề vào mùng 6 tháng Giêng âm lịch.',
   },

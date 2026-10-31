@@ -294,6 +294,10 @@ Còn mở (nhỏ):
 - [ ] Báo cáo lệnh: dòng Phần mở đầu trang liệt kê ~35 trường; chưa test dòng "Đã có sẵn nguồn"; nhãn "Công đoạn" rút gọn từ "Công đoạn làm nghề".
 - [ ] Test global chưa từng lưu dùng `TRUNCATE … CASCADE` thô qua `payload.db.drizzle`.
 
+Soát chữ trước prod (2026-11-01), người dùng duyệt sửa lệch artboard: "Thanh Hoá", ngoặc kép cong “Trạng Chiếu”, bỏ câu tả ảnh tham khảo (prod không có ảnh), chân trang bỏ "cần đối chiếu", nhãn mốc "Chưa rõ năm" thay "[?]", nguồn "Dân Việt, dẫn Báo Hải Dương", "ni-lông". Link nguồn ra trang ngoài mở tab mới (`src/components/ui/newTab.tsx`).
+- [ ] Ghi chú nguồn cuối bài thiếu tác giả ("Vương Tâm" của bài Đại Đoàn Kết, có trong artboard StoryDetail): collection `sources` chưa có trường tác giả; cần thêm trường, migration, `SourceView.author`, `ensureSources` chép `author`.
+- [ ] Khi có ảnh thật từ người làng: thêm lại câu tả ảnh cho công đoạn 5, 6 và phần Dệt thủ công/Dệt bằng máy trong `/admin`.
+
 ## D. Quyết định cần biết (không phải lỗi)
 
 - Phase 7 (đủ danh sách R1–R16 trong `docs/superpowers/plans/2026-10-28-phase-7-staging-kiem-tra.md`), thêm các quyết định khi chạy:

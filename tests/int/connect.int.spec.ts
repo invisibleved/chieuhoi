@@ -45,7 +45,7 @@ describe('view model Kết nối', () => {
     expect(v.contact.phone).toBeNull()
     expect(v.contact.mobileLine).toBeNull()
     expect(v.contact.address).toBe('Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên')
-    expect(v.contact.addressNote).toContain('Vietnam+')
+    expect(v.contact.addressNote).toBe('Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình')
     expect(v.contact.visit).toEqual({ desktop: 'Chưa có thông tin tham quan chính thức', mobile: 'Thăm làng: chưa có thông tin chính thức' })
     expect(v.intro.title).toContain('\n')
     expect(v.copy.contact.preview).toBeNull()

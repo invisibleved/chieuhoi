@@ -4,7 +4,7 @@ export const siteSettings = {
   tagline: 'Nơi những sợi cói dệt nên chuyện làng.',
   description: 'Không gian số lưu giữ ký ức, con người và nghề dệt chiếu làng Hới.',
   address: 'Làng Hới (Hải Triều), xã Long Hưng, tỉnh Hưng Yên',
-  addressNote: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình · theo Vietnam+ (08/2026), cần đối chiếu',
+  addressNote: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
   copyright: '© 2026 Chiếu Hới. Ảnh thuộc bản quyền của tác giả, ghi công trong từng tư liệu.',
   // email, phone, visitInfo: artboard chỉ có placeholder, để trống.
 } as const

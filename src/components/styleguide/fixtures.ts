@@ -116,7 +116,7 @@ export const sources: SourceView[] = [
   },
   {
     id: 'danviet-2024',
-    publisher: 'Dân Việt (dẫn Báo Hải Dương)',
+    publisher: 'Dân Việt, dẫn Báo Hải Dương',
     title: 'Lăng mộ Trạng nguyên Phạm Đôn Lễ thời Hậu Lê ở Hải Dương',
     url: 'https://danviet.vn/lang-mo-trang-nguyen-pham-don-le-thoi-hau-le-o-hai-duong-ong-que-thai-binh-ong-to-nghe-det-chieu-20240613144750326-d1166801.html',
     date: '2024-06-13',
@@ -140,10 +140,10 @@ const ev = (label: string, title: string, body: string, confidence: TimelineEven
   label, title, body, confidence, sourceIds: [], sourceLine, sourceHref: null, flags: [],
 })
 export const timelineEvents: TimelineEventView[] = [
-  ev('1457', 'Phạm Đôn Lễ ra đời', 'Sinh tại làng Hải Triều, tức làng Hới.', 'press', 'Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021)'),
-  ev('1481', 'Đỗ Tam nguyên', 'Đỗ đầu cả ba kỳ thi Hương, Hội và Đình dưới triều Lê Thánh Tông.', 'press', 'Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021)'),
-  ev('Thời Lê', 'Khung dệt về làng', 'Theo lời kể, khi đi sứ nhà Minh ông học kỹ thuật dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng. Vietnam+ đặt vào đầu thế kỷ XVI.', 'oral', 'Dân Việt (dẫn Báo Hải Dương) (13/06/2024); Đại Đoàn Kết (07/08/2021); Vietnam+ (14/08/2026)'),
-  ev('[?]', 'Đền thờ tổ nghề', 'Năm lập đền và cấp xếp hạng chưa xác định. Lễ tế được ghi vào mùng 6 tháng Giêng âm lịch.', 'pending', 'Đại Đoàn Kết (07/08/2021)'),
+  ev('1457', 'Phạm Đôn Lễ ra đời', 'Sinh tại làng Hải Triều, tức làng Hới.', 'press', 'Dân Việt, dẫn Báo Hải Dương (13/06/2024); Đại Đoàn Kết (07/08/2021)'),
+  ev('1481', 'Đỗ Tam nguyên', 'Đỗ đầu cả ba kỳ thi Hương, Hội và Đình dưới triều Lê Thánh Tông.', 'press', 'Dân Việt, dẫn Báo Hải Dương (13/06/2024); Đại Đoàn Kết (07/08/2021)'),
+  ev('Thời Lê', 'Khung dệt về làng', 'Theo lời kể, khi đi sứ nhà Minh ông học kỹ thuật dệt chiếu, mua khung dệt mang về, cải tiến khung và dạy dân làng. Vietnam+ đặt vào đầu thế kỷ XVI.', 'oral', 'Dân Việt, dẫn Báo Hải Dương (13/06/2024); Đại Đoàn Kết (07/08/2021); Vietnam+ (14/08/2026)'),
+  ev('Chưa rõ năm', 'Đền thờ tổ nghề', 'Năm lập đền và cấp xếp hạng chưa xác định. Lễ tế được ghi vào mùng 6 tháng Giêng âm lịch.', 'pending', 'Đại Đoàn Kết (07/08/2021)'),
   {
     label: '+', title: 'Mốc của bạn',
     body: 'Ký ức, ảnh cũ, giấy tờ của các gia đình làng Hới có thể bổ sung vào dòng thời gian này sau khi được xác minh.',
@@ -175,7 +175,7 @@ export const craftWaySamples: { hand: CraftPageView['compare']['hand']; machine:
   hand: {
     title: 'Dệt thủ công', image: null, textCite: ['vietnamplus-2026'], noteCite: [],
     text: {
-      desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
+      desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
       mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
     },
     note: {
@@ -186,7 +186,7 @@ export const craftWaySamples: { hand: CraftPageView['compare']['hand']; machine:
   machine: {
     title: 'Dệt bằng máy', image: null, textCite: [], noteCite: [],
     text: {
-      desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
+      desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay.',
       mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
     },
     note: {
@@ -204,7 +204,7 @@ export const richArticle: Rich = {
   root: {
     type: 'root',
     children: [
-      { type: 'paragraph', children: [t('Ở làng Hới, người ta ít khi gọi Phạm Đôn Lễ bằng học vị. Người ta gọi ông là "Trạng Chiếu".'), { type: 'cite', n: 1 }, { type: 'cite', n: 2 }] },
+      { type: 'paragraph', children: [t('Ở làng Hới, người ta ít khi gọi Phạm Đôn Lễ bằng học vị. Người ta gọi ông là “Trạng Chiếu”.'), { type: 'cite', n: 1 }, { type: 'cite', n: 2 }] },
       { type: 'heading', tag: 'h2', anchor: 'mot-tam-nguyen-cua-lang-hai-trieu', children: [t('Một Tam nguyên của làng Hải Triều')] },
       { type: 'paragraph', children: [t('Theo các bài báo, Phạm Đôn Lễ sinh năm 1457 tại làng Hải Triều. '), t('Điều báo chí ghi lại', 1), t(' và '), t('điều làng kể', 2), t(' được giữ song song.'), { type: 'cite', n: 2 }] },
       { type: 'quote', children: [t('Một ông Trạng, một khung dệt, và một nghề theo làng qua nhiều thế kỷ.')] },

@@ -1,10 +1,10 @@
-Ở làng Hới, người ta ít khi gọi Phạm Đôn Lễ bằng học vị. Người ta gọi ông là "Trạng Chiếu", ông Trạng của nghề chiếu.[[cite:vietnamplus-2026]][[cite:danviet-2024]]
+Ở làng Hới, người ta ít khi gọi Phạm Đôn Lễ bằng học vị. Người ta gọi ông là “Trạng Chiếu”, ông Trạng của nghề chiếu.[[cite:vietnamplus-2026]][[cite:danviet-2024]]
 
 ## Một Tam nguyên của làng Hải Triều
 
 Theo các bài báo, Phạm Đôn Lễ sinh năm 1457 tại làng Hải Triều và mất năm 1531. Năm 1481, dưới triều Lê Thánh Tông, ông đỗ đầu cả ba kỳ thi Hương, Hội và Đình.[[cite:danviet-2024]][[cite:daidoanket-2021]]
 
-Báo Đại Đoàn Kết kể thêm rằng thuở nhỏ ông từng bị lạc và được một gia đình nuôi dưỡng ở Thanh Hóa, trước khi theo con đường khoa cử.[[cite:daidoanket-2021]]
+Báo Đại Đoàn Kết kể thêm rằng thuở nhỏ ông từng bị lạc và được một gia đình nuôi dưỡng ở Thanh Hoá, trước khi theo con đường khoa cử.[[cite:daidoanket-2021]]
 
 ## Khung dệt từ phương Bắc
 

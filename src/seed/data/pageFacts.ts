@@ -57,8 +57,8 @@ export const villageFactsSeed: VillageFactsSeed = {
     },
     {
       term: 'TỔ NGHỀ',
-      detail: 'Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"',
-      detailMobile: 'Phạm Đôn Lễ, "Trạng Chiếu"',
+      detail: 'Phạm Đôn Lễ, dân làng gọi là “Trạng Chiếu”',
+      detailMobile: 'Phạm Đôn Lễ, “Trạng Chiếu”',
       sources: ['vietnamplus-2026', 'danviet-2024'],
     },
   ],
@@ -116,7 +116,7 @@ export const villageFactsSeed: VillageFactsSeed = {
         sources: ['vietnamplus-2026'],
       },
       {
-        text: 'Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu nylon và chiếu giả mây.',
+        text: 'Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu ni-lông và chiếu giả mây.',
         hideOnMobile: true,
         sources: ['vietnamplus-2026'],
       },
@@ -145,7 +145,7 @@ export const craftFactsSeed: CraftFactsSeed = {
   hand: {
     title: 'Dệt thủ công',
     text: {
-      text: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
+      text: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
       mobileText: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
     },
     note: {
@@ -156,7 +156,7 @@ export const craftFactsSeed: CraftFactsSeed = {
   machine: {
     title: 'Dệt bằng máy',
     text: {
-      text: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
+      text: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay.',
       mobileText: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
     },
     note: {

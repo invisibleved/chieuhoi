@@ -1,4 +1,5 @@
 import type { SourceView } from '@/lib/content'
+import { NewTabHint, newTabProps } from '@/components/ui/newTab'
 
 // Đánh số nguồn 1..n theo thứ tự mảng.
 export function sourceNumbers(sources: SourceView[]): Map<string, number> {
@@ -102,8 +103,9 @@ export function SourceList({
             const parts = [
               s.publisher,
               s.url ? (
-                <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2">
+                <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2" {...newTabProps}>
                   {s.title}
+                  <NewTabHint />
                 </a>
               ) : (
                 s.title

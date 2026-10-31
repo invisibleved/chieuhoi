@@ -60,7 +60,7 @@ describe('dữ liệu seed dữ kiện trang', () => {
       },
       {
         term: 'TỔ NGHỀ',
-        detail: { desktop: 'Phạm Đôn Lễ, dân làng gọi là "Trạng Chiếu"', mobile: 'Phạm Đôn Lễ, "Trạng Chiếu"' },
+        detail: { desktop: 'Phạm Đôn Lễ, dân làng gọi là “Trạng Chiếu”', mobile: 'Phạm Đôn Lễ, “Trạng Chiếu”' },
         note: none, editorNote: null, cite: ['vietnamplus-2026', 'danviet-2024'],
       },
     ])
@@ -128,7 +128,7 @@ describe('dữ liệu seed dữ kiện trang', () => {
         },
         cite: ['vietnamplus-2026'],
       },
-      { text: { desktop: 'Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu nylon và chiếu giả mây.', mobile: null }, cite: ['vietnamplus-2026'] },
+      { text: { desktop: 'Bên cạnh chiếu cói, các cơ sở trong xã còn làm chiếu nhựa, chiếu ni-lông và chiếu giả mây.', mobile: null }, cite: ['vietnamplus-2026'] },
     ])
     expect(v.heritage.note).toEqual({
       desktop: 'Số hộ, số khung dệt và số lao động có trong bài báo nhưng chưa thống nhất giữa các đoạn; chưa đưa lên trang cho đến khi đối chiếu với số liệu của xã.',
@@ -149,7 +149,7 @@ describe('dữ liệu seed dữ kiện trang', () => {
       title: 'Dệt thủ công',
       text: {
         text: {
-          desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt. Ảnh cho thấy hai người cùng làm trên một khung.',
+          desktop: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
           mobile: 'Người thợ ngồi bên khung, đưa từng sợi cói qua khung dệt.',
         },
         cite: [],
@@ -166,7 +166,7 @@ describe('dữ liệu seed dữ kiện trang', () => {
       title: 'Dệt bằng máy',
       text: {
         text: {
-          desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay, như trong ảnh.',
+          desktop: 'Máy đảm nhận việc đan sợi, nhưng người thợ vẫn nạp cói bằng tay.',
           mobile: 'Máy đảm nhận việc đan sợi, người thợ vẫn nạp cói bằng tay.',
         },
         cite: [],

@@ -114,7 +114,7 @@ describe('StoryView', () => {
 
   it('ghi chú nguồn: id #nguon-n, số dạng "1."', () => {
     const { container } = render(<StoryView page={view()} />)
-    expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề, 14/08/2026.')
+    expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề (mở tab mới), 14/08/2026.')
     expect(container.querySelector('#nguon-2')?.textContent).toBe('2. Dân Việt, Lăng mộ.')
   })
 

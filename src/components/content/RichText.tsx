@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from 'react'
 import type { ImageView, Rich, RichNode, Variant } from '@/lib/content'
+import { NewTabHint, newTabProps } from '@/components/ui/newTab'
 import { PullQuote } from '@/components/ui/PullQuote'
 import { VariantText } from '@/components/ui/VariantText'
 import { ContentImage } from './ContentImage'
@@ -65,8 +66,9 @@ function inline(nodes: RichNode[]): ReactNode[] {
         const f = (n.fields ?? {}) as { url?: unknown; newTab?: unknown }
         if (typeof f.url !== 'string') return <Fragment key={i}>{inline(kids(n))}</Fragment>
         return (
-          <a key={i} href={f.url} className="underline underline-offset-2 hover:decoration-2" {...(f.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+          <a key={i} href={f.url} className="underline underline-offset-2 hover:decoration-2" {...(f.newTab ? newTabProps : {})}>
             {inline(kids(n))}
+            {f.newTab ? <NewTabHint /> : null}
           </a>
         )
       }
