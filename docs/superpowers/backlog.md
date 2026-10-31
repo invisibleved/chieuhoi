@@ -276,6 +276,24 @@ Còn mở (nhỏ):
 - [ ] Fixtures `/styleguide` lặp chữ seed; ô mobile của `ComparisonTabs` lặp markup `Cite` inline; tên test "có numbers thì hiện [1] ở ô máy và đoạn mô tả" đã lỗi thời.
 - [ ] `isEmptyGroup` coi nhóm admin cố ý xoá trống là trống → chạy lại lệnh nhập sẽ điền lại (đã ghi lưu ý trong DEPLOY.md).
 
+## F. Lệnh nhập nội dung khởi đầu `import:content` (nhánh du-lieu-trang-cms, 2026-10-31)
+
+Phải làm trước khi lên prod:
+- [ ] Commit mục nhập nội dung trong `docs/DEPLOY.md` (đang ở working tree cùng thay đổi riêng của người dùng). Thay cho việc đầu tiên của mục E.
+- [ ] Ảnh và con người nhập trong `/admin` khi người làng gửi ảnh và đồng ý (lệnh nhập không làm). Thay cho việc thứ hai của mục E, trừ phần ảnh.
+
+Còn mở (nhỏ):
+- [ ] `importContent` tạo nguồn trước khi dựng dữ liệu; lỗi muộn (vd. thiếu `storyExtras`) để lại nguồn đã tạo. Chạy lại vẫn an toàn.
+- [ ] `stripFigureParagraphs` lọc theo dòng; token `[[figure:…]]` nhiều dòng sẽ lọt.
+- [ ] `sourceRefs()` lặp đường dẫn trường của builder và regex `cite`; nhánh lỗi nguồn lạ qua `importContent` chưa có test.
+- [ ] `storyDocs`: chưa có unit test; cho phép `asset` khác null mà thiếu `assets`; `workflow` `'seed'|'draft'` khác các builder khác; tự `readFileSync` cạnh `readSeedJson`.
+- [ ] Test "có asset thì gắn image" có thể qua rỗng; `productDocs` có ảnh chưa test.
+- [ ] Test "global có nháp chờ duyệt" chưa kiểm bản đăng vẫn trống.
+- [ ] `toId` và `{ ...existing, ...fill }` lặp ở `importPageFacts` và `importContent`.
+- [ ] Global có nháp chờ duyệt mà không có gì để điền thì không có cảnh báo.
+- [ ] Báo cáo lệnh: dòng Phần mở đầu trang liệt kê ~35 trường; chưa test dòng "Đã có sẵn nguồn"; nhãn "Công đoạn" rút gọn từ "Công đoạn làm nghề".
+- [ ] Test global chưa từng lưu dùng `TRUNCATE … CASCADE` thô qua `payload.db.drizzle`.
+
 ## D. Quyết định cần biết (không phải lỗi)
 
 - Phase 7 (đủ danh sách R1–R16 trong `docs/superpowers/plans/2026-10-28-phase-7-staging-kiem-tra.md`), thêm các quyết định khi chạy:
