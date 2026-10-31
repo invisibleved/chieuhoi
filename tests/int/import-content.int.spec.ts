@@ -1,5 +1,6 @@
 // @vitest-environment node
 import type { Payload } from 'payload'
+import { sql } from 'drizzle-orm'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
 import { ROUTE_KEYS } from '@/globals/PageIntros'
@@ -170,6 +171,26 @@ describe('importContent', () => {
     expect(live.lead ?? null).toBeNull()
   }, 120_000)
 
+  it('global chưa từng lưu (production mới): public vẫn trống, nháp có nội dung, chạy lại không đổi', async () => {
+    const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle
+    await db.execute(sql`TRUNCATE TABLE "page_intros", "_page_intros_v", "site_settings", "_site_settings_v" CASCADE`)
+
+    const first = await importContent(payload)
+    expect(first.globals.map((g) => g.saved)).toEqual(['draft', 'draft'])
+
+    const liveIntros = (await readGlobal('page-intros', false))['lang-hoi'] as Rec | undefined
+    expect(liveIntros?.title ?? null).toBeNull()
+    expect((await readGlobal('site-settings', false)).tagline ?? null).toBeNull()
+
+    const draftIntros = (await readGlobal('page-intros', true))['lang-hoi'] as Rec
+    expect(draftIntros.title).toBe(pageIntros['lang-hoi'].title)
+    expect((await readGlobal('site-settings', true)).tagline).toBe(siteSettings.tagline)
+
+    const second = await importContent(payload)
+    expect(second.globals.map((g) => g.saved)).toEqual(['none', 'none'])
+    expect(second.created).toEqual([])
+  }, 120_000)
+
   it('global có nháp chờ duyệt', async () => {
     await payload.updateGlobal({
       slug: 'site-settings', data: { tagline: 'Nháp' }, draft: true, overrideAccess: true,
@@ -177,7 +198,7 @@ describe('importContent', () => {
     const report = await importContent(payload)
     const s = report.globals.find((g) => g.slug === 'site-settings')!
     expect(s.saved).toBe('draft')
-    expect(s.warning).toContain('Cài đặt chung')
+    expect(s.warning).toContain('Thông tin site')
     expect(s.filled).not.toContain('tagline')
     expect(report.globals.find((g) => g.slug === 'page-intros')!.warning).toBeUndefined()
 

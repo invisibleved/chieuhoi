@@ -147,7 +147,7 @@ export async function importContent(payload: Payload): Promise<ContentReport> {
     await saveGlobalDraft(payload, 'page-intros', 'Phần mở đầu trang', introData, [...introFilled, ...facts.filled]),
   )
 
-  // Cài đặt chung.
+  // Thông tin site.
   const settings = (await payload.findGlobal({
     slug: 'site-settings', draft: true, depth: 0, overrideAccess: true,
   })) as unknown as Rec
@@ -156,7 +156,7 @@ export async function importContent(payload: Payload): Promise<ContentReport> {
     if (isEmptyGroup(settings[f])) settingsData[f] = v
   }
   report.globals.push(
-    await saveGlobalDraft(payload, 'site-settings', 'Cài đặt chung', settingsData, Object.keys(settingsData)),
+    await saveGlobalDraft(payload, 'site-settings', 'Thông tin site', settingsData, Object.keys(settingsData)),
   )
 
   return report

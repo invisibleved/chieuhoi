@@ -37,7 +37,7 @@ Dữ liệu lấy đúng nguồn mà `npm run seed` đang dùng, không viết l
 | Sản phẩm | `products.json` + `productSummary` | `slug` | 7 loại, **không** gắn ảnh; giữ chú giải (annotations) và nguồn của chú giải |
 | Bài "Chuyện về Trạng Chiếu" | `stories.json` + `chuyen-ve-trang-chieu.md` + `storyExtras` | `slug` | Thân bài giữ chú thích nguồn, **bỏ mọi hình chèn** (figure) và ảnh bìa |
 | Phần mở đầu trang | `pageIntros` (`site.ts`) | trường | `eyebrow`, `title`, `heroTitle`, `lead` của mọi trang; **không** ảnh/`media` |
-| Cài đặt chung | `siteSettings` (`site.ts`) | trường | Tagline, mô tả, địa chỉ, ghi chú địa chỉ, bản quyền |
+| Thông tin site | `siteSettings` (`site.ts`) | trường | Tagline, mô tả, địa chỉ, ghi chú địa chỉ, bản quyền |
 | Dữ kiện trang | như lệnh hiện tại | nhóm | Giữ nguyên hành vi `importPageFacts` |
 
 Không nhập:
@@ -72,7 +72,7 @@ Kết quả của seed ở dev **không đổi** (vẫn gắn ảnh tham khảo,
 
 ### Hướng dẫn
 
-- `docs/DEPLOY.md`: thay bước nhập bằng `import:content`, ghi rõ người duyệt phải đăng từng mục: 7 mốc, 7 công đoạn, 7 sản phẩm, 1 bài, Phần mở đầu trang, Cài đặt chung. File này đang có thay đổi riêng của người dùng: **sửa nhưng không commit**, nhắc người dùng commit.
+- `docs/DEPLOY.md`: thay bước nhập bằng `import:content`, ghi rõ người duyệt phải đăng từng mục: 7 mốc, 7 công đoạn, 7 sản phẩm, 1 bài, Phần mở đầu trang, Thông tin site. File này đang có thay đổi riêng của người dùng: **sửa nhưng không commit**, nhắc người dùng commit.
 - Trang hướng dẫn admin (`/admin/huong-dan`) không bắt buộc đổi. Nếu đổi lời thì chụp lại ảnh theo CLAUDE.md.
 
 ### Kiểm tra

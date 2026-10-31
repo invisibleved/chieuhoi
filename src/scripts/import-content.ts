@@ -11,7 +11,7 @@ const COLLECTION_LABEL: Record<ContentReport['created'][number]['collection'], s
 
 const GLOBAL_LABEL: Record<ContentReport['globals'][number]['slug'], string> = {
   'page-intros': 'Phần mở đầu trang',
-  'site-settings': 'Cài đặt chung',
+  'site-settings': 'Thông tin site',
 }
 
 export function formatContentReport(r: ContentReport): string {

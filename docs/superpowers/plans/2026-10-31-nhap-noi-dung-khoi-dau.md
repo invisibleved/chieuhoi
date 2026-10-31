@@ -91,7 +91,7 @@
   - Collection: với mỗi phần tử, `find` theo khoá với `draft: true`; có thì đưa vào `existing`; không thì `create({ draft: true, data: { ...data, workflow: 'draft' } })`. Truyền `null` cho ảnh.
   - `page-intros`: với mỗi route trong `pageIntros` (`site.ts`) và mỗi trường `eyebrow`, `title`, `heroTitle`, `lead` có trong seed: điền nếu trường ở bản mới nhất trống (`isEmptyGroup`). Gộp với dữ kiện trang, một `updateGlobal({ draft: true })` duy nhất. Giữ nguyên các trường khác của route (ghi `{ ...existing, ...fill }`).
   - `site-settings`: điền trường trống trong `siteSettings`, một lần lưu nháp.
-  - Global có bản nháp chờ duyệt (`hasPendingDraft(payload, slug)`) → vẫn lưu nháp và đặt `warning` (cùng lời trong `importPageFacts`, đổi tên global tương ứng: "Phần mở đầu trang" / "Cài đặt chung").
+  - Global có bản nháp chờ duyệt (`hasPendingDraft(payload, slug)`) → vẫn lưu nháp và đặt `warning` (cùng lời trong `importPageFacts`, đổi tên global tương ứng: "Phần mở đầu trang" / "Thông tin site").
   - Không có gì để điền → `saved: 'none'`, không gọi `updateGlobal`.
 
 - [ ] **Step 1: Viết test hỏng** `tests/int/import-content.int.spec.ts` (`resetDb` trước mỗi ca, theo `tests/int/page-intros.int.spec.ts`):
@@ -128,7 +128,7 @@
   - Nhãn collection tiếng Việt: Dòng thời gian, Công đoạn, Sản phẩm, Bài viết.
 - [ ] **Step 2:** `npx vitest run tests/unit/scripts/import-content.test.ts` → FAIL.
 - [ ] **Step 3:** Viết script và thêm npm script.
-- [ ] **Step 4:** Test PASS. Sửa `docs/DEPLOY.md`: mục "Nhập dữ kiện trang (lần đầu lên prod)" đổi sang `npm run import:content`, liệt kê phải đăng: 7 mốc, 7 công đoạn, 7 sản phẩm, 1 bài, Phần mở đầu trang, Cài đặt chung; lưu ý chạy lại sẽ tạo lại bản ghi đã xoá hẳn và điền lại trường cố ý để trống; ảnh và con người nhập trong /admin. Dòng "Không chạy `npm run seed`" nêu `import:content`.
+- [ ] **Step 4:** Test PASS. Sửa `docs/DEPLOY.md`: mục "Nhập dữ kiện trang (lần đầu lên prod)" đổi sang `npm run import:content`, liệt kê phải đăng: 7 mốc, 7 công đoạn, 7 sản phẩm, 1 bài, Phần mở đầu trang, Thông tin site; lưu ý chạy lại sẽ tạo lại bản ghi đã xoá hẳn và điền lại trường cố ý để trống; ảnh và con người nhập trong /admin. Dòng "Không chạy `npm run seed`" nêu `import:content`.
 - [ ] **Step 5: Chạy thử DB trắng.**
   - `chieuhoi_demo` trắng → `APP_ENV=production npm run migrate` → `create-reviewer` → `npm run import:content` (in đủ báo cáo) → chạy lại in `Không có gì để nhập.`
   - `next dev -p 3001` với `PREVIEW_ALL=false`: trước khi đăng, `/lang-hoi` không có mốc.
