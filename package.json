@@ -22,6 +22,7 @@
     "guide:seed": "node --import tsx/esm tools/guide.mjs seed",
     "guide:shots": "node --import tsx/esm tools/guide.mjs shots",
     "import:content": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/import-content.ts",
+    "migrate:pages": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/migrate-pages.ts --",
     "import:page-facts": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/import-page-facts.ts",
     "create-reviewer": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/create-reviewer.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
