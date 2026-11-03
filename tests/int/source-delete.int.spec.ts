@@ -85,6 +85,15 @@ describe('xoá Nguồn đang được trích', () => {
     await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn/)
   })
 
+  it('collection pages: chặn, nêu nhãn trang', async () => {
+    const s = await createSource('pg')
+    await create('pages', {
+      slug: 'lang-hoi', title: 'Làng\nHới', workflow: 'published',
+      facts: [{ term: 'Mục', detail: 'Nội dung', sources: [s.id] }],
+    })
+    await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn[\s\S]*Trang: Làng Hới/)
+  })
+
   it('nguồn không ai trích: xoá được', async () => {
     const s = await createSource('free')
     await del(s.id)

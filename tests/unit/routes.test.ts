@@ -19,6 +19,10 @@ describe('routes', () => {
     ['archive-assets', { inArchive: true }, null],
     ['site-settings', {}, '/'],
     ['page-intros', {}, '/'],
+    ['pages', { slug: 'home' }, '/'],
+    ['pages', { slug: 'lang-hoi' }, '/lang-hoi'],
+    ['pages', { slug: 'x' }, null],
+    ['pages', {}, null],
   ])('previewPathFor %s', (slug, doc, out) =>
     expect(previewPathFor(slug as PreviewCollection, doc)).toBe(out))
 

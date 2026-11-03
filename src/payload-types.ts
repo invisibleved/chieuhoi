@@ -76,6 +76,7 @@ export interface Config {
     stories: Story;
     people: Person;
     makers: Maker;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     stories: StoriesSelect<false> | StoriesSelect<true>;
     people: PeopleSelect<false> | PeopleSelect<true>;
     makers: MakersSelect<false> | MakersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -500,6 +502,172 @@ export interface Person {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  slug: 'home' | 'lang-hoi' | 'cau-chuyen' | 'nghe-det-chieu' | 'con-nguoi' | 'san-pham' | 'thu-vien' | 'ket-noi';
+  workflow: 'draft' | 'in_review' | 'published';
+  eyebrow?: string | null;
+  title?: string | null;
+  lead?: string | null;
+  heroTitle?: string | null;
+  heroImage?: (number | null) | ArchiveAsset;
+  heroInset?: (number | null) | ArchiveAsset;
+  heroCaption?: string | null;
+  villageImages?:
+    | {
+        image?: (number | null) | ArchiveAsset;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  media?:
+    | {
+        slot:
+          | 'hero'
+          | 'hand'
+          | 'machine'
+          | 'next-people'
+          | 'next-stories'
+          | 'next-products'
+          | 'life-1'
+          | 'life-2'
+          | 'life-3'
+          | 'next-village'
+          | 'next-craft'
+          | 'related-people'
+          | 'next-pattern';
+        image?: (number | null) | ArchiveAsset;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  facts?:
+    | {
+        term: string;
+        detail: string;
+        detailMobile?: string | null;
+        note?: string | null;
+        noteMobile?: string | null;
+        editorNote?: string | null;
+        sources?: (number | Source)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  founder?: {
+    paragraphs?:
+      | {
+          sentences?:
+            | {
+                text: string;
+                mobileText?: string | null;
+                hideOnMobile?: boolean | null;
+                sources?: (number | Source)[] | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+    conflict?:
+      | {
+          text: string;
+          mobileText?: string | null;
+          hideOnMobile?: boolean | null;
+          sources?: (number | Source)[] | null;
+          id?: string | null;
+        }[]
+      | null;
+    conflictEditorNote?: string | null;
+    noPortrait?: string | null;
+  };
+  location?: {
+    text?: string | null;
+    sources?: (number | Source)[] | null;
+    editorNote?: string | null;
+  };
+  heritage?: {
+    sentences?:
+      | {
+          text: string;
+          mobileText?: string | null;
+          hideOnMobile?: boolean | null;
+          sources?: (number | Source)[] | null;
+          id?: string | null;
+        }[]
+      | null;
+    editorNote?: string | null;
+  };
+  /**
+   * Số [1], [2]… trên trang theo đúng thứ tự này.
+   */
+  pageSources?: (number | Source)[] | null;
+  /**
+   * Ảnh nằm ngay trong từng dòng.
+   */
+  tools?:
+    | {
+        name: string;
+        image?: (number | null) | ArchiveAsset;
+        note?: {
+          text?: string | null;
+          mobileText?: string | null;
+          hideOnMobile?: boolean | null;
+          sources?: (number | Source)[] | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  hand?: {
+    title?: string | null;
+    text?: {
+      text?: string | null;
+      mobileText?: string | null;
+      hideOnMobile?: boolean | null;
+      sources?: (number | Source)[] | null;
+    };
+    note?: {
+      text?: string | null;
+      mobileText?: string | null;
+      hideOnMobile?: boolean | null;
+      sources?: (number | Source)[] | null;
+    };
+  };
+  machine?: {
+    title?: string | null;
+    text?: {
+      text?: string | null;
+      mobileText?: string | null;
+      hideOnMobile?: boolean | null;
+      sources?: (number | Source)[] | null;
+    };
+    note?: {
+      text?: string | null;
+      mobileText?: string | null;
+      hideOnMobile?: boolean | null;
+      sources?: (number | Source)[] | null;
+    };
+  };
+  compareRows?:
+    | {
+        aspect: string;
+        hand?: string | null;
+        machine?: string | null;
+        /**
+         * Mỗi dòng một ý. Để trống thì tự ghép: Thủ công: … · Máy: …
+         */
+        mobile?: string | null;
+        sources?: (number | Source)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -557,6 +725,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'makers';
         value: number | Maker;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -870,6 +1042,169 @@ export interface MakersSelect<T extends boolean = true> {
   contact?: T;
   verified?: T;
   publicConsent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  slug?: T;
+  workflow?: T;
+  eyebrow?: T;
+  title?: T;
+  lead?: T;
+  heroTitle?: T;
+  heroImage?: T;
+  heroInset?: T;
+  heroCaption?: T;
+  villageImages?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  media?:
+    | T
+    | {
+        slot?: T;
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  facts?:
+    | T
+    | {
+        term?: T;
+        detail?: T;
+        detailMobile?: T;
+        note?: T;
+        noteMobile?: T;
+        editorNote?: T;
+        sources?: T;
+        id?: T;
+      };
+  founder?:
+    | T
+    | {
+        paragraphs?:
+          | T
+          | {
+              sentences?:
+                | T
+                | {
+                    text?: T;
+                    mobileText?: T;
+                    hideOnMobile?: T;
+                    sources?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        conflict?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+              id?: T;
+            };
+        conflictEditorNote?: T;
+        noPortrait?: T;
+      };
+  location?:
+    | T
+    | {
+        text?: T;
+        sources?: T;
+        editorNote?: T;
+      };
+  heritage?:
+    | T
+    | {
+        sentences?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+              id?: T;
+            };
+        editorNote?: T;
+      };
+  pageSources?: T;
+  tools?:
+    | T
+    | {
+        name?: T;
+        image?: T;
+        note?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+            };
+        id?: T;
+      };
+  hand?:
+    | T
+    | {
+        title?: T;
+        text?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+            };
+        note?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+            };
+      };
+  machine?:
+    | T
+    | {
+        title?: T;
+        text?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+            };
+        note?:
+          | T
+          | {
+              text?: T;
+              mobileText?: T;
+              hideOnMobile?: T;
+              sources?: T;
+            };
+      };
+  compareRows?:
+    | T
+    | {
+        aspect?: T;
+        hand?: T;
+        machine?: T;
+        mobile?: T;
+        sources?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

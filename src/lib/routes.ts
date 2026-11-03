@@ -1,4 +1,6 @@
-/** Đường dẫn xem trước. File này không import gì để dùng được ở mọi tầng. */
+/** Đường dẫn xem trước. File này chỉ import file không import gì, để dùng được ở mọi tầng. */
+import { ROUTE_PATHS } from '@/collections/pages/routeKeys'
+
 export const PREVIEW_ROUTE = '/preview'
 export const PREVIEW_EXIT_ROUTE = '/preview/exit'
 
@@ -12,6 +14,7 @@ export type PreviewCollection =
   | 'archive-assets'
   | 'site-settings'
   | 'page-intros'
+  | 'pages'
 
 function slugOf(doc: Record<string, unknown>): string | null {
   return typeof doc.slug === 'string' && doc.slug ? encodeURIComponent(doc.slug) : null
@@ -40,6 +43,10 @@ export function previewPathFor(slug: PreviewCollection, doc: Record<string, unkn
     case 'site-settings':
     case 'page-intros':
       return '/'
+    case 'pages':
+      return typeof doc.slug === 'string' && Object.hasOwn(ROUTE_PATHS, doc.slug)
+        ? ROUTE_PATHS[doc.slug as keyof typeof ROUTE_PATHS]
+        : null
   }
 }
 

@@ -1,7 +1,9 @@
 import { APIError, type CollectionBeforeDeleteHook, type Payload } from 'payload'
 
-/** Collection có thể trích Nguồn. Thêm slug mới vào đây (ví dụ `pages`). */
-export const SOURCE_CITING_COLLECTIONS = ['timeline-events', 'stories', 'products', 'people'] as const
+import { ROUTE_LABELS } from '@/collections/pages/routeKeys'
+
+/** Collection có thể trích Nguồn. Thêm slug mới vào đây. */
+export const SOURCE_CITING_COLLECTIONS = ['timeline-events', 'stories', 'products', 'people', 'pages'] as const
 /** Global có thể trích Nguồn. */
 export const SOURCE_CITING_GLOBALS = ['page-intros'] as const
 
@@ -42,7 +44,11 @@ export function citedSourceIds(value: unknown): Set<number> {
   return out
 }
 
-const itemLabel = (doc: Record<string, unknown>): string => {
+const itemLabel = (doc: Record<string, unknown>, collection?: string): string => {
+  // Trang: nhãn của trang ("Làng Hới"), vì tiêu đề trang có ngắt dòng.
+  if (collection === 'pages' && typeof doc.slug === 'string' && Object.hasOwn(ROUTE_LABELS, doc.slug)) {
+    return ROUTE_LABELS[doc.slug as keyof typeof ROUTE_LABELS]
+  }
   for (const key of ['title', 'name', 'label', 'slug'] as const) {
     const v = doc[key]
     if (typeof v === 'string' && v.trim()) return v
@@ -79,7 +85,7 @@ export async function findSourceRefs(payload: Payload, sourceId: number): Promis
       })
       for (const doc of docs as unknown as Record<string, unknown>[]) {
         if (citedSourceIds(doc).has(sourceId)) {
-          add(slug, (doc.id as number | string | undefined) ?? null, `${collectionLabel}: ${itemLabel(doc)}`)
+          add(slug, (doc.id as number | string | undefined) ?? null, `${collectionLabel}: ${itemLabel(doc, slug)}`)
         }
       }
     }

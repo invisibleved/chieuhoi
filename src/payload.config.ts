@@ -9,6 +9,7 @@ import { vi } from '@payloadcms/translations/languages/vi'
 import { ArchiveAssets } from './collections/ArchiveAssets'
 import { CraftSteps } from './collections/CraftSteps'
 import { Makers } from './collections/Makers'
+import { Pages } from './collections/Pages'
 import { People } from './collections/People'
 import { Products } from './collections/Products'
 import { Stories } from './collections/Stories'
@@ -36,7 +37,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers],
+  collections: [Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers, Pages],
   globals: [SiteSettings, PageIntros],
   i18n: { supportedLanguages: { vi }, fallbackLanguage: 'vi' },
   localization: { locales: [{ code: 'vi', label: 'Tiếng Việt' }], defaultLocale: 'vi' },
