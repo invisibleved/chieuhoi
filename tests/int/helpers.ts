@@ -25,7 +25,7 @@ export async function resetDb(payload: Payload): Promise<void> {
       collection: collection.slug,
       where: { id: { exists: true } },
       overrideAccess: true,
-      context: { skipLastReviewerGuard: true },
+      context: { skipLastReviewerGuard: true, skipSourceRefGuard: true },
     })
   }
 }

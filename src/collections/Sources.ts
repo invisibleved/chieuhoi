@@ -1,6 +1,7 @@
 import type { CollectionConfig, TextFieldSingleValidation } from 'payload'
 
 import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
+import { blockCitedSourceDelete } from '@/hooks/sourceRefs'
 import { ADMIN_GROUPS, isLoggedIn, isReviewer } from '@/access/roles'
 
 const URL_MESSAGE = 'Chỉ nhận đường dẫn http:// hoặc https://.'
@@ -30,7 +31,11 @@ export const Sources: CollectionConfig = {
     defaultColumns: ['sourceId', 'title', 'publisher', 'date'],
   },
   access: { read: isLoggedIn, create: isLoggedIn, update: isReviewer, delete: isReviewer },
-  hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
+  hooks: {
+    beforeDelete: [blockCitedSourceDelete],
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
   fields: [
     {
       name: 'sourceId',

@@ -56,7 +56,7 @@ async function wipe(payload: Payload): Promise<void> {
       collection: collection.slug as 'users',
       where: { id: { exists: true } },
       overrideAccess: true,
-      context: { skipLastReviewerGuard: true },
+      context: { skipLastReviewerGuard: true, skipSourceRefGuard: true },
     })
   }
 }
