@@ -5,6 +5,7 @@ import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
 import { craftFactsFields, villageFactsFields } from '@/globals/pageFacts'
 import { PAGES_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS } from '@/globals/pageMedia'
 import { revalidateAfterChange } from '@/hooks/revalidate'
+import { pagePageSourcesField } from './pages/checkPageSources'
 import { isPageField } from './pages/fields'
 import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from './pages/routeKeys'
 import { stripForeignFields } from './pages/stripForeign'
@@ -70,6 +71,10 @@ const craftFields = craftFactsFields({ dbPrefix: 'pg_', toolImage: true }).filte
   (f) => (f as { name?: string }).name !== 'pageSources',
 )
 
+const villageFields = villageFactsFields({ dbPrefix: 'pg_' }).map((f) =>
+  (f as { name?: string }).name === 'pageSources' ? pagePageSourcesField() : f,
+)
+
 /** Xoá giá trị các trường không thuộc trang đang lưu; chỉ đụng tới khoá có trong `data`. */
 const stripForeignHook: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
   const slug = (data as { slug?: unknown }).slug ?? (originalDoc as { slug?: unknown } | undefined)?.slug
@@ -114,6 +119,6 @@ export const Pages: CollectionConfig = {
     { name: 'eyebrow', type: 'text', label: 'Dòng nhỏ phía trên', localized: true },
     { name: 'title', type: 'textarea', label: 'Tiêu đề (giữ ngắt dòng)', localized: true },
     { name: 'lead', type: 'textarea', label: 'Đoạn dẫn', localized: true },
-    ...[...homeFields, mediaField, ...villageFactsFields({ dbPrefix: 'pg_' }), ...craftFields].map(onlyOnOwnPage),
+    ...[...homeFields, mediaField, ...villageFields, ...craftFields].map(onlyOnOwnPage),
   ],
 }

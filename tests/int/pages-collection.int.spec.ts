@@ -117,4 +117,49 @@ describe('collection pages', () => {
     })) as PageDoc
     expect(draft.title).toBe('Nháp')
   })
+
+  describe('kiểm nguồn khi đăng', () => {
+    const makeSource = async (sourceId: string) =>
+      (await payload.create({
+        collection: 'sources', data: { sourceId, title: sourceId }, overrideAccess: true,
+      })) as { id: number }
+
+    const citing = async () => {
+      const a = await makeSource('danviet-2024')
+      const b = await makeSource('vnexpress-2023')
+      return {
+        pageSources: [a.id],
+        facts: [{ term: 'Diện tích', detail: '...', sources: [a.id, b.id] }],
+      }
+    }
+
+    it('đăng trang có câu trích nguồn ngoài pageSources thì lỗi, nêu mã nguồn', async () => {
+      const p = await createPage('lang-hoi')
+      const data = await citing()
+      const errs = await fieldErrors(updatePage(p.id, { ...data, _status: 'published' }))
+      expect(errs.join(' ')).toContain('Chưa có trong Nguồn tham khảo của trang')
+      expect(errs.join(' ')).toContain('Bảng thông tin đầu trang, dòng "Diện tích" (vnexpress-2023)')
+    })
+
+    it('lưu nháp thì qua', async () => {
+      const p = await createPage('lang-hoi')
+      await updatePage(p.id, await citing(), true)
+    })
+
+    it('có skipPageSourcesCheck thì đăng được', async () => {
+      const p = await createPage('lang-hoi')
+      await payload.update({
+        collection: 'pages', id: p.id, data: { ...(await citing()), _status: 'published' }, draft: false,
+        user: reviewer, overrideAccess: true, context: { skipPageSourcesCheck: true },
+      } as never)
+    })
+
+    it('đủ nguồn thì đăng được', async () => {
+      const p = await createPage('lang-hoi')
+      const a = await makeSource('a-1')
+      await updatePage(p.id, {
+        pageSources: [a.id], facts: [{ term: 't', detail: 'd', sources: [a.id] }], _status: 'published',
+      })
+    })
+  })
 })

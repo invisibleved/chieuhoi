@@ -89,6 +89,7 @@ describe('xoá Nguồn đang được trích', () => {
     const s = await createSource('pg')
     await create('pages', {
       slug: 'lang-hoi', title: 'Làng\nHới', workflow: 'published',
+      pageSources: [s.id],
       facts: [{ term: 'Mục', detail: 'Nội dung', sources: [s.id] }],
     })
     await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn[\s\S]*Trang: Làng Hới/)
