@@ -25,7 +25,11 @@ const citedGroup = (name: string, label: string, required: boolean): Field => ({
   name, type: 'group', label, fields: citedSentenceFields({ required }),
 })
 
-export const villageFactsFields = (): Field[] => [
+export type FactsFieldOpts = { dbPrefix?: string; toolImage?: boolean }
+
+export const villageFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
+  const p = opts.dbPrefix ?? ''
+  return [
   {
     name: 'facts', type: 'array', label: 'Bảng thông tin đầu trang', labels: { singular: 'Dòng', plural: 'Các dòng' },
     admin: { components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'term', fallback: 'Dòng' } } } },
@@ -43,8 +47,8 @@ export const villageFactsFields = (): Field[] => [
     name: 'founder', type: 'group', label: 'Tổ nghề',
     fields: [
       {
-        name: 'paragraphs', type: 'array', label: 'Đoạn', labels: { singular: 'Đoạn', plural: 'Các đoạn' }, dbName: 'lh_founder_paras',
-        fields: [{ name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_founder_sents', fields: citedSentenceFields() }],
+        name: 'paragraphs', type: 'array', label: 'Đoạn', labels: { singular: 'Đoạn', plural: 'Các đoạn' }, dbName: `${p}lh_founder_paras`,
+        fields: [{ name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: `${p}lh_founder_sents`, fields: citedSentenceFields() }],
       },
       { name: 'conflict', type: 'array', label: 'Hộp Các nguồn chưa thống nhất', labels: { singular: 'Câu', plural: 'Các câu' }, fields: citedSentenceFields() },
       { name: 'conflictEditorNote', type: 'textarea', label: 'Ghi chú biên tập cuối hộp (chỉ hiện ở bản xem trước)', localized: true },
@@ -62,22 +66,26 @@ export const villageFactsFields = (): Field[] => [
   {
     name: 'heritage', type: 'group', label: 'Di sản hôm nay',
     fields: [
-      { name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: 'lh_heritage_sents', fields: citedSentenceFields() },
+      { name: 'sentences', type: 'array', label: 'Câu', labels: { singular: 'Câu', plural: 'Các câu' }, dbName: `${p}lh_heritage_sents`, fields: citedSentenceFields() },
       { name: 'editorNote', type: 'textarea', label: 'Ghi chú biên tập (chỉ hiện ở bản xem trước)', localized: true },
     ],
   },
   pageSourcesField(),
-]
+  ]
+}
 
-export const craftFactsFields = (): Field[] => [
+export const craftFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
+  const p = opts.dbPrefix ?? ''
+  return [
   {
     name: 'tools', type: 'array', label: 'Dụng cụ', labels: { singular: 'Dụng cụ', plural: 'Các dụng cụ' }, maxRows: 3,
     admin: {
-      description: 'Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.',
+      description: opts.toolImage ? 'Ảnh nằm ngay trong từng dòng.' : 'Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.',
       components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'name', fallback: 'Dụng cụ' } } },
     },
     fields: [
       { name: 'name', type: 'text', label: 'Tên dụng cụ', required: true, localized: true },
+      ...(opts.toolImage ? [{ name: 'image', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh' } as Field] : []),
       citedGroup('note', 'Ghi chú', false),
     ],
   },
@@ -98,7 +106,7 @@ export const craftFactsFields = (): Field[] => [
     ],
   },
   {
-    name: 'compareRows', type: 'array', label: 'Bảng so sánh', labels: { singular: 'Hàng', plural: 'Các hàng' }, dbName: 'ndc_compare',
+    name: 'compareRows', type: 'array', label: 'Bảng so sánh', labels: { singular: 'Hàng', plural: 'Các hàng' }, dbName: `${p}ndc_compare`,
     admin: { components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'aspect', fallback: 'Hàng' } } } },
     fields: [
       { name: 'aspect', type: 'text', label: 'Khía cạnh', required: true, localized: true },
@@ -112,4 +120,5 @@ export const craftFactsFields = (): Field[] => [
     ],
   },
   pageSourcesField(),
-]
+  ]
+}

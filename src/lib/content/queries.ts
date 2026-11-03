@@ -2,7 +2,7 @@
 import type { CollectionSlug, Payload, Where } from 'payload'
 
 import { publicAssetQuery } from '@/access/assetRules'
-import type { RouteKey } from '@/globals/PageIntros'
+import type { RouteKey } from '@/collections/pages/routeKeys'
 import type { ArchiveAsset, Maker, Person, Product, Source, Story } from '@/payload-types'
 import { fillTemplate } from '@/lib/template'
 

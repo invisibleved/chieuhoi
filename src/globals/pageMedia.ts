@@ -7,6 +7,12 @@ export const PAGE_MEDIA_SLOTS = {
   'san-pham': ['next-pattern'],
 } as const
 
+/** Ô ảnh của collection Trang: ảnh dụng cụ nằm trong từng dòng dụng cụ nên bỏ tool-1..3. */
+export const PAGES_MEDIA_SLOTS = {
+  ...PAGE_MEDIA_SLOTS,
+  'nghe-det-chieu': ['hero', 'hand', 'machine', 'next-people', 'next-stories', 'next-products'],
+} as const
+
 export type PageMediaRoute = keyof typeof PAGE_MEDIA_SLOTS
 export type PageMediaSlot<R extends PageMediaRoute> = (typeof PAGE_MEDIA_SLOTS)[R][number]
 

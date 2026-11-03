@@ -3,32 +3,12 @@ import type { Field, GlobalConfig } from 'payload'
 import { guardPublish, recordDraftArg, previewFor } from '@/access/publishing'
 import { revalidateGlobalAfterChange } from '@/hooks/revalidate'
 import { ADMIN_GROUPS, isLoggedIn } from '@/access/roles'
+import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from '@/collections/pages/routeKeys'
 import { craftFactsFields, villageFactsFields } from './pageFacts'
 import { PAGE_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS, isPageMediaRoute } from './pageMedia'
 
-export const ROUTE_KEYS = [
-  'home',
-  'lang-hoi',
-  'cau-chuyen',
-  'nghe-det-chieu',
-  'con-nguoi',
-  'san-pham',
-  'thu-vien',
-  'ket-noi',
-] as const
-
-export type RouteKey = (typeof ROUTE_KEYS)[number]
-
-const ROUTE_LABELS: Record<RouteKey, string> = {
-  home: 'Trang chủ',
-  'lang-hoi': 'Làng Hới',
-  'cau-chuyen': 'Câu chuyện',
-  'nghe-det-chieu': 'Nghề dệt chiếu',
-  'con-nguoi': 'Con người',
-  'san-pham': 'Sản phẩm',
-  'thu-vien': 'Thư viện',
-  'ket-noi': 'Kết nối',
-}
+export { ROUTE_KEYS }
+export type { RouteKey }
 
 const pageMediaField = (key: keyof typeof PAGE_MEDIA_SLOTS): Field => ({
   name: 'media',
