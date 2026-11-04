@@ -99,14 +99,13 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn cần sửa một dữ kiện, ví dụ địa giới của làng, hoặc gắn nguồn cho một câu.',
     steps: [
-      { text: 'Mở menu bên trái, bấm **Phần mở đầu trang**.' },
-      { text: 'Kéo xuống tới phần **Làng Hới**. Tên phần là chữ to, in đậm.' },
-      { text: 'Tìm tiếp phần **Bảng thông tin đầu trang**. Mỗi dòng trong bảng là một dữ kiện, tên dòng là chữ ở ô **Mục**.' },
+      { text: 'Mở menu bên trái, bấm **Trang**, rồi bấm tên trang cần sửa.' },
+      { text: 'Tìm phần **Bảng thông tin đầu trang**. Mỗi dòng trong bảng là một dữ kiện, tên dòng là chữ ở ô **Mục**.' },
       { text: 'Nếu dòng đang đóng, bấm vào dòng **ĐỊA GIỚI HIỆN NAY** để mở ra.', shot: 'du-kien-dia-gioi' },
       { text: 'Sửa câu trong ô **Nội dung**. Chỉ viết điều bạn biết chắc.' },
       { text: 'Muốn ghi nguồn, bấm vào ô **Nguồn** của dòng đó rồi chọn nguồn trong danh sách.', shot: 'du-kien-nguon' },
       { text: 'Chưa có nguồn trong danh sách thì ra menu, vào mục **Nguồn**, thêm nguồn mới trước. Rồi quay lại chọn.' },
-      { text: 'Kéo xuống cuối phần **Làng Hới**, tới ô **Nguồn tham khảo của trang**. Thứ tự các nguồn ở đây quyết định số [1], [2] trên trang. Nguồn đứng đầu là [1].' },
+      { text: 'Kéo xuống tới ô **Nguồn tham khảo của trang**. Thứ tự các nguồn ở đây quyết định số [1], [2] trên trang. Nguồn đứng đầu là [1].' },
       { text: 'Bấm **Lưu bản nháp**.' },
       { text: 'Báo người duyệt biết bạn đã sửa. Người duyệt xem và đăng thì trang web mới đổi.' },
     ],
@@ -222,6 +221,10 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Xem lại: ảnh trong bài đã được phép dùng, người trong bài đã đồng ý.' },
       { text: 'Bấm **Xuất bản tài liệu**.', shot: 'duyet-dang' },
       { text: 'Bài hiện lên trang web. Ô **Quy trình** tự chuyển sang **Đã đăng**.' },
+      { text: 'Đăng trang nào chỉ đổi trang đó.' },
+      {
+        text: 'Không xoá được một nguồn khi nó còn đang được trích; hộp báo lỗi liệt kê nơi đang trích. Khôi phục một phiên bản cũ của mục thì xem lại chú thích.',
+      },
     ],
   },
   {

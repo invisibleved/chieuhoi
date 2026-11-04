@@ -77,6 +77,7 @@ test.describe('hướng dẫn', () => {
     await expect(sectionTitles(reviewerPage)).toHaveCount(13)
     await expect(reviewerPage.getByRole('heading', { level: 2, name: 'Dành cho mọi người' })).toBeVisible()
     await expect(reviewerPage.getByRole('heading', { level: 2, name: 'Dành cho người duyệt' })).toBeVisible()
+    await expect(reviewerPage.getByText('Đăng trang nào chỉ đổi trang đó.', { exact: true })).toBeVisible()
   })
 
   test('mọi ảnh trên trang tải được ở 1440 và 390', async () => {

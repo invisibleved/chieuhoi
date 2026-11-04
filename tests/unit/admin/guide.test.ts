@@ -100,6 +100,23 @@ describe('GUIDE_SECTIONS', () => {
     expect(text).toContain('**Chờ duyệt**')
   })
 
+  it('mục sửa dữ kiện trang mở mục Trang, không còn Phần mở đầu trang', () => {
+    const text = GUIDE_SECTIONS.find((x) => x.id === 'du-kien-trang')!.steps.map((st) => st.text).join(' ')
+    expect(text).toContain('Mở menu bên trái, bấm **Trang**, rồi bấm tên trang cần sửa.')
+    const all = GUIDE_SECTIONS.flatMap((s) => s.steps.map((st) => st.text)).join(' ')
+    expect(all).not.toContain('Phần mở đầu trang')
+  })
+
+  it('phần người duyệt nói đăng trang nào chỉ đổi trang đó, và nguồn đang được trích không xoá được', () => {
+    const text = GUIDE_SECTIONS.filter((x) => x.audience === 'reviewer')
+      .flatMap((s) => s.steps.map((st) => st.text))
+      .join(' ')
+    expect(text).toContain('Đăng trang nào chỉ đổi trang đó.')
+    expect(text).toContain(
+      'Không xoá được một nguồn khi nó còn đang được trích; hộp báo lỗi liệt kê nơi đang trích. Khôi phục một phiên bản cũ của mục thì xem lại chú thích.',
+    )
+  })
+
   it('dấu ** luôn đi thành cặp', () => {
     for (const s of GUIDE_SECTIONS) for (const st of s.steps) expect(st.text.split('**').length % 2, st.text).toBe(1)
   })

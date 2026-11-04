@@ -67,12 +67,13 @@ async function chooseWorkflow(page: Page, label: string) {
   await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur())
 }
 
-/** Phần mở đầu trang, phần Làng Hới, mở dòng Địa giới hiện nay của Bảng thông tin đầu trang; trả về dòng đó. */
+/** Trang Làng Hới, mở dòng Địa giới hiện nay của Bảng thông tin đầu trang; trả về dòng đó. */
 async function openFactRow(page: Page): Promise<Locator> {
   // Payload nhớ dòng nào đang đóng hay mở theo từng người dùng; xoá đi để dòng nào cũng mở sẵn như lần đầu vào trang.
   const cleared = await page.request.delete('/api/payload-preferences?where[key][exists]=true')
   expect(cleared.ok(), await cleared.text()).toBe(true)
-  await page.goto('/admin/globals/page-intros')
+  const id = await idOf(page, 'pages', 'where[slug][equals]=lang-hoi')
+  await page.goto(`/admin/collections/pages/${id}`)
   // Tên dòng là chữ ở ô Mục.
   const row = page.locator('.array-field__row').filter({ has: page.locator('.array-field__row-header', { hasText: /^ĐỊA GIỚI HIỆN NAY$/ }) }).first()
   await expect(row).toBeVisible()
