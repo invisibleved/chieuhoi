@@ -102,7 +102,7 @@ describe('GUIDE_SECTIONS', () => {
 
   it('mục sửa dữ kiện trang mở mục Trang, không còn Phần mở đầu trang', () => {
     const text = GUIDE_SECTIONS.find((x) => x.id === 'du-kien-trang')!.steps.map((st) => st.text).join(' ')
-    expect(text).toContain('Mở menu bên trái, bấm **Trang**, rồi bấm tên trang cần sửa.')
+    expect(text).toContain('Mở menu bên trái, trong nhóm **Trang** bấm **Các trang**, rồi bấm tên trang cần sửa.')
     const all = GUIDE_SECTIONS.flatMap((s) => s.steps.map((st) => st.text)).join(' ')
     expect(all).not.toContain('Phần mở đầu trang')
   })

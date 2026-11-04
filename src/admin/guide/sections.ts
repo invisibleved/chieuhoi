@@ -99,7 +99,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     audience: 'all',
     when: 'Dùng khi bạn cần sửa một dữ kiện, ví dụ địa giới của làng, hoặc gắn nguồn cho một câu.',
     steps: [
-      { text: 'Mở menu bên trái, bấm **Trang**, rồi bấm tên trang cần sửa.' },
+      { text: 'Mở menu bên trái, trong nhóm **Trang** bấm **Các trang**, rồi bấm tên trang cần sửa.' },
       { text: 'Tìm phần **Bảng thông tin đầu trang**. Mỗi dòng trong bảng là một dữ kiện, tên dòng là chữ ở ô **Mục**.' },
       { text: 'Nếu dòng đang đóng, bấm vào dòng **ĐỊA GIỚI HIỆN NAY** để mở ra.', shot: 'du-kien-dia-gioi' },
       { text: 'Sửa câu trong ô **Nội dung**. Chỉ viết điều bạn biết chắc.' },
@@ -222,9 +222,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Bấm **Xuất bản tài liệu**.', shot: 'duyet-dang' },
       { text: 'Bài hiện lên trang web. Ô **Quy trình** tự chuyển sang **Đã đăng**.' },
       { text: 'Đăng trang nào chỉ đổi trang đó.' },
-      {
-        text: 'Không xoá được một nguồn khi nó còn đang được trích; hộp báo lỗi liệt kê nơi đang trích. Khôi phục một phiên bản cũ của mục thì xem lại chú thích.',
-      },
+      { text: 'Không xoá được một nguồn khi nó còn đang được trích; hộp báo lỗi liệt kê nơi đang trích. Khôi phục một phiên bản cũ của mục thì xem lại chú thích.' },
     ],
   },
   {
