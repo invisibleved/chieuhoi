@@ -6,7 +6,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { createContent } from '@/lib/content/queries'
 import type { User } from '@/payload-types'
 
-import { getTestPayload, makeUser, resetDb } from './helpers'
+import { getTestPayload, makeUser, resetDb, upsertPage } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
@@ -39,9 +39,7 @@ describe('lib/content', () => {
   beforeEach(async () => {
     await resetDb(payload)
     reviewer = await makeUser(payload, 'reviewer')
-    for (const slug of ['site-settings', 'page-intros']) {
-      await setGlobal(slug, { _status: 'draft' }, false) // gỡ đăng
-    }
+    await setGlobal('site-settings', { _status: 'draft' }, false) // gỡ đăng; tài liệu `pages` đã bị resetDb xoá
   })
 
   it('public bỏ bản ghi chưa đăng', async () => {
@@ -195,12 +193,29 @@ describe('lib/content', () => {
 
   it('global chưa từng đăng thì public trống, không lỗi', async () => {
     expect((await content.getSiteSettings('public')).tagline).toBeNull()
+  })
+
+  it('không có trang thì public và preview trống, không lỗi', async () => {
     expect((await content.getPageIntro('home', 'public')).title).toBeNull()
+    expect((await content.getPageIntro('home', 'preview')).title).toBe('[cần xác minh]')
+  })
+
+  it('trang chưa từng đăng thì public trống, preview đọc nháp', async () => {
+    await upsertPage(payload, 'home', { title: 'Nháp trang chủ' }, { publish: false })
+    expect((await content.getPageIntro('home', 'public')).title).toBeNull()
+    expect((await content.getPageIntro('home', 'preview')).title).toBe('Nháp trang chủ')
   })
 
   it('page intro đã đăng', async () => {
-    await setGlobal('page-intros', { home: { title: 'Trang chủ' }, _status: 'published' }, false)
+    await upsertPage(payload, 'home', { title: 'Trang chủ' })
     expect((await content.getPageIntro('home', 'public')).title).toBe('Trang chủ')
+  })
+
+  it('page intro: public không lộ nháp mới của trang đã đăng', async () => {
+    await upsertPage(payload, 'home', { title: 'Trang chủ' })
+    await upsertPage(payload, 'home', { title: 'Nháp mới' }, { publish: false })
+    expect((await content.getPageIntro('home', 'public')).title).toBe('Trang chủ')
+    expect((await content.getPageIntro('home', 'preview')).title).toBe('Nháp mới')
   })
 
   const txt = (text: string) => ({ type: 'text', version: 1, text, format: 0, detail: 0, mode: 'normal', style: '' })

@@ -141,9 +141,9 @@ describe('dữ liệu seed dữ kiện trang', () => {
     // Chữ chép nguyên văn từ copy/craft.ts trước khi chuyển sang CMS.
     const c = craftFactsFrom(populated(craftFactsSeed))
     expect(c.tools).toEqual([
-      { n: 1, name: 'Khung dệt', note: { desktop: 'Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].', mobile: 'Tên bộ phận: [cần xác minh]' }, cite: [] },
-      { n: 2, name: 'Khuôn in hoa văn', note: { desktop: 'Chất liệu khuôn và cách làm khuôn: [cần xác minh].', mobile: 'Chất liệu: [cần xác minh]' }, cite: [] },
-      { n: 3, name: 'Bàn chải quét màu', note: { desktop: 'Loại màu dùng để in và cách pha: [cần xác minh].', mobile: 'Loại màu: [cần xác minh]' }, cite: [] },
+      { n: 1, name: 'Khung dệt', note: { desktop: 'Cấu tạo, chất liệu gỗ và tên gọi từng bộ phận: [cần xác minh].', mobile: 'Tên bộ phận: [cần xác minh]' }, cite: [], image: null },
+      { n: 2, name: 'Khuôn in hoa văn', note: { desktop: 'Chất liệu khuôn và cách làm khuôn: [cần xác minh].', mobile: 'Chất liệu: [cần xác minh]' }, cite: [], image: null },
+      { n: 3, name: 'Bàn chải quét màu', note: { desktop: 'Loại màu dùng để in và cách pha: [cần xác minh].', mobile: 'Loại màu: [cần xác minh]' }, cite: [], image: null },
     ])
     expect(c.hand).toEqual({
       title: 'Dệt thủ công',

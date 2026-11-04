@@ -65,7 +65,7 @@ export const productsCopy = {
 
 export type ProductsCopyView = ApplyMode<typeof productsCopy>
 
-// Thẻ cố định cuối "Hiện vật khác" (R8); ảnh lấy từ ô `slot` của page-intros.san-pham.
+// Thẻ cố định cuối "Hiện vật khác" (R8); ảnh lấy từ ô `slot` của trang `san-pham` (collection `pages`).
 export const productsOtherFixed = {
   href: '/nghe-det-chieu', slot: 'next-pattern', eyebrow: 'CÁCH LÀM', title: 'Công đoạn tạo hoa văn', cta: 'Xem công đoạn →',
 } as const

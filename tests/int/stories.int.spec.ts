@@ -7,7 +7,7 @@ import { createContent } from '@/lib/content/queries'
 import { createStories } from '@/lib/content/stories'
 import { seed } from '@/seed'
 
-import { getTestPayload, resetDb } from './helpers'
+import { getTestPayload, resetDb, syncPagesFromGlobal } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 const SLUG = 'chuyen-ve-trang-chieu'
@@ -43,6 +43,7 @@ describe('view model Câu chuyện', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
+    await syncPagesFromGlobal(payload)
     delete process.env.SEED_FORCE_GLOBALS
     stories = createStories(payload, createContent(payload))
   }, 240_000)

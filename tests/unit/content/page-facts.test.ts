@@ -84,12 +84,18 @@ describe('craftFactsFrom', () => {
       hand: { title: 'H', text: { text: 't', sources: [{ sourceId: 'a' }] }, note: { text: 'n', sources: [{ sourceId: 'b' }, { sourceId: 'a' }] } },
       compareRows: [{ aspect: 'A', hand: 'h' }],
     })
-    expect(c.tools[0]).toMatchObject({ n: 1, name: 'Khung', cite: ['a'] })
+    expect(c.tools[0]).toMatchObject({ n: 1, name: 'Khung', cite: ['a'], image: null })
     // Mỗi câu của thẻ giữ nguồn riêng (I1).
     expect(c.hand.text.cite).toEqual(['a'])
     expect(c.hand.note.cite).toEqual(['b', 'a'])
     expect(c.rows[0]).toEqual({ aspect: 'A', hand: 'h', machine: '', mobile: ['Thủ công: h · Máy: '], mobileAuto: true, cite: [] })
     expect(c.sourceOrder).toEqual(['a', 'b'])
+  })
+  it('tools: ảnh nằm trong từng dòng dụng cụ', () => {
+    const a = { id: 1, url: '/a.webp' }
+    const b = { id: 2, url: '/b.webp' }
+    const c = craftFactsFrom({ tools: [{ name: 'Go', image: b }, { name: 'Khung dệt', image: a }, { name: 'Lược' }] })
+    expect(c.tools.map((t) => [t.name, t.image])).toEqual([['Go', b], ['Khung dệt', a], ['Lược', null]])
   })
   it('rows: dòng điện thoại do biên tập viên viết thì mobileAuto false', () => {
     const c = craftFactsFrom({ compareRows: [{ aspect: 'A', hand: 'h', machine: 'm', mobile: 'Thủ công: h' }] })

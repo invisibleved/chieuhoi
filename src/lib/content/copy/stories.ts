@@ -48,7 +48,7 @@ export const storiesCopy = {
 
 export type StoriesCopyView = ApplyMode<typeof storiesCopy>
 
-// Hai thẻ "Đọc tiếp" cố định của bài (R8); ảnh lấy từ ô `slot` của page-intros.cau-chuyen.
+// Hai thẻ "Đọc tiếp" cố định của bài (R8); ảnh lấy từ ô `slot` của trang `cau-chuyen` (collection `pages`).
 export const storiesReadNext = [
   { href: '/lang-hoi', slot: 'next-village', eyebrow: 'LÀNG HỚI', title: 'Dòng thời gian làng Hới', cta: 'Xem các mốc →' },
   { href: '/nghe-det-chieu', slot: 'next-craft', eyebrow: 'NGHỀ DỆT CHIẾU', title: 'Một tấm chiếu, muôn công đoạn', cta: 'Đi theo hành trình →' },

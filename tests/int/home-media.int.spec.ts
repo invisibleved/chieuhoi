@@ -6,7 +6,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { createContent } from '@/lib/content/queries'
 import type { User } from '@/payload-types'
 
-import { getTestPayload, makeUser, resetDb } from './helpers'
+import { getTestPayload, makeUser, readPage, resetDb, upsertPage } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 const HERO_CAPTION = 'Ảnh: [tác giả — cần xác minh] · Địa điểm: [cần xác minh]'
@@ -24,20 +24,13 @@ async function seedHomeMedia(over: Record<string, unknown>) {
   const [hero, inset, v1, v2] = await Promise.all(
     [1, 2, 3, 4].map((i) => asset({ title: `Ảnh ${i}`, code: `TL-0${i}`, ...over })),
   )
-  await payload.updateGlobal({
-    slug: 'page-intros',
-    data: {
-      home: {
-        heroImage: hero.id, heroInset: inset.id, heroCaption: HERO_CAPTION,
-        villageImages: [
-          { image: v1.id, caption: 'Chiếu trải phơi trên bãi đất trống. Địa điểm và thời gian chụp: [cần xác minh].' },
-          { image: v2.id, caption: 'Gấp chiếu thành phẩm. [Nhân vật — cần xin phép trước khi đăng]' },
-        ],
-      },
-      _status: 'published',
-    },
-    user: reviewer, overrideAccess: true,
-  } as never)
+  await upsertPage(payload, 'home', {
+    heroImage: hero.id, heroInset: inset.id, heroCaption: HERO_CAPTION,
+    villageImages: [
+      { image: v1.id, caption: 'Chiếu trải phơi trên bãi đất trống. Địa điểm và thời gian chụp: [cần xác minh].' },
+      { image: v2.id, caption: 'Gấp chiếu thành phẩm. [Nhân vật — cần xin phép trước khi đăng]' },
+    ],
+  })
 }
 
 describe('getHomeMedia', () => {
@@ -48,9 +41,6 @@ describe('getHomeMedia', () => {
   beforeEach(async () => {
     await resetDb(payload)
     reviewer = await makeUser(payload, 'reviewer')
-    await payload.updateGlobal({
-      slug: 'page-intros', data: { _status: 'draft' }, user: reviewer, overrideAccess: true,
-    } as never)
   })
 
   it('public: ảnh chưa được phép thì hero null, làng rỗng', async () => {
@@ -84,34 +74,27 @@ describe('getHomeMedia', () => {
   })
   it('public: chỉ một trong hai ảnh làng được phép thì village có 1 phần tử', async () => {
     await seedHomeMedia({ rights: 'unknown', subjectConsent: 'pending' })
-    const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as {
-      home: { villageImages: { image: number }[] }
-    }
+    const home = (await readPage(payload, 'home')) as { villageImages: { image: number }[] }
     await payload.update({
-      collection: 'archive-assets', id: g.home.villageImages[0].image,
+      collection: 'archive-assets', id: home.villageImages[0].image,
       data: { rights: 'permitted', subjectConsent: 'not_applicable' }, overrideAccess: true,
     } as never)
     const m = await content.getHomeMedia('public')
     expect(m.village).toHaveLength(1)
   })
-  it('xoá asset đang được tham chiếu: lưu lại global vẫn được, preview chỉ còn ảnh còn lại', async () => {
+  it('xoá asset đang được tham chiếu: lưu lại trang vẫn được, preview chỉ còn ảnh còn lại', async () => {
     await seedHomeMedia({ rights: 'unknown', subjectConsent: 'pending' })
-    const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as {
-      home: { villageImages: { image: number }[] }
-    }
+    const home = (await readPage(payload, 'home')) as { villageImages: { image: number }[] }
     await payload.delete({
-      collection: 'archive-assets', id: g.home.villageImages[0].image, user: reviewer, overrideAccess: true,
+      collection: 'archive-assets', id: home.villageImages[0].image, user: reviewer, overrideAccess: true,
     } as never)
-    await payload.updateGlobal({
-      slug: 'page-intros', data: { home: { heroCaption: 'Sửa' }, _status: 'published' },
-      user: reviewer, overrideAccess: true,
-    } as never)
+    await upsertPage(payload, 'home', { heroCaption: 'Sửa' })
     const m = await content.getHomeMedia('preview')
     expect(m.village).toHaveLength(1)
   })
-  // Chỉ chứng minh: sau resetDb các tham chiếu ảnh của global bị xoá (FK ON DELETE SET NULL), public trả rỗng, không lỗi.
-  // Nhánh global chưa đăng (readGlobal) được phủ ở content.int 'global chưa từng đăng'.
-  it('tham chiếu ảnh bị xoá qua FK SET NULL: public trả rỗng, không lỗi', async () => {
+  // Sau resetDb không còn tài liệu trang: public trả rỗng, không lỗi.
+  // Nhánh trang chưa đăng (readPageDoc) được phủ ở content.int 'trang chưa từng đăng'.
+  it('không có trang Trang chủ: public trả rỗng, không lỗi', async () => {
     const m = await content.getHomeMedia('public')
     expect(m).toEqual({ hero: null, heroInset: null, village: [] })
   })

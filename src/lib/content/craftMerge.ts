@@ -1,18 +1,23 @@
 // Hàm thuần dựng dụng cụ, thẻ hai cách dệt và hàng bảng so sánh của /nghe-det-chieu từ dữ kiện CMS.
+import type { ArchiveAsset } from '@/payload-types'
+
 import { applyMode } from './copy/applyMode'
 import { composeMobileLine, type CraftFacts, type Way } from './pageFacts'
 import type { CraftPageView, ImageView, Mode } from './types'
-import { isUnverified, showText } from './visibility'
+import { isUnverified, showText, toImageView } from './visibility'
 
-/** Dụng cụ: tên qua luật hiển thị (public bỏ dụng cụ không có tên); ghi chú áp mode theo nguồn nhìn thấy. */
+/**
+ * Dụng cụ: tên qua luật hiển thị (public bỏ dụng cụ không có tên); ghi chú áp mode theo nguồn nhìn thấy.
+ * Ảnh lấy từ chính dòng dụng cụ nên đi theo dòng khi biên tập viên đổi thứ tự.
+ */
 export function craftToolCards(
-  tools: CraftFacts['tools'], mode: Mode, visible: ReadonlySet<string>, imageOf: (n: number) => ImageView | null,
+  tools: CraftFacts['tools'], mode: Mode, visible: ReadonlySet<string>,
 ): CraftPageView['tools'] {
   return tools.flatMap((t) => {
     const name = showText(t.name, mode)
     if (name === null) return []
     const m = applyMode({ note: t.note, cite: t.cite }, mode, { cites: visible })
-    return [{ n: t.n, name, note: m.note, cite: m.cite, image: imageOf(t.n) }]
+    return [{ n: t.n, name, note: m.note, cite: m.cite, image: toImageView(t.image as ArchiveAsset | number | null | undefined, mode) }]
   })
 }
 

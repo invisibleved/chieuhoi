@@ -66,20 +66,29 @@ describe('craftCompareRows', () => {
 })
 
 describe('craftToolCards (I3)', () => {
-  const tool = (n: number, name: string, cite: string[] = []): CraftFacts['tools'][number] => ({ n, name, note: { desktop: 'ghi chú', mobile: null }, cite })
-  const imageOf = () => null
+  const tool = (n: number, name: string, cite: string[] = [], image: unknown = null): CraftFacts['tools'][number] =>
+    ({ n, name, note: { desktop: 'ghi chú', mobile: null }, cite, image })
+  const asset = (rights: string) => ({ id: 7, url: '/a.webp', alt: 'Khung', rights, subjectConsent: 'not_applicable' })
   it('public: tên dụng cụ chờ xác minh hoặc trống thì bỏ dụng cụ, giữ số n theo ô ảnh', () => {
-    const out = craftToolCards([tool(1, '[cần xác minh]'), tool(2, 'Khuôn'), tool(3, '')], 'public', new Set(), imageOf)
+    const out = craftToolCards([tool(1, '[cần xác minh]'), tool(2, 'Khuôn'), tool(3, '')], 'public', new Set())
     expect(out.map((t) => [t.n, t.name])).toEqual([[2, 'Khuôn']])
   })
   it('preview: giữ dụng cụ, tên trống thành [cần xác minh]', () => {
-    const out = craftToolCards([tool(1, '')], 'preview', new Set(), imageOf)
+    const out = craftToolCards([tool(1, '')], 'preview', new Set())
     expect(out.map((t) => t.name)).toEqual(['[cần xác minh]'])
   })
   it('cite lọc theo nguồn nhìn thấy; ghi chú hết nguồn thì ẩn ở public', () => {
-    const [t] = craftToolCards([tool(1, 'Khung', ['a'])], 'public', new Set(), imageOf)
+    const [t] = craftToolCards([tool(1, 'Khung', ['a'])], 'public', new Set())
     expect(t.cite).toEqual([])
     expect(t.note).toEqual({ desktop: null, mobile: null })
+  })
+  it('ảnh lấy từ chính dòng dụng cụ, qua luật hiển thị ảnh', () => {
+    const [pub] = craftToolCards([tool(1, 'Khung', [], asset('permitted'))], 'public', new Set())
+    expect(pub.image?.url).toBe('/a.webp')
+    expect(craftToolCards([tool(1, 'Khung', [], asset('unknown'))], 'public', new Set())[0].image).toBeNull()
+    expect(craftToolCards([tool(1, 'Khung', [], asset('unknown'))], 'preview', new Set())[0].image?.flags).toContain('rights-not-permitted')
+    // Chưa nạp quan hệ (chỉ có id) hoặc trống thì không có ảnh.
+    expect(craftToolCards([tool(1, 'Khung', [], 7), tool(2, 'Go')], 'preview', new Set()).map((t) => t.image)).toEqual([null, null])
   })
 })
 

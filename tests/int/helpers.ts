@@ -1,6 +1,8 @@
 import { getPayload, type Payload } from 'payload'
 
+import type { RouteKey } from '@/collections/pages/routeKeys'
 import type { User } from '@/payload-types'
+import { migratePages } from '@/seed/migratePages'
 
 /**
  * Trả về Payload trỏ vào DB test (DATABASE_URI_TEST), không bao giờ vào DB dev.
@@ -46,4 +48,56 @@ export async function makeUser(payload: Payload, role: 'editor' | 'reviewer'): P
     overrideAccess: true,
     context: { skipFirstUserBootstrap: true },
   }) as Promise<User>
+}
+
+/**
+ * Seed còn ghi global `page-intros` (Task 7 chuyển seed sang `pages`): chép global sang collection
+ * `pages` để lớp `lib/content` đọc thấy dữ liệu seed. Gọi ngay sau mỗi lần `seed(payload)`.
+ */
+export async function syncPagesFromGlobal(payload: Payload): Promise<void> {
+  await migratePages(payload, { replace: true })
+}
+
+const PAGE_CTX = { disableRevalidate: true, skipPageSourcesCheck: true }
+
+async function anyReviewer(payload: Payload) {
+  const { docs } = await payload.find({
+    collection: 'users', where: { role: { equals: 'reviewer' } }, limit: 1, depth: 0, overrideAccess: true, sort: 'id',
+  })
+  return { ...(docs[0] ?? (await makeUser(payload, 'reviewer'))), collection: 'users' as const }
+}
+
+/**
+ * Tạo hoặc sửa tài liệu `pages` của `slug` (bỏ qua access, bỏ kiểm nguồn của trang).
+ * `publish` (mặc định): đăng bằng người duyệt; ngược lại chỉ lưu nháp, bản đã đăng giữ nguyên.
+ */
+export async function upsertPage(
+  payload: Payload, slug: RouteKey, data: Record<string, unknown>, opts: { publish?: boolean } = {},
+): Promise<number> {
+  const publish = opts.publish ?? true
+  const user = await anyReviewer(payload)
+  const status = publish ? { _status: 'published' } : {}
+  const { docs } = await payload.find({
+    collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0, overrideAccess: true,
+  })
+  if (docs[0]) {
+    await payload.update({
+      collection: 'pages', id: docs[0].id, data: { ...data, ...status }, draft: !publish,
+      user, overrideAccess: true, context: PAGE_CTX,
+    } as never)
+    return docs[0].id
+  }
+  const created = await payload.create({
+    collection: 'pages', data: { slug, ...data, ...status }, draft: !publish,
+    user, overrideAccess: true, context: PAGE_CTX,
+  } as never) as unknown as { id: number }
+  return created.id
+}
+
+/** Bản đã đăng (hoặc nháp mới nhất khi `draft`) của trang `slug`, quan hệ ở dạng id. */
+export async function readPage(payload: Payload, slug: RouteKey, draft = false): Promise<Record<string, unknown>> {
+  const { docs } = await payload.find({
+    collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0, draft, overrideAccess: true,
+  })
+  return (docs[0] as unknown as Record<string, unknown> | undefined) ?? {}
 }

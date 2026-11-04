@@ -10,7 +10,7 @@ import type { ArchiveAsset, Person } from '@/payload-types'
 import { seed } from '@/seed'
 import { peopleSamples } from '@/seed/data/extras'
 
-import { getTestPayload, resetDb } from './helpers'
+import { getTestPayload, resetDb, syncPagesFromGlobal } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 const SLUG = 'mau-nghe-nhan'
@@ -46,6 +46,7 @@ describe('view model Con người', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
+    await syncPagesFromGlobal(payload)
     delete process.env.SEED_FORCE_GLOBALS
     content = createContent(payload)
     people = createPeople(payload, content)

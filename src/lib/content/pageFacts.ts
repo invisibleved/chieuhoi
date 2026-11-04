@@ -1,4 +1,4 @@
-// Ánh xạ global `page-intros` → dữ kiện trang Làng Hới và Nghề dệt chiếu.
+// Ánh xạ tài liệu trang (collection `pages`) → dữ kiện trang Làng Hới và Nghề dệt chiếu.
 // Hàm thuần, chịu được dữ liệu thiếu; không áp mode (pages.ts áp sau).
 import type { Variant } from './types'
 
@@ -27,7 +27,8 @@ export type VillageFacts = {
 }
 
 export type CraftFacts = {
-  tools: { n: number; name: string; note: Variant; cite: string[] }[]
+  /** `image`: giá trị thô của ô ảnh trong dòng dụng cụ (asset đã nạp, id, hoặc null); craftMerge áp luật ảnh. */
+  tools: { n: number; name: string; note: Variant; cite: string[]; image: unknown }[]
   hand: Way
   machine: Way
   /** `mobileAuto`: dòng điện thoại tự ghép từ hai ô (biên tập viên để trống), dựng lại sau khi áp mode. */
@@ -128,7 +129,7 @@ export function craftFactsFrom(g: Record<string, unknown> | undefined): CraftFac
   const src = rec(g)
   const tools = arr(src.tools).slice(0, 3).map((t, i) => {
     const note = toCited(rec(t.note))
-    return { n: i + 1, name: str(t.name), note: note.text, cite: note.cite }
+    return { n: i + 1, name: str(t.name), note: note.text, cite: note.cite, image: t.image ?? null }
   })
   const hand = wayFrom(src.hand)
   const machine = wayFrom(src.machine)

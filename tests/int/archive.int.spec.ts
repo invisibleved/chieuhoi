@@ -7,7 +7,7 @@ import { createArchive } from '@/lib/content/archive'
 import { createContent } from '@/lib/content/queries'
 import { seed } from '@/seed'
 
-import { getTestPayload, resetDb } from './helpers'
+import { getTestPayload, resetDb, syncPagesFromGlobal } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
@@ -30,6 +30,7 @@ describe('view model Thư viện', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
+    await syncPagesFromGlobal(payload)
     archive = createArchive(createContent(payload))
   }, 240_000)
   afterAll(() => {

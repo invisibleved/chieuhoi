@@ -127,7 +127,7 @@ export const peopleCopy = {
 
 export type PeopleCopyView = ApplyMode<typeof peopleCopy>
 
-// Thẻ "Liên quan" của trang chân dung. Thẻ "Con người" cố định, ảnh lấy từ ô `slot` của page-intros.con-nguoi.
+// Thẻ "Liên quan" của trang chân dung. Thẻ "Con người" cố định, ảnh lấy từ ô `slot` của trang `con-nguoi` (collection `pages`).
 export const peopleRelated = {
   step: { eyebrow: 'CÔNG ĐOẠN', cta: 'Xem công đoạn →', href: '/nghe-det-chieu' },
   product: { eyebrow: 'HIỆN VẬT', cta: 'Xem hiện vật →' },

@@ -7,7 +7,7 @@ import { createPages } from '@/lib/content/pages'
 import { createContent } from '@/lib/content/queries'
 import { seed } from '@/seed'
 
-import { getTestPayload, resetDb } from './helpers'
+import { getTestPayload, readPage, resetDb, syncPagesFromGlobal, upsertPage } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
@@ -19,6 +19,13 @@ const savedForce = process.env.SEED_FORCE_GLOBALS
 const reviewer = async () => {
   const [u] = (await payload.find({ collection: 'users', overrideAccess: true })).docs
   return { ...u, collection: 'users' }
+}
+/** Ghi lại global bằng seed rồi chép sang `pages`: đưa dữ liệu trang về trạng thái seed. */
+const reseed = async () => {
+  process.env.SEED_FORCE_GLOBALS = 'true'
+  await seed(payload)
+  delete process.env.SEED_FORCE_GLOBALS
+  await syncPagesFromGlobal(payload)
 }
 const sourceDoc = async (sourceId: string) =>
   (await payload.find({ collection: 'sources', where: { sourceId: { equals: sourceId } }, overrideAccess: true })).docs[0]
@@ -32,6 +39,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
     delete process.env.SEED_FORCE_GLOBALS
+    await syncPagesFromGlobal(payload)
     pages = createPages(payload, createContent(payload))
   }, 240_000)
   afterAll(() => {
@@ -62,15 +70,8 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect(v.sources).toEqual([])
     })
     it('gắn nguồn cho hàng so sánh: public có sources và cite; nguồn bị ẩn thì cite bị bỏ', async () => {
-      const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
-        'nghe-det-chieu': { compareRows: Record<string, unknown>[] }
-      }
-      const original = g['nghe-det-chieu'].compareRows
-      const user = await reviewer()
-      const save = (compareRows: unknown) =>
-        payload.updateGlobal({
-          slug: 'page-intros', data: { 'nghe-det-chieu': { compareRows }, _status: 'published' } as never, user, overrideAccess: true,
-        } as never)
+      const original = (await readPage(payload, 'nghe-det-chieu')).compareRows as Record<string, unknown>[]
+      const save = (compareRows: unknown) => upsertPage(payload, 'nghe-det-chieu', { compareRows })
       const src = await sourceDoc('vietnamplus-2026')
       try {
         await save(original.map((r, i) => (i === 1 ? { ...r, hand: '2 lá/ngày', sources: [src.id] } : r)))
@@ -84,29 +85,19 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         expect(hidden.compare.rows.map((r) => r.aspect)).toEqual(['Việc của đôi tay'])
       } finally {
         await payload.update({ collection: 'sources', id: src.id, data: { title: src.title }, overrideAccess: true })
-        process.env.SEED_FORCE_GLOBALS = 'true'
-        await seed(payload)
-        delete process.env.SEED_FORCE_GLOBALS
+        await reseed()
       }
     })
     it('ví dụ Vietnam+: ghi chú thẻ thủ công và hàng "Thời gian một tấm" có nguồn, ô máy còn chờ xác minh', async () => {
-      const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
-        'nghe-det-chieu': { hand: Record<string, Record<string, unknown>>; compareRows: Record<string, unknown>[] }
+      const { hand, compareRows } = (await readPage(payload, 'nghe-det-chieu')) as {
+        hand: Record<string, Record<string, unknown>>; compareRows: Record<string, unknown>[]
       }
-      const { hand, compareRows } = g['nghe-det-chieu']
-      const user = await reviewer()
       const src = await sourceDoc('vietnamplus-2026')
       try {
-        await payload.updateGlobal({
-          slug: 'page-intros', user, overrideAccess: true,
-          data: {
-            'nghe-det-chieu': {
-              hand: { ...hand, note: { ...hand.note, text: 'Dệt tay khoảng 2 lá/ngày.', mobileText: null, sources: [src.id] } },
-              compareRows: compareRows.map((r) => (r.aspect === 'Thời gian một tấm' ? { ...r, hand: '2 lá/ngày', machine: '[cần xác minh]', sources: [src.id] } : r)),
-            },
-            _status: 'published',
-          } as never,
-        } as never)
+        await upsertPage(payload, 'nghe-det-chieu', {
+          hand: { ...hand, note: { ...hand.note, text: 'Dệt tay khoảng 2 lá/ngày.', mobileText: null, sources: [src.id] } },
+          compareRows: compareRows.map((r) => (r.aspect === 'Thời gian một tấm' ? { ...r, hand: '2 lá/ngày', machine: '[cần xác minh]', sources: [src.id] } : r)),
+        })
         const v = await pages.getCraftPage('public')
         expect(v.compare.hand.note).toEqual({ desktop: 'Dệt tay khoảng 2 lá/ngày.', mobile: 'Dệt tay khoảng 2 lá/ngày.' })
         expect(v.compare.hand.noteCite).toEqual(['vietnamplus-2026'])
@@ -116,9 +107,7 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         expect(row).toMatchObject({ hand: '2 lá/ngày', machine: null, mobile: ['Thủ công: 2 lá/ngày'], cite: ['vietnamplus-2026'] })
         expect(v.sources.map((s) => s.id)).toEqual(['vietnamplus-2026'])
       } finally {
-        process.env.SEED_FORCE_GLOBALS = 'true'
-        await seed(payload)
-        delete process.env.SEED_FORCE_GLOBALS
+        await reseed()
       }
     })
     it('preview: đủ 7 công đoạn, công đoạn thiếu ảnh có shotNeeded, toRecord hiện', async () => {
@@ -159,22 +148,14 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       expect((await pages.getCraftPage('public')).steps).toHaveLength(0)
     })
     it('asset permitted gắn vào hero: public có ảnh, chú thích có dấu chờ xác minh thì ẩn', async () => {
-      const user = await reviewer()
       const asset = (await payload.create({
         collection: 'archive-assets',
         data: { alt: 'Ảnh thử', title: 'Ảnh thử', code: 'TL-900', rights: 'permitted', subjectConsent: 'not_applicable' },
         filePath: fixture, overrideAccess: true,
       } as never)) as { id: number }
-      const read = async () =>
-        (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as {
-          'nghe-det-chieu': { media: { slot: string; image: number | null; caption: string | null }[] }
-        }
-      const original = (await read())['nghe-det-chieu'].media
-      const save = (media: unknown) =>
-        payload.updateGlobal({
-          slug: 'page-intros', data: { 'nghe-det-chieu': { media }, _status: 'published' } as never,
-          user, overrideAccess: true,
-        } as never)
+      const original = (await readPage(payload, 'nghe-det-chieu')).media as
+        { slot: string; image: number | null; caption: string | null }[]
+      const save = (media: unknown) => upsertPage(payload, 'nghe-det-chieu', { media })
       try {
         await save(original.map((m) => (m.slot === 'hero' ? { ...m, image: asset.id } : m)))
         const v = await pages.getCraftPage('public')
@@ -186,6 +167,31 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       } finally {
         await save(original)
         await payload.delete({ collection: 'archive-assets', id: asset.id, overrideAccess: true })
+      }
+    })
+    it('đảo thứ tự dụng cụ rồi đăng lại: ảnh vẫn đi theo dụng cụ của nó', async () => {
+      const permitted = (code: string) =>
+        payload.create({
+          collection: 'archive-assets',
+          data: { alt: `Ảnh ${code}`, title: `Ảnh ${code}`, code, rights: 'permitted', subjectConsent: 'not_applicable' },
+          filePath: fixture, overrideAccess: true,
+        } as never) as unknown as Promise<{ id: number; url: string }>
+      const a = await permitted('TL-901')
+      const b = await permitted('TL-902')
+      try {
+        await upsertPage(payload, 'nghe-det-chieu', { tools: [{ name: 'Khung dệt', image: a.id }, { name: 'Go', image: b.id }] })
+        const before = await pages.getCraftPage('public')
+        expect(before.tools.map((t) => [t.name, t.image?.docNumber])).toEqual([['Khung dệt', '901'], ['Go', '902']])
+        await upsertPage(payload, 'nghe-det-chieu', { tools: [{ name: 'Go', image: b.id }, { name: 'Khung dệt', image: a.id }] })
+        const v = await pages.getCraftPage('public')
+        expect(v.tools.map((t) => t.name)).toEqual(['Go', 'Khung dệt'])
+        const khung = v.tools.find((t) => t.name === 'Khung dệt')
+        expect(khung?.image?.url).toBe(a.url)
+        expect(khung?.image?.docNumber).toBe('901')
+        expect(v.tools.find((t) => t.name === 'Go')?.image?.url).toBe(b.url)
+      } finally {
+        await reseed()
+        for (const id of [a.id, b.id]) await payload.delete({ collection: 'archive-assets', id, overrideAccess: true })
       }
     })
   })
@@ -261,36 +267,23 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
       }
     })
     it('edits in admin show on page', async () => {
-      const g = (await payload.findGlobal({ slug: 'page-intros', depth: 0, overrideAccess: true })) as unknown as Record<string, Record<string, Record<string, unknown>>>
-      const user = await reviewer()
-      await payload.updateGlobal({
-        slug: 'page-intros', overrideAccess: true, user, draft: false,
-        data: { 'lang-hoi': { ...g['lang-hoi'], location: { ...g['lang-hoi'].location, text: 'Làng nằm ở xã Long Hưng.' } }, _status: 'published' },
-      } as never)
+      const { location } = (await readPage(payload, 'lang-hoi')) as { location: Record<string, unknown> }
+      await upsertPage(payload, 'lang-hoi', { location: { ...location, text: 'Làng nằm ở xã Long Hưng.' } })
       try {
         const v = await pages.getVillagePage('public')
         expect(v.copy.location.body.text).toBe('Làng nằm ở xã Long Hưng.')
       } finally {
-        process.env.SEED_FORCE_GLOBALS = 'true'
-        await seed(payload)
-        delete process.env.SEED_FORCE_GLOBALS
+        await reseed()
       }
     })
     it('hides empty founder/location/heritage when groups are missing', async () => {
-      const user = await reviewer()
-      await payload.updateGlobal({
-        slug: 'page-intros', overrideAccess: true, user, draft: false,
-        data: {
-          'lang-hoi': {
-            eyebrow: '01 — LÀNG HỚI', title: 'Có một làng Hới...', lead: 'Lead',
-            facts: [], pageSources: [],
-            founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
-            location: { text: null, sources: [], editorNote: null },
-            heritage: { sentences: [], editorNote: null },
-          },
-          _status: 'published',
-        },
-      } as never)
+      await upsertPage(payload, 'lang-hoi', {
+        eyebrow: '01 — LÀNG HỚI', title: 'Có một làng Hới...', lead: 'Lead',
+        facts: [], pageSources: [],
+        founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
+        location: { text: null, sources: [], editorNote: null },
+        heritage: { sentences: [], editorNote: null },
+      })
       try {
         const v = await pages.getVillagePage('public')
         expect(v.facts).toEqual([])
@@ -298,9 +291,24 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         expect(v.copy.location.body.text).toBeNull()
         expect(v.sources).toEqual([])
       } finally {
-        process.env.SEED_FORCE_GLOBALS = 'true'
-        await seed(payload)
-        delete process.env.SEED_FORCE_GLOBALS
+        await reseed()
+      }
+    })
+    it('lang-hoi có nháp chưa đăng, nghe-det-chieu vừa đăng: public vẫn là bản đăng cũ của lang-hoi', async () => {
+      const live = await pages.getVillagePage('public')
+      const published = live.copy.location.body.text
+      expect(published).toBeTruthy()
+      const { location } = (await readPage(payload, 'lang-hoi', true)) as { location: Record<string, unknown> }
+      try {
+        await upsertPage(payload, 'lang-hoi', { location: { ...location, text: 'Nháp chưa đăng.' } }, { publish: false })
+        await upsertPage(payload, 'nghe-det-chieu', { eyebrow: 'Dòng nhỏ mới' })
+        expect((await pages.getCraftPage('public')).intro.eyebrow).toBe('Dòng nhỏ mới')
+        const v = await pages.getVillagePage('public')
+        expect(v.copy.location.body.text).toBe(published)
+        expect(v).toEqual(live)
+        expect((await pages.getVillagePage('preview')).copy.location.body.text).toBe('Nháp chưa đăng.')
+      } finally {
+        await reseed()
       }
     })
     it('mốc thiếu mức tin cậy được trả là pending', async () => {

@@ -7,7 +7,7 @@ import { createContent } from '@/lib/content/queries'
 import { createProducts } from '@/lib/content/products'
 import { seed } from '@/seed'
 
-import { getTestPayload, resetDb } from './helpers'
+import { getTestPayload, resetDb, syncPagesFromGlobal } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
@@ -39,6 +39,7 @@ describe('view model Sản phẩm', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
+    await syncPagesFromGlobal(payload)
     delete process.env.SEED_FORCE_GLOBALS
     products = createProducts(payload, createContent(payload))
   }, 240_000)

@@ -76,6 +76,22 @@ export async function readGlobalDoc(
   return mode === 'public' && g._status !== 'published' ? {} : g
 }
 
+/**
+ * Đọc tài liệu `pages` của một trang theo `slug`. Không có trang thì `{}`.
+ * Bản công khai chỉ đọc bản đã đăng; trang chưa từng đăng coi như trống, như `readGlobalDoc`.
+ */
+export async function readPageDoc(
+  payload: Payload, slug: RouteKey, mode: Mode, depth = 0,
+): Promise<Record<string, unknown>> {
+  const res = await payload.find({
+    collection: 'pages', where: { slug: { equals: slug } }, draft: mode === 'preview', limit: 1, depth,
+    overrideAccess: true,
+  })
+  const doc = res.docs[0] as unknown as (Record<string, unknown> & Doc) | undefined
+  if (!doc) return {}
+  return mode === 'public' && doc._status !== 'published' ? {} : doc
+}
+
 export function createContent(payload: Payload) {
   async function findAll(
     collection: CollectionSlug, mode: Mode, opts: { where?: Where; sort?: string; depth?: number } = {},
@@ -529,8 +545,7 @@ export function createContent(payload: Payload) {
     return items
   }
 
-  const readGlobal = (slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0) =>
-    readGlobalDoc(payload, slug, mode, depth)
+  const readGlobal = (slug: 'site-settings', mode: Mode, depth = 0) => readGlobalDoc(payload, slug, mode, depth)
 
   async function getSiteSettings(mode: Mode): Promise<SiteSettingsView> {
     const g = (await readGlobal('site-settings', mode)) as Record<string, string | null | undefined>
@@ -543,8 +558,7 @@ export function createContent(payload: Payload) {
   }
 
   async function getPageIntro(route: RouteKey, mode: Mode): Promise<PageIntroView> {
-    const g = (await readGlobal('page-intros', mode)) as Record<string, Record<string, string | null> | undefined>
-    const r = g[route] ?? {}
+    const r = (await readPageDoc(payload, route, mode)) as Record<string, string | null | undefined>
     return {
       eyebrow: showText(r.eyebrow, mode), title: showText(r.title, mode),
       lead: showText(r.lead, mode), heroTitle: showText(r.heroTitle, mode),
@@ -552,8 +566,7 @@ export function createContent(payload: Payload) {
   }
 
   async function getHomeMedia(mode: Mode): Promise<HomeMediaView> {
-    const g = (await readGlobal('page-intros', mode, 1)) as { home?: Record<string, unknown> }
-    const h = g.home ?? {}
+    const h = await readPageDoc(payload, 'home', mode, 1)
     const img = (v: unknown) => toImageView(v as ArchiveAsset | number | null | undefined, mode)
     const heroImage = img(h.heroImage)
     const heroAsset = h.heroImage && typeof h.heroImage === 'object' ? (h.heroImage as ArchiveAsset) : null
