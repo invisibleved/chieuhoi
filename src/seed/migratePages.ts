@@ -47,30 +47,55 @@ const pickPage = (src: Obj | undefined, slug: RouteKey): Obj => {
 
 const TOOL_SLOT = /^tool-(\d+)$/
 
+/** Khoá của nhóm global không có chỗ trong trang `slug` (không phải trường chung, trường riêng hay `id`). */
+export function unknownKeys(group: Obj | undefined, slug: RouteKey): string[] {
+  if (!group) return []
+  const known = new Set<string>([...COMMON_FIELDS, ...PAGE_ONLY_FIELDS[slug], 'id'])
+  return Object.keys(group).filter((k) => !known.has(k))
+}
+
+const isEmpty = (v: unknown): boolean => v == null || (typeof v === 'string' && v.trim() === '')
+
 /**
- * Dữ liệu trang `slug` của collection `pages` lấy từ nhóm cùng tên của global.
- * Với `nghe-det-chieu`: ảnh ô `tool-n` chuyển vào `tools[n-1].image`, ô `tool-n` bỏ khỏi `media`.
+ * Như `pageFromGlobal`, kèm danh sách dữ liệu không chép được (lời tiếng Việt cho người duyệt):
+ * khoá lạ của nhóm, chú thích của ô `tool-n`, ảnh `tool-n` không có dòng dụng cụ thứ n.
  */
-export function pageFromGlobal(group: Obj | undefined, slug: RouteKey): Obj {
+export function convertGlobalPage(group: Obj | undefined, slug: RouteKey): { page: Obj; dropped: string[] } {
   const page = pickPage(group, slug)
-  if (slug !== 'nghe-det-chieu' || !Array.isArray(page.media)) return page
+  const dropped = unknownKeys(group, slug).map((k) => `Trường "${k}" không có trong Trang`)
+  if (slug !== 'nghe-det-chieu' || !Array.isArray(page.media)) return { page, dropped }
 
   const toolImages = new Map<number, unknown>()
   page.media = (page.media as unknown[]).filter((row) => {
     const m = isObj(row) && typeof row.slot === 'string' ? TOOL_SLOT.exec(row.slot) : null
     if (!m) return true
-    toolImages.set(Number(m[1]) - 1, (row as Obj).image ?? null)
+    const r = row as Obj
+    if (!isEmpty(r.caption)) dropped.push(`Chú thích của ô ảnh ${r.slot}: "${String(r.caption)}"`)
+    toolImages.set(Number(m[1]) - 1, r.image ?? null)
     return false
   })
-  if (Array.isArray(page.tools)) {
-    page.tools = (page.tools as unknown[]).map((t, i) =>
-      isObj(t) && toolImages.has(i) ? { ...t, image: toolImages.get(i) } : t,
-    )
+  const tools = Array.isArray(page.tools) ? (page.tools as unknown[]) : []
+  for (const [i, image] of toolImages) {
+    if (image != null && !isObj(tools[i])) dropped.push(`Ảnh ô tool-${i + 1} (id ${String(image)}) không có dòng dụng cụ thứ ${i + 1}`)
   }
-  return page
+  if (Array.isArray(page.tools)) {
+    page.tools = tools.map((t, i) => (isObj(t) && toolImages.has(i) ? { ...t, image: toolImages.get(i) } : t))
+  }
+  return { page, dropped }
 }
 
-/** Bỏ khoá không phải nội dung và mọi giá trị trống (`null`, thiếu, mảng trống, nhóm trống). */
+/**
+ * Dữ liệu trang `slug` của collection `pages` lấy từ nhóm cùng tên của global.
+ * Với `nghe-det-chieu`: ảnh ô `tool-n` chuyển vào `tools[n-1].image`, ô `tool-n` bỏ khỏi `media`.
+ */
+export function pageFromGlobal(group: Obj | undefined, slug: RouteKey): Obj {
+  return convertGlobalPage(group, slug).page
+}
+
+/**
+ * Bỏ khoá không phải nội dung và mọi giá trị trống: `null`, thiếu, `false` (ô đánh dấu chưa bật),
+ * mảng trống, nhóm trống. `true` vẫn khác `false`.
+ */
 const comparable = (v: unknown): unknown => {
   if (Array.isArray(v)) {
     const rows = v.map(comparable)
@@ -84,7 +109,7 @@ const comparable = (v: unknown): unknown => {
       .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     return entries.length ? Object.fromEntries(entries) : undefined
   }
-  return v === null ? undefined : v
+  return v === null || v === false ? undefined : v
 }
 
 /** So sâu nội dung hai trang, bỏ qua `id`, ngày giờ, trạng thái, `slug` và giá trị trống. */
@@ -97,9 +122,13 @@ export type MigrateAction = 'created-published' | 'created-published+draft' | 'c
 export type MigrateReport = {
   pages: { slug: RouteKey; action: MigrateAction; rows: number; citations: number }[]
   sourceIssues: { slug: RouteKey; missing: MissingSource[] }[]
+  /** Dữ liệu của global không chép được sang trang. */
+  dropped: { slug: RouteKey; what: string }[]
 }
 
-export type PageDiff = { slug: RouteKey; state: 'published' | 'draft'; reason: 'missing' | 'different' }
+export type PageDiff =
+  | { slug: RouteKey; state: 'published' | 'draft'; reason: 'missing' | 'different' }
+  | { slug: RouteKey; state: 'published' | 'draft'; reason: 'unknown-field'; field: string }
 
 const CONTEXT = { skipPageSourcesCheck: true, disableRevalidate: true }
 
@@ -162,7 +191,7 @@ export async function migratePages(payload: Payload, opts: { replace?: boolean }
   const latest = await readGlobal(payload, true)
   const isPublished = published._status === 'published'
   const user = isPublished ? await findReviewer(payload) : undefined
-  const report: MigrateReport = { pages: [], sourceIssues: [] }
+  const report: MigrateReport = { pages: [], sourceIssues: [], dropped: [] }
 
   for (const slug of ROUTE_KEYS) {
     const existing = await findPage(payload, slug)
@@ -175,11 +204,15 @@ export async function migratePages(payload: Payload, opts: { replace?: boolean }
       await payload.delete({ collection: 'pages', id: existing.id, overrideAccess: true, context: CONTEXT })
     }
 
-    const draftData = pageFromGlobal(groupOf(latest, slug), slug)
+    const draft = convertGlobalPage(groupOf(latest, slug), slug)
+    const draftData = draft.page
     const written: Obj[] = []
+    const dropped = new Set<string>()
     let action: MigrateAction
     if (isPublished) {
-      const liveData = pageFromGlobal(groupOf(published, slug), slug)
+      const live = convertGlobalPage(groupOf(published, slug), slug)
+      const liveData = live.page
+      live.dropped.forEach((d) => dropped.add(d))
       const created = await payload.create({
         collection: 'pages',
         data: { ...liveData, slug, _status: 'published', workflow: 'published' } as never,
@@ -195,6 +228,7 @@ export async function migratePages(payload: Payload, opts: { replace?: boolean }
           overrideAccess: true, user, context: CONTEXT,
         })
         written.push(draftData)
+        draft.dropped.forEach((d) => dropped.add(d))
         action = 'created-published+draft'
       }
     } else {
@@ -202,6 +236,7 @@ export async function migratePages(payload: Payload, opts: { replace?: boolean }
         collection: 'pages', data: { ...draftData, slug } as never, draft: true, overrideAccess: true, context: CONTEXT,
       })
       written.push(draftData)
+      draft.dropped.forEach((d) => dropped.add(d))
       action = 'created-draft'
     }
 
@@ -211,6 +246,7 @@ export async function migratePages(payload: Payload, opts: { replace?: boolean }
     const missing = new Map<string, MissingSource>()
     for (const data of written) for (const m of missingPageSources(data)) missing.set(issueKey(m), m)
     if (missing.size) report.sourceIssues.push({ slug, missing: [...missing.values()] })
+    for (const what of dropped) report.dropped.push({ slug, what })
   }
   return report
 }
@@ -226,6 +262,16 @@ export async function checkPages(payload: Payload): Promise<PageDiff[]> {
   const diffs: PageDiff[] = []
 
   for (const slug of ROUTE_KEYS) {
+    // Trường của global không có chỗ trong Trang: phép so bên dưới không thấy được nên báo riêng.
+    if (isPublished) {
+      for (const field of unknownKeys(groupOf(published, slug), slug)) {
+        diffs.push({ slug, state: 'published', reason: 'unknown-field', field })
+      }
+    }
+    for (const field of unknownKeys(groupOf(latest, slug), slug)) {
+      diffs.push({ slug, state: 'draft', reason: 'unknown-field', field })
+    }
+
     const existing = await findPage(payload, slug)
     if (!existing) {
       if (isPublished) diffs.push({ slug, state: 'published', reason: 'missing' })

@@ -149,6 +149,93 @@ describe('migratePages', { timeout: 60_000 }, () => {
     expect(await checkPages(payload)).toEqual([])
   })
 
+  it('chú thích ô tool-n và ảnh tool-n không có dòng dụng cụ: nêu trong báo cáo', async () => {
+    const img = (await payload.create({
+      collection: 'archive-assets', data: { alt: 'Go', title: 'Go', code: 'TL-02' }, filePath: fixture,
+      overrideAccess: true,
+    } as never)) as { id: number }
+    await publishGlobal(intros({
+      'nghe-det-chieu': {
+        media: [{ slot: 'tool-1', image: img.id, caption: 'Khung dệt cũ' }, { slot: 'tool-3', image: img.id }],
+        tools: [{ name: 'Khung dệt' }],
+      },
+    }))
+    const report = await migratePages(payload)
+    expect(report.dropped).toEqual([
+      { slug: 'nghe-det-chieu', what: 'Chú thích của ô ảnh tool-1: "Khung dệt cũ"' },
+      { slug: 'nghe-det-chieu', what: `Ảnh ô tool-3 (id ${img.id}) không có dòng dụng cụ thứ 3` },
+    ])
+  })
+
+  it('dữ liệu lồng nhau được chép đúng từng giá trị', async () => {
+    const src = async (sourceId: string) =>
+      ((await payload.create({ collection: 'sources', data: { sourceId, title: sourceId }, overrideAccess: true })) as { id: number }).id
+    const [s1, s2, s3] = [await src('s-1'), await src('s-2'), await src('s-3')]
+    const asset = async (code: string) =>
+      ((await payload.create({
+        collection: 'archive-assets', data: { alt: code, title: code, code }, filePath: fixture, overrideAccess: true,
+      } as never)) as { id: number }).id
+    const [a1, a2, a3, a4] = [await asset('TL-11'), await asset('TL-12'), await asset('TL-13'), await asset('TL-14')]
+
+    const village = {
+      pageSources: [s1, s2, s3],
+      founder: {
+        paragraphs: [
+          { sentences: [{ text: 'Câu 1', mobileText: 'Ngắn 1', hideOnMobile: false, sources: [s1] }, { text: 'Câu 2', sources: [s2, s1] }] },
+          { sentences: [{ text: 'Câu 3', hideOnMobile: true, sources: [] }] },
+        ],
+        conflict: [{ text: 'Mâu thuẫn', sources: [s3] }],
+        conflictEditorNote: 'Ghi chú hộp',
+        noPortrait: 'Không có chân dung',
+      },
+      location: { text: 'Ven sông', sources: [s2], editorNote: 'Kiểm bản đồ' },
+      heritage: { sentences: [{ text: 'Di sản', sources: [s3, s1] }], editorNote: 'Ghi chú di sản' },
+    }
+    const craft = {
+      compareRows: [{ aspect: 'Tốc độ', hand: 'Chậm', machine: 'Nhanh', mobile: 'Thủ công: Chậm', sources: [s1] }],
+    }
+    const home = {
+      heroTitle: 'Chiếu\nHới', heroImage: a1, heroInset: a2, heroCaption: 'Ảnh hero',
+      villageImages: [{ image: a3, caption: 'Làng 1' }, { image: a4, caption: 'Làng 2' }],
+    }
+    await publishGlobal(intros({ 'lang-hoi': village, 'nghe-det-chieu': { ...craft, pageSources: [s1] }, home }))
+
+    const report = await migratePages(payload)
+    expect(report.sourceIssues).toEqual([])
+    expect(report.dropped).toEqual([])
+
+    const lh = await pageOf('lang-hoi', false)
+    const strip = (v: unknown): unknown =>
+      Array.isArray(v) ? v.map(strip) : v && typeof v === 'object'
+        ? Object.fromEntries(Object.entries(v).filter(([k]) => k !== 'id').map(([k, x]) => [k, strip(x)])) : v
+    expect(strip(lh.pageSources)).toEqual([s1, s2, s3])
+    expect(strip(lh.founder)).toMatchObject({
+      paragraphs: [
+        { sentences: [
+          { text: 'Câu 1', mobileText: 'Ngắn 1', hideOnMobile: false, sources: [s1] },
+          { text: 'Câu 2', sources: [s2, s1] },
+        ] },
+        { sentences: [{ text: 'Câu 3', hideOnMobile: true, sources: [] }] },
+      ],
+      conflict: [{ text: 'Mâu thuẫn', sources: [s3] }],
+      conflictEditorNote: 'Ghi chú hộp',
+      noPortrait: 'Không có chân dung',
+    })
+    expect(strip(lh.location)).toEqual({ text: 'Ven sông', sources: [s2], editorNote: 'Kiểm bản đồ' })
+    expect(strip(lh.heritage)).toMatchObject({ sentences: [{ text: 'Di sản', sources: [s3, s1] }], editorNote: 'Ghi chú di sản' })
+
+    const ndc = await pageOf('nghe-det-chieu', false)
+    expect(strip(ndc.compareRows)).toEqual([
+      { aspect: 'Tốc độ', hand: 'Chậm', machine: 'Nhanh', mobile: 'Thủ công: Chậm', sources: [s1] },
+    ])
+
+    const hp = await pageOf('home', false)
+    expect(hp).toMatchObject({ heroTitle: 'Chiếu\nHới', heroImage: a1, heroInset: a2, heroCaption: 'Ảnh hero' })
+    expect(strip(hp.villageImages)).toEqual([{ image: a3, caption: 'Làng 1' }, { image: a4, caption: 'Làng 2' }])
+
+    expect(await checkPages(payload)).toEqual([])
+  })
+
   it('sửa global sau khi chép: --check báo khác, --replace chép lại hết', async () => {
     await publishGlobal(intros())
     await migratePages(payload)

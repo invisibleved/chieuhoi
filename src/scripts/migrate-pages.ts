@@ -27,12 +27,18 @@ export function formatMigrateReport(r: MigrateReport, codes: ReadonlyMap<number,
       }
     }
   }
+  if (r.dropped.length) {
+    lines.push('', 'Dữ liệu không chép được sang Trang (cần xem lại trong admin):')
+    for (const d of r.dropped) lines.push(`- ${ROUTE_LABELS[d.slug]}: ${d.what}`)
+  }
   return lines.join('\n')
 }
 
 export function formatCheck(diffs: PageDiff[]): string {
   if (!diffs.length) return 'Không có khác biệt.'
-  return diffs.map((d) => `${d.slug} (${d.state}): ${d.reason === 'missing' ? 'thiếu' : 'khác'}`).join('\n')
+  const reason = (d: PageDiff) =>
+    d.reason === 'unknown-field' ? `trường lạ "${d.field}"` : d.reason === 'missing' ? 'thiếu' : 'khác'
+  return diffs.map((d) => `${d.slug} (${d.state}): ${reason(d)}`).join('\n')
 }
 
 const FLAGS = ['--check', '--replace'] as const

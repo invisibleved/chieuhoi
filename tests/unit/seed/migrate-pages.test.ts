@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { pageFromGlobal, samePageContent } from '@/seed/migratePages'
+import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+import { PageIntros } from '@/globals/PageIntros'
+import { convertGlobalPage, pageFromGlobal, samePageContent, unknownKeys } from '@/seed/migratePages'
 import { formatCheck, formatMigrateReport, parseArgs } from '@/scripts/migrate-pages'
 
 const hasId = (v: unknown): boolean =>
@@ -56,6 +58,48 @@ describe('pageFromGlobal', () => {
   })
 })
 
+describe('dữ liệu không chép được', () => {
+  it('mọi trường của nhóm trang trong global PageIntros đều có chỗ trong Trang', () => {
+    for (const group of PageIntros.fields as { name: string; fields: { name: string }[] }[]) {
+      const slug = group.name as (typeof ROUTE_KEYS)[number]
+      expect(ROUTE_KEYS).toContain(slug)
+      const sample = Object.fromEntries(group.fields.map((f) => [f.name, null]))
+      expect(unknownKeys(sample, slug), slug).toEqual([])
+    }
+  })
+
+  it('khoá lạ của nhóm được nêu, không bỏ lặng lẽ', () => {
+    expect(unknownKeys({ id: 'x', title: 't', heroVideo: 1 }, 'home')).toEqual(['heroVideo'])
+    expect(convertGlobalPage({ title: 't', heroVideo: 1 }, 'home').dropped).toEqual([
+      'Trường "heroVideo" không có trong Trang',
+    ])
+  })
+
+  it('chú thích ô tool-n và ảnh tool-n không có dòng dụng cụ được nêu', () => {
+    const { page, dropped } = convertGlobalPage(
+      {
+        media: [
+          { slot: 'tool-1', image: 5, caption: 'Khung' },
+          { slot: 'tool-3', image: 7 },
+          { slot: 'tool-2', image: null, caption: '' },
+        ],
+        tools: [{ name: 'Khung' }],
+      },
+      'nghe-det-chieu',
+    )
+    expect((page.tools as { image?: unknown }[])[0].image).toBe(5)
+    expect(dropped).toEqual([
+      'Chú thích của ô ảnh tool-1: "Khung"',
+      'Ảnh ô tool-3 (id 7) không có dòng dụng cụ thứ 3',
+    ])
+  })
+
+  it('dữ liệu bình thường thì không có gì bị bỏ', () => {
+    expect(convertGlobalPage({ media: [{ slot: 'tool-1', image: 5 }], tools: [{ name: 'Khung' }] }, 'nghe-det-chieu').dropped)
+      .toEqual([])
+  })
+})
+
 describe('samePageContent', () => {
   const a = { title: 'T', facts: [{ id: 'x1', term: 'Diện tích', detail: '1 km²', sources: [1] }] }
 
@@ -77,6 +121,14 @@ describe('samePageContent', () => {
     expect(samePageContent({ tools: [{ name: 'Go' }] }, { tools: [{ name: 'Go', image: null }] })).toBe(true)
   })
 
+  it('false của ô đánh dấu coi như trống, true vẫn khác', () => {
+    const row = (hideOnMobile: unknown) => ({ heritage: { sentences: [{ text: 'c', hideOnMobile }] } })
+    expect(samePageContent(row(null), row(false))).toBe(true)
+    expect(samePageContent(row(undefined), row(false))).toBe(true)
+    expect(samePageContent(row(true), row(false))).toBe(false)
+    expect(samePageContent(row(true), row(null))).toBe(false)
+  })
+
   it('thứ tự dòng có nghĩa', () => {
     expect(samePageContent({ pageSources: [1, 2] }, { pageSources: [2, 1] })).toBe(false)
   })
@@ -92,6 +144,7 @@ describe('báo cáo CLI', () => {
           { slug: 'thu-vien', action: 'skipped', rows: 0, citations: 0 },
         ],
         sourceIssues: [{ slug: 'lang-hoi', missing: [{ where: 'Vị trí', sourceIds: [3] }] }],
+        dropped: [{ slug: 'nghe-det-chieu', what: 'Chú thích của ô ảnh tool-1: "Khung"' }],
       },
       new Map([[3, 'bao-1']]),
     )
@@ -100,6 +153,13 @@ describe('báo cáo CLI', () => {
     expect(out).toContain('Thư viện: bỏ qua (đã có), 0 dòng, 0 chú thích')
     expect(out).toContain('Câu trích nguồn chưa có trong Nguồn tham khảo của trang (cần sửa trong admin):')
     expect(out).toContain('Làng Hới: Vị trí (bao-1)')
+    expect(out).toContain('Dữ liệu không chép được sang Trang (cần xem lại trong admin):')
+    expect(out).toContain('- Nghề dệt chiếu: Chú thích của ô ảnh tool-1: "Khung"')
+  })
+
+  it('không có gì bị bỏ thì không in tiêu đề', () => {
+    const out = formatMigrateReport({ pages: [], sourceIssues: [], dropped: [] })
+    expect(out).not.toContain('không chép được')
   })
 
   it('--check in từng khác biệt hoặc báo không có', () => {
@@ -107,7 +167,8 @@ describe('báo cáo CLI', () => {
     expect(formatCheck([
       { slug: 'lang-hoi', state: 'published', reason: 'different' },
       { slug: 'home', state: 'draft', reason: 'missing' },
-    ])).toBe('lang-hoi (published): khác\nhome (draft): thiếu')
+      { slug: 'home', state: 'published', reason: 'unknown-field', field: 'heroVideo' },
+    ])).toBe('lang-hoi (published): khác\nhome (draft): thiếu\nhome (published): trường lạ "heroVideo"')
   })
 })
 
