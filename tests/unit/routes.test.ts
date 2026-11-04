@@ -18,7 +18,6 @@ describe('routes', () => {
     ['archive-assets', { inArchive: false, code: 'TL-001' }, null],
     ['archive-assets', { inArchive: true }, null],
     ['site-settings', {}, '/'],
-    ['page-intros', {}, '/'],
     ['pages', { slug: 'home' }, '/'],
     ['pages', { slug: 'lang-hoi' }, '/lang-hoi'],
     ['pages', { slug: 'x' }, null],

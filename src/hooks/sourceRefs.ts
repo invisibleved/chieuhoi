@@ -4,8 +4,6 @@ import { ROUTE_LABELS } from '@/collections/pages/routeKeys'
 
 /** Collection có thể trích Nguồn. Thêm slug mới vào đây. */
 export const SOURCE_CITING_COLLECTIONS = ['timeline-events', 'stories', 'products', 'people', 'pages'] as const
-/** Global có thể trích Nguồn. */
-export const SOURCE_CITING_GLOBALS = ['page-intros'] as const
 
 const SOURCE_KEYS = new Set(['sources', 'pageSources', 'source', 'quoteSource'])
 
@@ -91,17 +89,6 @@ export async function findSourceRefs(payload: Payload, sourceId: number): Promis
     }
   }
 
-  for (const slug of SOURCE_CITING_GLOBALS) {
-    const cfg = payload.globals.config.find((g) => g.slug === slug)
-    const globalLabel = labelOf(cfg?.label) ?? slug
-    for (const draft of [false, true]) {
-      const doc = (await payload.findGlobal({ slug, draft, depth: 0, overrideAccess: true })) as unknown as Record<
-        string,
-        unknown
-      >
-      if (citedSourceIds(doc).has(sourceId)) add(slug, null, `${globalLabel}: ${globalLabel}`)
-    }
-  }
   return refs
 }
 

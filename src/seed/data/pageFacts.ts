@@ -1,4 +1,4 @@
-// Dữ kiện trang /lang-hoi và /nghe-det-chieu, dạng nhập của global `page-intros`.
+// Dữ kiện trang /lang-hoi và /nghe-det-chieu, dạng nhập của collection `pages`.
 // Chép nguyên văn từ src/lib/content/copy/village.ts và copy/craft.ts (bản trước khi chuyển vào CMS).
 // Nguồn ghi bằng sourceId; importPageFacts đổi sang id lúc ghi.
 

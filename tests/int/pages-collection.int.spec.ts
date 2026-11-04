@@ -1,11 +1,13 @@
 // @vitest-environment node
+import path from 'path'
 import { Forbidden, type Payload } from 'payload'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { PAGES_LIVE } from '@/collections/Pages'
 import type { User } from '@/payload-types'
 
 import { getTestPayload, makeUser, resetDb } from './helpers'
+
+const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
 let payload: Payload
 let reviewer: User
@@ -65,13 +67,46 @@ describe('collection pages', () => {
     ).rejects.toThrow()
   })
 
-  it.runIf(!PAGES_LIVE)('đợt 1: biên tập viên không sửa được trang', async () => {
-    const p = await createPage('lang-hoi')
-    await expect(
-      payload.update({
-        collection: 'pages', id: p.id, data: { title: 'x' }, draft: true, user: editor, overrideAccess: false,
-      } as never),
-    ).rejects.toThrow()
+  it('biên tập viên lưu nháp được, không đăng được', async () => {
+    const p = await createPage('lang-hoi', { title: 'Bản đăng' })
+    const asEditor = (data: Record<string, unknown>, draft: boolean) =>
+      payload.update({ collection: 'pages', id: p.id, data, draft, user: editor, overrideAccess: false } as never)
+    await asEditor({ title: 'Nháp của biên tập viên' }, true)
+    const draft = (await payload.findByID({ collection: 'pages', id: p.id, draft: true, overrideAccess: true })) as PageDoc
+    expect(draft.title).toBe('Nháp của biên tập viên')
+    await expect(asEditor({ title: 'Đăng', _status: 'published' }, false)).rejects.toBeInstanceOf(Forbidden)
+    await expect(asEditor({ title: 'Sửa thẳng' }, false)).rejects.toBeInstanceOf(Forbidden)
+    const live = (await payload.findByID({ collection: 'pages', id: p.id, draft: false, overrideAccess: true })) as PageDoc
+    expect(live.title).toBe('Bản đăng')
+  })
+
+  it('tiêu đề giữ ngắt dòng', async () => {
+    const p = await createPage('nghe-det-chieu', { title: 'Một tấm chiếu,\nmuôn công đoạn.' })
+    const got = (await payload.findByID({ collection: 'pages', id: p.id, overrideAccess: true })) as PageDoc
+    expect(got.title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
+  })
+
+  it('xoá ảnh đang gắn vào ô: lưu lại trang vẫn được', async () => {
+    const a = (await payload.create({
+      collection: 'archive-assets', data: { alt: 'Ảnh thử' }, filePath: fixture, overrideAccess: true,
+    } as never)) as { id: number }
+    const p = await createPage('nghe-det-chieu', { media: [{ slot: 'hero', image: a.id, caption: 'x' }] })
+    await payload.delete({ collection: 'archive-assets', id: a.id, user: reviewer, overrideAccess: true } as never)
+    await updatePage(p.id, { eyebrow: 'Sửa', _status: 'published' })
+    const got = (await payload.findByID({ collection: 'pages', id: p.id, depth: 0, overrideAccess: true })) as {
+      media: { slot: string; image: number | null }[]
+    }
+    expect(got.media[0].slot).toBe('hero')
+    expect(got.media[0].image).toBeNull()
+  })
+
+  it('bảng thông tin thiếu Mục, quá 3 dụng cụ, dòng so sánh thiếu Khía cạnh: bị từ chối khi đăng', async () => {
+    const lh = await createPage('lang-hoi')
+    await expect(updatePage(lh.id, { facts: [{ term: '', detail: 'x' }], _status: 'published' })).rejects.toThrow()
+    const ndc = await createPage('nghe-det-chieu')
+    const tools = [1, 2, 3, 4].map((n) => ({ name: `Dụng cụ ${n}` }))
+    await expect(updatePage(ndc.id, { tools, _status: 'published' })).rejects.toThrow()
+    await expect(updatePage(ndc.id, { compareRows: [{ aspect: '' }], _status: 'published' })).rejects.toThrow()
   })
 
   it('trường của trang khác không được ghi', async () => {

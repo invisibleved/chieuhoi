@@ -76,13 +76,14 @@ describe('xoá Nguồn đang được trích', () => {
     await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn[\s\S]*Chiếu thử/)
   })
 
-  it('global page-intros: chặn', async () => {
-    const s = await createSource('gl')
-    await payload.updateGlobal({
-      slug: 'page-intros', user: reviewer, overrideAccess: true,
-      data: { 'lang-hoi': { facts: [{ term: 'Mục', detail: 'Nội dung', sources: [s.id] }] }, _status: 'published' },
+  it('chỉ trong bản nháp của trang: vẫn chặn', async () => {
+    const s = await createSource('pgd')
+    const page = (await create('pages', { slug: 'nghe-det-chieu', title: 'Nghề', workflow: 'published' })) as { id: number }
+    await payload.update({
+      collection: 'pages', id: page.id, draft: true, user: reviewer, overrideAccess: true,
+      data: { compareRows: [{ aspect: 'Khung', sources: [s.id] }] },
     } as never)
-    await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn/)
+    await expect(del(s.id)).rejects.toThrow(/Không xoá được nguồn[\s\S]*Trang: Nghề dệt chiếu/)
   })
 
   it('collection pages: chặn, nêu nhãn trang', async () => {

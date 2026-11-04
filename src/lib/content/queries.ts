@@ -68,7 +68,7 @@ function flagsOf(doc: Doc, mode: Mode, texts: (string | null | undefined)[] = []
 
 /** Đọc một global; bản công khai của global chưa từng đăng coi như trống. */
 export async function readGlobalDoc(
-  payload: Payload, slug: 'site-settings' | 'page-intros', mode: Mode, depth = 0,
+  payload: Payload, slug: 'site-settings', mode: Mode, depth = 0,
 ) {
   const g = ((await payload.findGlobal({
     slug, draft: mode === 'preview', overrideAccess: true, depth,

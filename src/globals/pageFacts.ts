@@ -25,11 +25,10 @@ const citedGroup = (name: string, label: string, required: boolean): Field => ({
   name, type: 'group', label, fields: citedSentenceFields({ required }),
 })
 
-export type FactsFieldOpts = { dbPrefix?: string; toolImage?: boolean }
+/** Tiền tố tên bảng con của collection Trang (dbName của các mảng lồng). */
+const p = 'pg_'
 
-export const villageFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
-  const p = opts.dbPrefix ?? ''
-  return [
+export const villageFactsFields = (): Field[] => [
   {
     name: 'facts', type: 'array', label: 'Bảng thông tin đầu trang', labels: { singular: 'Dòng', plural: 'Các dòng' },
     admin: { components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'term', fallback: 'Dòng' } } } },
@@ -71,21 +70,18 @@ export const villageFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
     ],
   },
   pageSourcesField(),
-  ]
-}
+]
 
-export const craftFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
-  const p = opts.dbPrefix ?? ''
-  return [
+export const craftFactsFields = (): Field[] => [
   {
     name: 'tools', type: 'array', label: 'Dụng cụ', labels: { singular: 'Dụng cụ', plural: 'Các dụng cụ' }, maxRows: 3,
     admin: {
-      description: opts.toolImage ? 'Ảnh nằm ngay trong từng dòng.' : 'Ảnh lấy từ ô ảnh Dụng cụ 1–3 theo thứ tự dòng.',
+      description: 'Ảnh nằm ngay trong từng dòng.',
       components: { RowLabel: { path: '/admin/FieldRowLabel#FieldRowLabel', clientProps: { field: 'name', fallback: 'Dụng cụ' } } },
     },
     fields: [
       { name: 'name', type: 'text', label: 'Tên dụng cụ', required: true, localized: true },
-      ...(opts.toolImage ? [{ name: 'image', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh' } as Field] : []),
+      { name: 'image', type: 'upload', relationTo: 'archive-assets', label: 'Ảnh' },
       citedGroup('note', 'Ghi chú', false),
     ],
   },
@@ -120,5 +116,4 @@ export const craftFactsFields = (opts: FactsFieldOpts = {}): Field[] => {
     ],
   },
   pageSourcesField(),
-  ]
-}
+]

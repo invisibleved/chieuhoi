@@ -13,7 +13,6 @@ export type PreviewCollection =
   | 'makers'
   | 'archive-assets'
   | 'site-settings'
-  | 'page-intros'
   | 'pages'
 
 function slugOf(doc: Record<string, unknown>): string | null {
@@ -41,7 +40,6 @@ export function previewPathFor(slug: PreviewCollection, doc: Record<string, unkn
         ? `/thu-vien?anh=${encodeURIComponent(doc.code)}`
         : null
     case 'site-settings':
-    case 'page-intros':
       return '/'
     case 'pages':
       return typeof doc.slug === 'string' && Object.hasOwn(ROUTE_PATHS, doc.slug)

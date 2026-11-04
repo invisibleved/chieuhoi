@@ -24,7 +24,7 @@ const readLive = () =>
     _status?: string
   }>
 
-describe('globals site-settings và page-intros', () => {
+describe('global site-settings', () => {
   beforeAll(async () => {
     payload = await getTestPayload()
   })
@@ -68,9 +68,6 @@ describe('globals site-settings và page-intros', () => {
   it('khách không đọc global qua API', async () => {
     await expect(
       payload.findGlobal({ slug: 'site-settings', overrideAccess: false }),
-    ).rejects.toThrow()
-    await expect(
-      payload.findGlobal({ slug: 'page-intros', overrideAccess: false }),
     ).rejects.toThrow()
   })
 })

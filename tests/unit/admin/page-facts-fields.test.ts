@@ -1,62 +1,57 @@
 import { describe, expect, it } from 'vitest'
 
+import { Pages } from '@/collections/Pages'
 import { ROUTE_PATHS } from '@/collections/pages/routeKeys'
+import { isPageField } from '@/collections/pages/fields'
 import { craftFactsFields, villageFactsFields } from '@/globals/pageFacts'
-import { PAGE_MEDIA_SLOTS, PAGES_MEDIA_SLOTS } from '@/globals/pageMedia'
-import { PageIntros } from '@/globals/PageIntros'
+import { PAGES_MEDIA_SLOTS } from '@/globals/pageMedia'
 
-const group = (k: string) =>
-  PageIntros.fields.find((f) => 'name' in f && f.name === k) as {
-    fields: { name?: string; label?: string; maxRows?: number }[]
-  }
-const names = (k: string) => group(k).fields.map((f) => f.name)
+type F = { name?: string; dbName?: string; type?: string; relationTo?: string; label?: unknown; maxRows?: number; fields?: F[] }
+const field = (name: string) => (Pages.fields as F[]).find((f) => f.name === name)
 
-describe('page-intros: dữ kiện trang', () => {
+describe('pages: dữ kiện trang', () => {
   it('Làng Hới có các nhóm dữ kiện', () => {
-    expect(names('lang-hoi')).toEqual(
-      expect.arrayContaining(['facts', 'founder', 'location', 'heritage', 'pageSources']),
-    )
+    for (const k of ['facts', 'founder', 'location', 'heritage', 'pageSources']) {
+      expect(field(k), k).toBeTruthy()
+      expect(isPageField('lang-hoi', k), k).toBe(true)
+    }
   })
   it('Nghề dệt có dụng cụ tối đa 3 dòng và bảng so sánh', () => {
-    expect(names('nghe-det-chieu')).toEqual(
-      expect.arrayContaining(['tools', 'hand', 'machine', 'compareRows', 'pageSources']),
-    )
-    expect(group('nghe-det-chieu').fields.find((f) => f.name === 'tools')?.maxRows).toBe(3)
+    for (const k of ['tools', 'hand', 'machine', 'compareRows', 'pageSources']) {
+      expect(isPageField('nghe-det-chieu', k), k).toBe(true)
+    }
+    expect(field('tools')?.maxRows).toBe(3)
   })
   it('các trang khác không có nhóm dữ kiện', () => {
-    expect(names('home')).not.toContain('pageSources')
+    expect(isPageField('home', 'pageSources')).toBe(false)
   })
   it('nhãn admin không có từ kỹ thuật', () => {
     const labels: string[] = []
-    const walk = (fs: unknown[]) =>
+    const walk = (fs: F[]) =>
       fs.forEach((f) => {
-        const x = f as { label?: unknown; fields?: unknown[] }
-        if (typeof x.label === 'string') labels.push(x.label)
-        if (x.fields) walk(x.fields)
+        if (typeof f.label === 'string') labels.push(f.label)
+        if (f.fields) walk(f.fields)
       })
-    walk([...group('lang-hoi').fields, ...group('nghe-det-chieu').fields])
+    walk([...villageFactsFields(), ...craftFactsFields()] as F[])
     for (const l of labels) expect(l).not.toMatch(/sourceId|desktop|mobile|JSON/i)
   })
 })
 
-describe('khoá trang và tuỳ chọn trường dữ kiện', () => {
-  type F = { name?: string; dbName?: string; type?: string; relationTo?: string; fields?: F[] }
+describe('khoá trang và trường dữ kiện', () => {
   const find = (fs: F[], name: string): F | undefined => fs.find((f) => f.name === name)
-  const founder = (fs: F[]) => find(find(fs as F[], 'founder')!.fields!, 'paragraphs')!
-  it('dbName mặc định và có tiền tố', () => {
+  const founder = (fs: F[]) => find(find(fs, 'founder')!.fields!, 'paragraphs')!
+  it('dbName có tiền tố pg_', () => {
     const v = villageFactsFields() as F[]
-    expect(founder(v).dbName).toBe('lh_founder_paras')
-    expect(find(founder(v).fields!, 'sentences')?.dbName).toBe('lh_founder_sents')
-    expect(founder(villageFactsFields({ dbPrefix: 'pg_' }) as F[]).dbName).toBe('pg_lh_founder_paras')
+    expect(founder(v).dbName).toBe('pg_lh_founder_paras')
+    expect(find(founder(v).fields!, 'sentences')?.dbName).toBe('pg_lh_founder_sents')
+    expect(find(craftFactsFields() as F[], 'compareRows')?.dbName).toBe('pg_ndc_compare')
   })
-  it('toolImage thêm trường ảnh vào dòng dụng cụ', () => {
-    const img = (fs: F[]) => find(find(fs, 'tools')!.fields!, 'image')
-    expect(img(craftFactsFields({ toolImage: true }) as F[])).toMatchObject({ type: 'upload', relationTo: 'archive-assets' })
-    expect(img(craftFactsFields() as F[])).toBeUndefined()
+  it('dòng dụng cụ có trường ảnh', () => {
+    const img = find(find(craftFactsFields() as F[], 'tools')!.fields!, 'image')
+    expect(img).toMatchObject({ type: 'upload', relationTo: 'archive-assets' })
   })
   it('ô ảnh và đường dẫn', () => {
     expect(PAGES_MEDIA_SLOTS['nghe-det-chieu']).not.toContain('tool-1')
-    expect(PAGE_MEDIA_SLOTS['nghe-det-chieu']).toContain('tool-1')
     expect(ROUTE_PATHS['lang-hoi']).toBe('/lang-hoi')
   })
 })

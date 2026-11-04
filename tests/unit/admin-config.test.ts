@@ -7,19 +7,19 @@ import { revalidateAfterChange, revalidateAfterDelete, revalidateGlobalAfterChan
 import { ArchiveAssets } from '@/collections/ArchiveAssets'
 import { CraftSteps } from '@/collections/CraftSteps'
 import { Makers } from '@/collections/Makers'
+import { Pages } from '@/collections/Pages'
 import { People } from '@/collections/People'
 import { Products } from '@/collections/Products'
 import { Sources } from '@/collections/Sources'
 import { Stories } from '@/collections/Stories'
 import { TimelineEvents } from '@/collections/TimelineEvents'
 import { Users } from '@/collections/Users'
-import { PageIntros } from '@/globals/PageIntros'
 import { SiteSettings } from '@/globals/SiteSettings'
 
 export const collections: CollectionConfig[] = [
-  Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers,
+  Users, Sources, TimelineEvents, ArchiveAssets, CraftSteps, Products, Stories, People, Makers, Pages,
 ]
-export const globals: GlobalConfig[] = [SiteSettings, PageIntros]
+export const globals: GlobalConfig[] = [SiteSettings]
 
 /** Duyệt đệ quy mọi trường, kể cả trong group, array, row, collapsible, tabs và blocks. */
 function walk(fields: Field[], visit: (f: Field, path: string) => void, prefix = ''): void {
@@ -43,7 +43,7 @@ const GROUPS = {
   'archive-assets': 'Tư liệu',
   sources: 'Tư liệu',
   'site-settings': 'Trang',
-  'page-intros': 'Trang',
+  pages: 'Trang',
   users: 'Quản trị',
 }
 
@@ -64,7 +64,6 @@ describe('cấu hình admin', () => {
       expect(typeof g.label, g.slug).toBe('string')
       expect(g.label).not.toBe(g.slug)
     }
-    expect(PageIntros.label).toBe('Phần mở đầu trang')
   })
 
   it('mọi collection và global có admin.group thuộc ADMIN_GROUPS', () => {
@@ -117,9 +116,9 @@ describe('cấu hình admin', () => {
 })
 
 describe('xem trước', () => {
-  const previewable = ['stories', 'people', 'products', 'craft-steps', 'timeline-events', 'makers', 'archive-assets', 'site-settings', 'page-intros']
+  const previewable = ['stories', 'people', 'products', 'craft-steps', 'timeline-events', 'makers', 'archive-assets', 'site-settings', 'pages']
 
-  it('admin.preview là hàm ở collection nội dung, archive-assets và 2 global', () => {
+  it('admin.preview là hàm ở collection nội dung, archive-assets, pages và global', () => {
     const all = [...collections, ...globals]
     for (const slug of previewable) {
       const c = all.find((x) => x.slug === slug)
@@ -139,7 +138,7 @@ describe('xem trước', () => {
 })
 
 describe('revalidate', () => {
-  const withHooks = collections.filter((c) => c.slug !== 'users')
+  const withHooks = collections.filter((c) => c.slug !== 'users' && c.slug !== 'pages')
   it('8 collection (7 nội dung + sources, archive-assets) có hook revalidate khi lưu và xoá', () => {
     expect(withHooks).toHaveLength(8)
     for (const c of withHooks) {
@@ -147,11 +146,26 @@ describe('revalidate', () => {
       expect(c.hooks?.afterDelete, c.slug).toContain(revalidateAfterDelete)
     }
   })
-  it('2 global có revalidateGlobalAfterChange', () => {
+  it('pages có hook revalidate khi lưu (không xoá được trang)', () => {
+    expect(Pages.hooks?.afterChange).toContain(revalidateAfterChange)
+  })
+  it('global có revalidateGlobalAfterChange', () => {
     for (const g of globals) expect(g.hooks?.afterChange, g.slug).toContain(revalidateGlobalAfterChange)
   })
   it('users không có', () => {
     expect(Users.hooks?.afterChange ?? []).not.toContain(revalidateAfterChange)
     expect(Users.hooks?.afterDelete ?? []).not.toContain(revalidateAfterDelete)
+  })
+})
+
+// Đặt cuối file: dựng config làm biến đổi các object collection dùng chung ở trên (vd. thêm trường auth).
+describe('config Payload', () => {
+  it('chỉ còn global site-settings; Trang hiện trong menu nhóm Trang', async () => {
+    const config = await (await import('@/payload.config')).default
+    expect(config.globals.map((g) => g.slug)).toEqual(['site-settings'])
+    const pages = config.collections.find((c) => c.slug === 'pages')
+    expect(pages?.admin?.hidden ?? false).toBe(false)
+    expect(pages?.admin?.group).toBe('Trang')
+    expect(Pages.labels).toEqual({ singular: 'Trang', plural: 'Các trang' })
   })
 })

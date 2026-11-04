@@ -10,9 +10,6 @@ import { isPageField } from './pages/fields'
 import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from './pages/routeKeys'
 import { stripForeignFields } from './pages/stripForeign'
 
-/** Đợt 1: collection có trong DB nhưng ẩn khỏi menu và không sửa được trong admin. Task 8 đổi thành true. */
-export const PAGES_LIVE = false
-
 const isRouteKey = (v: unknown): v is RouteKey => typeof v === 'string' && (ROUTE_KEYS as readonly string[]).includes(v)
 
 /** Chỉ hiện trường ở đúng trang của nó. */
@@ -67,11 +64,11 @@ const homeFields: Field[] = [
 ]
 
 // `pageSources` có ở cả hai bộ dữ kiện; collection chỉ giữ một trường.
-const craftFields = craftFactsFields({ dbPrefix: 'pg_', toolImage: true }).filter(
+const craftFields = craftFactsFields().filter(
   (f) => (f as { name?: string }).name !== 'pageSources',
 )
 
-const villageFields = villageFactsFields({ dbPrefix: 'pg_' }).map((f) =>
+const villageFields = villageFactsFields().map((f) =>
   (f as { name?: string }).name === 'pageSources' ? pagePageSourcesField() : f,
 )
 
@@ -90,7 +87,6 @@ export const Pages: CollectionConfig = {
     group: ADMIN_GROUPS.pages,
     useAsTitle: 'slug',
     defaultColumns: ['slug', '_status', 'workflow', 'updatedAt'],
-    hidden: !PAGES_LIVE,
     preview: previewFor('pages'),
   },
   versions: { drafts: true },
@@ -98,7 +94,7 @@ export const Pages: CollectionConfig = {
     read: isLoggedIn,
     create: () => false,
     delete: () => false,
-    update: PAGES_LIVE ? isLoggedIn : () => false,
+    update: isLoggedIn,
   },
   hooks: {
     beforeOperation: [recordDraftArg],
