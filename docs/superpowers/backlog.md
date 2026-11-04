@@ -298,6 +298,29 @@ Soát chữ trước prod (2026-11-01), người dùng duyệt sửa lệch artb
 - [ ] Ghi chú nguồn cuối bài thiếu tác giả ("Vương Tâm" của bài Đại Đoàn Kết, có trong artboard StoryDetail): collection `sources` chưa có trường tác giả; cần thêm trường, migration, `SourceView.author`, `ensureSources` chép `author`.
 - [ ] Khi có ảnh thật từ người làng: thêm lại câu tả ảnh cho công đoạn 5, 6 và phần Dệt thủ công/Dệt bằng máy trong `/admin`.
 
+## G. Chuyển Phần mở đầu trang sang collection Trang (nhánh trang-collection, 2026-11-04)
+
+Việc cho máy dev khác:
+- [ ] Sau khi pull đợt 2a, chạy `npm run dev` một lần và trả lời "có" ở câu hỏi DATA LOSS (xoá bảng `page_intros*`, `lh_*`, `ndc_*`). Dev push treo khi không có TTY ở câu hỏi này.
+
+Dữ liệu và e2e:
+- [ ] Dữ kiện năm sinh/mất trùng giữa dòng thời gian và tổ nghề: hai nơi nhập cùng một dữ kiện, dễ lệch nhau.
+- [ ] Câu riêng cho điện thoại lẫn trong dữ liệu trang (chữ dành cho mobile nằm chung trường với chữ desktop).
+- [ ] E2e `workflow` và `a11y-public` chạy song song trên cùng server :3100 nên có thể đụng nhau (thấy lại ở lần chạy 2026-11-04: story `e2e-quy-trinh-*` còn sót trong DB dev, làm `public`, `a11y-public` và `chromium` fail vì đếm 6 bài thay vì 5).
+- [ ] `tests/e2e/links.e2e.spec.ts` có lúc quá thời gian (flake).
+- [ ] `tests/int/pages.int.spec.ts` có lúc quá 5 giây khi chạy cả bộ (flake).
+
+Review còn mở (mức nhỏ):
+- [ ] `src/hooks` (kiểm nguồn trước khi xoá): các truy vấn tra cứu không truyền `req` nên nằm ngoài transaction xoá; nhãn global/collection có thể rơi về slug hoặc "X: X" trong câu báo tiếng Việt; thiếu test cho cờ bỏ qua trực tiếp, trích dẫn global chỉ có bản nháp, câu báo nhiều nơi.
+- [ ] `src/collections/fields/pageFacts.ts`: mảng trả về chưa thụt lề lại sau khi đổi sang thân khối; ép kiểu `as Field` ở trường ảnh có điều kiện và ở `validate` (thiếu chú thích); test chưa kiểm `pg_lh_heritage_sents`, `pg_ndc_compare`.
+- [ ] Hook `stripForeignFields` của Pages: `clearGroup` đệ quy sẽ làm hỏng upload/relationship/richText nếu sau này có trong nhóm (cần chú thích hoặc duyệt theo cấu hình trường); giá trị lạ đã có trong DB không được dọn khi cập nhật một phần; test xoá/sửa của biên tập viên chỉ kiểm `toThrow()`, chưa kiểm đúng lỗi Forbidden.
+- [ ] Hook kiểm nguồn của Pages: dòng thủ công và máy dùng chung nhãn `where` nên câu báo có thể lặp dòng.
+- [ ] `src/seed/migratePages.ts`: `draft.dropped` chỉ ghi khi có ghi bản nháp; `--check` không phát hiện mất dữ liệu của tool-n.
+- [ ] `src/lib/content`: `getCraftPage`/`getVillagePage` đọc trang hai lần; ép kiểu ảnh `tools` trong `craftMerge`; tìm trang theo slug lặp ở 3 nơi, `pageLabel` đoán theo tiền tố, closure `toId` lặp.
+- [ ] `src/seed`: hằng `pageIntros` đặt tên gây hiểu nhầm (giờ ghi vào collection Trang).
+- [ ] Test `admin-config` dùng cấu hình thật, phụ thuộc thứ tự chạy.
+- [ ] Ảnh hướng dẫn admin (`public/admin-guide/`) có ngày giờ trong ảnh nên mỗi lần chụp lại đều đổi PNG.
+
 ## D. Quyết định cần biết (không phải lỗi)
 
 - Phase 7 (đủ danh sách R1–R16 trong `docs/superpowers/plans/2026-10-28-phase-7-staging-kiem-tra.md`), thêm các quyết định khi chạy:
