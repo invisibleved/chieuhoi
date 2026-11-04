@@ -6,7 +6,7 @@ import { createPages } from '@/lib/content/pages'
 import { createContent } from '@/lib/content/queries'
 import { seed } from '@/seed'
 
-import { getTestPayload, resetDb, syncPagesFromGlobal } from './helpers'
+import { getTestPayload, resetDb } from './helpers'
 
 let payload: Payload
 let pages: ReturnType<typeof createPages>
@@ -29,7 +29,6 @@ describe('view model Kết nối', () => {
     process.env.APP_ENV = 'development'
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
-    await syncPagesFromGlobal(payload)
     await setContact({ email: '', phone: '' })
     pages = createPages(payload, createContent(payload))
   }, 240_000)

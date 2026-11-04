@@ -1,6 +1,7 @@
 // Nhập nội dung khởi đầu (dòng thời gian, công đoạn, sản phẩm, bài viết, phần mở đầu trang, cài đặt chung)
 // vào CMS dưới dạng bản nháp. Chạy ở mọi APP_ENV. Không gắn ảnh, không ghi đè, không tự đăng.
 import type { ContentReport } from '../seed/importContent'
+import { pageLabel } from '../seed/pageFacts'
 
 const COLLECTION_LABEL: Record<ContentReport['created'][number]['collection'], string> = {
   'timeline-events': 'Dòng thời gian',
@@ -10,13 +11,14 @@ const COLLECTION_LABEL: Record<ContentReport['created'][number]['collection'], s
 }
 
 const GLOBAL_LABEL: Record<ContentReport['globals'][number]['slug'], string> = {
-  'page-intros': 'Phần mở đầu trang',
   'site-settings': 'Thông tin site',
 }
 
 export function formatContentReport(r: ContentReport): string {
   const savedGlobals = r.globals.filter((g) => g.saved === 'draft')
-  if (!r.sourcesCreated.length && !r.created.length && !savedGlobals.length) return 'Không có gì để nhập.'
+  if (!r.sourcesCreated.length && !r.created.length && !r.pages.length && !savedGlobals.length) {
+    return 'Không có gì để nhập.'
+  }
 
   const lines: string[] = []
   if (r.sourcesCreated.length) lines.push(`Đã tạo nguồn: ${r.sourcesCreated.join(', ')}`)
@@ -29,6 +31,11 @@ export function formatContentReport(r: ContentReport): string {
     const parts = [`tạo ${created}`]
     if (existing) parts.push(`đã có sẵn ${existing}`)
     lines.push(`${label}: ${parts.join(', ')}`)
+  }
+
+  for (const p of r.pages) {
+    lines.push(`${pageLabel(p.slug)}: đã điền ${p.filled.join(', ')} và lưu bản nháp`)
+    if (p.warning) lines.push(`Lưu ý: ${p.warning}`)
   }
 
   for (const g of savedGlobals) {

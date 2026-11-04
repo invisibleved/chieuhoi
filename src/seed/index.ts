@@ -4,15 +4,17 @@ import { readdirSync } from 'fs'
 import path from 'path'
 import type { Payload, TypedUser } from 'payload'
 
+import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+
 import {
   craftStepDocs, isDraft, productDocs, readSeedJson, storyDocs, timelineDocs,
   type SourceIdMap,
 } from './content'
 import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples } from './data/extras'
-import { homeMedia, pageIntros, pageMedia, siteSettings } from './data/site'
+import { homeMedia, pageIntros, pageMedia, siteSettings, toolImages } from './data/site'
 import { assertSeedAllowed } from './guard'
-import { importPageFacts } from './pageFacts'
+import { ensurePages, importPageFacts, savePage } from './pageFacts'
 
 export { assertSeedAllowed } from './guard'
 export { injectCitations, injectFigures } from './citations'
@@ -202,48 +204,57 @@ export async function seed(payload: Payload): Promise<void> {
     )
   }
 
-  // Globals: không ghi đè bản đã đăng (có thể đã được biên tập) trừ khi SEED_FORCE_GLOBALS=true.
+  // Global và trang: không ghi đè bản đã đăng (có thể đã được biên tập) trừ khi SEED_FORCE_GLOBALS=true.
   const byFile = (f: string) => {
     if (!assets[f]) throw new Error(`Không có ảnh ${f}`)
     return assets[f]
   }
+  const force = process.env.SEED_FORCE_GLOBALS === 'true'
+
+  if (force || !(await isPublishedGlobal(payload, 'site-settings'))) {
+    await payload.updateGlobal({
+      slug: 'site-settings', data: { ...siteSettings, _status: 'published' } as never, overrideAccess: true, user,
+    })
+  }
+
+  await ensurePages(payload)
   const homeMediaData = {
     heroImage: byFile(homeMedia.heroImage),
     heroInset: byFile(homeMedia.heroInset),
     heroCaption: homeMedia.heroCaption,
     villageImages: homeMedia.villageImages.map((v) => ({ image: byFile(v.file), caption: v.caption })),
   }
-  const mediaFor = (route: keyof typeof pageMedia) => ({
-    media: pageMedia[route].map((m) => ({ slot: m.slot, image: byFile(m.file), caption: m.caption })),
-  })
-  const force = process.env.SEED_FORCE_GLOBALS === 'true'
-  const globals: [slug: 'site-settings' | 'page-intros', data: object][] = [
-    ['site-settings', siteSettings],
-    ['page-intros', {
-      ...pageIntros,
-      home: { ...pageIntros.home, ...homeMediaData },
-      'nghe-det-chieu': { ...pageIntros['nghe-det-chieu'], ...mediaFor('nghe-det-chieu') },
-      'lang-hoi': { ...pageIntros['lang-hoi'], ...mediaFor('lang-hoi') },
-      'cau-chuyen': { ...pageIntros['cau-chuyen'], ...mediaFor('cau-chuyen') },
-      'con-nguoi': { ...pageIntros['con-nguoi'], ...mediaFor('con-nguoi') },
-      'san-pham': { ...pageIntros['san-pham'], ...mediaFor('san-pham') },
-    } as object],
-  ]
-  for (const [slug, data] of globals) {
-    if (!force) {
-      const current = (await payload.findGlobal({
-        slug, draft: false, depth: 0, overrideAccess: true,
-      })) as { _status?: string | null }
-      if (current._status === 'published') continue
-    }
-    await payload.updateGlobal({
-      slug, data: { ...data, _status: 'published' } as never, overrideAccess: true, user,
+  for (const slug of ROUTE_KEYS) {
+    if (!force && (await isPublishedPage(payload, slug))) continue
+    const media = Object.hasOwn(pageMedia, slug)
+      ? { media: pageMedia[slug as keyof typeof pageMedia].map((m) => ({ slot: m.slot, image: byFile(m.file), caption: m.caption })) }
+      : {}
+    // Lần ghi này không có dữ kiện trang, nên bỏ kiểm nguồn: dữ kiện cũ của trang (khi force) không chặn
+    // việc đăng phần mở đầu. Bước điền dữ kiện bên dưới vẫn được kiểm.
+    await savePage(payload, slug, { ...pageIntros[slug], ...(slug === 'home' ? homeMediaData : {}), ...media }, {
+      publish: true, user, context: { skipPageSourcesCheck: true },
     })
   }
 
   // Dữ kiện trang Làng Hới / Nghề dệt: chỉ điền nhóm trống (hoặc mọi nhóm khi force).
-  const factsReport = await importPageFacts(payload, { publish: 'when-no-draft', force, user })
+  const factsReport = await importPageFacts(payload, {
+    publish: 'when-no-draft', force, user, toolImages: toolImages.map(byFile),
+  })
   console.log('Dữ kiện trang:', factsReport)
+}
+
+async function isPublishedGlobal(payload: Payload, slug: 'site-settings'): Promise<boolean> {
+  const current = (await payload.findGlobal({ slug, draft: false, depth: 0, overrideAccess: true })) as {
+    _status?: string | null
+  }
+  return current._status === 'published'
+}
+
+async function isPublishedPage(payload: Payload, slug: (typeof ROUTE_KEYS)[number]): Promise<boolean> {
+  const { docs } = await payload.find({
+    collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0, overrideAccess: true,
+  })
+  return docs[0]?._status === 'published'
 }
 
 async function main() {

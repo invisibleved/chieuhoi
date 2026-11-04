@@ -5,9 +5,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Payload } from 'payload'
 
 import { seed } from '@/seed'
-import { importPageFacts } from '@/seed/pageFacts'
+import { importPageFacts, pendingDraftWarning } from '@/seed/pageFacts'
 import { PAGE_FACT_SOURCE_IDS } from '@/seed/data/pageFacts'
-import { getTestPayload, makeUser, resetDb } from './helpers'
+import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+import { getTestPayload, makeUser, readPage, resetDb, upsertPage } from './helpers'
 
 const sources = JSON.parse(
   readFileSync(path.resolve(process.cwd(), 'content/seed/sources.json'), 'utf8'),
@@ -75,17 +76,38 @@ describe('seed', () => {
     expect(forced.tagline).not.toBe('Sửa tay')
   }, 240_000)
 
-  it('page-intros: đủ ô ảnh, tiêu đề nhiều dòng; công đoạn có shortTitle/toRecord', async () => {
-    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as {
-      'nghe-det-chieu': { title: string; media: { slot: string; image: number | null }[] }
-      'lang-hoi': { media: { slot: string }[] }
+  it('8 trang đều đã đăng', async () => {
+    const { docs } = await payload.find({ collection: 'pages', pagination: false, depth: 0, overrideAccess: true })
+    expect(docs.map((d) => d.slug).sort()).toEqual([...ROUTE_KEYS].sort())
+    expect(docs.every((d) => d._status === 'published')).toBe(true)
+  })
+
+  it('chạy lại không ghi đè trang đã đăng, trừ khi SEED_FORCE_GLOBALS=true', async () => {
+    await upsertPage(payload, 'thu-vien', { title: 'Sửa tay' })
+    await seed(payload)
+    expect((await readPage(payload, 'thu-vien')).title).toBe('Sửa tay')
+    process.env.SEED_FORCE_GLOBALS = 'true'
+    try {
+      await seed(payload)
+    } finally {
+      delete process.env.SEED_FORCE_GLOBALS
     }
-    expect(g['nghe-det-chieu'].media.map((m) => m.slot)).toEqual(
-      ['hero', 'tool-1', 'tool-2', 'tool-3', 'hand', 'machine', 'next-people', 'next-stories', 'next-products'],
+    expect((await readPage(payload, 'thu-vien')).title).not.toBe('Sửa tay')
+  }, 240_000)
+
+  it('trang: đủ ô ảnh, ảnh dụng cụ nằm trong dòng dụng cụ, tiêu đề nhiều dòng; công đoạn có shortTitle/toRecord', async () => {
+    const craft = (await readPage(payload, 'nghe-det-chieu')) as {
+      title: string; media: { slot: string; image: number | null }[]; tools: { name: string; image: number | null }[]
+    }
+    const village = (await readPage(payload, 'lang-hoi')) as { media: { slot: string }[] }
+    expect(craft.media.map((m) => m.slot)).toEqual(
+      ['hero', 'hand', 'machine', 'next-people', 'next-stories', 'next-products'],
     )
-    expect(g['nghe-det-chieu'].media.every((m) => m.image)).toBe(true)
-    expect(g['lang-hoi'].media.map((m) => m.slot)).toEqual(['hero', 'life-1', 'life-2', 'life-3'])
-    expect(g['nghe-det-chieu'].title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
+    expect(craft.media.every((m) => m.image)).toBe(true)
+    expect(craft.tools).toHaveLength(3)
+    expect(craft.tools.every((t) => t.image)).toBe(true)
+    expect(village.media.map((m) => m.slot)).toEqual(['hero', 'life-1', 'life-2', 'life-3'])
+    expect(craft.title).toBe('Một tấm chiếu,\nmuôn công đoạn.')
     const step = (await payload.find({
       collection: 'craft-steps', where: { n: { equals: 2 } }, draft: true, overrideAccess: true,
     })).docs[0] as { shortTitle?: string; toRecord?: string }
@@ -116,10 +138,8 @@ describe('seed', () => {
     expect(res.docs[0]?.reviewChecklist).toHaveLength(3)
   })
 
-  it('page-intros.cau-chuyen: lead mobile và 2 ảnh Đọc tiếp', async () => {
-    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as {
-      'cau-chuyen': { lead: string; media: { slot: string; image: number | null }[] }
-    }
+  it('trang cau-chuyen: lead mobile và 2 ảnh Đọc tiếp', async () => {
+    const g = { 'cau-chuyen': (await readPage(payload, 'cau-chuyen')) as { lead: string; media: { slot: string; image: number | null }[] } }
     expect(g['cau-chuyen'].lead).toBe('Ký ức, lịch sử và đời sống hôm nay của làng Hới.')
     expect(g['cau-chuyen'].media.map((m) => m.slot)).toEqual(['next-village', 'next-craft'])
     expect(g['cau-chuyen'].media.every((m) => m.image)).toBe(true)
@@ -144,9 +164,7 @@ describe('seed', () => {
   })
 
   it('Sản phẩm: ô ảnh san-pham, bối cảnh/hoa văn/chú thích của chieu-cap-dieu', async () => {
-    const g = (await payload.findGlobal({ slug: 'page-intros', draft: false, depth: 0, overrideAccess: true })) as unknown as {
-      'san-pham': { media: { slot: string; image: number | null }[] }
-    }
+    const g = { 'san-pham': (await readPage(payload, 'san-pham')) as { media: { slot: string; image: number | null }[] } }
     expect(g['san-pham'].media).toHaveLength(1)
     expect(g['san-pham'].media[0]).toMatchObject({ slot: 'next-pattern' })
     expect(g['san-pham'].media[0].image).toBeTruthy()
@@ -175,127 +193,89 @@ describe('importPageFacts', () => {
   })
 
   type Group = Record<string, unknown>
-  type Intros = { _status?: string | null; 'lang-hoi': Group; 'nghe-det-chieu': Group }
-  const read = async (draft: boolean) =>
-    (await payload.findGlobal({ slug: 'page-intros', draft, depth: 0, overrideAccess: true })) as unknown as Intros
-  const reviewerUser = async () => ({ ...(await makeUser(payload, 'reviewer')), collection: 'users' as const })
-  const count = async (collection: string) =>
-    (await payload.count({ collection: collection as 'sources', overrideAccess: true })).totalDocs
-
-  const EMPTY_VILLAGE = {
-    facts: [],
-    founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
-    location: { text: null, sources: [], editorNote: null },
-    heritage: { sentences: [], editorNote: null },
-    pageSources: [],
-  }
-  const EMPTY_CRAFT = {
-    tools: [],
-    hand: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
-    machine: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
-    compareRows: [],
-    pageSources: [],
-  }
-
-  /** Đăng bản global với mọi nhóm dữ kiện trống (globals không bị resetDb xoá). */
-  async function publishEmptyFacts() {
-    const user = await reviewerUser()
-    const cur = await read(true)
-    await payload.updateGlobal({
-      slug: 'page-intros',
-      data: {
-        'lang-hoi': { ...cur['lang-hoi'], ...EMPTY_VILLAGE },
-        'nghe-det-chieu': { ...cur['nghe-det-chieu'], ...EMPTY_CRAFT },
-        _status: 'published',
-      },
-      overrideAccess: true,
-      user,
-    } as never)
-  }
+  const count = async (collection: string, where?: object) =>
+    (await payload.count({ collection: collection as 'sources', where: where as never, overrideAccess: true })).totalDocs
 
   it('fills empty groups and publishes on fresh db', async () => {
-    await publishEmptyFacts()
     await resetDb(payload)
     await seed(payload)
-    const g = await read(false)
-    expect(g._status).toBe('published')
-    expect((g['lang-hoi'].facts as unknown[]).length).toBe(3)
-    expect((g['nghe-det-chieu'].tools as unknown[]).length).toBe(3)
-    expect((g['lang-hoi'].media as unknown[]).length).toBe(4)
-    expect(g['lang-hoi'].lead).toBeTruthy()
+    const village = await readPage(payload, 'lang-hoi')
+    const craft = await readPage(payload, 'nghe-det-chieu')
+    expect(village._status).toBe('published')
+    expect(craft._status).toBe('published')
+    expect((village.facts as unknown[]).length).toBe(3)
+    expect((craft.tools as unknown[]).length).toBe(3)
+    expect((village.media as unknown[]).length).toBe(4)
+    expect(village.lead).toBeTruthy()
   }, 240_000)
 
   it('keeps pending draft and only fills empty groups', async () => {
-    const user = await reviewerUser()
-    const cur = await read(true)
-    const leadBefore = cur['lang-hoi'].lead
-    const mediaBefore = cur['lang-hoi'].media
-    const craftMediaBefore = cur['nghe-det-chieu'].media
-    await payload.updateGlobal({
-      slug: 'page-intros',
-      data: {
-        'lang-hoi': {
-          ...cur['lang-hoi'],
-          location: { ...(cur['lang-hoi'].location as Group), text: 'Đã sửa' },
-          heritage: { sentences: [], editorNote: null },
-        },
-        _status: 'published',
-      },
-      overrideAccess: true,
-      user,
-    } as never)
-    const pub = await read(true)
-    await payload.updateGlobal({
-      slug: 'page-intros',
-      data: { 'lang-hoi': { ...pub['lang-hoi'], lead: 'Nháp' } },
-      draft: true,
-      overrideAccess: true,
-      user,
-    } as never)
+    const user = { ...(await makeUser(payload, 'reviewer')), collection: 'users' as const }
+    const cur = await readPage(payload, 'lang-hoi', true)
+    const leadBefore = cur.lead
+    const mediaBefore = cur.media
+    const craftBefore = await readPage(payload, 'nghe-det-chieu', true)
+    await upsertPage(payload, 'lang-hoi', {
+      location: { ...(cur.location as Group), text: 'Đã sửa' },
+      heritage: { sentences: [], editorNote: null },
+    })
+    await upsertPage(payload, 'lang-hoi', { lead: 'Nháp' }, { publish: false })
 
     const report = await importPageFacts(payload, { publish: 'when-no-draft', user })
-    expect(report.saved).toBe('draft')
-    expect(report.warning).toBeTruthy()
     expect(report.filled).toEqual(['lang-hoi.heritage'])
+    expect(report.pages).toHaveLength(1)
+    expect(report.pages[0]).toMatchObject({ slug: 'lang-hoi', filled: ['heritage'], saved: 'draft' })
+    expect(report.pages[0].warning).toBe(pendingDraftWarning('Trang Làng Hới'))
 
-    const published = await read(false)
-    expect(published['lang-hoi'].heritage).toMatchObject({ sentences: [] })
-    expect(published['lang-hoi'].lead).toBe(leadBefore)
+    const published = await readPage(payload, 'lang-hoi')
+    expect(published.heritage).toMatchObject({ sentences: [] })
+    expect(published.lead).toBe(leadBefore)
 
-    const draft = await read(true)
-    expect((draft['lang-hoi'].heritage as { sentences: unknown[] }).sentences).toHaveLength(2)
-    expect((draft['lang-hoi'].location as Group).text).toBe('Đã sửa')
-    expect(draft['lang-hoi'].lead).toBe('Nháp')
-    // Không mất ô cũ của route hay route khác.
-    expect(draft['lang-hoi'].media).toEqual(mediaBefore)
-    expect(draft['nghe-det-chieu'].media).toEqual(craftMediaBefore)
-    expect((draft['lang-hoi'].facts as unknown[]).length).toBe(3)
+    const draft = await readPage(payload, 'lang-hoi', true)
+    expect((draft.heritage as { sentences: unknown[] }).sentences).toHaveLength(2)
+    expect((draft.location as Group).text).toBe('Đã sửa')
+    expect(draft.lead).toBe('Nháp')
+    // Không mất ô cũ của trang hay trang khác.
+    expect(draft.media).toEqual(mediaBefore)
+    expect((draft.facts as unknown[]).length).toBe(3)
+    const craftAfter = await readPage(payload, 'nghe-det-chieu', true)
+    expect(craftAfter.media).toEqual(craftBefore.media)
+    expect(craftAfter.tools).toEqual(craftBefore.tools)
+  }, 60_000)
+
+  it('no pending draft: publishes the filled page as reviewer', async () => {
+    const user = { ...(await makeUser(payload, 'reviewer')), collection: 'users' as const }
+    await upsertPage(payload, 'nghe-det-chieu', { compareRows: [] })
+    const report = await importPageFacts(payload, { publish: 'when-no-draft', user })
+    expect(report.pages).toEqual([{ slug: 'nghe-det-chieu', filled: ['compareRows'], saved: 'published' }])
+    expect(((await readPage(payload, 'nghe-det-chieu')).compareRows as unknown[]).length).toBe(4)
   }, 60_000)
 
   it('import never publishes and is idempotent', async () => {
-    await publishEmptyFacts()
     await resetDb(payload)
-    const before = await read(false)
 
     const first = await importPageFacts(payload, { publish: 'never' })
     expect([...first.sourcesCreated].sort()).toEqual([...PAGE_FACT_SOURCE_IDS].sort())
-    expect(first.saved).toBe('draft')
+    expect(first.pages.map((p) => [p.slug, p.saved])).toEqual([['lang-hoi', 'draft'], ['nghe-det-chieu', 'draft']])
+    expect(first.pages.every((p) => p.warning === undefined)).toBe(true)
     expect(first.filled).toHaveLength(9)
     expect(first.skipped).toEqual([{ group: 'nghe-det-chieu.pageSources', reason: 'seed không có dữ liệu' }])
 
-    const after = await read(false)
-    expect(after['lang-hoi']).toEqual(before['lang-hoi'])
-    expect(after['nghe-det-chieu']).toEqual(before['nghe-det-chieu'])
-    const draft = await read(true)
-    expect((draft['lang-hoi'].facts as unknown[]).length).toBe(3)
-    expect((draft['lang-hoi'].pageSources as unknown[]).length).toBe(5)
+    // Đủ 8 trang, không trang nào được đăng.
+    expect(await count('pages')).toBe(8)
+    const { docs } = await payload.find({ collection: 'pages', pagination: false, depth: 0, overrideAccess: true })
+    expect(docs.every((d) => d._status === 'draft')).toBe(true)
+    const draft = await readPage(payload, 'lang-hoi', true)
+    expect((draft.facts as unknown[]).length).toBe(3)
+    expect((draft.pageSources as unknown[]).length).toBe(5)
 
     const second = await importPageFacts(payload, { publish: 'never' })
     expect(second.sourcesCreated).toEqual([])
     expect([...second.sourcesSkipped].sort()).toEqual([...PAGE_FACT_SOURCE_IDS].sort())
-    expect(second.saved).toBe('none')
+    expect(second.pages).toEqual([])
     expect(second.skipped).toHaveLength(10)
     expect(second.skipped.filter((s) => s.reason === 'đã có dữ liệu')).toHaveLength(9)
+    expect(await count('pages')).toBe(8)
 
     for (const c of ['people', 'products', 'stories', 'archive-assets', 'timeline-events']) {
       expect(await count(c)).toBe(0)

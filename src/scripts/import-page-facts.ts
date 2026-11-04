@@ -1,21 +1,19 @@
 // Nhập dữ kiện trang (Làng Hới, Nghề dệt chiếu) vào CMS dưới dạng bản nháp. Chạy ở mọi APP_ENV.
 // Chỉ điền nhóm còn trống, không ghi đè, không tự đăng: người duyệt đăng trong /admin.
-import type { ImportReport } from '../seed/pageFacts'
+import { pageLabel, type ImportReport } from '../seed/pageFacts'
 
 export function formatReport(r: ImportReport): string {
   const lines: string[] = []
   if (r.sourcesCreated.length) lines.push(`Đã tạo nguồn: ${r.sourcesCreated.join(', ')}`)
   if (r.sourcesSkipped.length) lines.push(`Đã có sẵn nguồn: ${r.sourcesSkipped.join(', ')}`)
-  if (r.filled.length) lines.push(`Đã điền nhóm: ${r.filled.join(', ')}`)
-  for (const s of r.skipped) lines.push(`Bỏ qua nhóm ${s.group}: ${s.reason}`)
-  if (r.warning) lines.push(`Lưu ý: ${r.warning}`)
-  if (r.saved === 'draft') {
-    lines.push('Đã lưu bản nháp. Người duyệt vào /admin › Phần mở đầu trang để xem và đăng.')
-  } else if (r.saved === 'published') {
-    lines.push('Đã lưu và đăng.')
-  } else {
-    lines.push('Không có gì để nhập.')
+  for (const p of r.pages) {
+    const how = p.saved === 'published' ? 'đăng' : 'lưu bản nháp'
+    lines.push(`${pageLabel(p.slug)}: đã điền ${p.filled.join(', ')} và ${how}`)
+    if (p.warning) lines.push(`Lưu ý: ${p.warning}`)
   }
+  for (const s of r.skipped) lines.push(`Bỏ qua nhóm ${s.group}: ${s.reason}`)
+  if (!r.pages.length) lines.push('Không có gì để nhập.')
+  else if (r.pages.some((p) => p.saved === 'draft')) lines.push('Người duyệt vào /admin › Trang để xem và đăng.')
   return lines.join('\n')
 }
 

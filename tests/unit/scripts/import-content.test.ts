@@ -7,10 +7,8 @@ const base: ContentReport = {
   sourcesSkipped: [],
   created: [],
   existing: [],
-  globals: [
-    { slug: 'page-intros', filled: [], saved: 'none' },
-    { slug: 'site-settings', filled: [], saved: 'none' },
-  ],
+  pages: [],
+  globals: [{ slug: 'site-settings', filled: [], saved: 'none' }],
 }
 
 const seven = Array.from({ length: 7 }, (_, i) => ({ collection: 'timeline-events' as const, key: String(i + 1) }))
@@ -44,17 +42,32 @@ describe('formatContentReport', () => {
     })
     expect(out).toMatch(/Sản phẩm.*đã có sẵn 1/)
   })
-  it('in global lưu nháp và cảnh báo', () => {
+  it('in từng trang lưu nháp, kèm cảnh báo ngay dưới trang đó', () => {
     const out = formatContentReport({
       ...base,
-      globals: [
-        { slug: 'page-intros', filled: ['lang-hoi'], saved: 'draft', warning: 'Đang có bản nháp chưa đăng' },
-        { slug: 'site-settings', filled: [], saved: 'none' },
+      pages: [
+        { slug: 'lang-hoi', filled: ['title', 'facts'], saved: 'draft', warning: 'Đang có bản nháp chưa đăng' },
+        { slug: 'nghe-det-chieu', filled: ['tools'], saved: 'draft' },
       ],
     })
-    const line = out.split('\n').find((l) => l.includes('Phần mở đầu trang'))!
-    expect(line).toContain('bản nháp')
-    expect(out.split('\n').some((l) => l.startsWith('Lưu ý:'))).toBe(true)
+    const lines = out.split('\n')
+    expect(out).not.toContain('Phần mở đầu trang')
+    const i = lines.indexOf('Trang Làng Hới: đã điền title, facts và lưu bản nháp')
+    expect(i).toBeGreaterThanOrEqual(0)
+    expect(lines[i + 1]).toBe('Lưu ý: Đang có bản nháp chưa đăng')
+    expect(lines).toContain('Trang Nghề dệt chiếu: đã điền tools và lưu bản nháp')
+  })
+  it('trang chủ không bị lặp chữ "Trang"', () => {
+    const out = formatContentReport({ ...base, pages: [{ slug: 'home', filled: ['heroTitle'], saved: 'draft' }] })
+    expect(out).toContain('Trang chủ: đã điền heroTitle và lưu bản nháp')
+    expect(out).not.toContain('Trang Trang')
+  })
+  it('in global Thông tin site lưu nháp', () => {
+    const out = formatContentReport({
+      ...base,
+      globals: [{ slug: 'site-settings', filled: ['tagline'], saved: 'draft' }],
+    })
+    expect(out).toContain('Thông tin site: đã điền tagline và lưu bản nháp')
   })
   it('không tạo gì thì chỉ báo không có gì để nhập', () => {
     const out = formatContentReport(base)
@@ -66,7 +79,7 @@ describe('formatContentReport', () => {
     const out = formatContentReport({
       ...base,
       existing: [{ collection: 'products', key: 'x' }],
-      globals: [{ slug: 'page-intros', filled: [], saved: 'none', warning: 'w' }],
+      globals: [{ slug: 'site-settings', filled: [], saved: 'none', warning: 'w' }],
     })
     expect(out.trim()).toBe('Không có gì để nhập.')
   })

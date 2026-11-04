@@ -1,17 +1,23 @@
 // Lệnh nhập nội dung khởi đầu cho production (spec 2026-10-31, phần A):
 // tạo nguồn còn thiếu, tạo mốc/công đoạn/sản phẩm/bài dưới dạng bản nháp, không gắn ảnh,
-// không ghi đè bản ghi đã có; global chỉ điền trường trống rồi lưu một bản nháp.
+// không ghi đè bản ghi đã có; mỗi trang (`pages`) và global Thông tin site chỉ điền trường trống
+// rồi lưu một bản nháp.
 // Chạy không cần tài khoản (overrideAccess). Không bao giờ đăng.
 import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
+import { ROUTE_KEYS, type RouteKey } from '@/collections/pages/routeKeys'
+
 import { craftStepDocs, productDocs, readSeedJson, storyDocs, timelineDocs, type SourceIdMap } from './content'
 import { pageIntros, siteSettings } from './data/site'
-import { ensureSources, hasPendingDraft, isEmptyGroup, pageFactsFill, pendingDraftWarning } from './pageFacts'
+import {
+  ensurePages, ensureSources, hasPendingDraft, isEmptyGroup, pageFactsFill, pageLabel, pendingDraftWarning,
+  readPageDraft, savePage, type PageSave,
+} from './pageFacts'
 
 type Collection = 'timeline-events' | 'craft-steps' | 'products' | 'stories'
-type GlobalSlug = 'page-intros' | 'site-settings'
+type GlobalSlug = 'site-settings'
 type Rec = Record<string, unknown>
 
 export type ContentReport = {
@@ -19,6 +25,8 @@ export type ContentReport = {
   sourcesSkipped: string[]
   created: { collection: Collection; key: string }[]
   existing: { collection: Collection; key: string }[]
+  /** Các trang đã lưu nháp; trang không có gì để điền thì không có ở đây. */
+  pages: PageSave[]
   globals: { slug: GlobalSlug; filled: string[]; saved: 'draft' | 'none'; warning?: string }[]
 }
 
@@ -64,7 +72,7 @@ async function saveGlobalDraft(
   filled: string[],
 ): Promise<ContentReport['globals'][number]> {
   if (!filled.length) return { slug, filled, saved: 'none' }
-  const pending = await hasPendingDraft(payload, slug)
+  const pending = await hasPendingDraft(payload, { global: slug })
   await payload.updateGlobal({
     slug,
     data: { ...data, _status: 'draft' } as never,
@@ -75,7 +83,9 @@ async function saveGlobalDraft(
 }
 
 export async function importContent(payload: Payload): Promise<ContentReport> {
-  const report: ContentReport = { sourcesCreated: [], sourcesSkipped: [], created: [], existing: [], globals: [] }
+  const report: ContentReport = {
+    sourcesCreated: [], sourcesSkipped: [], created: [], existing: [], pages: [], globals: [],
+  }
 
   // Kiểm trước khi ghi bất cứ gì.
   const sourceList = readSeedJson<{ id: string }[]>('sources.json').map((s) => s.id)
@@ -114,38 +124,34 @@ export async function importContent(payload: Payload): Promise<ContentReport> {
     }
   }
 
-  // Phần mở đầu trang + dữ kiện trang: gộp vào một bản nháp.
-  const intros = (await payload.findGlobal({
-    slug: 'page-intros', draft: true, depth: 0, overrideAccess: true,
-  })) as unknown as Record<string, Rec | undefined>
+  // Trang: phần mở đầu + dữ kiện trang, mỗi trang một bản nháp.
+  const createdPages = await ensurePages(payload)
+  const drafts = {} as Record<RouteKey, Rec>
+  for (const slug of ROUTE_KEYS) drafts[slug] = await readPageDraft(payload, slug)
   const toId = (sourceId: string) => {
     const id = sourceIds[sourceId]
     if (id === undefined) throw new Error(`Không có nguồn ${sourceId}.`)
     return id
   }
-  const facts = pageFactsFill(intros, toId)
-  const introData: Rec = {}
-  const introFilled: string[] = []
-  const routes = new Set([...Object.keys(pageIntros), ...Object.keys(facts.fill)])
-  for (const route of routes) {
-    const existing = intros[route] ?? {}
-    const seed = (pageIntros[route] ?? {}) as Rec
+  const facts = pageFactsFill(drafts, toId)
+  for (const slug of ROUTE_KEYS) {
+    const existing = drafts[slug]
+    const seed = (pageIntros[slug] ?? {}) as Rec
     const fill: Rec = {}
     for (const f of INTRO_FIELDS) {
-      if (seed[f] !== undefined && isEmptyGroup(existing[f])) {
-        fill[f] = seed[f]
-        introFilled.push(`${route}.${f}`)
-      }
+      if (seed[f] !== undefined && isEmptyGroup(existing[f])) fill[f] = seed[f]
     }
-    const factFill = facts.fill[route as keyof typeof facts.fill] ?? {}
-    // Ghi cả đối tượng route để không mất ô cũ (ảnh, trường khác…).
-    if (Object.keys(fill).length || Object.keys(factFill).length) {
-      introData[route] = { ...existing, ...fill, ...factFill }
-    }
+    Object.assign(fill, facts.fill[slug as keyof typeof facts.fill] ?? {})
+    if (!Object.keys(fill).length) continue
+    const pending = !createdPages.includes(slug) && (await hasPendingDraft(payload, { collection: 'pages', slug }))
+    await savePage(payload, slug, fill, { publish: false })
+    report.pages.push({
+      slug,
+      filled: Object.keys(fill),
+      saved: 'draft',
+      ...(pending ? { warning: pendingDraftWarning(pageLabel(slug)) } : {}),
+    })
   }
-  report.globals.push(
-    await saveGlobalDraft(payload, 'page-intros', 'Phần mở đầu trang', introData, [...introFilled, ...facts.filled]),
-  )
 
   // Thông tin site.
   const settings = (await payload.findGlobal({

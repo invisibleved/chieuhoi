@@ -7,7 +7,7 @@ import { createPages } from '@/lib/content/pages'
 import { createContent } from '@/lib/content/queries'
 import { seed } from '@/seed'
 
-import { getTestPayload, readPage, resetDb, syncPagesFromGlobal, upsertPage } from './helpers'
+import { getTestPayload, readPage, resetDb, upsertPage } from './helpers'
 
 const fixture = path.resolve(__dirname, '../fixtures/tiny.webp')
 
@@ -20,12 +20,11 @@ const reviewer = async () => {
   const [u] = (await payload.find({ collection: 'users', overrideAccess: true })).docs
   return { ...u, collection: 'users' }
 }
-/** Ghi lại global bằng seed rồi chép sang `pages`: đưa dữ liệu trang về trạng thái seed. */
+/** Ghi lại các trang bằng seed: đưa dữ liệu trang về trạng thái seed. */
 const reseed = async () => {
   process.env.SEED_FORCE_GLOBALS = 'true'
   await seed(payload)
   delete process.env.SEED_FORCE_GLOBALS
-  await syncPagesFromGlobal(payload)
 }
 const sourceDoc = async (sourceId: string) =>
   (await payload.find({ collection: 'sources', where: { sourceId: { equals: sourceId } }, overrideAccess: true })).docs[0]
@@ -39,7 +38,6 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
     process.env.SEED_FORCE_GLOBALS = 'true'
     await seed(payload)
     delete process.env.SEED_FORCE_GLOBALS
-    await syncPagesFromGlobal(payload)
     pages = createPages(payload, createContent(payload))
   }, 240_000)
   afterAll(() => {

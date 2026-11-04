@@ -3,10 +3,11 @@ import type { Payload } from 'payload'
 import { sql } from 'drizzle-orm'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { ROUTE_KEYS } from '@/globals/PageIntros'
+import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
 import { importContent } from '@/seed/importContent'
+import { pendingDraftWarning } from '@/seed/pageFacts'
 import { pageIntros, siteSettings } from '@/seed/data/site'
-import { getTestPayload, makeUser, resetDb } from './helpers'
+import { getTestPayload, makeUser, readPage, resetDb, upsertPage } from './helpers'
 
 type Rec = Record<string, unknown>
 type Coll = 'timeline-events' | 'craft-steps' | 'products' | 'stories'
@@ -16,36 +17,9 @@ let payload: Payload
 
 const reviewer = async () => ({ ...(await makeUser(payload, 'reviewer')), collection: 'users' as const })
 
-const EMPTY_VILLAGE = {
-  facts: [],
-  founder: { paragraphs: [], conflict: [], conflictEditorNote: null, noPortrait: null },
-  location: { text: null, sources: [], editorNote: null },
-  heritage: { sentences: [], editorNote: null },
-  pageSources: [],
-}
-const EMPTY_CRAFT = {
-  tools: [],
-  hand: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
-  machine: { title: null, text: { text: null, mobileText: null, sources: [] }, note: { text: null, mobileText: null, sources: [] } },
-  compareRows: [],
-  pageSources: [],
-}
-
-/** Globals không bị resetDb xoá: đăng bản có mọi trường lệnh nhập điền đều trống. */
+/** Globals không bị resetDb xoá: đăng bản có mọi trường lệnh nhập điền đều trống. Trang thì resetDb xoá hết. */
 async function publishEmptyGlobals() {
   const user = await reviewer()
-  const intros: Rec = {}
-  for (const key of ROUTE_KEYS) {
-    intros[key] = {
-      eyebrow: null, title: null, lead: null,
-      ...(key === 'home' ? { heroTitle: null } : {}),
-      ...(key === 'lang-hoi' ? EMPTY_VILLAGE : {}),
-      ...(key === 'nghe-det-chieu' ? EMPTY_CRAFT : {}),
-    }
-  }
-  await payload.updateGlobal({
-    slug: 'page-intros', data: { ...intros, _status: 'published' }, overrideAccess: true, user,
-  } as never)
   await payload.updateGlobal({
     slug: 'site-settings',
     data: {
@@ -64,8 +38,16 @@ const findAll = async (collection: Coll | 'archive-assets', draft: boolean, wher
 
 const publishedDocs = (collection: Coll) => findAll(collection, false, { _status: { equals: 'published' } })
 
-const readGlobal = async (slug: 'page-intros' | 'site-settings', draft: boolean) =>
+const readGlobal = async (slug: 'site-settings', draft: boolean) =>
   (await payload.findGlobal({ slug, draft, depth: 0, overrideAccess: true })) as unknown as Rec
+
+/** Mọi tài liệu `pages`: bản chính (`draft: false`) hoặc nháp mới nhất. */
+const allPages = async (draft: boolean) =>
+  (await payload.find({ collection: 'pages', draft, pagination: false, depth: 0, overrideAccess: true }))
+    .docs as unknown as Rec[]
+
+const pageReport = (report: Awaited<ReturnType<typeof importContent>>, slug: string) =>
+  report.pages.find((p) => p.slug === slug)
 
 type Node = Rec & { children?: Node[] }
 const collectNodes = (n: Node, out: Node[] = []): Node[] => {
@@ -106,15 +88,35 @@ describe('importContent', () => {
     }
     expect((await payload.count({ collection: 'archive-assets', overrideAccess: true })).totalDocs).toBe(0)
 
+    // 8 trang, đều là nháp, có đúng các nhóm như trước.
+    expect(report.pages.map((p) => p.slug).sort()).toEqual([...ROUTE_KEYS].sort())
+    for (const p of report.pages) {
+      expect(p.saved, p.slug).toBe('draft')
+      expect(p.warning, p.slug).toBeUndefined()
+    }
+    expect(pageReport(report, 'lang-hoi')!.filled).toEqual(expect.arrayContaining(['title', 'lead', 'facts', 'pageSources']))
+    expect(pageReport(report, 'home')!.filled).toEqual(expect.arrayContaining(['eyebrow', 'title', 'heroTitle']))
+    expect(pageReport(report, 'nghe-det-chieu')!.filled).toEqual(expect.arrayContaining(['tools', 'compareRows']))
+    expect(pageReport(report, 'nghe-det-chieu')!.filled).not.toContain('pageSources')
+    const main = await allPages(false)
+    expect(main).toHaveLength(8)
+    expect(main.every((d) => d._status === 'draft')).toBe(true)
+    const drafts = await allPages(true)
+    for (const d of drafts) {
+      expect(d._status).toBe('draft')
+      expect(d.title, String(d.slug)).toBe(pageIntros[d.slug as string].title)
+    }
+    const village = await readPage(payload, 'lang-hoi', true)
+    expect((village.facts as unknown[]).length).toBe(3)
+    expect((village.pageSources as unknown[]).length).toBe(5)
+    expect((await readPage(payload, 'nghe-det-chieu', true)).tools as unknown[]).toHaveLength(3)
+    expect((await readPage(payload, 'home', true)).heroTitle).toBe(pageIntros.home.heroTitle)
+
     const g = Object.fromEntries(report.globals.map((x) => [x.slug, x]))
-    expect(g['page-intros'].saved).toBe('draft')
-    expect(g['page-intros'].filled).toEqual(expect.arrayContaining(['lang-hoi.title', 'lang-hoi.facts', 'home.heroTitle']))
-    expect(g['page-intros'].warning).toBeUndefined()
+    expect(Object.keys(g)).toEqual(['site-settings'])
     expect(g['site-settings'].saved).toBe('draft')
     expect(g['site-settings'].filled).toEqual(expect.arrayContaining(['tagline', 'copyright']))
 
-    // Bản công khai của global không đổi.
-    expect((await readGlobal('page-intros', false))['lang-hoi']).toMatchObject({ title: null })
     expect((await readGlobal('site-settings', false)).tagline ?? null).toBeNull()
   }, 120_000)
 
@@ -135,8 +137,10 @@ describe('importContent', () => {
     expect(second.existing).toHaveLength(22)
     expect(second.sourcesCreated).toEqual([])
     expect(second.sourcesSkipped).toHaveLength(5)
-    expect(second.globals.map((g) => g.saved)).toEqual(['none', 'none'])
+    expect(second.globals.map((g) => g.saved)).toEqual(['none'])
     expect(second.globals.every((g) => g.filled.length === 0)).toBe(true)
+    expect(second.pages).toEqual([])
+    expect(await allPages(false)).toHaveLength(8)
   }, 120_000)
 
   it('không ghi đè bản ghi đã có', async () => {
@@ -152,42 +156,42 @@ describe('importContent', () => {
     expect(await findAll('timeline-events', true)).toHaveLength(7)
   }, 120_000)
 
-  it('global chỉ điền trường trống', async () => {
-    const user = await reviewer()
-    await payload.updateGlobal({
-      slug: 'page-intros', data: { 'lang-hoi': { title: 'Tiêu đề riêng' }, _status: 'published' }, overrideAccess: true, user,
-    } as never)
+  it('trang chỉ điền trường trống, bản đã đăng giữ nguyên', async () => {
+    await upsertPage(payload, 'lang-hoi', { title: 'Tiêu đề riêng' })
     const report = await importContent(payload)
-    const intros = report.globals.find((g) => g.slug === 'page-intros')!
-    expect(intros.filled).not.toContain('lang-hoi.title')
-    expect(intros.filled).toContain('lang-hoi.lead')
+    const village = pageReport(report, 'lang-hoi')!
+    expect(village.filled).not.toContain('title')
+    expect(village.filled).toContain('lead')
+    expect(village.warning).toBeUndefined()
 
-    const draft = (await readGlobal('page-intros', true))['lang-hoi'] as Rec
+    const draft = await readPage(payload, 'lang-hoi', true)
     expect(draft.title).toBe('Tiêu đề riêng')
     expect(draft.lead).toBe(pageIntros['lang-hoi'].lead)
     expect((draft.facts as unknown[]).length).toBeGreaterThan(0)
-    const live = (await readGlobal('page-intros', false))['lang-hoi'] as Rec
+    const live = await readPage(payload, 'lang-hoi', false)
+    expect(live._status).toBe('published')
     expect(live.title).toBe('Tiêu đề riêng')
     expect(live.lead ?? null).toBeNull()
+    expect((live.facts as unknown[] | undefined) ?? []).toEqual([])
   }, 120_000)
 
   it('global chưa từng lưu (production mới): public vẫn trống, nháp có nội dung, chạy lại không đổi', async () => {
     const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle
-    await db.execute(sql`TRUNCATE TABLE "page_intros", "_page_intros_v", "site_settings", "_site_settings_v" CASCADE`)
+    await db.execute(sql`TRUNCATE TABLE "site_settings", "_site_settings_v" CASCADE`)
 
     const first = await importContent(payload)
-    expect(first.globals.map((g) => g.saved)).toEqual(['draft', 'draft'])
+    expect(first.globals.map((g) => g.saved)).toEqual(['draft'])
+    expect(first.pages).toHaveLength(8)
 
-    const liveIntros = (await readGlobal('page-intros', false))['lang-hoi'] as Rec | undefined
-    expect(liveIntros?.title ?? null).toBeNull()
+    expect((await allPages(false)).some((d) => d._status === 'published')).toBe(false)
     expect((await readGlobal('site-settings', false)).tagline ?? null).toBeNull()
 
-    const draftIntros = (await readGlobal('page-intros', true))['lang-hoi'] as Rec
-    expect(draftIntros.title).toBe(pageIntros['lang-hoi'].title)
+    expect((await readPage(payload, 'lang-hoi', true)).title).toBe(pageIntros['lang-hoi'].title)
     expect((await readGlobal('site-settings', true)).tagline).toBe(siteSettings.tagline)
 
     const second = await importContent(payload)
-    expect(second.globals.map((g) => g.saved)).toEqual(['none', 'none'])
+    expect(second.globals.map((g) => g.saved)).toEqual(['none'])
+    expect(second.pages).toEqual([])
     expect(second.created).toEqual([])
   }, 120_000)
 
@@ -200,11 +204,27 @@ describe('importContent', () => {
     expect(s.saved).toBe('draft')
     expect(s.warning).toContain('Thông tin site')
     expect(s.filled).not.toContain('tagline')
-    expect(report.globals.find((g) => g.slug === 'page-intros')!.warning).toBeUndefined()
+    expect(report.pages.every((p) => p.warning === undefined)).toBe(true)
 
     const draft = await readGlobal('site-settings', true)
     expect(draft.tagline).toBe('Nháp')
     expect(draft.description).toBe(siteSettings.description)
+  }, 120_000)
+
+  it('trang có nháp chờ duyệt: vẫn lưu nháp, kèm cảnh báo của đúng trang đó', async () => {
+    await upsertPage(payload, 'lang-hoi', { title: 'Đã đăng' })
+    await upsertPage(payload, 'lang-hoi', { title: 'Nháp' }, { publish: false })
+    const report = await importContent(payload)
+    const village = pageReport(report, 'lang-hoi')!
+    expect(village.saved).toBe('draft')
+    expect(village.warning).toBe(pendingDraftWarning('Trang Làng Hới'))
+    expect(village.filled).not.toContain('title')
+    expect(report.pages.filter((p) => p.warning)).toHaveLength(1)
+
+    const draft = await readPage(payload, 'lang-hoi', true)
+    expect(draft.title).toBe('Nháp')
+    expect(draft.lead).toBe(pageIntros['lang-hoi'].lead)
+    expect((await readPage(payload, 'lang-hoi', false)).title).toBe('Đã đăng')
   }, 120_000)
 
   it('người duyệt đăng được', async () => {
@@ -225,12 +245,19 @@ describe('importContent', () => {
       const pub = await findAll(collection, false, { and: [where, { _status: { equals: 'published' } }] })
       expect(pub, collection).toHaveLength(1)
     }
-    for (const slug of ['page-intros', 'site-settings'] as const) {
-      await payload.updateGlobal({ slug, data: { _status: 'published' }, overrideAccess: true, user } as never)
+    await payload.updateGlobal({ slug: 'site-settings', data: { _status: 'published' }, overrideAccess: true, user } as never)
+    // Mọi trang đăng được, kể cả kiểm nguồn của trang Làng Hới và Nghề dệt chiếu.
+    for (const d of await allPages(true)) {
+      await payload.update({
+        collection: 'pages', id: d.id as number,
+        data: { _status: 'published', workflow: 'published' }, overrideAccess: true, user,
+        context: { disableRevalidate: true },
+      } as never)
     }
-    const intros = await readGlobal('page-intros', false)
-    expect(intros._status).toBe('published')
-    expect((intros['lang-hoi'] as Rec).title).toBe(pageIntros['lang-hoi'].title)
+    const live = await allPages(false)
+    expect(live.every((d) => d._status === 'published')).toBe(true)
+    expect((await readPage(payload, 'lang-hoi', false)).title).toBe(pageIntros['lang-hoi'].title)
+    expect(((await readPage(payload, 'lang-hoi', false)).facts as unknown[]).length).toBe(3)
     expect((await readGlobal('site-settings', false)).tagline).toBe(siteSettings.tagline)
   }, 120_000)
 

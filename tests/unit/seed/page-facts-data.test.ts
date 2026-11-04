@@ -4,7 +4,7 @@ import path from 'path'
 import { describe, expect, it } from 'vitest'
 
 import { craftFactsSeed, PAGE_FACT_SOURCE_IDS, villageFactsSeed } from '@/seed/data/pageFacts'
-import { isEmptyGroup, mapSourceRefs } from '@/seed/pageFacts'
+import { isEmptyGroup, mapSourceRefs, pageFactsFill } from '@/seed/pageFacts'
 import { craftFactsFrom, villageFactsFrom } from '@/lib/content/pageFacts'
 // Làng Hới: so với chữ cố định (chép từ artboard). Nghề dệt: đối chiếu với chữ đang có trong code (Task 5 đổi sang giá trị cố định).
 
@@ -219,5 +219,25 @@ describe('mapSourceRefs', () => {
       (id) => `#${id}`,
     )
     expect(out).toEqual({ pageSources: ['#a'], rows: [{ text: 'sources', sources: ['#b', 7] }], note: { sources: [] } })
+  })
+})
+
+describe('pageFactsFill', () => {
+  it('force: nhóm được thay hẳn, khoá cũ mà seed không có thành trống (Payload gộp nhóm theo khoá)', () => {
+    const current = {
+      'nghe-det-chieu': {
+        hand: { id: 'x', title: 'Cũ', text: { text: 'Cũ', sources: [9] }, note: { text: 'Cũ', mobileText: 'Cũ', sources: [9] } },
+      },
+    }
+    const { fill } = pageFactsFill(current, () => 1, true)
+    const hand = fill['nghe-det-chieu']!.hand as Record<string, Record<string, unknown>>
+    expect(hand.note).toEqual({ ...craftFactsSeed.hand.note, sources: [] })
+    expect(hand.text.sources).toEqual([])
+    expect(hand.title).toBe(craftFactsSeed.hand.title)
+    expect(hand).not.toHaveProperty('id')
+  })
+  it('nhóm trống: chỉ dữ liệu seed', () => {
+    const { fill } = pageFactsFill({}, () => 1)
+    expect(fill['nghe-det-chieu']!.hand).toEqual(craftFactsSeed.hand)
   })
 })

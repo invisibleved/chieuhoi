@@ -2,7 +2,6 @@ import { getPayload, type Payload } from 'payload'
 
 import type { RouteKey } from '@/collections/pages/routeKeys'
 import type { User } from '@/payload-types'
-import { migratePages } from '@/seed/migratePages'
 
 /**
  * Trả về Payload trỏ vào DB test (DATABASE_URI_TEST), không bao giờ vào DB dev.
@@ -48,14 +47,6 @@ export async function makeUser(payload: Payload, role: 'editor' | 'reviewer'): P
     overrideAccess: true,
     context: { skipFirstUserBootstrap: true },
   }) as Promise<User>
-}
-
-/**
- * Seed còn ghi global `page-intros` (Task 7 chuyển seed sang `pages`): chép global sang collection
- * `pages` để lớp `lib/content` đọc thấy dữ liệu seed. Gọi ngay sau mỗi lần `seed(payload)`.
- */
-export async function syncPagesFromGlobal(payload: Payload): Promise<void> {
-  await migratePages(payload, { replace: true })
 }
 
 const PAGE_CTX = { disableRevalidate: true, skipPageSourcesCheck: true }

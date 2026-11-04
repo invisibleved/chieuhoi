@@ -1,5 +1,5 @@
 // Dữ liệu mẫu cho ảnh chụp trang Hướng dẫn trong admin. Chạy bằng `npm run guide:seed` (DB chieuhoi_test).
-// Xoá sạch DB test rồi tạo lại: 2 tài khoản mẫu, 3 ảnh tự sinh bằng sharp, 2 bài viết, 1 người, 1 sản phẩm, dữ kiện trang (nháp).
+// Xoá sạch DB test rồi tạo lại: 2 tài khoản mẫu, 3 ảnh tự sinh bằng sharp, 2 bài viết, 1 người, 1 sản phẩm, 8 trang (nháp) có dữ kiện trang Làng Hới và Nghề dệt chiếu.
 // Không dùng ảnh tham khảo. Mật khẩu ngẫu nhiên chỉ ghi vào .superpowers/guide-users.json (gitignore), không in ra.
 // `payload run` chỉ đợi top-level await nên main() phải được await ở cuối file.
 import { randomBytes } from 'crypto'
@@ -8,7 +8,7 @@ import path from 'path'
 import type { Payload } from 'payload'
 
 import { assertGuideDatabase, assertGuideMediaDir, assertGuideNoS3, assertSeedAllowed } from './guard'
-import { importPageFacts } from './pageFacts'
+import { ensurePages, importPageFacts } from './pageFacts'
 import { sampleImage } from './sampleImage'
 
 const GUIDE_USERS_FILE = path.resolve(process.cwd(), '.superpowers/guide-users.json')
@@ -63,6 +63,8 @@ async function wipe(payload: Payload): Promise<void> {
 
 async function seedGuide(payload: Payload): Promise<void> {
   await wipe(payload)
+  // wipe() xoá cả `pages`: tạo lại đủ 8 trang (nháp, trống).
+  await ensurePages(payload)
 
   const passwords = { reviewer: randomBytes(18).toString('base64url'), editor: randomBytes(18).toString('base64url') }
   const reviewer = await payload.create({
@@ -169,8 +171,7 @@ async function seedGuide(payload: Payload): Promise<void> {
   })
 
   // Dữ kiện trang Làng Hới và Nghề dệt (lưu nháp) cho ảnh hướng dẫn sửa dữ kiện trang.
-  // force: global không bị wipe() xoá, nên lần chạy trước để lại dữ kiện mà nguồn đã bị xoá mất.
-  await importPageFacts(payload, { publish: 'never', force: true, user })
+  await importPageFacts(payload, { publish: 'never', user })
 }
 
 async function main() {

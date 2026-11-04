@@ -25,9 +25,6 @@ type Slot = { slot: string; file: string; caption?: string }
 export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'con-nguoi' | 'san-pham', Slot[]> = {
   'nghe-det-chieu': [
     { slot: 'hero', file: 'nkc14.webp', caption: 'Đôi tay trên khung dệt. Ảnh: [tác giả — cần xác minh]' },
-    { slot: 'tool-1', file: 'nkc13.webp' },
-    { slot: 'tool-2', file: 'kn1.webp' },
-    { slot: 'tool-3', file: 'kn4.webp' },
     { slot: 'hand', file: 'nkc5.webp' },
     { slot: 'machine', file: 'nkc2.webp' },
     { slot: 'next-people', file: 'nkc10.webp' },
@@ -50,6 +47,9 @@ export const pageMedia: Record<'nghe-det-chieu' | 'lang-hoi' | 'cau-chuyen' | 'c
   // Thẻ cố định "CÁCH LÀM · Công đoạn tạo hoa văn" ở cuối trang hiện vật (R8).
   'san-pham': [{ slot: 'next-pattern', file: 'kn13.webp' }],
 }
+
+/** Ảnh của từng dòng dụng cụ trang Nghề dệt chiếu (theo thứ tự dòng), trước đây ở ô `tool-1..3`. */
+export const toolImages = ['nkc13.webp', 'kn1.webp', 'kn4.webp'] as const
 
 type Intro = { eyebrow: string; title: string; lead?: string; heroTitle?: string }
 
