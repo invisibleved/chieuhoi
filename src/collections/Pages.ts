@@ -7,7 +7,7 @@ import { PAGES_MEDIA_SLOTS, PAGE_MEDIA_SLOT_LABELS } from '@/globals/pageMedia'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 import { pagePageSourcesField } from './pages/checkPageSources'
 import { isPageField } from './pages/fields'
-import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from './pages/routeKeys'
+import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from '@/lib/routeKeys'
 import { stripForeignFields } from './pages/stripForeign'
 
 const isRouteKey = (v: unknown): v is RouteKey => typeof v === 'string' && (ROUTE_KEYS as readonly string[]).includes(v)
@@ -74,7 +74,7 @@ const villageFields = villageFactsFields().map((f) =>
 
 /** Xoá giá trị các trường không thuộc trang đang lưu; chỉ đụng tới khoá có trong `data`. */
 const stripForeignHook: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
-  const slug = (data as { slug?: unknown }).slug ?? (originalDoc as { slug?: unknown } | undefined)?.slug
+  const slug = (originalDoc as { slug?: unknown } | undefined)?.slug ?? (data as { slug?: unknown }).slug
   if (!isRouteKey(slug)) return data
   const stripped = stripForeignFields(slug, data)
   return Object.fromEntries(Object.keys(data).map((k) => [k, stripped[k]]))
@@ -109,6 +109,7 @@ export const Pages: CollectionConfig = {
       options: ROUTE_KEYS.map((k) => ({ value: k, label: ROUTE_LABELS[k] })),
       required: true,
       unique: true,
+      access: { update: () => false },
       admin: { readOnly: true, position: 'sidebar' },
     },
     workflowField(),

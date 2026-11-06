@@ -80,6 +80,20 @@ describe('collection pages', () => {
     expect(live.title).toBe('Bản đăng')
   })
 
+  it('biên tập viên không đổi được slug, trường riêng của trang không bị xoá', async () => {
+    const p = await createPage('lang-hoi', { facts: [{ term: 'Mục', detail: 'Nội dung' }] })
+    const asEditor = (data: Record<string, unknown>, draft: boolean) =>
+      payload.update({ collection: 'pages', id: p.id, data, draft, user: editor, overrideAccess: false } as never)
+    await asEditor({ slug: 'home', title: 'Nháp' }, true)
+    await asEditor({ slug: 'home', title: 'Nháp hai' }, false).catch(() => undefined)
+    const draft = (await payload.findByID({ collection: 'pages', id: p.id, draft: true, overrideAccess: true })) as PageDoc
+    expect(draft.slug).toBe('lang-hoi')
+    expect(draft.facts).toHaveLength(1)
+    const live = (await payload.findByID({ collection: 'pages', id: p.id, draft: false, overrideAccess: true })) as PageDoc
+    expect(live.slug).toBe('lang-hoi')
+    expect(live.facts).toHaveLength(1)
+  })
+
   it('tiêu đề giữ ngắt dòng', async () => {
     const p = await createPage('nghe-det-chieu', { title: 'Một tấm chiếu,\nmuôn công đoạn.' })
     const got = (await payload.findByID({ collection: 'pages', id: p.id, overrideAccess: true })) as PageDoc
