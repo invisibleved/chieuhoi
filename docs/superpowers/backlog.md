@@ -320,6 +320,8 @@ Review còn mở (mức nhỏ):
 - [ ] `src/seed`: hằng `pageIntros` đặt tên gây hiểu nhầm (giờ ghi vào collection Trang).
 - [ ] Test `admin-config` dùng cấu hình thật, phụ thuộc thứ tự chạy.
 - [ ] Ảnh hướng dẫn admin (`public/admin-guide/`) có ngày giờ trong ảnh nên mỗi lần chụp lại đều đổi PNG.
+- [ ] DB prod còn dòng `global_slug = 'page-intros'` trong `payload_locked_documents` và `payload_preferences` (vô hại); dọn bằng một migration sau nếu muốn.
+- [ ] `tests/int/source-delete.int.spec.ts`: test `wipe` chép lại lệnh xoá của `src/seed/guide.ts` vì `wipe` không export; nên export `wipe` và gọi thẳng.
 
 ## D. Quyết định cần biết (không phải lỗi)
 
