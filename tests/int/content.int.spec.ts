@@ -281,10 +281,19 @@ describe('lib/content', () => {
     expect((await content.getCraftSteps('public'))[0].shotNeeded).toBe('Cận cảnh khung dệt')
   })
 
+  it('nguồn: tác giả có trong view, để trống thì null', async () => {
+    await create('sources', { sourceId: 's-a', title: 'Về làng Hới', author: 'Vương Tâm' })
+    await create('sources', { sourceId: 's-b', title: 'Bài khác' })
+    const byId = new Map((await content.getSources('public')).map((s) => [s.id, s]))
+    expect(byId.get('s-a')?.author).toBe('Vương Tâm')
+    expect(byId.get('s-b')?.author).toBeNull()
+  })
+
   it('nguồn: trường chưa xác minh bị ẩn ở public', async () => {
-    await create('sources', { sourceId: 's-x', title: 'Báo', publisher: '[cần xác minh]', url: '' })
+    await create('sources', { sourceId: 's-x', title: 'Báo', publisher: '[cần xác minh]', author: '[cần xác minh]', url: '' })
     const [s] = await content.getSources('public')
     expect(s.publisher).toBeNull()
+    expect(s.author).toBeNull()
     expect(s.url).toBeNull()
     expect(s.title).toBe('Báo')
   })

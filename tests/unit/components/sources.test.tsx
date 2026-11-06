@@ -4,8 +4,8 @@ import { FootnoteRef, SourceList, sourceNumbers } from '@/components/content/Sou
 import type { SourceView } from '@/lib/content'
 
 const S: SourceView[] = [
-  { id: 'vnp', publisher: 'Vietnam+', title: 'Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại', url: 'https://www.vietnamplus.vn/x', date: '14/08/2026' },
-  { id: 'nourl', publisher: null, title: 'Lời kể người làng', url: null, date: null },
+  { id: 'vnp', publisher: 'Vietnam+', author: null, title: 'Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại', url: 'https://www.vietnamplus.vn/x', date: '14/08/2026' },
+  { id: 'nourl', publisher: null, author: null, title: 'Lời kể người làng', url: null, date: null },
 ]
 
 describe('Sources', () => {
@@ -28,6 +28,17 @@ describe('Sources', () => {
     const { container } = render(<SourceList sources={S} variant="notes" title="Ghi chú nguồn" />)
     expect(container.querySelector('#nguon-1')?.textContent).toBe('1. Vietnam+, Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại (mở tab mới), 14/08/2026.')
     expect(container.querySelector('#nguon-2')?.textContent).toBe('2. Lời kể người làng.')
+  })
+  it('SourceList chèn tác giả sau đơn vị xuất bản ở cả hai kiểu', () => {
+    const ddk: SourceView[] = [
+      { id: 'ddk', publisher: 'Đại Đoàn Kết', author: 'Vương Tâm', title: 'Về làng Hới', url: 'https://daidoanket.vn/x', date: '07/08/2021' },
+      { id: 'noPub', publisher: null, author: 'Vương Tâm', title: 'Về làng Hới', url: null, date: null },
+    ]
+    const ref = render(<SourceList sources={ddk} />).container
+    expect(ref.querySelector('#nguon-1')?.textContent).toBe('[1]Đại Đoàn Kết · Vương Tâm · Về làng Hới (mở tab mới) · 07/08/2021')
+    expect(ref.querySelector('#nguon-2')?.textContent).toBe('[2]Vương Tâm · Về làng Hới')
+    const notes = render(<SourceList sources={ddk} variant="notes" idPrefix="n" />).container
+    expect(notes.querySelector('#n-1')?.textContent).toBe('1. Đại Đoàn Kết, Vương Tâm, Về làng Hới (mở tab mới), 07/08/2021.')
   })
   it('SourceList idPrefix đổi tiền tố id', () => {
     const { container } = render(<SourceList sources={S} idPrefix="x" />)

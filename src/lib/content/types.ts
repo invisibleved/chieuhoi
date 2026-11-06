@@ -42,6 +42,7 @@ export interface PersonView {
 export interface SourceView {
   id: string
   publisher: string | null
+  author: string | null
   title: string
   url: string | null
   date: string | null

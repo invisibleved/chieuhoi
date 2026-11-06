@@ -100,7 +100,7 @@ describe('PersonView public, chưa đồng ý', () => {
       ...publicPerson, name: 'Bà Lan', heading: 'Bà Lan', storyTitle: 'Câu chuyện của Bà Lan',
       role: 'Thợ dệt', yearsInCraft: '40 năm', consentPending: false,
       storyParts: [part('Tuổi thơ', 'Đoạn một.', 1), part('Một ngày', 'Đoạn hai.'), part('Điều muốn giữ', 'Đoạn ba.', 1)],
-      sources: [{ id: 'a', publisher: 'Vietnam+', title: 'Giữ hồn nghề', url: null, date: '14/08/2026' }],
+      sources: [{ id: 'a', publisher: 'Vietnam+', author: null, title: 'Giữ hồn nghề', url: null, date: '14/08/2026' }],
       quote: { text: 'Nghề là hồn làng.', sourceLine: 'Vietnam+ (14/08/2026)', note: 'Nguồn: Vietnam+ (14/08/2026)' },
     }
     const { container } = render(<PersonView page={page(p, 'public')} />)

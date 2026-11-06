@@ -14,7 +14,7 @@ import { archiveAlt, archiveItems, otherImageAlts } from './data/archive'
 import { peopleSamples } from './data/extras'
 import { homeMedia, pageIntros, pageMedia, siteSettings, toolImages } from './data/site'
 import { assertSeedAllowed } from './guard'
-import { ensurePages, importPageFacts, savePage } from './pageFacts'
+import { ensurePages, importPageFacts, savePage, sourceData, type SourceJson } from './pageFacts'
 
 export { assertSeedAllowed } from './guard'
 export { injectCitations, injectFigures } from './citations'
@@ -143,12 +143,11 @@ export async function seed(payload: Payload): Promise<void> {
   }
 
   // Nguồn
-  type SourceJson = { id: string; publisher?: string; title: string; url?: string; date?: string }
   const sourceIds: SourceIdMap = {}
   for (const s of readSeedJson<SourceJson[]>('sources.json')) {
     sourceIds[s.id] = await upsert(
       payload, user, 'sources', { field: 'sourceId', value: s.id },
-      { sourceId: s.id, publisher: s.publisher, title: s.title, url: s.url, date: s.date },
+      sourceData(s),
       'published',
     )
   }

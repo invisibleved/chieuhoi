@@ -207,6 +207,8 @@ describe('view model trang Nghề dệt chiếu và Làng Hới', () => {
         'vietnamplus-2026', 'danviet-2024', 'daidoanket-2021', 'nq-1666-2025', 'nq-202-2025',
       ])
       expect(v.sources[0].date).toBe('14/08/2026')
+      expect(v.sources[2].author).toBe('Vương Tâm')
+      expect(v.sources[0].author).toBeNull()
       expect(v.facts[1].note).toEqual({
         desktop: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, tỉnh Thái Bình',
         mobile: 'Trước đây: xã Tân Lễ, huyện Hưng Hà, Thái Bình',

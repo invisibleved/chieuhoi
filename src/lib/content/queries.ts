@@ -27,13 +27,14 @@ const sourcesOf = (v: unknown): Source[] =>
 /**
  * Tiêu đề nguồn là bắt buộc nên không thể để null: ở public, nguồn có tiêu đề chưa xác minh
  * bị bỏ hẳn khỏi danh sách/trích dẫn (không có gì đáng hiện); preview vẫn hiện nguyên văn.
+ * Tác giả là trường tuỳ chọn (nhiều bài không ghi tên): trống thì null ở cả hai mode.
  */
 function toSourceView(s: Source, mode: Mode = 'public'): SourceView | null {
   const title = showText(s.title, mode)
   if (title === null) return null
   const url = showText(s.url, mode)
   return {
-    id: s.sourceId, publisher: showText(s.publisher, mode), title,
+    id: s.sourceId, publisher: showText(s.publisher, mode), author: optionalText(s.author, mode), title,
     url: isHttpUrl(url) ? url : null, date: showText(s.date, mode),
   }
 }

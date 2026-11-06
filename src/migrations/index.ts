@@ -8,6 +8,7 @@ import * as migration_20261028_191749_phase7_sync from './20261028_191749_phase7
 import * as migration_20261030_125051_page_facts from './20261030_125051_page_facts';
 import * as migration_20261103_155827_pages from './20261103_155827_pages';
 import * as migration_20261104_021127_drop_page_intros from './20261104_021127_drop_page_intros';
+import * as migration_20261106_040546_source_author from './20261106_040546_source_author';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261104_021127_drop_page_intros.up,
     down: migration_20261104_021127_drop_page_intros.down,
-    name: '20261104_021127_drop_page_intros'
+    name: '20261104_021127_drop_page_intros',
+  },
+  {
+    up: migration_20261106_040546_source_author.up,
+    down: migration_20261106_040546_source_author.down,
+    name: '20261106_040546_source_author'
   },
 ];

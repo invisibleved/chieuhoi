@@ -46,6 +46,7 @@ export const Sources: CollectionConfig = {
       admin: { description: 'Ví dụ: vietnamplus-2026' },
     },
     { name: 'publisher', type: 'text', label: 'Đơn vị xuất bản' },
+    { name: 'author', type: 'text', label: 'Tác giả', admin: { description: 'Để trống nếu bài không ghi tên tác giả.' } },
     { name: 'title', type: 'text', label: 'Tiêu đề', required: true },
     { name: 'url', type: 'text', label: 'Đường dẫn', validate: validateHttpUrl },
     {

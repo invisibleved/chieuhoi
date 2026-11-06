@@ -43,8 +43,8 @@ function view(over: Partial<StoryPageView['story']> = {}, mode: 'public' | 'prev
         { id: 'ba', title: 'Mục ba' }, { id: 'bon', title: 'Mục bốn' },
       ],
       sources: [
-        { id: 'a', publisher: 'Vietnam+', title: 'Giữ hồn nghề', url: 'https://x.vn/a', date: '14/08/2026' },
-        { id: 'b', publisher: 'Dân Việt', title: 'Lăng mộ', url: null, date: null },
+        { id: 'a', publisher: 'Vietnam+', author: null, title: 'Giữ hồn nghề', url: 'https://x.vn/a', date: '14/08/2026' },
+        { id: 'b', publisher: 'Dân Việt', author: null, title: 'Lăng mộ', url: null, date: null },
       ],
       editor: null, publishedAt: null, coverCaption: 'Khung dệt thủ công ngày nay.',
       reviewChecklist: mode === 'preview' ? ['Đối chiếu năm sinh.', 'Xác nhận ngày lễ.'] : null,

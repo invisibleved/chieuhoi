@@ -83,7 +83,12 @@ const ROUTE_GROUPS = {
 
 type Route = keyof typeof ROUTE_GROUPS
 
-type SourceJson = { id: string; publisher?: string; title: string; url?: string; date?: string }
+export type SourceJson = { id: string; publisher?: string; author?: string; title: string; url?: string; date?: string }
+
+/** Dữ liệu tạo/ghi một nguồn từ một mục của content/seed/sources.json. */
+export const sourceData = (s: SourceJson) => ({
+  sourceId: s.id, publisher: s.publisher, author: s.author, title: s.title, url: s.url, date: s.date,
+})
 
 export type SourceReport = { sourcesCreated: string[]; sourcesSkipped: string[] }
 
@@ -115,7 +120,7 @@ export async function ensureSources(
     if (!s) throw new Error(`content/seed/sources.json thiếu nguồn ${id}.`)
     const doc = await payload.create({
       collection: 'sources',
-      data: { sourceId: s.id, publisher: s.publisher, title: s.title, url: s.url, date: s.date },
+      data: sourceData(s),
       overrideAccess: true,
       user,
     })

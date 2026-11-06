@@ -105,11 +105,12 @@ export const productWithImage: ProductCardView = {
   shotNeeded: { desktop: 'Chiếu cạp điều chụp phẳng, ánh sáng tự nhiên, kèm cận cảnh mặt dệt', mobile: 'Chiếu cạp điều' },
 }
 
-// Hai nguồn thật trích từ content/seed/sources.json.
+// Ba nguồn thật trích từ content/seed/sources.json (nguồn thứ ba có tác giả).
 export const sources: SourceView[] = [
   {
     id: 'vietnamplus-2026',
     publisher: 'Vietnam+',
+    author: null,
     title: 'Giữ hồn nghề dệt chiếu cói làng Hới giữa nhịp sống hiện đại',
     url: 'https://www.vietnamplus.vn/giu-hon-nghe-det-chieu-coi-lang-hoi-giua-nhip-song-hien-dai-post1123026.vnp',
     date: '2026-08-14',
@@ -117,9 +118,18 @@ export const sources: SourceView[] = [
   {
     id: 'danviet-2024',
     publisher: 'Dân Việt, dẫn Báo Hải Dương',
+    author: null,
     title: 'Lăng mộ Trạng nguyên Phạm Đôn Lễ thời Hậu Lê ở Hải Dương',
     url: 'https://danviet.vn/lang-mo-trang-nguyen-pham-don-le-thoi-hau-le-o-hai-duong-ong-que-thai-binh-ong-to-nghe-det-chieu-20240613144750326-d1166801.html',
     date: '2024-06-13',
+  },
+  {
+    id: 'daidoanket-2021',
+    publisher: 'Đại Đoàn Kết',
+    author: 'Vương Tâm',
+    title: 'Về làng Hới',
+    url: 'https://daidoanket.vn/ve-lang-hoi-10198724.html',
+    date: '2021-08-07',
   },
 ]
 

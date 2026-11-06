@@ -43,6 +43,7 @@ export function Cite({ ids, numbers, variant }: { ids: string[]; numbers: Map<st
 
 type ListVariant = 'reference' | 'notes'
 
+// Thứ tự trong mục: đơn vị xuất bản, tác giả, tiêu đề, ngày (artboard VillagePage, StoryDetail).
 // reference: mục "[n]" một cột phụ + một cột chữ, ngăn bằng " · " (trang Làng Hới, styleguide).
 // notes: "Ghi chú nguồn" cuối bài đọc, cột 4–9, số "n." và ngăn bằng ", " (StoryDetail).
 const listStyles = {
@@ -102,6 +103,7 @@ export function SourceList({
             const n = i + 1
             const parts = [
               s.publisher,
+              s.author,
               s.url ? (
                 <a key="t" href={s.url} className="underline underline-offset-2 hover:decoration-2" {...newTabProps}>
                   {s.title}

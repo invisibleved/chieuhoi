@@ -179,6 +179,10 @@ export interface Source {
    */
   sourceId: string;
   publisher?: string | null;
+  /**
+   * Để trống nếu bài không ghi tên tác giả.
+   */
+  author?: string | null;
   title: string;
   url?: string | null;
   /**
@@ -802,6 +806,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface SourcesSelect<T extends boolean = true> {
   sourceId?: T;
   publisher?: T;
+  author?: T;
   title?: T;
   url?: T;
   date?: T;

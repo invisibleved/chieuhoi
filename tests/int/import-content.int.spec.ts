@@ -74,6 +74,8 @@ describe('importContent', () => {
     expect(createdIn('stories')).toEqual(['chuyen-ve-trang-chieu'])
     expect(report.existing).toEqual([])
     expect(report.sourcesCreated).toHaveLength(5)
+    const ddk = await payload.find({ collection: 'sources', where: { sourceId: { equals: 'daidoanket-2021' } }, overrideAccess: true })
+    expect(ddk.docs[0]?.author).toBe('Vương Tâm')
 
     for (const c of COLLECTIONS) {
       expect(await publishedDocs(c)).toHaveLength(0)
