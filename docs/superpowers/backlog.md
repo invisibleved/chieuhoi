@@ -306,9 +306,9 @@ Việc cho máy dev khác:
 Dữ liệu và e2e:
 - [ ] Dữ kiện năm sinh/mất trùng giữa dòng thời gian và tổ nghề: hai nơi nhập cùng một dữ kiện, dễ lệch nhau.
 - [ ] Câu riêng cho điện thoại lẫn trong dữ liệu trang (chữ dành cho mobile nằm chung trường với chữ desktop).
-- [ ] E2e `workflow` và `a11y-public` chạy song song trên cùng server :3100 nên có thể đụng nhau (thấy lại ở lần chạy 2026-11-04: story `e2e-quy-trinh-*` còn sót trong DB dev, làm `public`, `a11y-public` và `chromium` fail vì đếm 6 bài thay vì 5).
-- [ ] `tests/e2e/links.e2e.spec.ts` có lúc quá thời gian (flake).
-- [ ] `tests/int/pages.int.spec.ts` có lúc quá 5 giây khi chạy cả bộ (flake).
+- [x] E2e `workflow` và `a11y-public` chạy song song trên cùng server :3100 nên có thể đụng nhau (thấy lại ở lần chạy 2026-11-04: story `e2e-quy-trinh-*` còn sót trong DB dev, làm `public`, `a11y-public` và `chromium` fail vì đếm 6 bài thay vì 5).
+- [x] `tests/e2e/links.e2e.spec.ts` có lúc quá thời gian (flake).
+- [x] `tests/int/pages.int.spec.ts` có lúc quá 5 giây khi chạy cả bộ (flake).
 
 Review còn mở (mức nhỏ):
 - [ ] `src/hooks` (kiểm nguồn trước khi xoá): các truy vấn tra cứu không truyền `req` nên nằm ngoài transaction xoá; nhãn global/collection có thể rơi về slug hoặc "X: X" trong câu báo tiếng Việt; thiếu test cho cờ bỏ qua trực tiếp, trích dẫn global chỉ có bản nháp, câu báo nhiều nơi.

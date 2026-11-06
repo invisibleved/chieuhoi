@@ -5,6 +5,8 @@ const SOURCES = ['/', '/nghe-det-chieu', '/lang-hoi', '/cau-chuyen', '/con-nguoi
 const TARGET = /^\/(san-pham(\/[^?#]+)?|thu-vien(\?anh=[^&#]+)?|ket-noi)$/
 
 test('link tới /san-pham, /thu-vien, /ket-noi không còn 404', async ({ page }) => {
+  // Duyệt tuần tự 5 trang rồi hỏi từng link; lần đầu `next dev` còn biên dịch từng route nên vượt 30 giây mặc định.
+  test.setTimeout(120_000)
   const found = new Map<string, string>()
   for (const source of SOURCES) {
     const res = await page.goto(source)

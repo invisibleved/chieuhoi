@@ -77,7 +77,8 @@ export default defineConfig({
       // Quét a11y trên bản production public (cổng 3100). Bản xem trước của cùng file chạy trong project chromium.
       name: 'a11y-public',
       testMatch: /(a11y|cls)\.e2e/,
-      dependencies: ['public'],
+      // Sau workflow: story tạm của workflow nằm chung DB và máy chủ :3100, chạy song song thì đếm bài sai.
+      dependencies: ['workflow'],
       use: { ...devices['Desktop Chrome'], channel: 'chromium', baseURL: 'http://localhost:3100' },
     },
     {

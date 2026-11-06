@@ -10,5 +10,7 @@ export default defineConfig({
     include: ['tests/int/**/*.int.spec.ts', 'tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
     // Test tích hợp dùng chung một DB: chạy tuần tự từng file.
     fileParallelism: false,
+    // Test int seed lại DB nhiều lần; 5 giây mặc định không đủ khi chạy cả bộ.
+    testTimeout: 30_000,
   },
 })
