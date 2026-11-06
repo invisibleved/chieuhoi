@@ -1,5 +1,5 @@
 /** Đường dẫn xem trước. File này chỉ import file không import gì, để dùng được ở mọi tầng. */
-import { ROUTE_PATHS } from '@/collections/pages/routeKeys'
+import { ROUTE_PATHS } from '@/lib/routeKeys'
 
 export const PREVIEW_ROUTE = '/preview'
 export const PREVIEW_EXIT_ROUTE = '/preview/exit'

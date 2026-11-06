@@ -1,5 +1,5 @@
 import { ALL_PAGE_ONLY_FIELDS, GROUP_PAGE_FIELDS, LIST_PAGE_FIELDS, PAGE_ONLY_FIELDS } from './fields'
-import type { RouteKey } from './routeKeys'
+import type { RouteKey } from '@/lib/routeKeys'
 
 /** Giữ dạng đối tượng của nhóm, xoá mọi giá trị con: mảng thành `[]`, còn lại thành `null` (`undefined` giữ nguyên). */
 const clearGroup = (value: unknown): Record<string, unknown> => {

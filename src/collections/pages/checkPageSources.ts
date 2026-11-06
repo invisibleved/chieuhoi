@@ -2,7 +2,7 @@ import type { Field, Validate } from 'payload'
 
 import { pageSourcesField } from '@/globals/pageFacts'
 import { PAGE_ONLY_FIELDS } from './fields'
-import type { RouteKey } from './routeKeys'
+import type { RouteKey } from '@/lib/routeKeys'
 
 export type MissingSource = { where: string; sourceIds: number[] }
 

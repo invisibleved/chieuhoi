@@ -1,4 +1,4 @@
-import type { RouteKey } from './routeKeys'
+import type { RouteKey } from '@/lib/routeKeys'
 
 /** Trường chỉ thuộc một số trang. Trường chung (`eyebrow`, `title`, `lead`, `slug`, `workflow`) không có ở đây. */
 export const PAGE_ONLY_FIELDS: Record<RouteKey, readonly string[]> = {

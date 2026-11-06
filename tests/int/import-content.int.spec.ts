@@ -3,7 +3,7 @@ import type { Payload } from 'payload'
 import { sql } from 'drizzle-orm'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
-import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+import { ROUTE_KEYS } from '@/lib/routeKeys'
 import { importContent } from '@/seed/importContent'
 import { pendingDraftWarning } from '@/seed/pageFacts'
 import { pageIntros, siteSettings } from '@/seed/data/site'

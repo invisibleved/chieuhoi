@@ -1,6 +1,6 @@
 import { APIError, type CollectionBeforeDeleteHook, type Payload } from 'payload'
 
-import { ROUTE_LABELS } from '@/collections/pages/routeKeys'
+import { ROUTE_LABELS } from '@/lib/routeKeys'
 
 /** Collection có thể trích Nguồn. Thêm slug mới vào đây. */
 export const SOURCE_CITING_COLLECTIONS = ['timeline-events', 'stories', 'products', 'people', 'pages'] as const

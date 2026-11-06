@@ -7,7 +7,7 @@ import type { Payload } from 'payload'
 import { seed } from '@/seed'
 import { importPageFacts, pendingDraftWarning } from '@/seed/pageFacts'
 import { PAGE_FACT_SOURCE_IDS } from '@/seed/data/pageFacts'
-import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+import { ROUTE_KEYS } from '@/lib/routeKeys'
 import { getTestPayload, makeUser, readPage, resetDb, upsertPage } from './helpers'
 
 const sources = JSON.parse(

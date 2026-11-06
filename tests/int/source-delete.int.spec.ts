@@ -110,4 +110,15 @@ describe('xoá Nguồn đang được trích', () => {
     const left = await payload.find({ collection: 'sources', overrideAccess: true })
     expect(left.totalDocs).toBe(0)
   })
+
+  it('wipe của guide seed (skipSourceRefGuard) xoá được khi còn nguồn được trích', async () => {
+    const s = await createSource('wipe')
+    await create('timeline-events', { label: '1', title: 'M', order: 1, workflow: 'published', sources: [s.id] })
+    await payload.delete({
+      collection: 'sources', where: { id: { exists: true } }, overrideAccess: true,
+      context: { skipLastReviewerGuard: true, skipSourceRefGuard: true },
+    })
+    const left = await payload.find({ collection: 'sources', overrideAccess: true })
+    expect(left.totalDocs).toBe(0)
+  })
 })

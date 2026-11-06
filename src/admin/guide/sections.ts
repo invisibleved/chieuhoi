@@ -105,7 +105,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
       { text: 'Sửa câu trong ô **Nội dung**. Chỉ viết điều bạn biết chắc.' },
       { text: 'Muốn ghi nguồn, bấm vào ô **Nguồn** của dòng đó rồi chọn nguồn trong danh sách.', shot: 'du-kien-nguon' },
       { text: 'Chưa có nguồn trong danh sách thì ra menu, vào mục **Nguồn**, thêm nguồn mới trước. Rồi quay lại chọn.' },
-      { text: 'Kéo xuống tới ô **Nguồn tham khảo của trang**. Thứ tự các nguồn ở đây quyết định số [1], [2] trên trang. Nguồn đứng đầu là [1].' },
+      { text: 'Kéo xuống tới ô **Nguồn tham khảo của trang**. Thứ tự các nguồn ở đây quyết định số [1], [2] trên trang. Nguồn đứng đầu là [1]. Nguồn nào bạn đã chọn cho một dòng cũng phải có trong danh sách này, nếu không thì trang không đăng được.' },
       { text: 'Bấm **Lưu bản nháp**.' },
       { text: 'Báo người duyệt biết bạn đã sửa. Người duyệt xem và đăng thì trang web mới đổi.' },
     ],

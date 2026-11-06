@@ -7,7 +7,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload } from 'payload'
 
-import { ROUTE_KEYS, type RouteKey } from '@/collections/pages/routeKeys'
+import { ROUTE_KEYS, type RouteKey } from '@/lib/routeKeys'
 
 import { craftStepDocs, productDocs, readSeedJson, storyDocs, timelineDocs, type SourceIdMap } from './content'
 import { pageIntros, siteSettings } from './data/site'

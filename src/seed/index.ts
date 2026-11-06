@@ -4,7 +4,7 @@ import { readdirSync } from 'fs'
 import path from 'path'
 import type { Payload, TypedUser } from 'payload'
 
-import { ROUTE_KEYS } from '@/collections/pages/routeKeys'
+import { ROUTE_KEYS } from '@/lib/routeKeys'
 
 import {
   craftStepDocs, isDraft, productDocs, readSeedJson, storyDocs, timelineDocs,

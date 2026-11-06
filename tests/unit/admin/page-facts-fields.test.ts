@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { Pages } from '@/collections/Pages'
-import { ROUTE_PATHS } from '@/collections/pages/routeKeys'
+import { ROUTE_PATHS } from '@/lib/routeKeys'
 import { isPageField } from '@/collections/pages/fields'
 import { craftFactsFields, villageFactsFields } from '@/globals/pageFacts'
 import { PAGES_MEDIA_SLOTS } from '@/globals/pageMedia'

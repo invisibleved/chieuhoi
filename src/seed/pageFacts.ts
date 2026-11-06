@@ -5,7 +5,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import type { Payload, TypedUser } from 'payload'
 
-import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from '@/collections/pages/routeKeys'
+import { ROUTE_KEYS, ROUTE_LABELS, type RouteKey } from '@/lib/routeKeys'
 
 import { craftFactsSeed, PAGE_FACT_SOURCE_IDS, villageFactsSeed } from './data/pageFacts'
 

@@ -1,4 +1,4 @@
-// Nhập nội dung khởi đầu (dòng thời gian, công đoạn, sản phẩm, bài viết, phần mở đầu trang, cài đặt chung)
+// Nhập nội dung khởi đầu (dòng thời gian, công đoạn, sản phẩm, bài viết, các trang trong mục Các trang, cài đặt chung)
 // vào CMS dưới dạng bản nháp. Chạy ở mọi APP_ENV. Không gắn ảnh, không ghi đè, không tự đăng.
 import type { ContentReport } from '../seed/importContent'
 import { pageLabel } from '../seed/pageFacts'

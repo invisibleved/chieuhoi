@@ -1,6 +1,6 @@
 import { getPayload, type Payload } from 'payload'
 
-import type { RouteKey } from '@/collections/pages/routeKeys'
+import type { RouteKey } from '@/lib/routeKeys'
 import type { User } from '@/payload-types'
 
 /**
