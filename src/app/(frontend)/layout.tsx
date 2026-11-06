@@ -1,8 +1,6 @@
 import React from 'react'
 import './globals.css'
-import { FooterSlot } from '@/components/layout/FooterSlot'
 import { PreviewBar } from '@/components/layout/PreviewBar'
-import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { isIndexable, siteUrl } from '@/lib/env'
 import { getMode, getPreviewBar, getSiteSettings } from '@/lib/content'
@@ -25,8 +23,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className="flex min-h-screen flex-col bg-bg-primary text-text-primary font-sans">
         {previewBar && <PreviewBar view={previewBar} />}
         <SiteHeader tagline={settings.tagline} />
-        <main className="flex-1">{children}</main>
-        <FooterSlot full={<SiteFooter variant="full" settings={settings} />} compact={<SiteFooter variant="compact" settings={settings} />} />
+        {/* <main> và footer nằm ở layout của nhóm (home) (footer đầy đủ) và (site) (footer gọn). */}
+        {children}
       </body>
     </html>
   )

@@ -50,7 +50,8 @@ export const getStory = async (...a: Parameters<ReturnType<typeof createContent>
 export const getPeople = async (...a: Parameters<ReturnType<typeof createContent>['getPeople']>) => (await bound()).getPeople(...a)
 export const getPerson = async (...a: Parameters<ReturnType<typeof createContent>['getPerson']>) => (await bound()).getPerson(...a)
 export const getArchive = async (...a: Parameters<ReturnType<typeof createContent>['getArchive']>) => (await bound()).getArchive(...a)
-export const getSiteSettings = async (...a: Parameters<ReturnType<typeof createContent>['getSiteSettings']>) => (await bound()).getSiteSettings(...a)
+// cache(): header (layout gốc) và footer (layout của từng nhóm trang) dùng chung một lần đọc.
+export const getSiteSettings = cache(async (...a: Parameters<ReturnType<typeof createContent>['getSiteSettings']>) => (await bound()).getSiteSettings(...a))
 export const getPageIntro = async (...a: Parameters<ReturnType<typeof createContent>['getPageIntro']>) => (await bound()).getPageIntro(...a)
 export const getHomeMedia = async (...a: Parameters<ReturnType<typeof createContent>['getHomeMedia']>) => (await bound()).getHomeMedia(...a)
 

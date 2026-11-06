@@ -44,6 +44,17 @@ test.describe('desktop 1440', () => {
     await expect(page.getByRole('navigation', { name: 'Đường dẫn' })).toBeVisible()
   })
 
+  test('HTML từ server (chưa chạy JS) đã đúng loại footer', async ({ request }) => {
+    // Footer chọn theo nhóm route; trước đây chọn theo đường dẫn nên trang chủ dựng lại trên Vercel (/index) ra footer gọn.
+    const footerOf = async (path: string) => {
+      const html = await (await request.get(path)).text()
+      return html.slice(html.indexOf('<footer'), html.indexOf('</footer>'))
+    }
+    expect(await footerOf('/')).toContain('aria-label="Khám phá"')
+    expect(await footerOf('/lang-hoi')).not.toContain('aria-label="Khám phá"')
+    expect(await footerOf('/lang-hoi')).toContain('CHIẾU HỚI')
+  })
+
   test('axe không có lỗi serious/critical ở / (1440)', async ({ page }) => {
     // Giảm chuyển động để axe không đo tương phản giữa lúc Reveal đang mờ dần.
     await page.emulateMedia({ reducedMotion: 'reduce' })
